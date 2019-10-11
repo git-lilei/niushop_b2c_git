@@ -1,0 +1,179 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/product.css">
+<style type="text/css">
+.num{width:40px;text-align:center;}
+.ns-main{margin-top:0px;}
+</style>
+{/block}
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<td width="50%" style="text-align: left;">
+			<button class="btn-common-delete" onclick="batchDelete()" >批量删除</button>
+			<button class="btn-common" onclick="location.href='{:__URL('ADMIN_MAIN/cms/addarticle')}';" style="margin:0 5px 0 0 !important;">添加文章</button>
+		</td>
+		<td width="20%">
+			<input type="text" id='search_text' placeholder="请输入文章标题或分类名称" class="input-common" />
+			<input type="button" onclick="searchData()" value="搜索" class="btn-common" />
+		</td>
+	</tr>
+</table>
+<table class="table-class">
+	<colgroup>
+		<col style="width: 2%">
+		<col style="width: 19%;">
+		<col style="width: 17%;">
+		<col style="width: 17%;">
+		<col style="width: 10%;">
+		<col style="width: 16%;">
+		<col style="width: 4%;">
+		<col style="width: 15%;">
+	</colgroup>
+	<thead>
+		<tr align="center">
+			<th><i class="checkbox-common" input_all =".table-class tbody">
+				<input id="ckall" type="checkbox"></i>
+			</th>
+			<th align="left"><div class="iconbg-arrow up">标题</div></th>
+			<th align="left"><div class="iconbg-arrow up">分类</div></th>
+			<th><div class="iconbg-arrow up">点击量 / 评论量</div></th>
+			<th><div class="iconbg-arrow up">状态</div></th>
+			<th><div class="iconbg-arrow up">发布时间</div></th>
+			<th><div class="iconbg-arrow up">排序</div></th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+$('.num').live("change",function(){
+	var fieldid = $(this).attr('fieldid');
+	var sort = $(this).val();
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/cms/modifyarticlefield')}",
+		data:{'fieldid':fieldid,'sort':sort},
+		success: function (data) {
+			if(data['code'] > 0){
+				showTip("修改成功","success");
+				LoadingInfo(getCurrentIndex(fieldid,'.table-class tbody'));
+			}else{
+				showTip("修改失败","error");
+			}
+		}
+	});
+});
+
+//分页数据
+function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/cms/articlelist')}",
+		data : { "page_index" : page_index, "page_size" : $("#showNumber").val(), "search_text" : search_text },
+		success : function(data) {
+			if (data["data"].length > 0) {
+				$(".table-class tbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					html += '<tr align="center">';
+					html += '<td><i class="checkbox-common"><input name="sub" type="checkbox" value="'+ data['data'][i]['article_id']+'" ></i></td>';
+					
+					html += '<td align="left" title="'+data["data"][i]["title"]+'">' + data["data"][i]["title"]+ '</td>';
+					if(data["data"][i]["name"]==null){
+						html += '<td align="left">--</td>';
+					}else{
+						html += '<td align="left">' + data["data"][i]["name"]+ '</td>';
+					}
+					html += '<td>' + data["data"][i]["click"]+ ' / ' + data["data"][i]["comment_count"]+ '</td>';
+					
+					if(data["data"][i]["status"]==0){
+						html += '<td>草稿</td>';
+					}else if(data["data"][i]["status"]==1){
+						html += '<td>待审核</td>';
+					}else if(data["data"][i]["status"]==2){
+						html += '<td>已发布</td>';
+					}else if(data["data"][i]["status"]==-1){
+						html += '<td>回收站</td>';
+					}
+					html += '<td>' + timeStampTurnTime(data["data"][i]["create_time"])+ '</td>';
+					html += '<td><input type="number" min="0" value="'+ data["data"][i]["sort"]+'" fieldid="'+ data['data'][i]['article_id']+'" class="num input-common input-common-sort" ></td>';
+					html += '<td><a target="_blank" href="'+__URL('SHOP_MAIN/article/detail?article_id='+ data['data'][i]['article_id']+'&class_id='+data["data"][i]["class_id"])+'">预览</a><a href="'+__URL('ADMIN_MAIN/cms/updatearticle?id='+ data['data'][i]['article_id'])+'">修改</a><a style="cursor: pointer;" onclick="deleteArticle('+data['data'][i]['article_id']+')">删除</a></td> ';
+					html += '</tr>';
+					$(".table-class tbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="8">暂无文章</td></tr>';
+				$(".table-class tbody").html(html);
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}	
+
+function batchDelete() {
+	var article_id= new Array();
+	$(".table-class tbody input[type='checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			article_id.push($(this).val());
+		}
+	});
+	if(article_id.length ==0){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#0059d6,#fff": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:"请选择需要操作的记录",
+			title:"消息提醒",
+		});
+		return false;
+	}
+	deleteArticle(article_id);
+}
+var flag = false;
+//删除分类
+function deleteArticle(article_id){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				if(!flag){
+					flag = true;
+					$.ajax({
+						type : "post",
+						url : "{:__URL('ADMIN_MAIN/cms/deletearticle')}",
+						data : { "article_id" : article_id.toString() },
+						dataType : "json",
+						success : function(data) {
+							
+							if (data["code"] > 0) {
+								showTip(data["message"],'success');
+								LoadingInfo(getCurrentIndex(article_id,'.table-class tbody'));
+							}else{
+								showTip(data["message"],'error');
+								flag = false;
+							}
+						}
+					})
+				}
+			},
+			"取消,#f5f5f5,#666": function() {
+				$(this).dialog('close');
+			}
+		},
+	contentText:"是否删除文章？",
+	});
+}
+
+
+function searchData(){
+	LoadingInfo(1);
+}
+</script>
+{/block}

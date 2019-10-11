@@ -1,0 +1,215 @@
+{extend name="$base" /}
+{block name="resources"}
+<style>
+.table-class tr th{padding: 5px!important;}
+.ns-main{margin-top:0px;}
+</style>
+{/block}
+{block name="main"}
+<div class="options-btn">
+	<button class="btn-common btn-small" onclick="showAddModal();">添加核销人员</button>
+</div>
+<table class="table-class" id="personList">
+		<colgroup>
+		<col style="width: 2%;">
+		<col style="width: 72%;">
+		<col style="width: 16%;">
+		<col style="width: 10%;">
+		</colgroup>
+	<thead>
+		<tr align="center">
+			<th><i class="checkbox-common"><input type="checkbox" ></i></th>
+			<th align="left">核销人员昵称</th>
+			<th>创建时间</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+
+<!-- 添加会员 -->
+<div class="modal fade hide" id="addVerificationPerson" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>添加核销人员</h3>
+			</div>
+			<div class="modal-body">
+				<div class="modal-infp-style">
+					<table class="mytable">
+						<tbody>
+							<tr>
+								<td>
+									<input id="user_info" class="input-common" type="text" placeholder="输入手机号/邮箱/会员昵称">
+									<input type="button" onclick="selectMember();" value="搜索" class="btn-common">
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<table class="table-class" id="member_list">
+						<colgroup>
+							<col style="width: 2%;">
+							<col style="width: 29%;">
+							<col style="width: 29%;">
+							<col style="width: 30%;">
+							<col style="width: 10%;">
+						</colgroup>
+						<thead>
+							<th><i class="checkbox-common"><input type="checkbox" onclick="CheckPerSonAll(this)"></i></th>
+							<th align="left">会员昵称</th>
+							<th>会员邮箱</th>
+							<th>会员手机</th>
+							<th>状态</th>
+						</thead>
+						<tbody></tbody>
+					</table>
+				</div>
+			</div>
+			
+			<div class="modal-footer">
+				<button class="btn-common btn-big" onclick="addVerificationPerson()">保存</button>
+				<button class="btn-common-cancle btn-big" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	$.ajax({
+		type : "post",
+		url : __URL("ADMIN_MAIN/verification/index"),
+		data : { "page_index" : page_index, "page_size" :  $("#showNumber").val() },
+		success : function(data) {
+			if (data["data"].length > 0) {
+				$("#personList tbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					html += '<tr align="center">';
+					html += '<td><i class="checkbox-common"><input name="sub" type="checkbox" value="'+ data["data"][i]["uid"]+'" ></i></td>';
+					html += '<td align="left">'+ data["data"][i]["nick_name"]+'</td>';
+					html += '<td>'+ timeStampTurnTime(data["data"][i]["create_time"])+'</td>';
+					html += '<td><a href="javascript:deleteVerificationPerson('+ data["data"][i]["v_id"] +')">删除</a></td>';
+					html += '</tr>';
+					$("#personList tbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="4">暂无符合条件的数据记录</td></tr>';
+				$("#personList tbody").html(html);
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+function CheckPerSonAll(event){
+	var checked = event.checked;
+	$("#member_list tbody input[type = 'checkbox']").prop("checked",checked);
+	if(checked) $("#member_list tbody input[type = 'checkbox']").parent().addClass("selected");
+	else $("#member_list tbody input[type = 'checkbox']").parent().removeClass("selected");
+}
+
+// 添加核销人员
+function showAddModal(){
+	$("#addVerificationPerson").modal("show");
+}
+
+var is_sub = false;
+function addVerificationPerson(){
+	var uid = [];
+	$("#member_list tbody tr input[name='sub']:checked").each(function(){
+		uid.push($(this).val());
+	});
+	if(uid.length == 0) {
+		showTip("请选择要添加的会员","warning"); 
+		return false;
+	}
+	if(!is_sub){
+		is_sub = true;
+		$.ajax({
+			type : "post",
+			url : __URL("ADMIN_MAIN/verification/addVerificationPerson"),
+			data : {"uid" : uid.toString()},
+			success : function(data) {
+				if(data["code"] > 0 ){
+					showTip(data["message"],'success');
+					location.href = "{:__URL('ADMIN_MAIN/verification/index')}";
+				}else{
+					showTip(data["message"],'error');
+					location.href = "{:__URL('ADMIN_MAIN/verification/index')}";
+				}
+			}
+		});
+	}
+}
+
+//查询会员列表
+function selectMember(){
+	var search_text = $("#user_info").val();
+	var v_id = [];
+	$("#personList tbody tr input[name='sub']").each(function(){
+		v_id.push($(this).val());
+	});
+	$.ajax({
+		type : "post",
+		url : __URL("ADMIN_MAIN/verification/getMemberList"),
+		data : {"search_text" : search_text, "v_id" : v_id.toString()},
+		success : function(data) {
+			var html = '';
+			if (data["data"].length > 0) {
+				for (var i = 0; i < data["data"].length; i++) {
+					html += '<tr align="center">';
+
+					html += '<td><i class="checkbox-common"><input name="sub" type="checkbox" value="'+ data["data"][i]["uid"]+'" ></i></td>';
+
+					html += '<td align="left">'+ data["data"][i]["nick_name"]+'</td>';
+
+					html +=  data["data"][i]["user_email"] == null || "" == data["data"][i]["user_email"] ? '<td><span>--</span></td>' : '<td>'+ data["data"][i]["user_email"]+'</td>';
+
+					html +=  data["data"][i]["user_tel"] == null || "" == data["data"][i]["user_tel"] ? '<td><span>--</span></td>' : '<td>'+ data["data"][i]["user_tel"]+'</td>';
+
+					html += data["data"][i]["user_status"] == 0 ? '<td style="color:red;">锁定</td>' : '<td style="color:green;">正常</td>';
+					
+					html += '</tr>';
+				}
+			} else {
+				html += '<tr align="center"><td colspan="5">暂无符合条件的数据记录</td></tr>';
+			}
+			$("#member_list tbody").html(html);
+		}
+	});
+}
+
+function deleteVerificationPerson(vid){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/verification/deleteVerificationPerson')}",
+					data : { "vid" : vid.toString() },
+					dataType : "json",
+					success : function(data) {
+						if(data["code"] > 0 ){
+							LoadingInfo(getCurrentIndex(vid.toString(),'#personList tbody'));
+							showTip(data["message"],'success');
+						}else{
+							showTip(data["message"],'error');
+						}
+					}
+				});
+				$(this).dialog('close');
+			},
+			"取消,#f5f5f5,#666": function() {
+				$(this).dialog('close');
+			},
+		},
+		contentText:"确定要删除该核销员吗？",
+	});
+}
+</script>
+{/block}

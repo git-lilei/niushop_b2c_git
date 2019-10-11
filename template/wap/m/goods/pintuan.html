@@ -1,0 +1,33 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/goods_pintuan.css">
+{/block}
+{block name="main"}
+{php}
+	$spelling_group_zone_adv = api('System.Shop.advDetail', ['ap_keyword' => 'WAP_PINTUAN_CENTER']);
+	$spelling_group_zone_adv = $spelling_group_zone_adv['data'];
+{/php}
+
+{notempty name="$spelling_group_zone_adv['advs'][0]"}
+{assign name="adv" value="$spelling_group_zone_adv['advs'][0]"}
+<div class="banner-container">
+	<a href="{:__URL('APP_MAIN'.$adv['adv_url'])}"><img src="{:__IMG($adv['adv_image'])}" alt=""></a>
+</div>
+{/notempty}
+<div class="spelling-head">
+	<h3 class="title ns-text-color-black">{:lang('拼团说明')}</h3>
+	<ul class="group clearfix">
+		<li class="term ns-text-color-gray"><i class="spelling-first-icon icon"></i><span>{:lang('开团/参团')}</span></li>
+		<li class="term ns-text-color-gray"><i class="spelling-second-icon icon"></i><span>{:lang('填写订单付款')}</span></li>
+		<li class="term ns-text-color-gray"><i class="spelling-third-icon icon"></i><span>{:lang('人满成团')}</span></li>
+	</ul>
+</div>
+
+<div class="spelling-block"></div>
+<input type="hidden" id="page_count">
+<input type="hidden" id="page" value="1">
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script src="WAP_JS/goods_pintuan.js"></script>
+{/block}

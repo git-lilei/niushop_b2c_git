@@ -1,0 +1,239 @@
+{extend name="$base" /}
+{block name="resources"}
+<style>
+.pick_title {float: left; line-height: 32px; width: 140px;  text-align: right;}
+.clear:after{content:'';display:block;clear:both;}
+.table-class tbody td a{margin-left:8px !important;}
+</style>
+{/block}
+{block name="main"}
+<div class="space-10"></div>
+<div class="ncsc-form-goods">
+	{include file="admin/Express/expressTitle"}
+	<!-- 基础设置 -->
+	<div class="mod-table">
+		<div class="mod-table-head">
+			<table class="mytable">
+				<tr>
+					<td width="50%" style="text-align: left;">
+						<button class="btn-common-delete" onclick="batchDelete()">批量删除</button>
+						<button class="btn-common" onclick="distributionShow()">添加配送人员</button>
+					</td>
+					<td width="20%">
+						<input type="text" id = 'search_text' placeholder="请输入配送人姓名" class="input-common"/>
+						<input type="button" onclick="searchData()" value="搜索" class="btn-common"/>
+					</td>
+				</tr>
+			</table>
+			<div class="con style0list">
+	
+				<table class="table-class">
+					<colgroup>
+						<col style="width: 2%;">
+						<col style="width: 15%;">
+						<col style="width: 15%;">
+						<col style="width: 58%;">
+						<col style="width: 10%;">
+					</colgroup>
+					<thead>
+						<tr align="center">
+							<th><i class="checkbox-common"><input type="checkbox" ></i></th>
+							<th align="left">姓名</th>
+							<th align="left">电话</th>
+							<th align="left">备注</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody id="productTbody"></tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 添加会员 -->
+<div class="modal hide fade" id="add_update_distribution_user" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="margin-left:-365px; width: 550px;">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3>配送人信息</h3>
+			</div>
+			<div class="modal-body">
+				<div class="form-group clear">
+					<div class="pick_title"><span class="required">*</span>姓名：</div>
+					<div class="col-lg-4"><input type="text" id="name" class="input-common" style="width:350px"></div>
+				</div>
+				<div class="form-group clear">
+					<div class="pick_title"><span class="required">*</span>电话：</div>
+					<div class="col-lg-4"><input type="text" id="mobile" class="input-common" style="width:350px"></div>
+				</div>
+				<div class="form-group clear">
+					<div class="pick_title">备注：</div>
+					
+					<div class="col-lg-4"><textarea name="remark" rows="3" id="remark" class="textarea-common"  style="width:350px"></textarea></div>
+				</div>
+			</div>
+			
+			<div class="modal-footer">
+				<input type="hidden" id="id" />
+				<button type="button" class="btn-common btn-big" onclick="addUpdateDistributionAjax()">确定</button>
+				<button type="button" class="btn-common-cancle btn-big" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script>
+var pageshow = "{$pageshow}";
+/**
+ * 配送人员列表
+ */
+function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	$.ajax({
+		type : "post",
+		url : __URL(ADMINMAIN+"/distribution/distributionuserlist"),
+		data : {
+			"page_index" : page_index,
+			"page_size" : $("#showNumber").val(),
+			"search_text" : search_text
+		},
+		success : function(data) {
+			if (data["data"].length > 0) {
+				$(".style0list tbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					html += '<tr align="center">';
+						html += '<td><i class="checkbox-common"><input name="sub" type="checkbox" value="'+ data['data'][i]['id']+'" ></i></td>';
+						
+						html += '<td align="left" class="tal">' + data["data"][i]["name"] + '</td>';
+						html += '<td align="left" class="tal">' + data["data"][i]["mobile"] + '</td>';
+						html += '<td align="left" class="tal">' + data["data"][i]["remark"] + '</td>';
+						html += '<td class="tal"><a  onclick="distributionShow('+data["data"][i]["id"]+')">修改</a>';
+						html += '<a style="cursor: pointer;" onclick="DelDistributionUser('+data["data"][i]["id"]+')">删除</a></td>';
+							
+					html += '</tr>';
+					$(".style0list tbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="5">暂无符合条件的数据记录</td></tr>';
+				$(".style0list tbody").html(html);
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),pageshow));
+		}
+	});
+}
+
+function searchData(){
+	LoadingInfo(1);
+}
+//批量删除
+function batchDelete() {
+	var id= [];
+	$("#productTbody input[type='checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			id.push($(this).val());
+		}
+	});
+	if(id.length ==0){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#0059d6,#fff": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:"请选择需要操作的记录",
+			title:"消息提醒",
+		});
+		return false;
+	}
+	DelDistributionUser(id);
+}
+//删除会员
+function DelDistributionUser(id){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				$.ajax({
+					type : "post",
+					url : __URL(ADMINMAIN+"/distribution/deleteDistributionUser"),
+					data : { "id" : id.toString() },
+					dataType : "json",
+					success : function(data) {
+						if (data["code"] > 0) {
+							LoadingInfo(getCurrentIndex(id,'#productTbody'));
+							showTip(data["message"],'success');
+						}else{
+							showTip(data["message"],'error');
+						}
+					}
+				})
+			},
+			"取消,#f5f5f5,#666": function() {
+				$(this).dialog('close');
+			}
+		},
+		contentText:"是否删除此配送人员？",
+	});
+}
+
+//显示配送人员信息模块
+function distributionShow(id){
+	$.ajax({
+		type : "post",
+		url : __URL(ADMINMAIN+"/distribution/addupdatedistributionuser"),
+		data : {'id':id},
+		success : function(data) {
+			$("#id").val(data['id']);
+			$("#name").val(data['name']);
+			$("#mobile").val(data['mobile']);
+			$("#remark").val(data['remark']);
+			$("#add_update_distribution_user").modal("show");
+		}
+	});
+	
+}
+ 
+//添加修改配送人员信息
+var flags = false;
+function addUpdateDistributionAjax() {
+	var id = $("#id").val();
+	var name = $("#name").val();
+	var mobile = $("#mobile").val();
+	var remark = $("#remark").val();
+	if (name == "") {
+		showTip("请填写配送人姓名", 'warning');
+		$("#name").focus();
+		return false;
+	}
+	if (mobile == "") {
+		showTip("请填写配送人联系电话", 'warning');
+		$("#mobile").focus();
+		return false;
+	}
+	if (flags) {
+		return;
+	}
+	flags = true;
+	$.ajax({
+		type: "post",
+		url: __URL(ADMINMAIN + "/distribution/addupdatedistributionuserajax"),
+		data: {"id": id, 'name': name, "mobile": mobile, "remark": remark},
+		success: function (data) {
+			$("#Delivery").modal('hide');
+			if (data['code'] > 0) {
+				showTip(data["message"], 'success');
+				window.location.reload();
+			} else {
+				showTip(data["message"], 'error');
+				flags = false;
+			}
+		}
+	});
+}
+</script>
+{/block}

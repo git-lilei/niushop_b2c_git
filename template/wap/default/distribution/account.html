@@ -1,0 +1,91 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/distribution_account.css">
+{/block} 
+{block name="main"}
+ <dl class="tabs tab-title2 ns-border-color-gray-fadeout-50">
+    <dd class="active" id="brokeragetab"><a href="javascript:void(0)" class="ns-text-color ns-border-color-gray-fadeout-50" onclick="brokeragelistshow(this)" >{:lang('commission_info')}</a></dd>
+    <dd id="extracttab"><a href="javascript:void(0)" class="ns-border-color-gray-fadeout-50" onclick="extractlistshow(this)" >{:lang('cash_register')}</a></dd>
+</dl>
+<div class="tabs-content">
+    <div class="content-01" id="detail_List"></div>
+    <div class="content-02" id="extractlist">
+        <div id="withdraw"></div>
+    </div>
+</div>
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+ <script type="text/javascript">
+$(function(){
+    query_detail();
+    query_withdraw();
+});
+function query_detail()
+{
+    api("System.Distribution.accountRecordsList",{},function (res) {
+        var data = res.data.account_records_detail;
+		$("#detail_List").html("");
+		var str = "";
+		if(data.length == 0)
+		{
+			$("#detail_List").append('<div class="nothing-data ns-text-color-gray" align="center"><img src="'+WAPIMG+'/wap_nodata.png"/><div>{:lang("no_commission")}</div></div>');
+		}else{
+			for(var i =0;i<data.length;i++){
+				str = str +'<tr class="ns-border-color-gray"><td>';
+				str = str + '<p>';
+				str = str + '<span class="text-name pull-left">'+data[i]['type_name']+'</span><span class="text-money pull-right ns-text-color">¥'+data[i]["money"]+'</span></p>';
+				str = str + '<p>';
+				str = str + '<span class="text-2 ns-text-color-gray">'+timeStampTurnTime(data[i]['create_time'])+'</span></p>';
+				str = str +'</td></tr>';
+			}
+			$("#detail_List").append(str);
+		}
+	});
+}
+function query_withdraw(){
+    api("System.Distribution.commissionWithdrawList",{},function (res) {
+        var data = res.data;
+		$("#withdraw").html("");
+		var str = "";
+		if(data['data'].length == 0){
+			$("#withdraw").append('<div class="nothing-data" align="center"><img src="'+WAPIMG+'/wap_nodata.png"/><div>{:lang("you_have_not_withdraw")}</div></div>');
+		}else{
+			for(var i =0;i<data['data'].length;i++){
+				str = str +'<tr class="ns-border-color-gray"><td>';
+				str = str + '<p>';
+				str = str + '<span class="text-name pull-left">'+data['data'][i]["bank_name"]+'</span><span class="text-money pull-right ns-text-color">￥'+data['data'][i]["cash"]+'</span></p>';
+				str = str + '<p>';
+				str = str + '<span class="text-2 ns-text-color-gray">'+timeStampTurnTime(data['data'][i]["ask_for_date"])+'</span>';
+				if(data['data'][i]["status"] == -1){
+					str = str + '<span class="text-money ns-text-color">{:lang("rejected")}</span>';
+				}else if(data['data'][i]["status"] == 0){
+					str = str + '<span class="text-money ns-text-color">{:lang("already_applied")}</span>';
+				}else{
+					str = str + '<span class="text-money ns-text-color">{:lang("approved")}</span>';
+				}
+				str = str + '</p>';
+				str = str +'</td></tr>';
+			}
+			$("#withdraw").append(str);
+		}
+	});
+}
+function brokeragelistshow() {
+    $("#detail_List").show();
+    $("#extractlist").hide();
+    $("#brokeragetab").addClass("active");
+    $("#brokeragetab>a").addClass("ns-text-color");
+    $("#extracttab").removeClass("active");
+    $("#extracttab>a").removeClass("ns-text-color");
+}
+function extractlistshow() {
+    $("#detail_List").hide();
+    $("#extractlist").show();
+    $("#extracttab").addClass("active");
+    $("#extracttab>a").addClass("ns-text-color");
+    $("#brokeragetab").removeClass("active");
+    $("#brokeragetab>a").removeClass("ns-text-color");
+}
+</script>
+{/block}

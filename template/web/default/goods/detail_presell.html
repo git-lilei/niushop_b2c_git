@@ -1,0 +1,81 @@
+{extend name="$goods_detail_base" /}
+{block name="goods_data"}
+<input type="hidden" id="hidden_order_type" value="6">
+{if condition="$goods_detail['point_exchange_type'] == 1 || ($goods_detail['point_exchange_type'] == 2 && $from == 'point')|| $goods_detail['point_exchange_type'] == 3"}
+<input type="hidden" id="hidden_promotion_type" value="4" />
+{else/}
+<input type="hidden" id="hidden_promotion_type" value="0" />
+{/if}
+{/block}
+{block name="goods_price"}
+<div class="item-block">
+	<div class="item-line promotion-price">
+		<!--是否为预售不同的显示方式-->
+		<dl class="item-line">
+			<dt class="ns-text-color-gray">{:lang('goods_deposit')}</dt>
+			<dd>
+				<em class="yuan ns-text-color">¥</em>
+				<span class="price ns-text-color">{$goods_detail.presell_price}</span>
+				
+				{if condition="$goods_detail.point_exchange_type==1 && $goods_detail.point_exchange>0"}
+				<!--积分加现金-->
+				<span class="label ns-text-color">+{$goods_detail.point_exchange}{:lang('goods_integral')}</span>
+				{/if}
+				
+				{if condition ='!empty($goods_detail.goods_unit)'}
+				<span class="label ns-text-color">/{$goods_detail.goods_unit}</span>
+				{/if}
+			</dd>
+		</dl>
+		<dl class="item-line">
+			<dt class="ns-text-color-gray">{:lang('goods_selling_price')}</dt>
+			<dd>
+				<em class="yuan ns-text-color">¥</em>
+				<span class="price ns-text-color" data-price="{$goods_detail.promotion_price}">{$goods_detail.promotion_price}</span>
+				{assign name="show_price" value="$goods_detail.promotion_price"}
+				{if condition ='!empty($goods_detail.goods_unit)'}
+				<span class="label ns-text-color">/{$goods_detail.goods_unit}</span>
+				{/if}
+				<!-- 原价大于输出价 -->
+				{if $show_price < $goods_detail['price']}
+				<span class="original-price">[￥{$goods_detail['price']}]</span>
+				{/if}
+			</dd>
+		</dl>
+		
+		<!-- 发货时间 -->
+		<dl class="item-line">
+			<dt>{:lang('goods_delivery_time')}</dt>
+			<dd>
+				{if condition ="$goods_detail.presell_delivery_type eq 1"}
+				<span>{:getTimeStampTurnTime($goods_detail.presell_time)}发货</span>
+				{else/}
+				<span>付款{$goods_detail.presell_day}天后发货</span>
+				{/if}
+			</dd>
+		</dl>
+{/block}
+
+{block name="goods_action"}
+<dl class="item-line buy-btn">
+	<dt></dt>
+	<dd>
+		{if condition="$goods_detail.state == 1"}
+		<button class="btn btn-primary js-buy-now" type="button" {if condition="$goods_detail['stock'] ==0"}disabled{/if}>{:lang('goods_immediate_reservation')}</button>
+		{else/}
+		<button class="btn btn-primary" type="button" disabled>{:lang('goods_laid_off')}</button>
+		{/if}
+		
+		{if condition="$goods_detail.QRcode != ''"}
+		<a href="javascript:;" class="go-phone">
+			<img src="WEB_IMG/goods/qrcode.png"/>
+			<div class="qrcode-wrap ns-border-color-gray">
+				<img src="{:__IMG($goods_detail.QRcode)}" alt="{:lang('goods_code_picture')}" width="100" height="100">
+			</div>
+		</a>
+		{/if}
+	
+	</dd>
+</dl>
+{/block}
+{block name="goods_middle"}{/block}

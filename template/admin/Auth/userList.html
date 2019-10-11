@@ -1,0 +1,189 @@
+{extend name="$base" /}
+{block name="resources"}
+<style>
+.ns-main{margin-top:0px;}
+</style>
+{/block}
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<td style="text-align: left;"><button class="btn-common" onclick="location.href='{:__URL('ADMIN_MAIN/auth/adduser')}';" style="margin:0 !important;">添加用户</button></td>
+		<td>
+			<input type="text" id='search_text' placeholder="请输入用户名" class="input-common" />
+			<input type="button" class="btn-common" onclick="searchData()" value="搜索" />
+		</td>
+	</tr>
+</table>
+<table class="table-class">
+	<colgroup>
+		<col style="width: 2%;">
+		<col style="width: 15%;">
+		<col style="width: 15%;">
+		<col style="width: 10%;">
+		<col style="width: 15%;">
+		<col style="width: 15%;">
+		<col style="width: 13%;">
+		<col style="width: 15%;">
+	</colgroup>
+	<thead>
+		<tr align="center">
+			<th><i class="checkbox-common" input_all =".table-class tbody">
+				<input type="checkbox"></i>
+				</th>
+			<th align="left">用户头像</th>
+			<th align="left">登录账号</th>
+			<th>手机号</th>
+			<th>邮箱</th>
+			<th>所属用户组</th>
+			<th>状态</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/auth/userlist')}",
+		data : { "page_index" : page_index, "page_size" : $("#showNumber").val(), "search_text" : search_text },
+		success : function(data) {
+			if (data["data"].length > 0) {
+				$(".table-class tbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					html += '<tr align="center">';
+					html += '<td><i class="checkbox-common"><input name="sub" type="checkbox" value="'+ data['data'][i]['uid']+'" ></i></td>';
+					html += '<td align="left">';
+					if(data["data"][i]["user_headimg"] == ""){
+						html += '<img src="__STATIC__/images/default_user_portrait.gif" class="head-portrait" />';
+					}else{
+						html += '<img src="'+__IMG(data["data"][i]["user_headimg"])+'" class="head-portrait" />';
+					}
+					html += '</td>';
+					html += '<td align="left">' + data["data"][i]["admin_name"] + '</td>';
+					html += '<td>' + data["data"][i]["user_tel"] + '</td>';
+					html += '<td>' + data["data"][i]["user_email"] + '</td>';
+					if(data["data"][i]["group_name"] == null){
+						html += '<td class="tal"></td>';
+					}else{
+						html += '<td class="tal">' + data["data"][i]["group_name"] + '</td>';
+					}
+					html += data["data"][i]["user_status"] == 0 ? '<td style="color:red;">锁定</td>' : '<td style="color:green;">正常</td>';
+					if(data['data'][i]['is_admin'] == 1){
+						html += '<td style="color:#B5B3B3;">管理员用户不可进行操作</td>';
+					}else{
+						html += '<td>';
+							html += '<a href="'+__URL('ADMIN_MAIN/auth/edituser?uid=' + data["data"][i]["uid"])+'">修改</a>';
+							html += data["data"][i]["user_status"] == 0 ? '<a href="javascript:void(0);" onclick="unlock('+data["data"][i]["uid"]+', 1)">解锁</a>' : '<a href="javascript:void(0);" onclick="lock('+data["data"][i]["uid"]+', 0)">锁定</a>';
+							html += '<a href="javascript:;" onclick="delectAdminUser(' + data["data"][i]["uid"] + ')">删除</a>';
+							html += '<br/><a href="javascript:void(0);" onclick="resetPassword(' + data["data"][i]["uid"] + ')">重置密码</a>';
+						html += '</td>';
+					}
+					html += '</tr>';
+					$(".table-class tbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="8">暂无符合条件的数据记录</td></tr>';
+				$(".table-class tbody").html(html);
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+function resetPassword(uid){
+	$("#dialog").dialog({
+		buttons: {
+			"确定,#0059d6,#fff": function() {
+				$(this).dialog('close');
+				$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/auth/resetuserpassword')}",
+					data : { "uid" : uid },
+					success : function(data) {
+						if(data["code"] > 0 ){
+							showTip(data["message"],'success');
+							location.href = "{:__URL('ADMIN_MAIN/auth/userlist')}";
+						}else{
+							showTip(data["message"],'error');
+						}
+					}
+				})
+			}
+		},
+		contentText:"你确定重置密码：123456？",
+		title:"消息提醒"
+	});
+}
+
+function lock(uid){
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/auth/userlock')}",
+		data : { "uid" : uid },
+		success : function(data) {
+			if(data["code"] > 0 ){
+				showTip(data["message"],'success');
+				location.href = "{:__URL('ADMIN_MAIN/auth/userlist')}";
+			}else{
+				showTip(data["message"],'error');
+			}
+		}
+	});
+}
+
+function unlock(uid){
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/Auth/userunlock')}",
+		data : { "uid" : uid },
+		success : function(data) {
+			if(data["code"] > 0 ){
+				showTip(data["message"],'success');
+				location.href = "{:__URL('ADMIN_MAIN/auth/userlist')}";
+			}else{
+				showTip(data["message"],'error');
+			}
+		}
+	});
+}
+
+function delectAdminUser(uid){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				$.ajax({
+				url : "{:__URL('ADMIN_MAIN/auth/deleteadminuserajax')}",
+				data : {"uid" : uid },
+				type : "post",
+				dataType : "json",
+				success : function(data) {
+					if(data['code'] > 0){
+						showTip(data["message"],'success');
+						location.href = "{:__URL('ADMIN_MAIN/auth/userlist')}";
+					}else{
+						showTip(data["message"],'error');
+					}
+				}
+			});
+		},
+		"取消,#f5f5f5,#666": function() {
+			$(this).dialog('close');
+		}
+	},
+	contentText:"确定要删除该用户吗？"
+	});
+}
+
+
+function searchData(){
+	LoadingInfo(1);
+}
+</script>
+{/block}

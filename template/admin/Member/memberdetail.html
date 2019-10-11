@@ -1,0 +1,140 @@
+{extend name="admin/base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/member_detail.css" />
+{/block}
+{block name="main"}
+<div class="set-style">
+	<h4><span></span>基本信息</h4>
+	<dl>
+		<dt>会员头像：</dt>
+		<dd>
+			<div class="member-img">
+				{if condition="$member_detail['user_info']['user_headimg']"}
+					<img src="{:__IMG($member_detail['user_info']['user_headimg'])}">
+				{else /}
+					<img src="{:__IMG($default_headimg)}">
+				{/if}
+				
+			</div>
+		</dd>
+	</dl>
+	<dl>
+		<dt>用户名：</dt>
+		<dd>
+			{if condition="$member_detail['member_name']"}{$member_detail['member_name']}{else /}--{/if}
+		</dd>
+	</dl>
+	<dl>
+		<dt>等级：</dt>
+		<dd>
+			{if condition="$member_detail['level_name']"}{$member_detail['level_name']}{else /}--{/if}
+		</dd>
+	</dl>
+	<dl>
+		<dt>积分：</dt>
+		<dd>
+			{$member_detail['point']}
+		</dd>
+	</dl>
+	<dl>
+		<dt>余额：</dt>
+		<dd>
+			{$member_detail['balance']}
+		</dd>
+	</dl>
+	<dl>
+		<dt>标签：</dt>
+		<dd>
+			{if condition="$member_detail['label_name']"}{$member_detail['label_name']}{else /}--{/if}
+		</dd>
+	</dl>
+	<dl>
+		<dt>最后登录：</dt>
+		<dd>
+			{if condition="$member_detail['user_info']['current_login_time']"}{:date('Y-m-d H:i:s',$member_detail['user_info']['current_login_time'])}{else /}--{/if}
+		</dd>
+	</dl>
+	
+	<h4><span></span>个人信息</h4>
+	<dl>
+		<dt>昵称：</dt>
+		<dd>
+			{if condition="$member_detail['user_info']['nick_name']"}
+			{$member_detail['user_info']['nick_name']}
+			{else /}--{/if}
+		</dd>
+	</dl>
+	<dl>
+		<dt>标签：</dt>
+		<dd>
+			{if condition="$member_detail['label_name']"}{$member_detail['label_name']}{else /}--{/if}
+		</dd>
+	</dl>
+	<dl>
+		<dt>手机号：</dt>
+		<dd>
+			{if condition="$member_detail['user_info']['user_tel']"}
+			{$member_detail['user_info']['user_tel']}
+			{else /}--{/if}
+		</dd>
+	</dl>
+	<dl>
+		<dt>性别：</dt>
+		<dd>
+			{if condition="$member_detail['user_info']['sex'] eq 1"}
+				<span>男</span>
+			{elseif condition="$member_detail['user_info']['sex'] eq 2"}
+				<span>女</span>
+			{else /}
+				<span>保密</span>
+			{/if}
+		</dd>
+	</dl>
+	<dl>
+		<dt>邮箱：</dt>
+		<dd>
+			{if condition="$member_detail['user_info']['user_email']"}
+			<span>{$member_detail['user_info']['user_email']}</span>
+			{else /}
+			<span>--</span>
+			{/if}
+		</dd>
+	</dl>
+	<dl>
+		<dt>QQ：</dt>
+		<dd>
+			{if condition="$member_detail['user_info']['user_qq']"}
+			<span>{$member_detail['user_info']['user_qq']}</span>
+			{else /}
+			<span>--</span>
+			{/if}
+		</dd>
+	</dl>
+	<h4><span></span>交易信息</h4>
+	<!-- 交易信息 -->
+	<div class="member-order">
+			<div>
+				<div class="member-fileds-info">
+					<span>累计消费：</span>
+					<span>￥{$member_detail['order_money']}</span>
+				</div>
+				<div class="member-fileds-info">
+					<span>消费次数：</span>
+					<span>{$member_detail['order_count']}</span>
+				</div>
+				<div class="member-fileds-info">
+					<span>平均消费金额：</span>
+					<span>￥{$member_detail['avg_order_money']}</span>
+				</div>
+				<div class="member-fileds-info">
+					<span>最近消费时间：</span>
+					{if condition="$member_detail['last_pay_time']"}
+					<span>{:date('Y-m-d H:i:s',$member_detail['last_pay_time'])}</span>
+					{else /}
+					<span>--</span>
+					{/if}
+				</div>
+			</div>
+	</div>
+</div>
+{/block}

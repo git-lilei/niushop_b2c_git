@@ -1,0 +1,11 @@
+@CHARSET "UTF-8";
+.extract{margin: 0; background: #FFF; padding: 15px;}
+input{width: 100%; height: 23px;border:0;}
+.extract-account{margin: 11px 0; padding: 0; background: #fff;}
+.extract-account .side-nav li a{padding: 10px 15px; display: block;overflow: hidden;}
+.extract-account .side-nav li span{float: left;}
+.extract-money{margin-bottom: 20px;}
+.extract-money .columns{padding: 10px; background: #fff;}
+.tip-text{padding: 10px 10px 0;}
+.fa-angle-right{position: absolute;right: 10px;top: 50%;font-size: 18px;margin-top: -9px;}
+.btn.primary{width: 90%; margin: 50px auto 0;display: block;line-height: 40px; height: 40px;border-radius: 5px;}

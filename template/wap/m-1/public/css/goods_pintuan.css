@@ -1,0 +1,29 @@
+.spelling-block ul li {background:#fff;padding:5px 10px;position:relative;overflow:hidden;width:100%;margin-top:10px;}
+.spelling-block ul li > div {text-align:center;margin:0;width:33%;display:inline-block;}
+.spelling-block ul li > div > img {display:inline-block;vertical-align:middle;max-width:100%;max-height:100%;height:auto;font-size:12px;}
+.spelling-block ul li > p {padding:0 10px;word-wrap:break-word;display:inline-block;width:55%;position:absolute;right:6px;top:21px;}
+.spelling-block ul li footer {display:inline-block;float:right;padding:0 0 8px 10px;text-align:left;width:67%;height:100%;}
+.spelling-block ul li footer p {height:40px;line-height:20px;overflow:hidden;width:100%;}
+.spelling-block ul li footer .tuangou-money {font-size:16px;margin-right:5px;}
+.spelling-block ul li footer .original-money {font-size:12px;}
+.spelling-block ul li footer .mui-btn-danger {height:26px;line-height:28px;width:30px;text-align:center;font-size:12px;}
+.assemble-tag {overflow:hidden;}
+.assemble-tag div {float:left;margin-right:5px;font-size:12px;border-radius:3px;}
+.assemble-tag .already-num {padding:1px 5px;}
+.assemble-tag .people-num {border:1px solid;padding:0 3px;}
+.assemble-foot {overflow:hidden;margin-top:20px;}
+.assemble-foot-left {float:left;height:40px;}
+.assemble-foot-right {float:right;margin-top:10px;}
+.assemble-foot-right .goin {border:1px solid;height:26px;line-height:26px;width:50px;text-align:center;font-size:12px;float:right;}
+.assemble-foot-right .mui-btn-danger {float:right;}
+.banner-container img {width:100%;height:auto;}
+.spelling-head {background:#fff;padding:10px;}
+.spelling-head .title {font-weight:normal;height:30px;line-height:30px;margin-bottom:0;font-size:16px;}
+.spelling-head .group .term {float:left;width:33.33%;text-align:center;line-height:40px;height:40px;font-size:12px;}
+.spelling-head .group .icon {display:inline-block;width:13px;height:13px;margin-right:5px;position:relative;top:2px;}
+.spelling-head .group .spelling-first-icon {background:url(../img/goods/pintuan_first_icon.png) no-repeat center center;background-size:contain;}
+.spelling-head .group .spelling-second-icon {background:url(../img/goods/pintuan_second_icon.png) no-repeat center center;background-size:contain;}
+.spelling-head .group .spelling-third-icon {background:url(../img/goods/pintuan_third_icon.png) no-repeat center center;background-size:contain;}
+.empty {text-align:center;padding:20px 0;}
+.empty img {width:50px;}
+.empty p {margin-top:10px;font-size:12px;}

@@ -1,0 +1,14 @@
+@CHARSET "UTF-8";
+.water-item{background: #fff; margin-bottom: 15px;}
+.water-top{padding: 10px 10px 8px; border-bottom: 1px solid;}
+.water-bottom{padding: 10px 0;}
+.water-info{padding: 5px 10px 5px;}
+.water-name{width: 33.333%;}
+.water-price{width: 30%; text-align: right;}
+.distribution-commission-record nav{height: 40px; top: 0; width: 100%; z-index: 6; background: #fff;border-bottom: 1px solid;}
+.distribution-commission-record nav ul{position: relative; top: 0; white-space: nowrap; z-index: 5; overflow: hidden; height: 40px; text-align: left;}
+.distribution-commission-record nav ul li{display: inline-block; padding: 0; line-height: 39px; text-align: center; width: 33.33%;height: 39px;}
+.distribution-commission-record nav ul li.selected{border-bottom: 2px solid;}
+.distribution-commission-record nav ul li a{padding: 0 3px;display: block;}
+.empty-data{text-align: center; margin-top: 100px;}
+.empty-data img{width: 50px; margin-bottom: 10px;}

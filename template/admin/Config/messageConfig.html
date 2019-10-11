@@ -1,0 +1,134 @@
+{extend name="$base" /}
+{block name="resources"}{/block}
+{block name="main"}
+<!-- 邮箱设置 -->
+<div class="set-style">
+	<dl>
+		<dt>是否开启：</dt>
+		<dd>
+			<input id="email_is_use" type="checkbox" class="checkbox" {if condition="$email_message.is_use=='1'"}checked="checked"{/if}/>
+		</dd>
+	</dl>
+	<dl>
+		<dt>SMTP服务器：</dt>
+		<dd>
+			<input id="email_host" type="text" value="{$email_message['value']['email_host']}" class="input-common" />
+		</dd>
+	</dl>
+	<dl>
+		<dt>SMTP端口：</dt>
+		<dd>
+			<input id="email_port" type="text" value="{$email_message['value']['email_port']}" class="input-common" />
+		</dd>
+	</dl>
+	<dl>
+		<dt>发信人邮件地址：</dt>
+		<dd>
+			<input id="email_addr" type="text" value="{$email_message['value']['email_addr']}" class="input-common" />
+		</dd>
+	</dl>
+	<dl>
+		<dt>SMTP身份验证用户名：</dt>
+		<dd>
+			<input id="email_id" type="text" value="{$email_message['value']['email_id']}" class="input-common" />
+		</dd>
+	</dl>
+	<dl>
+		<dt>SMTP身份验证码：</dt>
+		<dd>
+			<input id="email_pass" type="text" value="{$email_message['value']['email_pass']}" class="input-common" />
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否使用安全链接：</dt>
+		<dd>
+			<input id="email_is_security" type="checkbox" class="checkbox" {if condition="$email_message['value']['email_is_security'] eq 'true'"}checked="checked"{/if}/>
+		</dd>
+	</dl>
+	<dl>
+		<dt>测试接收邮件地址：</dt>
+		<dd>
+			<input id="email_test" type="text" class="input-common" />
+			<button class="btn-common" onclick="testSend()" style="vertical-align:1.5px;">测试发送</button>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="setConfigAjax();" >保存</button>
+			<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);" >返回</button>
+		</dd>
+	</dl>
+</div>
+<script>
+function setConfigAjax(){
+	var is_use = 0;
+	if($("#email_is_use").is(':checked')){
+		var is_use = 1;
+	}
+	var email_is_security = false;
+	if($("#email_is_security").is(':checked')){
+		var email_is_security = true;
+	}
+	var email_host = $("#email_host").val();
+	var email_port = $("#email_port").val();
+	var email_addr = $("#email_addr").val();
+	var email_id = $("#email_id").val();
+	var email_pass = $("#email_pass").val();
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/config/setemailmessage')}",
+		data:{
+			'is_use':is_use,
+			'email_host':email_host,
+			'email_port':email_port,
+			'email_addr':email_addr,
+			'email_id':email_id,
+			'email_pass':email_pass,
+			'email_is_security':email_is_security
+		},
+		success:function (data) {
+			if (data["code"] > 0) {
+				showTip(data["message"],'success');
+				location.href=__URL("ADMIN_MAIN/config/notifyindex");
+			}else{
+				showTip(data["message"],'error');
+			}
+		}
+	});
+}
+
+function testSend(){
+	var email_host = $("#email_host").val();
+	var email_port = $("#email_port").val();
+	var email_addr = $("#email_addr").val();
+	var email_id = $("#email_id").val();
+	var email_pass = $("#email_pass").val();
+	var email_is_security = false;
+	if($("#email_is_security").is(':checked')){
+		var email_is_security = true;
+	}
+	var email_test = $("#email_test").val();
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/config/testsend')}",
+		data:{
+			'email_host':email_host,
+			'email_port':email_port,
+			'email_addr':email_addr,
+			'email_id':email_id,
+			'email_pass':email_pass,
+			'email_is_security':email_is_security,
+			'email_test':email_test
+		},
+		success:function (data) {
+			if (data["code"] > 0) {
+				showTip(data["message"],'success');
+			}else{
+				showTip(data["message"],'error');
+			}
+		}
+	});
+}
+</script>
+{/block}

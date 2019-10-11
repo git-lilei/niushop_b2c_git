@@ -1,0 +1,228 @@
+{extend name="$base" /}
+{block name="resources"}
+<style>
+.modal-infp-style{width:90%;margin:10px auto;}
+.modal-infp-style table{width:100%;}
+.modal-infp-style table tr td{border: 1px solid #e5e5e5;padding: 10px;}
+.ns-main{margin-top: 0;}
+</style>
+{/block}
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<th width="10%">
+			<input type="text" id = 'search_text' placeholder="请输入通知标题" class="input-common" />
+			<input type="button" onclick="searchData()" value="搜索" class="btn-common" />
+		</th>
+	</tr>
+</table>
+<table class="table-class">
+	<colgroup>
+	<col style="width: 2%;">
+	<col style="width: 8%;">
+	<col style="width: 20%;">
+	<col style="width: 10%;">
+	<col style="width: 15%;">
+	<col style="width: 15%;">
+	<col style="width: 10%;">
+	<col style="width: 10%;">
+	</colgroup>
+	<thead>
+		<tr align="center">
+			<th></th>
+			<th align="left">类型</th>
+			<th align="left">标题</th>
+			<th align="left">接收账号</th>
+			<th>创建时间</th>
+			<th>发送时间</th>
+			<th>状态</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+
+<!-- 模态框（Modal） -->
+<div class="modal fade hide" id="notifyDetailInfo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>通知详情</h3>
+			</div>
+			<div class="modal-body">
+				<div class="modal-infp-style">
+					<table style="table-layout: fixed;">
+						<tr>
+							<td style="width:60px;">接受账号</td>
+							<td colspan='5' id="user_name"></td>
+						</tr>
+						<tr>
+							<td style="width:60px;">通知名称</td>
+							<td colspan='5' id="notice_title"></td>
+						</tr>
+						<tr>
+							<td style="width:60px;">创建时间 </td>
+							<td colspan='5' id="create_date"></td>
+						</tr>
+						<tr>
+							<td style="width:60px;">发送时间 </td>
+							<td colspan='5' id="send_date"></td>
+						</tr>
+						
+						<tr>
+							<td style="width:60px;">类型</td>
+							<td colspan='2' id="type"></td>
+							<td style="width:60px;">状态</td>
+							<td colspan='2' id="status"></td>
+
+						</tr>
+						<tr>
+							<td style="width:60px;">通知内容</td>
+							<td colspan='5' id="notice_context" style="word-break: break-word;"></td>
+						</tr>
+
+						<tr>
+							<td style="width:60px;">返回结果</td>
+							<td colspan='5' id="send_message" style="word-break: break-word;"></td>
+						</tr>
+
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	var type = "{$type}";
+	var status = "{$status}";
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/config/notifylist')}",
+		data : { "page_index" : page_index, "page_size" : $("#showNumber").val(), "search_text" : search_text, "type" : type,"status" : status },
+		success : function(data) {
+			if (data["data"].length > 0) {
+				$(".table-class tbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					//短信记录结果
+					switch(parseInt(data['data'][i]['is_send']))
+					{
+						case 0:
+							var status_name = '未发送';
+							break;
+						case 1:
+							var status_name = '发送成功';
+							break;
+						case -1:
+							var status_name = '发送失败';
+							break;
+					}
+				
+					switch(parseInt(data['data'][i]['send_type'])){
+					case 1:
+						var type_name = '短信';
+						break;
+					case 2:
+						var type_name = '邮件';
+						break;
+					}
+					
+					html += '<tr align="center">';
+					html += '<td></td>';
+					html += '<td align="left">' + type_name + '</td>';
+					html += '<td align="left">' + data["data"][i]["notice_title"] + '</td>';
+					html += '<td align="left">' + data["data"][i]["send_account"] + '</td>';
+					html += '<td>' + timeStampTurnTime(data["data"][i]["create_date"]) + '</td>';
+					html += '<td>'+ timeStampTurnTime(data["data"][i]["send_date"]) + '</td>';
+					html += '<td>'+ status_name +'</td>';
+					html += '<td>';
+
+					html += '<a href="javascript:void(0);"onclick="notifyDetailInfo('+data["data"][i]["id"]+')">详情</a>&nbsp;';
+					html += '</td> ';
+					html += '</tr>';
+					$(".table-class tbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="9">暂无符合条件的数据记录</td></tr>';
+				$(".table-class tbody").html(html);
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+			}
+	});
+}
+
+function searchData(){
+	LoadingInfo(1);
+}
+
+function notifyDetailInfo(id){
+	$("#notifyDetailInfo").modal("show");
+	$.ajax({
+		type:"post",
+		url : "{:__URL('ADMIN_MAIN/config/notifydetail')}",
+		data : { "id" : id },
+		success : function(data) {
+			$("#user_name").text(data["send_account"]);
+			$("#notice_title").text(data["notice_title"]);
+  			$("#create_date").text(timeStampTurnTime(data['create_date']));
+ 			$("#send_date").text(timeStampTurnTime(data['send_date']));
+
+			//短信记录结果
+			switch(parseInt(data['is_send']))
+			{
+				case 0:
+					var status_name = '未发送';
+					break;
+				case 1:
+					var status_name = '发送成功';
+					break;
+				case -1:
+					var status_name = '发送失败';
+					break;
+			}
+		
+			switch(parseInt(data['send_type']))
+			{
+				case 1:
+					var type_name = '短信';
+					break;
+				case 2:
+					var type_name = '邮件';
+					break;
+			}
+			
+			$("#status").text(status_name);
+			$("#type").text(type_name);
+			$("#notice_context").html(data["notice_context"]);
+			$("#send_message").text(data['send_message']);
+			$("#notifyDetailInfo table tr.rule").remove();
+
+		}
+	})
+}
+
+$('#notifyDetailInfo').on('hidden.bs.modal', function (e) {
+  	removeContent();
+});
+
+function removeContent(){
+	$("#status").text("");
+	$("#type").text("");
+	$("#notice_context").html("");
+	$("#send_message").text("");
+	$("#user_name").text("");
+	$("#notice_title").text("");
+	$("#create_date").text("");
+	$("#send_date").text("");
+}
+</script>
+{/block}

@@ -1,0 +1,172 @@
+{extend name="$base" /}
+{block name="resources"}
+<link type="text/css" rel="stylesheet" href="WEB_CSS/goods_topic.css">
+{/block}
+{block name="lunbo"}
+{php}
+	//轮播
+	$banner_list = api('System.Shop.advDetail', ['ap_keyword' => 'PC_TOPIC_SWIPER', 'export_type' => 'data']);
+{/php}
+<div class="banner-wrap">
+	{notempty name='$banner_list["data"]'}
+	<div id="banner" class="carousel slide" data-ride="carousel">
+		<ol class="carousel-indicators">
+			{foreach name="$banner_list['data']['advs']" item="vo" key="k"}
+			<li data-target="#banner" data-slide-to="{$k}" {if condition="$k==0"}class="active"{/if}></li>
+			{/foreach}
+		</ol>
+
+		<div class="carousel-inner">
+			{foreach name="$banner_list['data']['advs']" item="vo" key="k"}
+			<div class="item {if condition='$k==0'}active{/if}" style="background-color:{$vo['background']}">
+				{if $vo['adv_image'] == ''}
+				<a href="javascript:;"><img alt="轮播图" src="WEB_IMG/index/default_banner.png" ></a>
+				{else/}
+				<a href="{:__URL($vo['adv_url'])}" target="_blank" style="width: {$banner_list['data']['ap_width']}px;height: {$banner_list['data']['ap_height']}px;line-height: {$banner_list['data']['ap_height']}px;">
+					<img alt="轮播图" src="{:__IMG($vo['adv_image'])}"  onerror="this.src='WEB_IMG/index/default_banner.png'">
+				</a>
+				{/if}
+			</div>
+			{/foreach}
+		</div>
+
+		<a class="left carousel-control" href="#banner" data-slide="prev">
+			<span class="icon icon-chevron-left"></span>
+		</a>
+		<a class="right carousel-control" href="#banner" data-slide="next">
+			<span class="icon icon-chevron-right"></span>
+		</a>
+	</div>
+	{/notempty}
+</div>
+
+{/block}
+{block name="main"}
+{php}
+$data = api('System.Goods.promotionTopic');
+$data = $data['data'];
+$total_count = $data['total_count'];
+{/php}
+{if condition="$total_count eq 0"}
+<!--<div class="tip-box" style="position: static;">-->
+	<!--<i class="tip-icon"></i>-->
+	<!--<div class="tip-text">{:lang('sorry')}！{:lang('no_special_events')}……</div>-->
+<!--</div>-->
+{else /}
+<div class="n-title text20">{$title_before}</div>
+<div class="m-events-container">
+	<div class="row">
+		{foreach name="$data['data']" id="v"}
+		<div class="col-md-4">
+			<a href="{:__URL('SHOP_MAIN/goods/topicdetail','topic_id='.$v['topic_id'])}" target="_blank">
+				<div class="u-img">
+					<img class="u-snap" src="{$v['picture_img']}">
+					<div class="u-cover ns-bg-color-black">
+						<div class="u-button text18">{:lang("goods_entry_topic")}</div>
+					</div>
+				</div>
+				<h3><span class="ns-border-color-gray">{$v['topic_name']}</span></h3>
+				<div class="u-desc ns-text-color-gray">{$v['introduce']}</div>
+			</a>
+		</div>
+		{/foreach}
+	</div>
+</div>
+{/if}
+{php}
+	$guess_member_likes = api('System.Goods.guessMemberLikes');
+	$guess_member_likes = $guess_member_likes['data'];
+
+	$member_history = api('System.Member.memberHistory');
+	$member_history = $member_history['data'];
+{/php}
+{notempty name="$guess_member_likes && $member_history"}
+<div class="browse-history-tab ns-border-color-gray">
+	<!--当前选中color-->
+	<span class="tab-span ns-text-color">{:lang('guess_you_like')}</span>
+	<span class="tab-span">{:lang('browse_history')}</span>
+	<div class="browse-history-line ns-bg-color"></div>
+	<div class="browse-history-other">
+		<a href="javascript:change_like()" class="history-recommend-change ns-text-color-gray">
+		{notempty name="$guess_member_likes"}
+			{if condition="count($guess_member_likes) gt 6"}
+				<i class="icon"></i>
+				<em class="text">{:lang('batch')}</em>
+			{/if}
+		{/notempty}
+		</a>
+		<a href="javascript:clear_history();" class="clear-history hide ns-text-color-gray">
+			<i class="icon"></i>
+			<em id="del_history" class="text">{:lang('empty')}</em>
+		</a>
+	</div>
+</div>
+<div class="browse-history-con ns-border-color-gray">
+	<div class="browse-history-inner">
+		<ul id="user_like" class="recommend-panel">
+		{notempty name="$guess_member_likes"}
+			{volist name="guess_member_likes" id="vo" key="k"}
+			{if condition="$k%6 eq 1 and $k gt 1"}
+			<li class="hide ns-border-color-gray">
+			{else /}
+			<li class="ns-border-color-gray">
+			{/if}
+				<div class="p-img">
+					<a target="_blank" title="{$vo.goods_name}" href="{:__URL('SHOP_MAIN/goods/detail','goods_id='.$vo['goods_id'])}">
+						<img src="{:__IMG($vo['pic_cover_mid'])}">
+					</a>
+				</div>
+				<div class="p-name">
+					<a target="_blank" title="{$vo.goods_name}" href="{:__URL('SHOP_MAIN/goods/detail','goods_id='.$vo['goods_id'])}">{$vo.goods_name}</a>
+				</div>
+				<div class="p-comm">
+					{in name="$vo.point_exchange_type" value="0,2"}
+						<span class="p-price">￥{$vo.price}</span>
+					{else/}
+						{if $vo['point_exchange_type'] == 1 && $vo['promotion_price'] > 0}
+							<span class="p-price">￥{$vo.promotion_price}+{$vo.point_exchange}积分</span>
+						{else/}
+							<span class="p-price">{$vo.point_exchange}积分</span>
+						{/if}
+					{/in}
+				</div>
+			</li>
+			{/volist}
+		{/notempty}
+		</ul>
+		<ul id="history_list" class="history-panel hide">
+			{if condition="$member_history eq ''"}
+				{:lang('have_not_browsed_history_yet')}！
+			{else/}
+				{volist name="member_histrorys" id="vo"}
+				<li>
+					<div class="p-img">
+						<a target="_blank" title="{$vo.goods_name}" href="{:__URL('SHOP_MAIN/goods/detail','goods_id='.$vo['goods_id'])}">
+							<img alt="{$vo.goods_name}" src="{:__IMG($vo['pic_cover_mid'])}" >
+						</a>
+					</div>
+					<div class="p-name">
+						<a target="_blank" title="{$vo.goods_name}" href="{:__URL('SHOP_MAIN/goods/detail','goods_id='.$vo['goods_id'])}">{$vo.goods_name}</a>
+					</div>
+					<div class="p-comm">
+						{in name="$vo.point_exchange_type" value="0,2"}
+							<span class="p-price">￥{$vo.price}</span>
+						{else/}
+							{if $vo['point_exchange_type'] == 1 && $vo['promotion_price'] > 0}
+								<span class="p-price text18">￥{$vo.promotion_price}+{$vo.point_exchange}积分</span>
+							{else/}
+								<span class="p-price text18">{$vo.point_exchange}积分</span>
+							{/if}
+						{/in}
+					</div>
+				</li>
+				{/volist}
+			{/if}
+		</ul>
+	</div>
+</div>
+{/notempty}
+{/block}
+{block name="script"}
+<script type="text/javascript" src="WEB_JS/goods_topic.js"></script>
+{/block}

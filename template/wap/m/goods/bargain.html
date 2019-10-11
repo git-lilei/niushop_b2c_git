@@ -1,0 +1,54 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" href="WAP_CSS/goods_bargain.css">
+{/block}
+{block name="main"}
+{php}
+	$bargain_adv = api('System.Shop.advDetail', ['ap_keyword' => 'WAP_BARGAIN_CENTER']);
+	$bargain_adv = $bargain_adv['data'];
+{/php}
+
+{notempty name="$bargain_adv['advs'][0]"}
+{assign name="adv" value="$bargain_adv['advs'][0]"}
+<div class="banner-container">
+	<a href="{:__URL('APP_MAIN'.$adv['adv_url'])}"><img src="{:__IMG($adv['adv_image'])}"></a>
+</div>
+{/notempty}
+
+<div class="bargain-head">
+	<h3 class="title ns-text-color-black">{:lang('砍价说明')}</h3>
+	<ul class="group clearfix">
+		<li class="term ns-text-color-gray">
+			<i class="bargain-first-icon icon"></i>
+			<span class="text">
+				<p>{:lang('选择商品')}</p>
+				<p>{:lang('发起砍价')}</p>
+			</span>
+			<i class="bargain-right-icon icon"></i>
+		</li>
+		<li class="term ns-text-color-gray">
+			<i class="bargain-second-icon icon"></i>
+			<span class="text">
+				<p>{:lang('邀请好友')}</p>
+				<p>{:lang('帮忙砍价')}</p>
+			</span>
+			<i class="bargain-right-icon icon"></i>
+		</li>
+		<li class="term ns-text-color-gray">
+			<i class="bargain-third-icon icon"></i>
+			<span class="text">
+				<p>{:lang('立即出手')}</p>
+				<p>{:lang('下单购买')}</p>
+			</span>
+		</li>
+	</ul>
+</div>
+
+<div class="bargain-block"></div>
+<input type="hidden" id="page_count">
+<input type="hidden" id="page" value="1">
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script src="WAP_JS/goods_bargain.js"></script>
+{/block}

@@ -1,0 +1,46 @@
+{extend name="$member_base" /}
+{block name="right_main"}
+<link rel="stylesheet" href="WEB_CSS/member_coupon.css">
+{php}
+$coupon_data = api('System.Member.coupon', ['type' => $type]);
+$list = $coupon_data['data'];
+{/php}
+<div class="member-main">
+    <div class="main-top">
+        <div class="title">优惠卡券</div>
+    </div> 
+    <ul class="nav nav-tabs">
+        <li {if $type eq ''}class="active"{/if}><a href="{:__URL('SHOP_MAIN/member/coupon')}">全部</a></li>
+        <li {if $type eq 1}class="active"{/if}><a href="{:__URL('SHOP_MAIN/member/coupon?type=1')}">未使用</a></li>
+        <li {if $type eq 2}class="active"{/if}><a href="{:__URL('SHOP_MAIN/member/coupon?type=2')}">已使用</a></li>
+        <li {if $type eq 3}class="active"{/if}><a href="{:__URL('SHOP_MAIN/member/coupon?type=3')}">已过期</a></li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane active">
+            {notempty name="$list"}
+            <ul>
+                {foreach name="list" item="vo"}
+                    <li>
+                        <div class="card ns-bg-color-fadeout-40">
+                            <p>￥{$vo.money}</p>
+                            <p>{if $vo.range_type}(全部产品){else/}(部分产品){/if}</p>
+                            <p>卡券名称：{$vo.coupon_name}</p>
+                            <p>使用条件：{if $vo['at_least'] > 0}满{$vo.at_least}元可用{else/}无门槛{/if}</p>
+                            <p>有效时间：{$vo.start_time}至{$vo.end_time}</p>
+                            {if $vo.state == 2}
+                            <div class="state ns-bg-color-black">已使用</div>
+                            {elseif $vo.state == 3}
+                            <div class="state ns-bg-color-black">已过期</div>
+                            {/if}
+                        </div>
+                    </li>
+                {/foreach}
+            </ul>
+            {else/}
+            <div class="empty">当前没有关于该类型的优惠券！</div>
+            {/notempty}
+        </div>
+    </div>
+</div>
+{/block}
+{block name="script"}{/block}

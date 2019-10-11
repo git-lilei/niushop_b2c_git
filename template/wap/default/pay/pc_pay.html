@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>{:lang('choose_payment_method')}-{$title}</title>
+		<link rel="stylesheet" href="WAP_CSS/normalize.css"/>
+		<link type="text/css" rel="stylesheet" href="WAP_CSS/common.css">
+		<link type="text/css" rel="stylesheet" href="WAP_CSS/themes/theme.css">
+		<link type="text/css" rel="stylesheet" href="WAP_CSS/pay/pc_pay.css">
+		<script src="WAP_PLUGIN/mzui/lib/jquery/jquery-3.2.1.min.js"></script>
+		<script src="__STATIC__/js/load_bottom.js" type="text/javascript"></script>
+		<script src="WAP_JS/common.js"></script>
+		<script src="WAP_JS/pc_pay.js"></script>
+		<script type="text/javascript">
+			var APPMAIN = 'APP_MAIN';
+			var SHOPMAIN = "SHOP_MAIN";
+			var STATIC = "__STATIC__";
+			var WAPIMG = "WAP_IMG";
+			var UPLOAD = "__UPLOAD__";
+		</script>
+	</head>
+	<body class="body">
+		<div class="header">
+			<div class="container">
+				<div class="logo fl">
+					<img alt="{$web_info.title}{:lang('cashier_desk')}" src="{:__IMG($web_info.logo)}" />
+				</div>
+			</div>
+		</div>
+		<div class="pay-body">
+			<div class="payment-wrap">
+				<div class="payment-top clear">
+					<div class="payment-left">
+						<div class="payment-tit">
+							<span class="ns-text-color-gray">交易对象：</span>
+							<em class="ns-text-color-black">{$title}</em>
+						</div>
+					</div>
+					<div class="payment-right">
+						<div class="cost">
+                            <span class="tit ns-text-color-black">应付:</span>
+							<span class="price">
+								<span class="unit-icon ns-text-color">¥</span>
+								<em class="ns-text-color">{$pay_value.pay_money}</em>
+							</span>
+                        </div>
+					</div>
+				</div>
+				<div class="payment-mod clear ns-bg-color-gray-fadeout-60">
+                    <div class="payment-left">
+                        <label>
+                            <input type="checkbox" class="payment-checkbox" checked="checked" id="is_use_balance">
+                            <span class="ns-text-color-black">使用余额</span>
+                        </label>
+                        <span class="payment-balance-num ns-text-color-gray">(可用余额{$member_balance}元)</span>
+                    </div>
+                    <div class="payment-right">
+                        <div class="cost pay_balance_show">
+                            <span class="tit ns-text-color-black">支付:</span>
+							<span class="price">
+								<span class="unit-icon ns-text-color">¥</span>
+								<em class="pay_balance_value ns-text-color" style="font-weight:bold;">{$member_balance}</em>
+							</span>
+                        </div>
+                    </div>
+                </div>
+				<div class="payment-mod clear ns-bg-color-gray-fadeout-60">
+					<div class="clear">
+						<div class="payment-left">
+	                        <label>
+	                            <input type="checkbox" class="payment-checkbox" disabled checked>
+	                            <span class="ns-text-color-black">使用其他支付方式</span>
+	                        </label>
+	                        <span class="payment-balance-num ns-text-color-gray">(点击“立即支付”后您可在新开页面选择其中任意一种渠道进行支付。)</span>
+	                    </div>
+	                    <div class="payment-right">
+	                        <div class="cost">
+	                            <span class="tit">支付:</span>
+								<span class="price">
+									<span class="unit-icon ns-text-color">¥</span>
+									<em class="pay_balance_value surplus_need_pay_money ns-text-color" style="font-weight:bold;">{$need_pay_money}</em>
+								</span>
+	                        </div>
+	                    </div>
+                    </div>
+                    {php}
+						$pay_config = api("System.Pay.getPayConfig");// 支付方式配置
+						$pay_config = $pay_config['data'];
+					{/php}
+
+					{assign name="un_num" value="0"}
+					{notempty name="pay_config"}
+					<div class="payment-icon-list ns-border-color-gray">
+                        <ul>
+                            {foreach name="pay_config" item="pay_item"}
+								{if $pay_item.is_use}
+                                    <li class="ns-border-color-gray"><img src="WAP_IMG/pay/{$pay_item.pc_icon}"></li>
+                                {else/}
+									{php}$un_num += 1;{/php}
+                                {/if}
+                            {/foreach}
+                        </ul>
+						{if $un_num eq count($pay_config)}
+                        <p class="payment-icon-txt ns-text-color-gray">{:lang('not_yet_open_payment_background')}</p>
+                        {else/}
+                        <p class="payment-icon-txt ns-text-color-gray">当余额不足时，请选择上方的任一支付方式支付不足的部分</p>
+						{/if}
+                    </div>
+					{/notempty}
+				</div>
+				<a href="javascript:;" class="payment-btn pay primary">立即支付</a>
+			</div>
+			<input type="hidden" id="hidden_member_balance" value="{$member_balance}">
+			<input type="hidden" id="hidden_need_pay_money" value="{$need_pay_money}">
+			<input type="hidden" id="hidden_pay_money" value="{$pay_value.pay_money}">
+			<input type="hidden" id="hidden_out_trade_no" value="{$pay_value.out_trade_no}">
+		</div>
+		<input type="hidden" id="niushop_rewrite_model" value="{:rewrite_model()}">
+		<input type="hidden" id="niushop_url_model" value="{:url_model()}">
+	</body>
+</html>

@@ -1,0 +1,252 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" href="WEB_CSS/index.css" />
+{/block}
+{block name="main"}
+{php}
+	//首页顶部广告图
+	$top_list = api('System.Shop.advDetail', ['ap_keyword' => 'PC_INDEX_TOP', 'export_type' => 'data']);
+{/php}
+{notempty name="$top_list['data']"}
+{foreach name="$top_list['data']['advs']" item="vo" key="k"}
+<div class="top-active" style="background-color:{$vo.background};">
+	<div class="top-active-wrap">
+		<a href="{:__URL($vo['adv_url'])}" target="_blank" style="width: {$top_list['data']['ap_width']}px;height: {$top_list['data']['ap_height']}px;"><img src="{:__IMG($vo['adv_image'])}" /></a>
+		<a href="javascript:;" title="关闭">
+			<i class="fa fa-close ns-text-color-gray" aria-hidden="true"></i>
+		</a>
+	</div>
+</div>
+{/foreach}
+{/notempty}
+
+{php}
+	//PC端首页浮层
+	$web_floating = api('System.Shop.webFloating');
+	$web_floating = $web_floating['data'];
+{/php}
+{notempty name="$web_floating"}
+{if condition="$web_floating['is_show'] == 1"}
+<div class="web-floating">
+	<a class="close-wrap" href="javascript:;"><img src="WEB_IMG/index/floating_layer_close.png"></a>
+	<a class="img-wrap" href="{$web_floating['nav_url']}" target="_blank"><img src="{$web_floating['nav_icon']}" alt="浮层图片" /></a>
+</div>
+<div class="mask-layer"></div>
+{/if}
+{/notempty}
+
+{php}
+$banner_list = api('System.Shop.advDetail', ['ap_keyword' => 'PC_INDEX_SWIPER', 'export_type' => 'data']);
+{/php}
+<div class="banner-wrap">
+	{notempty name='$banner_list["data"]'}
+	<div id="banner" class="carousel slide" data-ride="carousel">
+		<ol class="carousel-indicators">
+			{foreach name="$banner_list['data']['advs']" item="vo" key="k"}
+			<li data-target="#banner" data-slide-to="{$k}" {if condition="$k==0"}class="active"{/if}></li>
+			{/foreach}
+		</ol>
+
+		<div class="carousel-inner">
+			{foreach name="$banner_list['data']['advs']" item="vo" key="k"}
+			<div class="item {if condition='$k==0'}active{/if}" style="background-color:{$vo['background']}">
+				{if $vo['adv_image'] == ''}
+				<a href="javascript:;"><img alt="轮播图" src="WEB_IMG/index/default_banner.png" ></a>
+				{else/}
+				<a href="{:__URL($vo['adv_url'])}" target="_blank" style="width: {$banner_list['data']['ap_width']}px;height: {$banner_list['data']['ap_height']}px;line-height: {$banner_list['data']['ap_height']}px;">
+					<img alt="轮播图" src="{:__IMG($vo['adv_image'])}"  onerror="this.src='WEB_IMG/index/default_banner.png'">
+				</a>
+				{/if}
+			</div>
+			{/foreach}
+		</div>
+
+		<a class="left carousel-control" href="#banner" data-slide="prev">
+			<span class="icon icon-chevron-left"></span>
+		</a>
+		<a class="right carousel-control" href="#banner" data-slide="next">
+			<span class="icon icon-chevron-right"></span>
+		</a>
+	</div>
+	{/notempty}
+	<div class="sidebar">
+		<div class="login-wrap">
+			<a href="{:__URL('SHOP_MAIN/member/index')}" class="img-wrap ns-box-shadow-index-user-img">
+				{notempty name="$member_detail && $member_detail['user_info']['user_headimg']"}
+				<img alt="avatar" src="{:__IMG($member_detail['user_info']['user_headimg'])}" class="img-circle">
+				{else/}
+				<img alt="avatar" src="WEB_IMG/index/default_avatar.png" class="img-circle">
+				{/notempty}
+			</a>
+			<div class="operation">
+				{notempty name="$member_detail"}
+				<p>{$member_detail['user_info']['nick_name']}</p>
+				<div>
+					<a href="javascript:logout()" class="ns-border-color ns-text-color">{:lang('safe_exit')}</a>
+				</div>
+				{else/}
+				<p>Hi,欢迎登录</p>
+				<div>
+					<a href="{:__URL('SHOP_MAIN/login/index')}" class="ns-border-color ns-text-color">登录</a>
+					<a href="{:__URL('SHOP_MAIN/login/register')}" class="ns-border-color ns-text-color">注册</a>
+				</div>
+				{/notempty}
+			</div>
+		</div>
+		<div class="content-wrap">
+			{php}
+			$notice = api("System.Shop.shopNoticeList", ["page_size" => 5]);
+			$notice = $notice['data'];
+			$condition = [];
+			$condition['status'] = 2;
+			$article_list = api("System.Article.articleList", ['condition'=>$condition, "page_size" => 5]);
+			$article_list = $article_list['data'];
+			{/php}
+			<div class="menu">
+				<ul>
+					<li class="active ns-border-color ns-text-color" data-url="{:__URL('SHOP_MAIN/notice/lists')}" type="notice">公告</li>
+					<li type="article" data-url="{:__URL('SHOP_MAIN/article/lists')}">最新资讯</li>
+				</ul>
+				<span class="notice-more"><a href="{:__URL('SHOP_MAIN/notice/lists')}" target="_blank">更多</a></span>
+			</div>
+			{if condition="!empty($notice.data)"}
+			<div class="item" data-type="notice" style="display: block;">
+				<ul>
+					{foreach name="$notice.data" item ="v"}
+					<li><a class="ns-text-color-gray" href="{:__URL('SHOP_MAIN/notice/detail', 'id='.$v.id)}" target="_blank" title="{$v["notice_title"]}">{$v["notice_title"]}</a></li>
+					{/foreach}
+				</ul>
+			</div>
+			{else/}
+			<div class="item" data-type="notice" style="display: block;">
+				<ul>
+					<li>暂无公告</li>
+				</ul>
+			</div>
+			{/if}
+			{if condition="!empty($article_list.data)"}
+			<div class="item" data-type="article" style="display: none;">
+				<ul>
+					{foreach name="article_list.data" item ="v"}
+					<li><a href="{:__URL('SHOP_MAIN/article/detail', 'article_id='.$v.article_id)}" target="_blank">{$v["title"]}</a></li>
+					{/foreach}
+				</ul>
+			</div>
+			{else/}
+			<div class="item" data-type="article" style="display: none;">
+				<ul>
+					<li>暂无咨询</li>
+				</ul>
+			</div>
+			{/if}
+		</div>
+	</div>
+
+</div>
+
+{php}
+$recommend_list = api('System.Shop.advDetail', ['ap_keyword' => 'PC_INDEX_RECOMMEND', 'export_type' => 'data']);
+{/php}
+{notempty name="$recommend_list['data']['advs']"}
+<!-- 推荐广告位 -->
+<div class="w1200">
+	<div class="adv-middle">
+		{foreach name="$recommend_list['data']['advs']" key="k" item="v"}
+		<div class="item">
+			<a href="{$v['adv_url']}" target="_blank">
+				<img src="{:__IMG($v['adv_image'])}">
+			</a>
+		</div>
+		{/foreach}
+	</div>
+</div>
+{/notempty}
+
+{php}
+$discount_data = api("System.Goods.newestDiscount");
+$discount = $discount_data['data'];
+$discount_adv = api('System.Shop.advDetail', ['ap_keyword' => 'PC_INDEX_DISCOUNT', 'export_type' => 'data']);
+$discount_adv = $discount_adv['data'];
+{/php}
+{notempty name="$discount"}
+<!--限时折扣-->
+<div class="w1200 discount-wrap">
+	<section class="btn-primary" onclick="window.open(__URL('SHOP_MAIN/goods/discount'))" data-start-time="{$discount.start_time}" data-end-time="{$discount.end_time}">
+		<div class="chinese">限时秒杀</div>
+		<div class="english">FLASH DEALS</div>
+		<i></i>
+		<div class="desc">距离本场结束还有</div>
+		<div class="time-wrap clearfix">
+			<div class="ns-bg-color-black day">00</div>
+			<div class="ns-bg-color-black hour">00</div>
+			<div class="ns-bg-color-black minute">00</div>
+			<div class="ns-bg-color-black second">00</div>
+		</div>
+	</section>
+
+	<aside>
+		{notempty name="$discount_adv"}
+		<div id="discount_adv" class="carousel slide">
+			<div class="carousel-inner">
+				{foreach name="$discount_adv['advs']" item="vo" key="k"}
+					<a class="item {eq name='$k' value='0'}active{/eq}" href="{:__URL('SHOP_MAIN'.$vo['adv_url'])}">
+						<img src="{:__IMG($vo['adv_image'])}" />
+					</a>
+				{/foreach}
+			</div>
+			<ol class="carousel-indicators active-base-color">
+				{foreach name="$discount_adv['advs']" item="vo" key="k"}
+			    <li data-target="#discount_adv" data-slide-to="{$k}" class="ns-bg-color-gray-shade-20 {eq name='$k' value='0'}active{/eq}"></li>
+				{/foreach}
+			</ol>
+		</div>
+		{/notempty}
+	</aside>
+
+	<div id="discount_goods" class="carousel slide" data-interval="false">
+		<div class="carousel-inner">
+			{foreach name="$discount['goods_list']" item="vo" key="k"}
+				{if condition="$k % 4 == 0 && $k == 0"}<div class="item active">{/if}
+				<a href="{:__URL('SHOP_MAIN/goods/detail','goods_id='.$vo['goods_id'])}" target="_blank" title="{$vo.goods_name}">
+					<div class="goods-img">
+						<img src="{:__IMG($vo['picture_info']['pic_cover_mid'])}">
+					</div>
+					<p class="goods-name">{$vo.goods_name}</p>
+					<div class="price-wrap ns-bg-color">
+						<span class="mod_price"><i>¥</i><span>{$vo.promotion_price}</span></span>
+						<span class="mod_price ns-text-color-gray"><i>¥</i><span>{$vo.price}</span></span>
+					</div>
+				</a>
+				{if condition="$k % 4 == 3 && $k != 0"}
+					</div>
+					{if condition="$k != count($discount['goods_list']) -1 "}
+					<div class="item">
+					{/if}
+				{/if}
+				{if condition="$k == count($discount['goods_list']) -1 "}</div>{/if}
+			{/foreach}
+		</div>
+	</div>
+
+</div>
+{/notempty}
+
+{php}
+$block_list = api("System.Goods.goodsCategoryBlockPc");
+$block_list = $block_list['data'];
+{/php}
+{notempty name="$block_list"}
+<!--楼层-->
+<div class="w1200 block-wap">
+	{php}
+	    echo $block_list;
+	{/php}
+	<!--楼层电梯-->
+	<div class="block-elevator">
+	</div>
+</div>
+{/notempty}
+{/block}
+{block name="script"}
+<script src="WEB_JS/index.js"></script>
+{/block}

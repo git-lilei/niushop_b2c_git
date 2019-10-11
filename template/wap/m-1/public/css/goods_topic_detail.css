@@ -1,0 +1,15 @@
+.goods-list-grid{width: 100%; overflow: hidden;}
+.goods-list-grid .topic-scroll{height: auto; width: 100%;}
+.goods-list-grid .topic-scroll img{width:100%;height:100%;border: 0 none; vertical-align: top;}
+.goods-list ul{overflow:hidden;}
+.goods-list-grid li{width: 49.5%; overflow: hidden; float: left; position: relative;list-style: none;margin-bottom: 1%;background-color: #fff;padding-bottom: 10px;}
+.goods-list-grid li:nth-child(even){margin-right: 0;float: right;}
+.goods-list-grid li .item{display: block; width: 98%; overflow: hidden; margin: auto; background: #fff; position: relative;}
+.goods-list-grid li .item-pic{display: block; width: 100%; overflow: hidden;float: left; position: relative;}
+.goods-list-grid li .item-pic a{display: block; position: relative; width: 100%; height: 100%; padding-top: 100%;}
+.goods-list-grid li .item-pic img{display: block; max-width: 100%; max-height: 100%;width: 100%; height: 100%;position: absolute; left: 0; top: 0;}
+.goods-list-grid li dl{margin-top: 8px; overflow: hidden;padding: 0 2%;float: right;}
+.goods-list-grid li dl dt{font-size: 14px; width: 100%; height: 40px;overflow: hidden;text-align: left; line-height: 20px;margin: auto;}
+.goods-list-grid li dl dt a{font-size: 14px; line-height: 20px; word-break: break-all;}
+.goods-list-grid li dd{width: 100%; margin: auto; overflow: hidden;}
+.goods-price{font-size: 16px;}

@@ -1,0 +1,124 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" href="WAP_CSS/game_turntable.css">
+{/block}
+{block name="head"}{/block}
+{block name="main"}
+{if condition="$game_open"}
+<div class="login-layer">
+	<div class="layer-curtain"></div>
+	<div class="layer-content">
+		<div class="layer-icon"><img src="WAP_IMG/game/member-icon.png"></div>
+		<div class="layer-text ns-text-color-black">您还未登录</div>
+		<div class="layer-desc ns-text-color-gray">（请先登录/注册在进行此操作）</div>
+		<a href="{:__URL('APP_MAIN/login')}">
+			<div class="layer-btn primary">登录</div>
+		</a>
+	</div>
+</div>
+{/if}  
+{if condition="$game_info"}
+	<div class="game-img">
+		<!-- 背景图片 -->
+		<img src="WAP_IMG/game/turn_table_bg.png" class="table-bg" />
+		<!-- 游戏标题 -->
+		<img src="WAP_IMG/game/turn_table_title.png" class="table-title" />
+		<!-- 奖励与未中奖图片 -->
+		<img src="WAP_IMG/game/table_success.png" id="shan-img" class="dis-none" />
+	    <img src="WAP_IMG/game/table_sorry.png" id="sorry-img" class="dis-none"/>
+	    <!-- 转盘区域 -->
+		<div class="banner">
+			<canvas class="item" id="wheelcanvas" width="422px" height="422px"></canvas>
+			<img class="pointer" src="WAP_IMG/game/turnplate_pointer.png"/>
+		</div>
+	</div>
+	<div class="game-text">
+		<!-- 活动规则 -->
+		<div class="active-rule">
+			<div class="title-box">
+				<img src="WAP_IMG/game/active_rule.png" class="title"/>
+				<ul class="rule-desc">
+					<li>
+						<div class="item-title">【活动时间】</div>
+						<div class="item-desc">{$game_info.start_time|date="Y年m月d日",###}-{$game_info.end_time|date="Y年m月d日",###}</div>
+					</li>
+					<li>
+						<div class="item-title">【活动奖品】</div>
+						<table border="1" class="rule-table">
+							<tr>
+								<th >奖品名称</th>
+								<th >份数</th>
+							</tr>
+							{foreach name="$game_info['rule']" item="vo"}
+							<tr>
+								<td>{$vo.rule_name}&nbsp;
+									{switch name="$vo['type']"}
+										{case value="1"}{$vo.points|round}积分{/case}
+										{case value="2"}{$vo.type_value}{/case}
+										{case value="3"}{$vo.hongbao}元余额红包{/case}
+										{case value="4"}{$vo.type_value}{/case}
+									{/switch}
+								</td>
+								<td>{$vo.rule_num}</td>
+							</tr>
+							{/foreach}
+						</table>
+					</li>
+					<li>
+						<div class="item-title">【活动规则】</div>
+						<div class="item-desc">
+							{if $game_info['member_level'] == 0}
+							<p>1.本次活动所有会员都可以参与，{$game_info.points|round}积分一次</p>
+							{else/}
+							<p>1.本次活动仅{$game_info.level_name}可以参与，{$game_info.points|round}积分一次</p>
+							{/if}
+							<p>2.中奖积分与红包会自动发放到账户中,实物奖品需到我的奖品进行领取</p>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<!-- 中奖名单 -->
+		{notempty name="$winning_records"}
+		<div class="name-list">
+			<div class="title-box">
+				<img src="WAP_IMG/game/name_list.png" class="title"/>
+				<div class="list-desc">
+					<ul>
+						{foreach name="$winning_records" item="vo"}
+						<li>
+							<span>{$vo.remark}</span>
+						</li>
+						{/foreach}
+					</ul>
+				</div>
+			</div>
+		</div>
+		{/notempty}
+	</div>
+	{notempty name="$participation_restriction"}
+	<div class="restriction">
+		<div class="tip-info-container">
+			<p class="tip-info ns-text-color-gray">{$participation_restriction}</p>
+			<button onclick="location.href=__URL('APP_MAIN')" class="ns-bg-color">知道了</button>
+		</div>
+	</div>
+	{/notempty}
+	<input type="hidden" id="rule_json" value='{$rule_json}'/>
+	<input type="hidden" id="game_id" value='{$game_info.game_id}'/>
+	{/block}
+	{block name="script"}
+	<script type="text/javascript" src="WAP_JS/award_rotate.js"></script>
+	<script type="text/javascript" src="WAP_JS/game_turntable.js"></script>
+	<script type="text/javascript" src="WAP_JS/my_scroll.js"></script>
+	<script>
+	$(function(){
+		$('.list-desc').myScroll({
+			speed: 40, //数值越大，速度越慢
+			rowHeight: 26 //li的高度
+		});
+	});
+	</script>
+{/if}
+{/block}
+{block name="footer"}{/block}

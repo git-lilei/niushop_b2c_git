@@ -1,0 +1,30 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/pintuan_lists.css">
+{/block}
+{block name="head_href"}{:__URL('APP_MAIN/member/index')}{/block}
+{block name="main"}
+{php}
+$member_info = api('System.Member.memberInfo');
+$member_info = $member_info['data']
+{/php}
+<div class="user-info ns-bg-color">
+	<div>
+		{if condition="$member_info['user_info']['user_headimg'] eq ''"}
+			<img src="{:__IMG($default_headimg)}" />
+		{else/}
+			<img src="{:__IMG($member_info['user_info']['user_headimg'])}"/>
+		{/if}
+	</div>
+	<h4>{$member_info["user_info"]['nick_name']}</h4>
+</div>
+<div class="spelling-order-list"></div>
+<input type="hidden" id="ms_time" value="{niu:currenttime/}"/>
+<input type="hidden" id="page_count">
+<input type="hidden" id="page">
+<input type="hidden" id="status" value="all">
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script src="WAP_JS/pintuan_lists.js"></script>
+{/block}

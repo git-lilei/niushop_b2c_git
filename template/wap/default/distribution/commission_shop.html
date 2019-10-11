@@ -1,0 +1,85 @@
+{extend name="$base" /} 
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/distribution_commission_shop.css">
+{/block}
+{block name="head_operation"}<a class="ns-operation" href="{:__URL('APP_MAIN/Distribution/account')}">明细</a>{/block}
+{block name="main"}
+{php}
+	$user_account = api("System.Distribution.myCommission");
+	$user_account = $user_account['data'];
+	
+	$shopConfig = api('System.Distribution.shopConfig');
+	$shopConfig = $shopConfig['data'];
+{/php}
+<div class="distribution-commission-shop">
+	<div class="tip-head">
+		<p class="tip-txt"><i class="icon-money"></i>可提现佣金余额</p>
+		<span class="commission-cash">¥{$user_account.commission_cash}</span>
+	</div>
+	<div class="tip-bottom">
+		<p class="field-2 pull-left">累计佣金<br/><span>￥{$user_account.commission}</span></p>
+		<p class="field-2 pull-left">待审核金额<br/><span>￥{$user_account.commission_locked}</span></p>
+		<p class="field-2 pull-right">已提现<br/><span>￥{$user_account.commission_withdraw}</span></p>
+	</div>
+</div>
+<!--分销商--> 
+<div class="distributors">
+	<p class="ns-border-color-gray"><span class="title ns-text-color-black"><i></i>分销商</span></p>
+	<ul class="money-list">
+		<li class="ns-border-color-gray">
+			<a class="a-personal" href="{:__URL('APP_MAIN/distribution/accountDetail?type_id=1')}">
+			     <span class="text ns-text-color-black">分销佣金</span> <span class="money-number ns-text-color">¥{$user_account.commission_promoter}<i class="fa fa-angle-right ns-text-color-gray"></i></span>
+			</a>
+		</li>
+		{if condition ="$shopConfig['is_regional_agent'] > 0"}
+			<li class="ns-border-color-gray">
+				<a  class="a-personal" href="{:__URL('APP_MAIN/distribution/accountDetail?type_id=2')}">
+				     <span class="text ns-text-color-black">区域代理佣金</span> <span class="money-number ns-text-color">¥{$user_account.commission_region_agent}<i class="fa fa-angle-right ns-text-color-gray"></i></span>
+				</a>
+			</li>
+		{/if}
+	<!-- 	<li class="ns-border-color-gray">
+		     <a  class="a-personal" href="">
+		         <span class="text">分销商团队分红</span> <span class="money-number">¥{$user_account.commission_promoter_team}<i class="fa fa-angle-right ns-text-color-gray"></i></span>
+		     </a>
+		</li>
+		<li class="ns-border-color-gray">
+		    <a  class="a-personal" href="{:__URL('APP_MAIN/distribution/accountDetail','type_id=3')}">
+		        <span class="text">渠道代理分红</span> <span class="money-number">¥{$user_account.commission_channelagent}<i class="fa fa-angle-right ns-text-color-gray"></i></span>
+		    </a>
+		</li>
+	 -->
+	</ul>
+</div>
+{if condition ="$shopConfig['is_partner_enable'] > 0"}
+<div class="blank ns-bg-color-gray-fadeout-80"></div>
+<!--股东--> 
+<div class="shareholders">
+	<p class="ns-border-color-gray"><span class="title gd ns-text-color-black"><i></i>股东</span><span class="xiajispanright"></span></p>
+	<ul class="money-list">
+		<li class="ns-border-color-gray">
+			<a class="a-personal" href="{:__URL('APP_MAIN/distribution/accountDetail?type_id=4')}">
+				 <span class="text ns-text-color-black">股东分红</span> <span class="money-number ns-text-color">¥{$user_account.commission_partner}<i class="fa fa-angle-right ns-text-color-gray"></i></span>
+			</a>
+		</li>
+		{if condition ="$shopConfig['is_global_enable'] > 0"}
+			<li class="ns-border-color-gray">
+			    <a class="a-personal" href="{:__URL('APP_MAIN/distribution/accountDetail?type_id=5')}">
+				    <span class="text ns-text-color-black">全球分红</span> <span class="money-number ns-text-color">¥{$user_account.commission_partner_global}<i class="fa fa-angle-right ns-text-color-gray"></i></span>
+			    </a>
+			</li>
+		{/if}
+	<!-- 	<li class="ns-border-color-gray">
+			<a  class="a-personal" href="">
+			   <span class="text">股东团队分红</span> <span class="money-number">¥{$user_account.commission_partner_team}<i class="fa fa-angle-right ns-text-color-gray"></i></span>
+			</a>
+		</li> -->
+	</ul>
+</div>
+{/if}
+<div class="btn-wrap">
+	<a href="{:__URL('APP_MAIN/distribution/toWithdraw')}" class="btn primary">申请提现</a>
+</div>
+{/block}
+{block name="footer"}{/block}
+{block name="script"}{/block}

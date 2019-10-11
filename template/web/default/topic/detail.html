@@ -1,0 +1,10 @@
+{extend name="$base" /}
+{block name="resources"}{/block}
+{block name="main"}
+{php}
+	$info = api("System.Article.topicInfo",['topic_id'=>$topic_id]);
+	$info = $info['data'];
+{/php}
+<div class="w1200">{$info.content}</div>
+{/block}
+{block name="script"}{/block}

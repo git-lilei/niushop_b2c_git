@@ -1,0 +1,307 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" href="ADMIN_JS/timeInterval/dateRange.css">
+<link rel="stylesheet" href="ADMIN_JS/timeInterval/monthPicker.css">
+<link rel="stylesheet" href="ADMIN_CSS/analysis.css">
+<style type="text/css">
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td {margin:0;padding:0;} 
+fieldset,img {border:0} 
+ol,ul {list-style:none;} 
+
+.member_farth{
+    width: 100%;
+    margin-top: 10px;
+    height: 450px;
+    border: 1px solid  #e6e9f0;
+    box-sizing: border-box ;
+    position: relative;
+}
+.member_farth .member_son{
+	width: 100%;
+    height: 6.5%;
+    line-height: 32px;
+    font-size: 13px;
+    border-bottom: 1px solid #e6e9f0;
+    background: #f5f7fa;
+    text-indent: 10px;
+}
+.member_data{
+	width: 100%;
+	height: 380px;
+	padding: 20px 0;
+}
+.clear:before,.clear:after{
+	content: '';
+	display: block;
+	clear: both;
+}
+
+.time-select-container{
+	position: absolute;
+	z-index: 10;
+	top: 53px;
+	right: 50px;
+}
+.time-select-container span.wrap{
+    margin-left: 10px;
+    float: left;
+    display: inline-block;
+}
+.time-select-container .time-type a{
+    margin: 0;
+    height: 26px;
+    line-height: 26px;
+    color: #666;
+    display: inline-block;
+    cursor: pointer;
+    border: 1px solid #d9d9d9;
+    border-left: 0;
+    background: #fff;
+    padding: 0 16px;
+    float: left;
+    font-size: 12px;
+    transition: all .3s;
+}
+.time-select-container .time-type a:first-child{
+	border: 1px solid #d9d9d9;
+	border-radius: 2px 0 0 2px;
+}
+.time-select-container .time-type a:last-child{
+	border-radius: 0 2px 2px 0;
+}
+.time-select-container .time-type a.active{
+	color: #00A0DE;
+	border-color: #00A0DE;
+}
+.time-select-container .time-type a:last-child.active{
+	box-shadow: -1px 0 0 0 #00A0DE;
+}
+.time-select-container .form{
+    position: relative;
+    padding: 4px 7px;
+    width: 320px;
+    height: 18px;
+    cursor: text;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #666;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #d9d9d9;
+    border-radius: 2px;
+    transition: all .3s;
+}
+.time-select-container .form input{
+	border: none;
+	margin-bottom: 0;
+    height: 18px;
+    line-height: 18px;
+    outline: 0;
+    width: 45%;
+    text-align: center;
+    padding: 0;
+    box-shadow: none;
+    font-size: 12px;
+    color: #666;
+}
+.time-select-container .form:hover{
+	border-color: #00A0DE;
+}
+.time-select-container .form input:focus{
+	border: none;
+}
+.time-select-container .form .split{
+	color: #666;
+	display: inline-block;
+	width: 18px;
+}
+</style>
+{/block}
+{block name="main"}
+<div class="basic_data_ons">
+	<div class="basic_data_ons_son">基本数据</div>
+	<ul class="basic_data_ons_son_list">
+		<li>
+            <div class="basic_data_ons_son_list_nvs">
+                <p>会员数</p>
+				<cite>{$data.newadd_member_num}</cite>
+			</div>
+		</li>
+		<li>
+            <div class="basic_data_ons_son_list_nvs">
+                <p>下单会员数</p>
+				<cite>{$data.deal_member_num}</cite>
+			</div>
+		</li>
+		<li>
+            <div class="basic_data_ons_son_list_nvs">
+                <p>微信粉丝数</p>
+				<cite>{$data.newadd_fans_num}</cite>
+			</div>
+		</li>
+	</ul>
+</div>
+		
+<div class="member_farth">
+	<div class="member_son">会员数据分析</div>
+	<div id="member" class="member_data"></div>
+
+	<div class="time-select-container clear">
+		<span class="time-type clear wrap">
+			<a href="javascript:;" class="active" data-type="day">按日</a>
+			<a href="javascript:;" data-type="month">按月</a>
+		</span>
+		<span class="form wrap" id="day">			
+			<input type="text" placeholder="开始时间" class="start_time">
+			<span class="split">-</span>
+			<input type="text" placeholder="结束时间" class="end_time">
+		</span>
+		<span class="form wrap" style="display: none;" id="month">			
+			<input type="text" placeholder="开始时间" class="start_time">
+			<span class="split">-</span>
+			<input type="text" placeholder="结束时间" class="end_time">
+		</span>
+	</div>
+</div>
+
+<script src="ADMIN_JS/echarts.js"></script>
+<script src="ADMIN_JS/timeInterval/dateRange.js" type="text/javascript"></script>
+<script src="ADMIN_JS/timeInterval/monthPicker.js" type="text/javascript"></script>
+<script type="text/javascript">
+var  member= echarts.init(document.getElementById('member'));
+var option = {
+  	color : ['#2998FF', '#4ECB74', '#FBD950', '#F47D6F'],
+    tooltip: {
+        trigger: 'axis'
+    },
+    legend: {
+        data:['新增会员数','成交会员数','新增粉丝数','取关粉丝数'],
+        left : '35px'
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },  
+    toolbox: {},
+    xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: [],
+        axisLine : {
+        	lineStyle : {
+    			color : '#777'
+        	}
+    	}
+    },
+    yAxis: {
+        type: 'value',
+     	splitLine:{  
+            show:true  ,
+         	lineStyle:{
+	    		color:'#ddd',
+	    		width: 1,
+	    		type : 'dashed'
+	    	}
+    	},
+        axisTick: {show: false},
+    	axisLine : {
+    		show : false,
+    		lineStyle : {
+    			color : '#777'
+        	}
+    	}
+    },
+    series: [
+        {
+            name:'新增会员数',
+            type:'line',
+            data:[],
+            smooth: true
+        },
+        {
+            name:'成交会员数',
+            type:'line',
+            data:[],
+            smooth: true
+        },
+        {
+            name:'新增粉丝数',
+            type:'line',
+            data:[],
+            smooth: true
+        },
+        {
+            name:'取关粉丝数',
+            type:'line',
+            data:[],
+            smooth: true
+        }
+    ]
+};
+
+$(function(){
+	loadMemberData();
+
+	$('.time-select-container .time-type a').click(function() {
+		$(this).addClass('active').siblings('a').removeClass('active');
+		var type = $(this).attr('data-type');
+			loadMemberData();
+			$('#' + type).show().siblings('.form').hide();
+	});
+})
+
+function loadMemberData(){
+    var type = $('.time-select-container .time-type a.active').attr('data-type');
+	$.ajax({
+		type : "post",
+		url : "{:__URL('__URL__/NsAnalysis/ADMIN_MODULE/account/memberAnalysis')}",
+		data: {
+			type : type, 
+			start_time : $('#' + type + ' .start_time').val(), 
+			end_time : end_time = $('#' + type + ' .end_time').val()
+		},
+		success : function(data) {
+			if(data.length > 0){
+				option.xAxis.data = [];
+				option.series[0].data = [];
+				option.series[1].data = [];
+				option.series[2].data = [];
+				option.series[3].data = [];
+
+				data.forEach(function(val, key){
+					option.xAxis.data.push(val.time);
+					option.series[0].data.push(val.data.newadd_member_num);
+					option.series[1].data.push(val.data.deal_member_num);
+                    option.series[2].data.push(val.data.newadd_fans_num);
+                    option.series[3].data.push(val.data.remove_concerns_fans_num);
+				})
+				member.setOption(option);
+			}
+		}
+	})
+}
+
+new pickerDateRange('day', {
+	isTodayValid : false,
+	theme : 'ta',
+	autoSubmit : true,
+	success : function(obj) {
+		$('#day .start_time').val(obj.startDate);
+		$('#day .end_time').val(obj.endDate);
+		loadMemberData()
+	}
+});
+
+monthPicker.create('month', {
+	period : true,
+	autoCommit : true,
+	callback : function(obj){
+		$('#month .start_time').val(obj.startDate);
+		$('#month .end_time').val(obj.endDate);
+		loadMemberData()
+	}
+});
+</script>
+{/block}

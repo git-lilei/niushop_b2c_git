@@ -1,0 +1,118 @@
+@CHARSET "UTF-8";
+/* 总框 */
+.ncsc-form-goods {
+    border: 1px solid #eceef1;
+}
+
+/***************** 一级切换菜单 **********************/
+.goods-nav {
+    background: #f5f7fa;
+    overflow: hidden;
+    padding-left: 5px;
+}
+.goods-nav li {
+    float: left;
+    width: 85px;
+    text-align: center;
+    padding: 5px 2px 0 2px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.goods-nav li a {
+    display: block;
+    color: #5e6166;
+    height: 35px;
+    line-height: 35px;
+    padding: 0 8px;
+    font-size: 13px;
+}
+.goods-nav li.selected a, .goods-nav li:hover a {
+    background: #fff;
+    color: #00A0DE;
+}
+
+/*************** 一级标题 ******************************/
+.h4-title {
+    padding-left: 5px;
+    font-size: 13px;
+    color: #5e6166;
+    padding: 10px 5px;
+    margin: 10px 0px 0px;
+}
+.h4-title span {
+    display: inline-block;
+    float: left;
+    width: 3px;
+    background: #00A0DE;
+    height: 14px;
+    margin: 3px 5px 0px;
+}
+
+/**************** 行级内容 ********************************/
+.ncsc-form-goods dl {
+    font-size: 0;
+    line-height: 20px;
+    clear: both;
+    padding: 0;
+    margin: 0;
+}
+.ncsc-form-goods dl dt {
+    font-size: 12px;
+    line-height: 30px;
+    color: #5e6166;
+    vertical-align: top;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-align: right;
+    display: inline-block;
+    padding: 8px 1% 8px 0;
+    margin: 0;
+}
+.ncsc-form-goods dl dd {
+    font-size: 12px;
+    line-height: 30px;
+    vertical-align: top;
+    letter-spacing: normal;
+    word-spacing: normal;
+    display: inline-block;
+    width: 80%;
+    padding: 8px 0;
+    min-height: 30px;
+    margin: 0;
+}
+
+/**************** 共用样式 **********************************/
+.help-inline {
+    display: none;
+    color: red;
+}
+dt {
+    font-weight: normal !important;
+}
+
+/**************** 分类 ***********************************/
+.category-text {
+    display: inline-block;
+    background-color: #FFF;
+    min-width: 203px;
+    height: 30px;
+    line-height: 30px;
+    border: 1px solid #eceef1;
+    float: left;
+    padding-left: 5px;
+    box-sizing: border-box;
+}
+.category-button {
+    display: inline-block;
+    height: 30px;
+    line-height: 30px;
+    float: left;
+    border: 1px solid #eceef1;
+    border-left: none;
+    background-color: #f5f7fa;
+    padding: 0 10px;
+    font-size: 13px;
+    color: #5e6166;
+    box-sizing: border-box;
+}

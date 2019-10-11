@@ -1,0 +1,18 @@
+.member-main{background: #fff; overflow: hidden; margin-top: 20px; padding: 20px;}
+.security-column{overflow: hidden; padding: 28px 28px; margin-top: 1px; border-top: 1px solid; height: 112px; display: inline-block; box-sizing: border-box;}
+.security-column:first-child{border-top: 0;}
+.security-column .column-icon{width: 75px; margin-top: 5px;}
+.security-column .column-desc{width: 700px; line-height: 28px;}
+.security-column .column-desc .title{font-size: 16px;}
+.security-column .column-operation .btn{margin-top: 13px;}
+.setting-cont{display: inline-block; min-height: 470px; height: auto; width: 100%; overflow: hidden; text-align: center; margin: 0 auto 20px;}
+.setting-cont .stepflex{display: block; border-top: 5px solid; text-align: center; margin: 60px auto 80px; width: 800px;}
+.setting-cont .stepflex dl{float: left; position: relative; width: 240px; top: -5px; border-top: 5px solid;}
+.setting-cont .stepflex-te dl{width: 400px;}
+.setting-cont .stepflex dl.doing{width: 400px;}
+.setting-cont .stepflex .s-num{position: relative; margin: -23px auto 0; color: #fff; font-weight: 700; width: 35px; height: 35px; line-height: 35px; font-size: 16px; border-radius: 50%;}
+.setting-cont .stepflex dl.doing .s-num{border-radius: 50%;}
+.setting-cont .stepflex dl .s-text s{left: 0;}
+.form-horizontal{width: 60%; text-align: left; margin-left: 20%;}
+.form-horizontal .verifyimg{vertical-align: middle; cursor: pointer; height: 32px; width: 123px}
+button.code{width: 100%;}

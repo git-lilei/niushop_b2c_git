@@ -1,0 +1,139 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/member_address.css">
+{/block}
+{block name="main"}
+{php}
+	$flag = request()->get('flag', '');
+	$url = request()->get('url', '');
+	$gift_id = request()->get('gift_id', '');
+	$record_id = request()->get('record_id', '');
+	$applet_member = api("System.Member.memberAddressList");
+	$list = $applet_member['data'];
+{/php}
+<ul class="address-list ns-bg-color-gray-fadeout-60">
+	{foreach name="list.data" item="address" key="k"}
+	<li id="{$address.id}" class="ns-border-color-gray">
+		<div class="info ns-border-color-gray">
+			<span>{:lang('member_receiving_information')}：{$address.consigner}</span>
+			<a href="{:__URL('APP_MAIN/member/addressedit?id='.$address['id'].'&flag='.$flag.'&url='.$url)}">【{:lang('member_modify')}】</a>
+			{if condition="count($list) gt 1 && $address.is_default neq '1'"}
+			<a href="javascript:address_delete({$address.id},{$address.is_default});">【{:lang('goods_delete')}】</a>
+			{/if}
+		</div>
+		<div class="info ns-border-color-gray" onclick='selectAddress({$address.id})'>
+			<span>{:lang('member_phone_number')}：{$address.mobile}</span>
+		</div>
+		<a href="javascript:selectAddress({$address.id},this)">
+			<span>{:lang('member_detailed_address')}：{$address.address_info}&nbsp;{$address.address}</span>
+		</a>
+	</li>{/foreach}
+</ul>
+{if condition = "count($list.data) eq 0"}
+<div class="empty-address">
+	<img src="WAP_IMG/member/member_none_address.png">
+	<p class="ns-text-color-gray">{:lang('you_have_not_added_your_shipping_address_yet_add_one')}!</p>
+</div>
+{/if}
+<button class="btn-save ns-bg-color" onclick="window.location.href='{:__URL('APP_MAIN/Member/addressEdit?flag='.$flag.'&url='.$url)}';">{:lang('member_new_delivery_address')}</button>
+{if $is_weixin_browser}<button class="btn-get-address ns-bg-color">一键获取微信地址</button>{/if}
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script type="text/javascript">
+var ref_url = '{$url}';
+var flag = "{$flag}";
+function selectAddress(id){
+	api("System.Member.modifyAddressDefault" , {"id" : id}, function(data){
+		var data = data['data'];
+		if (data > 0) {
+			if(flag == "1"){
+				return;
+			}else if(flag == "2"){
+				window.location.href = __URL(APPMAIN + "/member/receiveprize?gift_id={$gift_id}&record_id={$record_id}");
+				return;
+			}
+			if(ref_url == 'cart'){
+				window.location.href = __URL(APPMAIN + "/order/payment");
+			}else{
+				window.location.reload();
+			}
+		}else{
+			toast(res["message"]);
+		}
+	})
+}
+
+function address_delete(id,is_default){
+	if(is_default == 1){
+		toast("{:lang('the_default_address_cannot_be_deleted')}");
+		return;
+	}
+	api("System.Member.addressDelete", {"id" : id}, function(res){
+		if (res["code"] == 0) {
+			toast("{:lang('member_delete_successfully')}");
+			window.location.reload();
+		} else {
+			toast(res["outmessage"]);
+		}
+	})
+}
+
+wx.config({
+	debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+	appId: $("#appId").val(), // 必填，公众号的唯一标识
+	timestamp: $("#jsTimesTamp").val(), // 必填，生成签名的时间戳
+	nonceStr:  $("#jsNonceStr").val(), // 必填，生成签名的随机串
+	signature: $("#jsSignature").val(),// 必填，签名，见附录1
+	jsApiList: ['onMenuShareTimeline', 'onMenuShareAppMessage', 'onMenuShareQQ', 'onMenuShareWeibo', 'openAddress'] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+});
+
+$(".btn-get-address").click(function(){
+	wx.ready(function(){
+		wx.checkJsApi({
+		    jsApiList: ['openAddress'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
+		    success: function(res) {
+		    	if(!res.checkResult.openAddress){
+		    		toast("该公众号不支持该接口");
+		    	}
+		    }
+		});
+		wx.openAddress({
+			success: function (res) {
+				if(res.errMsg == 'openAddress:ok'){
+					var parmas = {
+						"consigner" : res.userName, // 收货人姓名,
+						"mobile" : res.telNumber, // 手机号
+						"province" : res.provinceName, // 省
+						"city" : res.cityName, // 市
+						"district" : res.countryName, // 县
+						"address" : res.detailInfo, // 详细地址
+						"zip_code" : res.postalCode // 邮编
+					};
+					api("System.Member.addWeixinAddress", parmas, function(data){
+						if(data['data'] > 0){
+							toast("获取成功");
+							if(flag == "1"){
+								return;
+							}else if(flag == "2"){
+								window.location.href = __URL(APPMAIN + "/member/receiveprize?gift_id={$gift_id}&record_id={$record_id}");
+								return;
+							}
+							if(ref_url == 'cart'){
+								window.location.href = __URL(APPMAIN + "/order/payment");
+							}else{
+								window.location.reload();
+							}
+						}else{
+							toast("获取失败");
+						}
+					});
+				}else{
+					toast("请检测公众号");
+				}
+			}
+		});
+	});
+})
+</script>
+{/block}

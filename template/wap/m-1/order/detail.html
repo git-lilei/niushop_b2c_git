@@ -1,0 +1,413 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/order_detail.css">
+{/block}
+{block name="head_href"}{:__URL('APP_MAIN/order/lists')}{/block}
+{block name="main"}
+{php}
+	$order_id = request()->get('order_id', 0);
+	if(!empty($order_id)){
+		$info = api("System.Order.orderDetail",['order_id' => $order_id]);
+		$info = $info['data'];
+	}
+{/php}
+{notempty name="$order_id && $info"}
+<div class="order-detail">
+	<section class="order-detail-infor">
+		<div class="order-detail-sum ns-bg-color ns-border-color">
+			<div class="sum-r order-detail-r">
+				<ul class="sum-r-ul">
+					{notempty name="$info['order']['status_name']"}
+					<li><span class="status">{$info['order']['status_name']}</span></li>
+					{/notempty}
+					
+					{notempty name="$info['order']['order_no']"}
+					<li><span class="label">{:lang('order_number')}：</span><span class="label">{$info['order']['order_no']}</span></li>
+					{/notempty}
+					
+					{notempty name="$info['order']['status_name']"}
+					<li><span class="label">{:lang('member_order_status')}：</span><span class="label">{$info['order']['status_name']}</span></li>
+					{/notempty}
+					
+					{notempty name="$info['order']['create_time'] | getTimeStampTurnTime"}
+					<li><span class="label">{:lang('order_time')}：</span><span class="label">{$info['order']['create_time'] | getTimeStampTurnTime}</span></li>
+					{/notempty}
+					
+					{notempty name="$info['order']['payment_type_name']"}
+					<li><span class="label">{:lang('member_payment_method')}：</span><span class="label">{$info['order']['payment_type_name']}</span></li>
+					{/notempty}
+					
+					{notempty name="$info['order']['pay_status_name']"}
+					<li><span class="label">{:lang('member_payment_status')}：</span><span class="label">{$info['order']['pay_status_name']}</span></li>
+					{/notempty}
+					
+					{notempty name="$info['order']['shipping_type_name']"}
+					<li><span class="label">{:lang('member_delivery_mode')}：</span><span class="label">{$info['order']['shipping_type_name']}</span></li>
+					{/notempty}
+					
+					<li><span class="label">{:lang('delivery_time')}：</span><span class="label">{if condition="$info['order']['shipping_time']>0"}{$info['order']['shipping_time']|getTimeStampTurnTimeByYmd} {$info['order']['distribution_time_out']}{else/}{:lang('days_and_holidays_can_be_delivered')}{/if}</span></li>
+					
+					{if condition="!empty($info['order_pickup'])"}
+					
+					{notempty name="$info['order_pickup']['address']"}
+					<li><span class="label">{:lang('member_self_addressed_address')}：</span><span class="label">{$info['order_pickup']['province_name']} {$info['order_pickup']['city_name']} {$info['order_pickup']['district_name']} {$info['order_pickup']['address']}</span></li>
+					{/notempty}
+					
+					{notempty name="$info['order_pickup']['picked_up_code']"}
+					<li><span class="label">{:lang('自提码：')}</span><span class="label">{$info['order_pickup']['picked_up_code']}</span></li>
+					{/notempty}
+					
+					{notempty name="$info['order_pickup']['buyer_name']"}
+					<li><span class="label">{:lang('联系人：')}</span><span class="label">{$info['order_pickup']['buyer_name']}</span></li>
+					{/notempty}
+					
+					{notempty name="$info['order_pickup']['buyer_mobile']"}
+					<li><span class="label">{:lang('联系电话：')}</span><span class="label">{$info['order_pickup']['buyer_mobile']}</span></li>
+					{/notempty}
+					{/if}
+				</ul>
+			</div>
+		</div>
+	</section>
+	{eq name="$info['order']['is_virtual']" value="0"}
+	<section class="order-detail-address">
+		<div class="address-out ns-border-color-gray">
+			<div class="address-l order-detail-l">
+				<img class="icon-order-detail" src="WAP_IMG/order/order-icon-address.png">
+			</div>
+			<div class="address-r order-detail-r">
+				<ul class="address-r-ul">
+					{switch name="$info['order']['shipping_type']"}
+						{case value="1|3"}
+						<li class="name">
+							<span class="label ns-text-color-black">{:lang('member_delivery_address')}：</span>
+							<span class="value ns-text-color-black" style="line-height: 150%;">{$info['order']['receiver_name']}，{$info['order']['receiver_mobile']}，{notempty name="$info['order']['fixed_telephone']"}{$info['order']['fixed_telephone']}，{/notempty} {$info['order']['address']}&nbsp;{if condition="$info['order']['receiver_zip']!=''"}&nbsp;，{$info['order']['receiver_zip']}{/if}</span>
+						</li>
+						{/case}
+						{case value="2"}
+						<li class="name">
+							<span class="label ns-text-color-black">{:lang('member_self_addressed_address')}：</span>
+							<span class="value ns-text-color-black">{$info['order']['order_pickup']['name']} {$info['order']['order_pickup']['province_name']}{$info['order']['order_pickup']['city_name']}{$info['order']['order_pickup']['district_name']}{$info['order']['order_pickup']['address']}</span>
+						</li>
+						{/case}
+					{/switch}
+					{if condition="!empty($info['order']['buyer_invoice_info'])"}
+						{if condition="!empty($info['order']['buyer_invoice_info'][0]) && $info['order']['buyer_invoice_info'][0] neq ''"}
+						<li class="name">
+							<span class="labe ns-text-color-blackl">{:lang('member_invoice_header')}：</span>
+							<span class="value ns-text-color-black">{$info['order']['buyer_invoice_info'][0]}</span>
+						</li>
+						{/if}
+						{if condition="!empty($info['order']['buyer_invoice_info'][2]) && $info['order']['buyer_invoice_info'][2] neq ''"}
+						<li class="name">
+							<span class="label ns-text-color-black">{:lang('member_taxpayer_identification_number')}：</span>
+							<span class="value ns-text-color-black">{$info['order']['buyer_invoice_info'][2]}</span>
+						</li>
+						{/if}
+						{if condition="!empty($info['order']['buyer_invoice_info'][1]) && $info['order']['buyer_invoice_info'][1] neq ''"}
+						<li class="name">
+							<span class="label ns-text-color-black">{:lang('member_invoice_content')}：</span>
+							<span class="value ns-text-color-black">{$info['order']['buyer_invoice_info'][1]}</span>
+						</li>
+						{/if}
+					{/if}
+				</ul>
+			</div>
+		</div>
+	</section>
+	{/eq}
+	{if condition="$info['order']['order_status'] == 6"}
+	{php}
+		$pintuan_info = api("NsPintuan.Pintuan.sharePintuan",['goods_id' => $info['order']['order_goods'][0]['goods_id'], 'group_id' => $info['order']['tuangou_group_id']]);
+		$pintuan_info = $pintuan_info['data'];
+	{/php}
+	<section class="order-detail-wating-share">
+		<label>
+			<span class="ns-text-color-black">{:lang('待分享，还差')}{$pintuan_info['tuangou_group_info']['poor_num']}{:lang('人')}，</span>
+			<time class="ns-text-color-black" data-end-time="{$pintuan_info['tuangou_group_info']['end_time']}">{:lang('剩余0天00:00:00')}</time>
+		</label>
+		<ul class="user-list">
+			<?php $is_boos = 0; ?>
+			{foreach name="$pintuan_info['tuangou_group_info']['user_list']" item="vo"}
+			<li>
+				{if condition="$vo.uid == $pintuan_info['tuangou_group_info']['group_uid'] && $is_boos == 0"}
+				<span class="boss ns-bg-color">{:lang('拼主')}</span>
+				<?php $is_boos = 1; ?>
+				{/if}
+				{if condition="$vo.user_headimg"}
+				<img src="{:__IMG($vo.user_headimg)}"/>
+				{else/}
+				<img src="{:__IMG($default_headimg)}"/>
+				{/if}
+			</li>
+			{/foreach}
+			{for start="0" end="$pintuan_info['tuangou_group_info']['poor_num']" step="1"}
+			<li>
+				<img src="WAP_IMG/goods/spelling_who.png"/>
+			</li>
+			{/for}
+		</ul>
+		<button class="btn primary">{:lang('邀请好友')}</button>
+		{if condition="$pintuan_info['tuangou_group_info']['tuangou_type'] = 2"}
+		<p class="spelling-success ns-text-color">{:lang('拼单成功后，')}{$pintuan_info['tuangou_group_info']['group_name']}{:lang('将会获得')}
+			{if condition="$pintuan_info['tuangou_group_info']['goods_tuangou']['colonel_point']>0"}
+			<em>{$pintuan_info['tuangou_group_info']['goods_tuangou']['colonel_point']}</em>{:lang('个积分')}
+			{/if}
+			{if condition="$pintuan_info['tuangou_group_info']['goods_tuangou']['colonel_commission']>0"}
+			<em>{$pintuan_info['tuangou_group_info']['goods_tuangou']['colonel_commission']}</em>元{:lang('余额')}
+			{/if}
+		</p>
+		{/if}
+	</section>
+	{/if}
+	{if $info['order']['shipping_type'] neq 3}
+		{if condition="$info['express_count'] > 0"}
+		<section class="order-detail-remark ns-border-color-gray">
+			<div class="remark-r order-detail-r">
+				<ul class="remark-r-ul">
+					<li class="name">
+						<a href="{:__URL('APP_MAIN/order/logistics?order_id='.$info['order']['order_id'])}">
+							<span class="label ns-text-color">{:lang('goods_total')}{$info['express_count']}{:lang('of_parcels')}</span>
+							<span class="label ns-text-color">{$info['express_name']}</span>
+							{if condition="$info['is_show_express_code']"}
+							<span class="label ns-text-color">{:lang('member_waybill_number')}:{$info['express_code']}</span>
+							{/if}
+							<span class="logistics-icon"><i class="fa fa-angle-right ns-text-color-gray"></i></span>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</section>
+		{/if}
+	{else/}
+		{if $info['order']['shipping_type'] eq 3 && $info['order']['shipping_status'] eq 1}
+		<section class="order-detail-remark ns-border-color-gray">
+			<div class="remark-r order-detail-r distribution-info">
+				<p class="ns-text-color-black">{:lang('配送单号：')}{$info['order']['distribution_info']['express_no']}</p>
+				<p class="ns-text-color-black">{:lang('配送人：')}{$info['order']['distribution_info']['order_delivery_user_name']}</p>
+				<p class="ns-text-color-black">{:lang('配送人手机号：')}{$info['order']['distribution_info']['order_delivery_user_mobile']}</p>
+				<p class="ns-text-color-black">{:lang('备注：')}{$info['order']['distribution_info']['remark']} </p>
+			</div>
+		</section>
+		{/if}
+	{/if}
+	<section class="order-detail-remark ns-border-color-gray">
+		<div class="remark-l order-detail-l">
+			<img class="icon-order-detail" src="WAP_IMG/order/order-icon-msg.png">
+		</div>
+		<div class="remark-r order-detail-r">
+			<ul class="remark-r-ul">
+				<li class="name">
+					<span class="labe ns-text-color-black">{:lang('member_buyer_message')}</span>
+				</li>
+				<li>
+					{if condition="$info['order']['buyer_message'] !=''"}
+					<span class="label ns-text-color-black">{$info['order']['buyer_message']}</span>
+					{else/}
+					<span class="label ns-text-color-black">{:lang('member_no_messages')}</span>
+					{/if}
+				</li>
+			</ul>
+		</div>
+	</section>
+	<div class="list-myorder ns-border-color-gray">
+		<ul class="ul-product">
+			{volist name="$info['order']['order_goods']" id="goodsData"}
+			<li class="ns-border-color-gray" onclick="location.href='{:__URL('APP_MAIN/goods/detail?goods_id='.$goodsData['goods_id'])}'">
+				<span class="pic"><img src="{:__IMG($goodsData['picture_info']['pic_cover_small'])}" /></span>
+				<div class="text">
+					<span class="pro-name">
+						<span class="ns-text-color-black">{$goodsData.goods_name}</span>
+						{if condition = "$goodsData['sku_name'] neq ''"}
+						<span class="ns-text-color-black">{$goodsData.sku_name}</span>
+						{/if}
+					</span>
+					<br/>
+					<div class="pro-pric">
+						<span class="ns-text-color-gray">{:lang('goods_price')}:</span>
+						<span class="ns-text-color-black">{:bl_cf($goodsData.price)}</span>
+						{if $goodsData.gift_flag > 0}
+						<i class="gift-mark">{:lang('赠品')}</i>
+						{/if}
+					</div>
+					<div class="pro-pric">
+						<span class="ns-text-color-gray">{:lang('goods_number')}:</span>
+						<span class="ns-text-color-black">{$goodsData.num}</span>
+					</div>
+					<div class="pro-pric">
+						<span class="ns-text-color-gray">{:lang('adjust_price')}:</span>
+						<span class="ns-text-color-black">{$goodsData.adjust_money}</span>
+					</div>
+				</div>
+			</li>
+			{/volist}
+		</ul>
+		<div class="money-content">
+			<div class="money-row">
+				<div>
+					<span class="ns-text-color-black">{:lang('member_total_commodity_value')}：</span>
+					<span class="price ns-text-color-black">{:bl_cf($info['order']['goods_money'])}</span>
+				</div>
+				<div>
+					<span class="ns-text-color-black">{:lang('goods_freight')}：</span>
+					<span class="price ns-text-color-black">{:bl_cf($info['order']['shipping_money'])}</span>
+				</div>
+				{if condition="$info['order']['user_platform_money']>0"}
+				<div>
+					<span class="ns-text-color-black">{:lang('member_balance_payment')}：</span>
+					<span class="price ns-text-color-black">{:bl_cf($info['order']['user_platform_money'])}</span>
+				</div>
+				{/if}
+				{if condition="$info['order']['coupon_money']>0"}
+				<div>
+					<span class="ns-text-color-black">{:lang('member_coupons')}：</span>
+					<span class="price ns-text-color-black">{:bl_cf($info['order']['coupon_money'])}</span>
+				</div>
+				{/if}
+				{if condition="$info['order']['tax_money']>0"}
+				<div>
+					<span class="ns-text-color-black">{:lang('member_invoice_tax')}：</span>
+					<span class="price ns-text-color-black">{:bl_cf($info['order']['tax_money'])}</span>
+				</div>
+				{/if}
+				{if condition="$info['order']['promotion_money']>0"}
+				<div>
+					<span class="ns-text-color-black">{:lang('member_total_discount')}：</span>
+					<span class="price ns-text-color-black">{:bl_cf($info['order']['promotion_money'])}</span>
+				</div>
+				
+				{/if}
+				{if condition="$info['order']['point']>0"}
+				<div>
+					<span class="ns-text-color-black">{:lang('member_use_integral')}：</span>
+					<span class="price ns-text-color-black">{$info['order']['point']}</span>
+				</div>
+				{/if}
+				<div>
+					<span class="ns-text-color-black">{:lang('member_actual_payment')}：</span>
+					<span class="price"><b class="ns-text-color">{:bl_cf($info['order']['pay_money'])}</b></span>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	{notempty name="$order['virtual_goods_list']"}
+	<!-- 虚拟码 -->
+	<div class="virtual-code">
+		<ul>
+			{foreach name="order.virtual_goods_list" item="vg"}
+			<li><h5 class="ns-text-color-black">{:lang('虚拟码：')}{if $vg.remark neq ''}{$vg.virtual_code}{/if}</h5></li>
+			<li>
+				{if $vg.remark eq ''}
+				<span class="code">{$vg.virtual_code}</span>
+				{if $vg.use_status eq 0}
+				<a href="{:__URL('APP_MAIN/verification/detail','vg_id='.$vg.virtual_goods_id)}"><span class="code-right ns-text-color-black">{:lang('待使用')}</span></a>
+				{elseif condition="$vg.use_status eq 1"/}
+				<a href="{:__URL('APP_MAIN/verification/detail','vg_id='.$vg.virtual_goods_id)}"><span class="code-right ns-text-color-black">{:lang('已使用')}</span></a>
+				{else}
+				<a href="{:__URL('APP_MAIN/verification/detail','vg_id='.$vg.virtual_goods_id)}"><span class="code-right ns-text-color-black">{:lang('已过期')}</span></a>
+				{/if}
+				{else /}
+				<span class="code">{:lang('详&nbsp;&nbsp;&nbsp;情：')}</span>
+				<span class="code value" code-text="{$vg.remark}">********</span>
+				<a href="javascript:;" class="btn-show ns-bg-color">{:lang('显示')}</a>
+				{/if}
+			</li>
+			{/foreach}
+		</ul>
+	</div>
+	<script type="text/javascript">
+		$('.virtual-code .btn-show').click(function(){
+			var code_value_obj = $(this).parents().children('.value');
+			code_value_obj.html(code_value_obj.attr('code-text'));
+			$(this).remove();
+		})
+	</script>
+	{/notempty}
+	
+	{php}
+		$custom_service = api("System.Config.customService");//客服信息
+		$custom_service = $custom_service['data'];
+		$web_site_info = api("System.Config.webSite");//站点信息
+		$web_site_info = $web_site_info['data'];
+		$data["list"] = $list;
+	{/php}
+	<div class="order-tablink ns-border-color-gray">
+		<div class="tablink-box">
+			<div class="tablink">
+				<a href="{$custom_service['value']['service_addr']}" class="ns-border-color-gray"><span class="kefu ns-text-color-black">{:lang('联系客服')}</span></a>
+			</div>
+			<div class="tablink">
+				<a href="tel:{$web_site_info['web_phone']}" class="ns-border-color-gray"><span class="call ns-text-color-black">{:lang('拨打电话')}</span></a>
+			</div>
+		</div>
+	</div>
+</div>
+<input type="hidden" id="ms_time" value="{niu:currenttime/}"/>
+{if count($info['order']['member_operation']) > 0}
+<div style="height: 55px;"></div>
+<div class="order-opcation" style="display:none;">
+	<div class="content">
+		{volist name="$info['order']['member_operation']" id="vo"}
+		<a href="javascript:;" class="btn {$vo.class_name}" onclick="operation('{$vo.no}',{$info['order']['order_id']})">{$vo.name}</a>
+		{/volist}
+	</div>
+</div>
+{/if}
+{else/}
+<script>history.back();</script>
+{/notempty}
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script src="WAP_JS/order.js" type="text/javascript"></script>
+{notempty name="$pintuan_info"}
+<script>
+commonCountDown($(".order-detail-wating-share>label>time").attr("data-end-time"),$(".order-detail-wating-share>label>time"));
+
+//邀请好友
+$(".order-detail-wating-share button").click(function(){
+	location.href = __URL(APPMAIN + "/pintuan/share?goods_id={$pintuan_info['tuangou_group_info']['goods_id']}&group_id={$pintuan_info['tuangou_group_info']['group_id']}");
+});
+
+function commonCountDown(time,obj){
+	if(null != time && "" != time){
+		var sys_second = (time-$("#ms_time").val());///1000;
+		if(sys_second>1){
+			sys_second -= 1;
+			var day = Math.floor((sys_second / 3600) / 24);
+			var hour = Math.floor((sys_second / 3600) % 24);
+			var minute = Math.floor((sys_second / 60) % 60);
+			var second = Math.floor(sys_second % 60);
+			var s_hour = hour<10?"0"+hour:hour;
+			var s_minute = minute<10?"0"+minute:minute;
+			var s_second = second<10?"0"+second:second;
+			var s_day = day > 0 ? day + "{:lang('天')}" : "";
+			var str = s_day + s_hour + ":" + s_minute + ":" + s_second;
+			obj.text("{:lang('剩余:')}" + str);
+		}else{
+			obj.text("{:lang('拼单已结束')}");
+		}
+		var timer = setInterval(function(){
+			if (sys_second > 1) {
+				sys_second -= 1;
+				var day = Math.floor((sys_second / 3600) / 24);
+				var hour = Math.floor((sys_second / 3600) % 24);
+				var minute = Math.floor((sys_second / 60) % 60);
+				var second = Math.floor(sys_second % 60);
+				var s_hour = hour<10?"0"+hour:hour;
+				var s_minute = minute<10?"0"+minute:minute;
+				var s_second = second<10?"0"+second:second;
+				var s_day = day > 0 ? day + "{:lang('天')}" : "";
+				var str = s_day + s_hour + ":" + s_minute + ":" + s_second;
+				obj.text("{:lang('剩余:')}" + str);
+			} else {
+				obj.text("{:lang('拼单已结束')}");
+				clearInterval(timer);
+			}
+		}, 1000);
+	}
+}
+</script>
+{/notempty}
+{/block}

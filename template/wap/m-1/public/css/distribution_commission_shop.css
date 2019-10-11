@@ -1,0 +1,23 @@
+@CHARSET "UTF-8";
+.distribution-commission-shop{border: 0; padding: 20px 15px 5px 15px; overflow: hidden;margin-top: 0;}
+.distribution-commission-shop .commission-cash{display: block; font-size: 40px; color: #fff; }
+.distribution-commission-shop .field-2{margin: 10px 0 15px 0;color: #fff;width: 33.33%;text-align: center; padding-top: 10px;}
+.distribution-commission-shop p.tip-txt{margin-bottom: 0; font-size: 16px; color: #fff; line-height: 25px;}
+.btn.primary{border-radius: 5px;height: 40px; line-height: 40px;width: 100%;}
+.money-list{margin: 0 0 0 15px;}
+.money-list li{position: relative; padding: 10px 0 10px 15px; background: #fff; border-bottom: 1px solid;}
+.money-list li:first-child{border-top: 0;}
+.money-list li a{position: relative; display: block;font-size: 12px;}
+.money-list li .text{vertical-align: middle}
+.money-list li p{font-size: 12px; position: relative; display: block; margin-bottom: 0;}
+.money-list li .money-number{float: right; margin: 0 30px 0 0; padding: 0 5px; border-radius: 10px; height: 20px; line-height: 20px; font-size: 14px; vertical-align: middle;}
+.distributors,.shareholders{background: #fff;}
+.shareholders .title,.distributors .title{ padding: 3px; line-height: 20px;}
+.shareholders>p,.distributors>p{padding: 8px; margin-bottom: 0; border-bottom: 1px solid;}
+.tip-head{width: 56%; margin: auto; text-align: center;}
+.tip-bottom{border-top: 1px solid #fff; margin-top: 10px;}
+.blank{height: 10px;}
+.btn-wrap{padding: 20px 15px; margin-top: 0;}
+.fa-angle-right{font-size: 16px;position: absolute;right: 10px;top: 50%;margin-top: -7px;}
+.distributors>p i{margin-right: 3px; display: inline-block; width: 22px; height: 22px; background: url(../img/distribution/member_index_ico.png) no-repeat  -6px -72px; float: left; margin-top: 2px;}
+.shareholders>p i{margin-right: 3px; display: inline-block; width: 25px; height: 25px; background: url(../img/distribution/distribution_center_ico.png) no-repeat -9px -37px; float: left;}

@@ -1,0 +1,85 @@
+{extend name="$base" /}
+{block name="resources"}{/block}
+{block name="main"}
+<div class="mod-table">
+	<div class="mod-table-head">
+		
+		<div class="con style0list">
+
+			<table class="table-class">
+				<colgroup>
+					<col style="width: 2%;">
+					<col style="width: 16%;">
+					<col style="width: 17%;">
+					<col style="width: 16%;">
+					<col style="width: 17%;">
+					<col style="width: 16%;">
+					<col style="width: 10%;">
+				</colgroup>
+				<thead>
+					<tr align="center">
+						<th><i class="checkbox-common"><input type="checkbox" ></i></th>
+						<th align="left">粉丝昵称</th>
+						<th align="left">留言内容</th>
+						<th>留言时间</th>
+						<th align="left">回复内容</th>
+						<th>回复时间</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody id="productTbody">
+					
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script>
+$(function(){
+	LoadingInfo(1);
+});
+
+function LoadingInfo(page_index) {
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/wchat/fansMessageManage')}",
+		data : { "page_index" : page_index, "page_size" : $("#showNumber").val() },
+		success : function(data) {
+			if (data["data"].length > 0) {
+				$(".table-class tbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					var msg = data["data"][i];
+					html += '<tr align="center">';
+						html += '<td><i class="checkbox-common"><input name="sub" type="checkbox" value="'+ msg['msg_id'] +'"></i></td>';
+						if(msg['headimgurl']){
+							var headimgurl = __IMG(msg['headimgurl']);
+						}else{
+							var headimgurl = "__STATIC__/images/default_user_portrait.gif";
+						}
+						html += '<td align="left"><img src="'+ headimgurl +'" class="head-portrait" />\n'+ msg['nickname'] +'</td>';
+						html += '<td align="left">'+ msg['content'] +'</td>';
+						html += '<td >'+ timeStampTurnTime(msg['create_time']) +'</td>';
+						html += '<td align="left">回复内容回复内容</td>';
+						html += '<td >2018-04-02 12:02:02</td>';
+						html += '<td>';
+							//html += '<a>查看</a>';
+							//html += '<a>回复</a>';
+							//html += '<a>删除</a>';
+						html += '</td>';
+					html += '</tr>';
+					$(".table-class tbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="8">暂无公告信息</td></tr>';
+				$(".table-class tbody").html(html);
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+</script>
+{/block}

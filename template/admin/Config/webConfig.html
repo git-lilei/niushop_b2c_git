@@ -1,0 +1,234 @@
+{extend name="admin/base" /}
+{block name="resources"}
+<style>
+.ns-main{margin-top:0;}
+</style>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<h4><span></span>网站基础设置</h4>
+	<dl>
+		<dt>网站名称：</dt>
+		<dd>
+			<input id="title" type="text" value="{$website.title}" class="input-common" />
+		</dd>
+	</dl>
+	<dl>
+		<dt>官方网址：</dt>
+		<dd>
+			<input id="web_url" type="text" value="{$website.web_url}" class="input-common" />
+		</dd>
+	</dl>
+	<dl>
+		<dt>网站logo (长方形)：</dt>
+		<dd>
+			<div class="upload-btn-common">
+				<div>
+					<input class="input-file" name="file_upload" id="uploadImg" type="file" onchange="imgUpload(this, 'logo');" title="上传">
+					<input type="hidden" id="logo" value="{if condition="$website.logo"}{$website.logo}{/if}" />
+				</div>
+				<input type="text" id="text_logo" class="input-common" readonly="readonly" value="{if condition="$website.logo"}{$website.logo}{/if}" />
+				<em>上传</em>
+				
+				<img id="preview_logo" src="__STATIC__/blue/img/upload-common-select.png" {if condition="$website.logo"}data-src="{:__IMG($website.logo)}"{/if} data-html="true" data-container="body" data-placement="top" data-trigger="manual"/>
+
+			</div>
+			<p class="hint">
+				<span>网站的长方形logo.  建议使用<i class="important-note">宽280</i>像素-<i class="important-note">高50</i>像素内的<i class="important-note">GIF</i>或<i class="important-note">PNG</i>透明图片</span>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>网站logo (正方形)：</dt>
+		<dd>
+			
+			<div class="upload-btn-common">
+				<div>
+					<input class="input-file" name="file_upload" id="uploadImgwechat_share_logo" type="file" onchange="imgUpload(this, 'wechat_share_logo');" title="上传">
+					<input type="hidden" id="wechat_share_logo" value="{if condition="$website.web_wechat_share_logo"}{$website.web_wechat_share_logo}{/if}" />
+				</div>
+				<input type="text" id="text_wechat_share_logo" class="input-common" readonly="readonly" value="{if condition="$website.web_wechat_share_logo"}{$website.web_wechat_share_logo}{/if}" />
+				<em>上传</em>
+				
+				<img id="preview_wechat_share_logo" src="__STATIC__/blue/img/upload-common-select.png" {if condition="$website.web_wechat_share_logo"}data-src="{:__IMG($website.web_wechat_share_logo)}"{/if} data-html="true" data-container="body" data-placement="top" data-trigger="manual"/>
+
+			</div>
+			<p class="hint">
+				<span>网站的正方形logo. 建议使用<i class="important-note">宽80</i>像素-<i class="important-note">高80</i>像素内的正方形图片</span>
+			</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>网站公众号二维码：</dt>
+		<dd>
+			
+			<div class="upload-btn-common">
+				<div>
+					<input class="input-file" name="file_upload" id="uploadImgweb_qrcode" type="file" onchange="imgUpload(this, 'web_qrcode');" title="上传">
+					<input type="hidden" id="web_qrcode" value="{if condition="$website.web_qrcode"}{$website.web_qrcode}{/if}" />
+				</div>
+				<input type="text" id="text_web_qrcode" class="input-common" readonly="readonly" value="{if condition="$website.web_qrcode"}{$website.web_qrcode}{/if}" />
+				<em>上传</em>
+				
+				<img id="preview_web_qrcode" src="__STATIC__/blue/img/upload-common-select.png" {if condition="$website.web_qrcode"}data-src="{:__IMG($website.web_qrcode)}"{/if} data-html="true" data-container="body" data-placement="top" data-trigger="manual"/>
+
+			</div>
+			
+			<p class="hint">
+				<span>网站绑定的微信公众号的二维码.建议使用<i class="important-note">宽100</i>像素-<i class="important-note">高100</i>像素内的<i class="important-note">GIF</i>或<i class="important-note">PNG</i>透明图片</span>
+			</p>
+			
+		</dd>
+	</dl>
+	<h4><span></span>网站联系设置</h4>
+	<dl>
+		<dt>电话/手机：</dt>
+		<dd>
+			<p>
+				<input id="web_phone" type="text" value="{$website.web_phone}" class="input-common" />
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>邮箱：</dt>
+		<dd>
+			<p>
+				<input id="web_email" type="text" value="{$website.web_email}" class="input-common" />
+			</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>QQ号：</dt>
+		<dd>
+			<p>
+				<input id="web_qq" type="text" value="{$website.web_qq}" class="input-common" />
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>微信号：</dt>
+		<dd>
+			<p>
+				<input id="web_weixin" type="text" value="{$website.web_weixin}" class="input-common" />
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>联系地址：</dt>
+		<dd>
+			<input id="web_address" type="text" value="{$website.web_address}" class="input-common long" />
+		</dd>
+	</dl>
+	<h4><span></span>备案与统计设置</h4>
+	<dl>
+		<dt>网站ICP备案号：</dt>
+		<dd>
+			<p>
+				<input id="web_icp" type="text" value="{$website.web_icp}" class="input-common" />
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>网站公安备案：</dt>
+		<dd>
+			<p>
+				<input id="web_gov_record" type="text" value="{$website.web_gov_record}" class="input-common" maxlength="30"/>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>网站公安备案链接：</dt>
+		<dd>
+			<p>
+				<input id="web_gov_record_url" type="text" value="{$website.web_gov_record_url}" class="input-common" maxlength="200"/>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>商城第三方统计代码：</dt>
+		<dd>
+			<textarea name="store_zy" rows="2" id="third_count" class="textarea-common">{$website.third_count}</textarea>
+			<p class="hint">第三方统计的脚本代码</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="setConfigAjax();">保存</button></dd>
+	</dl>
+</div>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script>
+//图片上传
+function imgUpload(event, id) {
+	var fileid = $(event).attr("id");
+	var data = { 'file_path' : "config" };
+	uploadFile({
+		url: __URL(ADMINMAIN + '/config/uploadimage'),
+		fileId: fileid,
+		data : data,
+		callBack: function (res) {
+			if(res.code){
+				$("#" + id).val(res.data.path);
+				$("#text_" + id).val(res.data.path);
+				$("#preview_"+ id).attr("data-src",__IMG(res.data.path));
+				showTip(res.message,"success");
+			}else{
+				showTip(res.message,"error");
+			}
+		}
+	});
+}
+
+function setConfigAjax() {
+	var title = $("#title").val();
+	var web_url = $("#web_url").val();
+	var web_popup_title = $("#web_popup_title").val();
+	var Logo = $("#logo").val();
+	var web_wechat_share_logo = $("#wechat_share_logo").val();//网站微信分享logo
+	var web_qrcode = $("#web_qrcode").val();
+	var web_phone = $("#web_phone").val();
+	var web_email = $("#web_email").val();
+	var web_qq = $("#web_qq").val();
+	var web_weixin = $("#web_weixin").val();
+	var web_address = $("#web_address").val();
+	var web_icp = $("#web_icp").val();
+	var third_count = $("#third_count").val();
+	var web_gov_record = $("#web_gov_record").val();
+	var web_gov_record_url = $("#web_gov_record_url").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/config/webconfig')}",
+		data : {
+			'title' : title,
+			'web_url' : web_url,
+			'web_address' : web_address,
+			'logo' : Logo,
+			'web_qrcode' : web_qrcode,
+			'web_phone' : web_phone,
+			'web_email' : web_email,
+			'web_qq' : web_qq,
+			'web_weixin' : web_weixin,
+			'web_icp' : web_icp,
+// 			'web_style_pc' : web_style_pc,
+			'third_count' : third_count,
+			'web_popup_title' : web_popup_title,
+			'web_wechat_share_logo' : web_wechat_share_logo,
+			'web_gov_record' : web_gov_record,
+			'web_gov_record_url' : web_gov_record_url
+		},
+		success : function(data) {
+			if (data["code"] > 0) {
+				showTip(data["message"],"success");
+				setTimeout(function(){window.location.href = "{:__URL('ADMIN_MAIN/config/webconfig')}"},2000);
+			} else {
+				showTip(res.message,"error");
+			}
+		}
+	});
+}
+</script>
+{/block}

@@ -1,0 +1,61 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" href="WAP_CSS/pintuan_share.css">
+{/block}
+{block name="head"}{/block}
+{block name="main"}
+{php}
+	$goods_id = request()->get("goods_id", "");
+	$group_id = request()->get("group_id", "");
+	$info = api("NsPintuan.Pintuan.sharePintuan",['goods_id' => $goods_id, 'group_id' => $group_id]);
+	$info = $info['data'];
+{/php}
+<section class="order-detail-wating-share">
+	<time class="ns-bg-color-gray" data-end-time="{$info['tuangou_group_info']['end_time']}">00:00:00</time><br>
+	<label>
+		<span>还差<b>{$info['tuangou_group_info']['poor_num']}</b>人，满足拼团人数才算成功</span>
+	</label>
+	<button id="invite_friends" class="ns-bg-color ns-border-color">邀请好友</button>
+	<a href="{:__URL('APP_MAIN/goods/detail?goods_id='.$info['tuangou_group_info']['goods_id'].'&group_id='.$info['tuangou_group_info']["group_id"])}"><button class="ns-text-color">一键参团</button></a>
+</section>
+<section class="group-detail">
+	<div class="list-item ns-border-color-gray">
+		<ul class="user-list">
+			<?php $is_boos = 0; ?>
+			{foreach name="$info['tuangou_group_info']['user_list']" item="vo"}
+			<li>
+				{if condition="$vo.uid == $info['tuangou_group_info']['group_uid'] && $is_boos == 0"}
+				<span class="boss ns-bg-color">拼主</span>
+				<?php $is_boos = 1; ?>
+				{/if}
+				{if condition="$vo.user_headimg"}
+				<img src="{:__IMG($vo.user_headimg)}"/>
+				{else/}
+				<img src="{:__IMG($default_headimg)}"/>
+				{/if}
+			</li>
+			{/foreach}
+			{for start="0" end="$info['tuangou_group_info']['poor_num']" step="1"}
+			<li>
+				<img src="WAP_IMG/goods/spelling_who.png"/>
+			</li>
+			{/for}
+		</ul>
+	</div>
+	<div class="goods-info">
+		<span class="item-title">商品名称</span>
+		<a href="{:__URL('APP_MAIN/goods/detail','goods_id='.$info['tuangou_group_info']["goods_id"])}"><span class="goods-name ns-text-color-gray">{$info['tuangou_group_info']['goods_name']}</span></a>
+	</div>
+</section>
+<div class="mask-layer-bg"></div>
+<div class="mask-layer-invite-friends">
+	<div><img src="WAP_IMG/goods/invite_friends_share.png"/></div>
+	<h4>还差<strong class="ns-text-color">{$info['tuangou_group_info']['tuangou_num']-$info['tuangou_group_info']['real_num']}</strong>人，点击右上角发送给好友</h4>
+</div>
+<input type="hidden" id="ms_time" value="{niu:currenttime/}"/>
+<input type="hidden" id="goods_id" value="{$goods_id}"/>
+{/block}
+{block name="bottom"}{/block}
+{block name="script"}
+<script src="WAP_JS/pintuan_share.js"></script>
+{/block}

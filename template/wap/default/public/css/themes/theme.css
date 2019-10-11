@@ -1,0 +1,175 @@
+body {
+  color: #333;
+}
+.ns-bg-color {
+  background-color: #FF0036 !important;
+}
+.ns-bg-color-fadeout-80 {
+  background-color: rgba(255, 0, 54, 0.2) !important;
+}
+.ns-bg-color-lighten-20 {
+  background-color: #ff6686 !important;
+}
+.ns-bg-color:hover,
+.ns-bg-color:focus,
+.ns-bg-color:active,
+.ns-bg-color:hover,
+.ns-bg-color:focus,
+.ns-bg-color-hover:hover,
+.ns-bg-color-hover.selected {
+  background-color: #e60031 !important;
+}
+.ns-bg-color-hover:hover > a:hover {
+  color: #fff !important;
+}
+.ns-bg-color-gray {
+  background-color: #e5e5e5 !important;
+}
+.ns-bg-color-gray-fadeout-60 {
+  background-color: rgba(229, 229, 229, 0.4) !important;
+}
+.ns-bg-color-gray-fadeout-80 {
+  background-color: rgba(229, 229, 229, 0.2) !important;
+}
+.ns-bg-color-gray-shade-20 {
+  background-color: #b7b7b7 !important;
+}
+.ns-bg-color-gray-shade-50 {
+  background-color: #737373 !important;
+}
+.primary.disabled {
+  background-color: #a0a0a0 !important;
+  border-color: #a0a0a0 !important;
+}
+.ns-black-color-black {
+  background-color: #333 !important;
+}
+.ns-text-color {
+  color: #FF0036 !important;
+}
+.ns-text-color-gray {
+  color: #898989 !important;
+}
+.ns-text-color-black {
+  color: #333 !important;
+}
+.ns-text-color-hover.selected,
+.ns-text-color-hover:hover {
+  color: #FF0036 !important;
+}
+.ns-border-color,
+.ns-border-color-hover:hover,
+.ns-border-color-hover.selected {
+  border-color: #FF0036 !important;
+}
+.ns-border-color-fadeout-80 {
+  border-color: rgba(255, 0, 54, 0.2) !important;
+}
+.ns-border-color-gray {
+  border-color: #e5e5e5 !important;
+}
+.ns-border-color-gray-shade-10 {
+  border-color: #cecece !important;
+}
+.ns-border-color-gray-shade-20 {
+  border-color: #b7b7b7 !important;
+}
+.ns-border-color-gray-fadeout-50 {
+  border-color: rgba(229, 229, 229, 0.5) !important;
+}
+.primary {
+  background-color: #FF0036 !important;
+  border-color: #FF0036 !important;
+}
+.primary:hover,
+.primary:focus,
+.primary:active,
+.primary.active {
+  background-color: #e60031 !important;
+  border-color: #e60031 !important;
+  color: #fff !important;
+}
+.checkbox > input:checked + label:before,
+.checkbox > input:checked + label:after {
+  background-color: #FF0036 !important;
+}
+.radio > input:checked + label:before {
+  border-color: #FF0036 !important;
+}
+.radio > input:checked + label:after {
+  background-color: #FF0036 !important;
+}
+.product .swiper-pagination-bullet-active {
+  background: #FF0036 !important;
+}
+.product-coupon-popup-layer .coupon-body .item {
+  background-color: rgba(255, 0, 54, 0.05) !important;
+  color: rgba(255, 0, 54, 0.7) !important;
+}
+.product-coupon-popup-layer .item .tax-split {
+  border-color: #ff0036 !important;
+}
+.product-coupon-popup-layer .item.receive {
+  color: #fff !important;
+  background: #b7b7b7 !important;
+}
+.product-coupon-popup-layer .item.receive .tax-split {
+  border-color: #e5e5e5 !important;
+}
+.product-evaluation-main .product-evaluation-ul li {
+  background-color: rgba(255, 0, 54, 0.05) !important;
+}
+.product-evaluation-main .product-evaluation-ul li,
+.product-evaluation-main .review-content ul.filter li {
+  color: #5c5c5c !important;
+}
+.product-evaluation-main .review-content ul.filter li.tag-product {
+  background-color: rgba(255, 0, 54, 0.05) !important;
+}
+.product-evaluation-main .review-content ul.filter li.ns-bg-color {
+  color: #fff !important;
+  background-color: #FF0036 !important;
+}
+.product-bottom-bar .bottom-btn .right-operation a.add-to-cart {
+  background: #ff9800 !important;
+}
+.product-bottom-bar .bottom-btn .right-operation a.buy-now {
+  background: #FF0036 !important;
+}
+.product-bottom-bar .sku-list-wrap .items .selected {
+  border-color: #FF0036 !important;
+  color: #FF0036 !important;
+  background-color: rgba(255, 0, 54, 0.05) !important;
+}
+.product-bottom-bar .sku-list-wrap .items .disabled {
+  color: #898989 !important;
+}
+.switch-checkbox:checked ~ .switch-label {
+  background: #FF0036 !important;
+}
+.member-balance .account-box {
+  background: linear-gradient(#FF0036, rgba(255, 0, 54, 0.7)) !important;
+}
+.signin-top {
+  background: linear-gradient(#FF0036, rgba(255, 0, 54, 0.7)) !important;
+}
+.member-info .member-level {
+  color: #fbf511 !important;
+  border-color: #fbf511 !important;
+}
+.member-point .account-box {
+  background: linear-gradient(#FF0036, rgba(255, 0, 54, 0.7)) !important;
+}
+.verification-detail .goods-info-wrap {
+  background: linear-gradient(#FF0036, rgba(255, 0, 54, 0.7)) !important;
+}
+.distribution-index {
+  background: radial-gradient(#FF0036, rgba(255, 0, 54, 0.8)) !important;
+}
+.distribution-commission-shop {
+  background: linear-gradient(#FF0036, rgba(255, 0, 54, 0.8)) !important;
+}
+.goods-bargain-launch {
+  background: radial-gradient(#FF0036, rgba(255, 0, 54, 0.7)) !important;
+}
+/*# sourceMappingURL=theme.css.map */

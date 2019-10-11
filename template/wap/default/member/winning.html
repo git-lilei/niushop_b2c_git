@@ -1,0 +1,41 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/member_winning.css">
+{/block}
+{block name="main"}
+<div class="container">
+	{php}
+		$myWinningRecord = api('System.Member.winningRecordQuery');
+		$gamesWinningRecordsList = $myWinningRecord['data'];
+	{/php}
+	<img src="	WAP_IMG/member/winning_record.png" class="winning-record-img">
+	{if count($gamesWinningRecordsList["data"]) > 0}
+	<ul class="winning-record-list">
+		{foreach name="$gamesWinningRecordsList['data']" item="vo"}
+		<li class="ns-border-color-gray">
+			<div class="winning-info">
+				<p class="promotion-name">【{$vo.name}】</p>
+				{switch name="$vo['type']"} 
+					{case value="1"} <p class="winning-content integral"> {/case}
+					{case value="2"} <p class="winning-content coupon"> {/case}
+					{case value="3"} <p class="winning-content hongbao"> {/case}
+					{case value="4"} <p class="winning-content gift"> {/case}
+				{/switch}
+				{$vo.remark|strstr="】"|mb_substr="1",mb_strlen($vo['remark']),"utf-8"}</p>
+				<p class="the-winning-time ns-text-color-gray">{$vo.add_time|date="Y-m-d H:i:s",###}</p>
+			</div>
+			{if $vo['is_use'] == 0 && $vo['type'] == 4}
+			<div class="receive ns-text-color">
+				<a href="{:__URL('APP_MAIN/member/receiveprize?gift_id='.$vo['gift_id'].'&record_id='.$vo['associated_gift_record_id'])}">领取</a>
+			</div>
+			{/if}
+		</li>
+		{/foreach}
+	</ul>
+	{else /}
+		<p class="record-empty">暂无中奖记录！</p>
+	{/if}
+</div>
+{/block}
+{block name="footer"}{/block}
+{block name="script"}{/block}

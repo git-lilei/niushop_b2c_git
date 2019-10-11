@@ -1,0 +1,48 @@
+.member-index .mt{padding: 0 20px; height: 55px; line-height: 55px; border-bottom: 1px solid;}
+.member-index .mt h3{font-size: 16px; float: left; font-weight: normal; line-height: 55px;}
+.member-index .mt .more{position: relative; float: right;font-size: 12px;}
+.member-index .iconfont{font-size: 48px;display: block;height: 48px;line-height: 48px;margin-bottom: 5px;}
+.member-index .iconfont.icon-all-order{font-size: 40px;}
+
+.member-index .box-0{padding: 20px 0;}
+.member-index .box-0 .ns-user{float: left; margin-bottom: 0; width: 250px; height: 243px; -webkit-box-shadow: 2px 2px 10px rgba(0, 0, 0, .3); box-shadow: 2px 2px 10px rgba(0, 0, 0, .3);}
+.member-index .box-0 .ns-user .avatar{display: block; margin: 0 auto 15px; border-radius: 50%; width: 64px; height: 64px;line-height: 59px; border: 2px solid #fff;overflow: hidden;text-align: center;}
+.member-index .box-0 .ns-user .avatar img{display: inline-block; max-height: 100%;}
+.member-index .box-0 .ns-user .nick-name{font-size: 18px; font-weight: bold; color: #fff; cursor: pointer; margin-bottom: 15px; display: block; padding: 0 10px; overflow: hidden; text-overflow: ellipsis;}
+.member-index .box-0 .ns-user .level-name{margin-bottom: 10px;}
+.member-index .box-0 .ns-user .level-name span{background: #fff; padding: 5px 10px;}
+.member-index .box-0 .ns-user > div:first-child{padding-top: 20px; position: relative; height: 187px; text-align: center;}
+.member-index .box-0 .ns-user > div:last-child{padding: 10px 20px; height: 56px;}
+.member-index .box-0 .m-wallet{margin: 9px 0 9px 250px;background-color: #fff;}
+.member-index .box-0 .m-wallet ul{display: -ms-flexbox; display: flex; -ms-flex-pack: justify; justify-content: space-around; padding: 20px; height: 169px;}
+.member-index .box-0 .m-wallet .num{padding-top: 10px; height: 40px; line-height: 40px; font-size: 22px; font-weight: 700;margin-bottom: 10px;}
+.member-index .box-0 .m-wallet .name{height: 20px; line-height: 20px; overflow: hidden;}
+.member-index .box-0 .m-wallet .operate{line-height: 80px; height: 60px;}
+
+.member-index .box-1{float: left; width: 694px; margin-bottom: 20px; background-color: #fff;}
+.member-index .box-1 .nav{padding: 15px 20px;}
+.member-index .box-1 .empty{padding: 30px 0 50px;text-align: center;}
+.member-index .box-1 .nav a{float: left; -webkit-box-sizing: border-box; box-sizing: border-box; padding: 12px 0 0; margin: 0 19px; height: 95px; text-align: center; -webkit-transition: all .4s ease; -o-transition: all .4s ease; transition: all .4s ease; width: 100px; position: relative;}
+.member-index .box-1 .nav a:hover{border-radius: 5px; -webkit-box-shadow: 0 0 16px 0 rgba(0, 0, 0, .1); box-shadow: 0 0 16px 0 rgba(0, 0, 0, .1);}
+.member-index .box-1 .nav a:first-child{margin-left: 0;}
+.member-index .box-1 .nav a:last-child{margin-right: 0;}
+.member-index .box-1 .icon-cart{width: 70px; height: 50px;display: inline-block; margin-right: 15px; margin-bottom: 0;}
+.member-index .box-1 .order-num{position: absolute; display: inline-block; height: 15px; line-height: 15px; top: 11px; padding: 0 4px; border-radius: 15px; color: #fff; font-size: 10px; margin: 0 0 0 2px; right: 18px;}
+.member-index .box-1 .order-item{padding: 10px 20px; border-top: 1px solid #f0f3ef;overflow: hidden;}
+.member-index .box-1 .order-item .order-img{width: 60px; height: 60px; float: left;}
+.member-index .box-1 .order-item .col-lg-4{padding: 0; text-align: right;}
+.member-index .box-1 .order-goods-item{margin-bottom: 10px;overflow: hidden;}
+.member-index .box-1 .order-goods-name{overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; float: left; width: 64%; margin-top: 3px; text-align: left; margin-left: 15px;cursor: pointer;}
+
+.member-index .box-2, .member-index .box-3{margin-left: 714px; width: 247px;}
+.member-index .m-follow{margin-bottom: 20px; background-color: #fff;}
+.member-index .m-follow ul{display: flex; justify-content: space-between; padding: 20px; height: 100px;}
+.member-index .m-follow ul li{height: 50px; line-height: 30px; font-size: 16px; width: 50%; text-align: center;}
+.member-index .m-follow ul li a{display: block;}
+.member-index .m-follow ul li a .text{font-size: 12px;}
+
+.member-index .box-3 .carousel{padding: 15px;}
+.member-index .box-3 .empty{padding: 15px; text-align: center;}
+.member-index .box-3 .product-item{width: 50px; height: 50px; line-height: 50px;display: inline-block; text-align: center;}
+.member-index .box-3 .product-item:last-child{margin-right: 0;}
+.member-index .box-3 .product-item img{max-width: 100%; max-height: 100%; height: auto;}

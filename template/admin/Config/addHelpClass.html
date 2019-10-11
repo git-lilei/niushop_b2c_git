@@ -1,0 +1,47 @@
+{extend name="$base" /}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt><span style="color:red;margin-right:10px;">*</span>类型名称：</dt>
+		<dd>
+			<input id="class_name" type="text" class="input-common" />
+		</dd>
+	</dl>
+	<dl>
+		<dt>排序：</dt>
+		<dd>
+			<input id="sort" type="number" value="0" onkeyup="this.value=this.value.replace(/\D/g,'')" class="input-common harf" />
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="setConfigAjax();">保存</button>
+			<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);" >返回</button>
+		</dd>
+	</dl>
+</div>
+<script>
+function setConfigAjax(){
+	var class_name = $("#class_name").val();
+	var sort = $("#sort").val();
+	if(class_name == ""){
+		showTip("请输入类型名称",'warning');
+		return;
+	}
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/config/addhelpclass')}",
+		data:{ 'class_name':class_name, 'sort':sort },
+		success:function (data) {
+			if (data["code"] > 0) {
+				showTip(data["message"],'success');
+				location.href = "{:__URL('ADMIN_MAIN/config/helpclass')}";
+			}else{
+				showTip(data["message"],'error');
+			}
+		}
+	});
+}
+</script>
+{/block}

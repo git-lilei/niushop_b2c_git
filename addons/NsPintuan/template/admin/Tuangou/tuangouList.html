@@ -1,0 +1,570 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/product.css">
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+<style type="text/css">
+.fun-a {margin-top: 0;padding: 6px 15px 0 15px;}
+.a-pro-view-img {float: left;}
+.thumbnail-img {width: 60px;margin-right: 10px;}
+.cell i {display: block;}
+.remodal-bg.with-red-theme.remodal-is-opening,.remodal-bg.with-red-theme.remodal-is-opened {filter: none;}
+.remodal-overlay.with-red-theme {background-color: #f44336;}
+.remodal.with-red-theme {background: #fff;}
+input[type="radio"], input[type="checkbox"] {margin: -1px 5px 0 0;}
+.edit-group{border-bottom: 1px solid #ebebeb;margin-bottom:10px;}
+.edit-group label{font-weight:normal;}
+.edit-group-title{height:15px;line-height:15px;width:140px;margin-top:3px;margin-bottom:3px;}
+.edit-group-button{border: 1px solid #3283fa;height: 26px;line-height: 24px;padding: 0 5px;}
+.group-button-bg{background: #3283fa;color: #fff;}
+.div-pro-view-name{width:75%;}
+i.hot,i.recommend,i.new{font-size:12px;margin-right:10px;font-style:normal;color:#fff;background-color:#E84C3D;border-radius:2px;padding:1px 2px;}
+.table-main label {margin: 8px 0 0 0;}
+.table-class tr:NTH-CHILD(even) {background: #fff;}
+.a-pro-view-img {float: left;}
+.thumbnail-img {width: 60px;margin-right: 10px;}
+.cell i {display: block;}
+.remodal-bg.with-red-theme.remodal-is-opening,.remodal-bg.with-red-theme.remodal-is-opened {filter: none;}
+.remodal-overlay.with-red-theme {background-color: #f44336;}
+.remodal.with-red-theme {background: #fff;}
+input[type="radio"], input[type="checkbox"] {margin: -1px 5px 0;margin-left:0px;}
+.edit-group{border-bottom: 1px solid #ebebeb;margin-bottom:10px;}
+.edit-group label{font-weight:normal;}
+.edit-group-title{height:15px;line-height:15px;width:140px;margin-top:3px;margin-bottom:3px;color:#126AE4;}
+.edit-group-button{border: 1px solid #3283fa;height: 26px;line-height: 24px;padding: 0 5px;}
+.group-button-bg{background: #3283fa;color: #fff;}
+.div-pro-view-name {width: 100%;min-height: 60px;}
+i.hot,i.recommend,i.new{font-size:12px;margin-right:5px;font-style:normal;color:#fff;background-color:#E84C3D;border-radius:2px;padding:1px 2px;position: relative;top:-5px;}
+.icon-qrcode:before {content: "\f029";}
+[class^="icon-"]:before, [class*=" icon-"]:before {text-decoration: inherit;display: inline-block;speak: none;}
+[class^="icon-"], [class*=" icon-"] {font-family: FontAwesome;font-weight: normal;font-style: normal;text-decoration: inherit;-webkit-font-smoothing: antialiased;}
+.goodsCategory{width: 159px;height: 300px;border: 1px solid #CCCCCC;position: absolute;z-index: 100;background: #fff;right: 0;display: none;overflow-y: auto;top: 31px;}
+.goodsCategory::-webkit-scrollbar{width: 3px;} 
+.goodsCategory::-webkit-scrollbar-track{-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);border-radius: 10px;background-color: #fff;}
+.goodsCategory::-webkit-scrollbar-thumb{height: 20px;border-radius: 10px;-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);background-color: #ccc;}
+.goodsCategory ul{height: 280px;margin-top: -2px;margin-left: 0;}
+.goodsCategory ul li{text-align: left;padding:0 15px;line-height: 30px;}
+.goodsCategory ul li i{float: right;line-height: 30px;}
+.goodsCategory ul li:hover{cursor: pointer;}
+.goodsCategory ul li:hover,.goodsCategory ul li.selected{background: #0059d6;color: #fff;}
+.two{left: 160px;border-left:0;}
+.three{left: 320px;width: 159px;border-left:0;}
+.selectGoodsCategory{width: 218px;height: 45px;border:1px solid #CCCCCC;position: absolute;z-index: 100;left: 0;margin-top: 299px;border-collapse: collapse;background: #fff;display: none;}
+.selectGoodsCategory a{display: block;height: 30px;width: 100px;text-align: center;color: #fff;line-height: 30px;margin:8px;background: #126AE4;text-decoration:none;}
+input[type=number] {-moz-appearance:textfield;}
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {-webkit-appearance: none;margin: 0;}
+input, textarea, .uneditable-input {width: 147px;}
+.table th{font-weight: normal;}
+.table th, .table td {vertical-align: middle;}
+.recommendBox{width: 360px;display: inline-block;float: right;}
+.introduction_box{width: 360px;display: inline-block;float: right;}
+.tab-content{overflow: visible;}
+.editGoodsIntroduction{display: inline-block;border:1px dashed #fff;padding: 0 5px;width: 350px;line-height: 25px;max-height: 60px;overflow: hidden;text-overflow: ellipsis;height: 25px;}
+.editGoodsIntroduction:hover{border-color: #ddd;cursor: pointer;}
+.editGoodsIntroduction + input{display: inline-block;border:1px solid #00C0FF;padding: 0 5px;width: 350px;line-height: 25px;height: 25px;background: #EEF7FF;display: none;border-radius: 0;}
+.padding_none{height: auto;}
+#productTbody td {padding: 5px;font-size: 12px;border-right: none;}
+.ns-main{margin-top: 0;}
+.goods-name{overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin-top:10px;}
+</style>
+{/block}
+
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<th style="line-height:33px;">
+			创建时间：
+			<input type="text" id="startDate" class="input-common middle" placeholder="请选择开始日期" onclick="WdatePicker()" />
+			&nbsp;-&nbsp;
+			<input type="text" id="endDate" placeholder="请选择结束日期" class="input-common middle" onclick="WdatePicker()" />
+			商品名：<input id="goods_name" class="input-common middle" type="text" value="">
+			<button class="btn-common" onclick="searchData()">搜索</button>
+		</th>		
+	</tr>
+</table>
+<div id="myTabContent" class="tab-content">
+	<div class="tab-pane active">
+		<table class="table-class" border="0">
+			<colgroup>
+				<col style="width: 2%;">
+				<col style="width: 24%;">
+				<col style="width: 9%;">
+				<col style="width: 9%;">
+				<col style="width: 10%;">
+				<col style="width: 10%;">
+				<col style="width: 10%;">
+				<col style="width: 16%;">
+				<col style="width: 10%;">
+			</colgroup>
+			<tbody>
+				<tr class="table-title">
+					<th>
+						<i class="checkbox-common">
+							<input  type="checkbox" id="chek_all">
+						</i>
+					</th>
+					<th>商品名称</th>
+					<th align="right">单价(元)</th>
+					<th align="right">活动价(元)</th>
+					<th>是否拼团</th>
+					<th>拼团类型</th>
+					<th>拼团价格</th>
+					<th>创建时间</th>
+					<th>操作</th>
+				</tr>
+			</tbody>
+			<tbody id="productTbody" style="border: 0;"></tbody>
+		</table>
+	</div>
+</div>
+<!-- 此部分以下是弹出框内容 -->
+<div class="modal fade hide" id="editGoodsCommissionRate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width:800px;">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="myModalLabel">商品拼团设定</h4>
+			</div>
+			<div class="modal-body">
+				<div class="set-style">
+					<input type="hidden" id="distribution_type" value=""/>
+					<input type="hidden"  id="distribution_condition"  value=''/>
+					<dl>
+						<dt>是否开启:</dt>
+						<dd>
+							<p id="is_open_box">
+								<input id="is_open" type="checkbox"  class="checkbox" />
+							</p>
+							
+							<!-- <label class="radio inline normal">
+								<i class="radio-common selected">
+									<input name="is_open" class="is_open1" id="is_open" type="radio" value="1" checked="checked" />
+								</i>
+								<span>立即开启</span>
+							</label>
+							<label class="radio inline normal">
+								<i class="radio-common">
+									<input name="is_open" class="is_open0" id="is_open" type="radio" value="0"/>
+								</i>
+								<span>暂不开启</span>	
+							</label> -->
+							<p class="error">请选择是否启用</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>是否推荐:</dt>
+						<dd>
+							<p id="is_show_box">
+								<input id="is_show" type="checkbox"  class="checkbox" />
+							</p>
+							
+							<!-- <label class="radio inline normal">
+								<i class="radio-common selected">
+									<input name="is_show" class="is_show1" id="is_show" type="radio" value="1" checked="checked" />
+								</i>
+								<span>推荐</span>
+							</label>	
+							<label class="radio inline normal">
+								<i class="radio-common">
+									<input name="is_show" class="is_show0" id="is_show" type="radio" value="0"/>
+								</i>
+								<span>不推荐</span>	
+							</label> -->
+							<p class="error">请选择是否推荐</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>团购金额:</dt>
+						<dd>
+							<p><input id="tuangou_money" type="number" min="0" placeholder="" value="" class="input-common harf" /><em class="unit">元</em><span class="error">&nbsp;&nbsp;请输入团购金额</span></p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>团购人数:</dt>
+						<dd>
+							<p><input id="tuangou_num" type="number" min="1" placeholder="" value="" class="input-common harf" /><em class="unit">人</em><span class="error">&nbsp;&nbsp;请输入团购人数</span></p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>团购有效期:</dt>
+						<dd>
+							<p><input id="tuangou_time" type="number" min="1" placeholder="" value="" class="input-common harf" /><em class="unit">小时</em>&nbsp;&nbsp;<span class="error">请输入团购有效期</span></p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>团购类型:</dt>
+						<dd>
+							<p><select id="type_val" class="select-common"  onchange="tuangou_type()"/>
+								<option value="0">请选择团购类型</option>
+								{foreach name="tuangou_type" item="vo"}
+									<option class="type{$vo.type_id}" value="{$vo.type_id}">{$vo.type_name}</option>
+								{/foreach}
+							</select>
+							<span class="error">请输入团购类型</span></p>
+						</dd>
+					</dl>
+					<dl style="display:none" id="commission_show">
+						<dt>团长佣金:</dt>
+						<dd>
+							<p><input id="colonel_commission" type="number" min="0" placeholder="" value="" class="input-common harf" /><em class="unit">元</em></p>
+							<p class="error">请输入团长佣金</p>
+						</dd>
+					</dl>
+					<dl style="display:none" id="coupon_show">
+						<dt>团长优惠券:</dt>
+						<dd>
+							<p><input id="colonel_coupon" type="number" min="0" placeholder="" value="" class="input-common" /></p>
+							<p class="error">请输入团长优惠券</p>
+						</dd>
+					</dl>
+					<dl style="display:none" id="point_show">
+						<dt>团长积分:</dt>
+						<dd>
+							<p><input name="" id="colonel_point" type="number" min="0" class="input-common harf"/><em class="unit">积分</em></p>
+							<p class="error">请输入团长积分</p>
+						</dd>
+					</dl>
+					<dl>
+						<dt>团购内容:</dt>
+						<dd>
+							<p>
+								<textarea name="" id="colonel_content" cols="30" rows="10" class="textarea-common"></textarea>
+							<p class="error">请输入团购信息内容</p>
+						</dd>
+					</dl>
+					<input id="goods_id" type="hidden" value="" >
+					<input id="tuangou_id" type="hidden" value="">
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn-common" onclick="updateGoodsPintuan();">修改</button>
+				<button type="button" class="btn-common" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+{include file="admin/pageCommon" /}
+<script src="__STATIC__/js/limit_input_digit.js"></script>
+<script type="text/javascript">
+function searchData(){
+	LoadingInfo(1);
+}
+
+function LoadingInfo(pageIndex) {
+	var start_date = $("#startDate").val();
+	var end_date = $("#endDate").val();
+	var is_open = $("#is_open").val();
+	var goods_name =$("#goods_name").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('__URL__/nspintuan/ADMIN_MODULE/Tuangou/tuangoulist')}",
+		data : {
+			"pageIndex" : pageIndex,
+			"start_date":start_date,
+			"end_date":end_date,
+			"is_open":is_open,
+			"goods_name":goods_name,
+			"page_size":$("#showNumber").val()
+		},
+		success : function(data) {
+			$("#page_count").val(data["page_count"]);
+			$("#pageNumber a").remove();
+			if (data["data"].length > 0) {
+				$("#productTbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					html += '<tr>';
+						html += '<td align="center">';
+							html += '<i class="checkbox-common"><input value="' + data["data"][i]["goods_id"] + '" name="sub" data-state="'+data["data"][i]["state"]+'" type="checkbox"></i>';
+						html += '</td>';
+
+						html += '<td colspan="1">';
+							html += '<div>';
+								html += '<a class="a-pro-view-img" href="'+__URL('SHOP_MAIN/goods/detail?goods_id='+data["data"][i]["goods_id"])+'" target="_blank" style="height:70px;line-height:70px;text-align:center;">';
+									html += '<img class="thumbnail-img" src="'+__IMG(data["data"][i]["pic_cover_micro"])+'">';
+								html += '</a>';
+							html += '</div>';
+							html += '<div class="div-pro-view-name">';
+								html += '<div class="goods-name">商品名称：<a target="_blank" href="' + __URL('APP_MAIN/goods/detail?goods_id=' + data["data"][i]["goods_id"]) + '">' + data["data"][i]["goods_name"] + '</a></div>';
+								html += '<div>商家编码：' + data["data"][i]["code"] + '</div>';
+							html += '</div>';
+						html += '</td>';
+
+						/* html += '<td style="text-align: right;">';
+							html += '<div class="priceaddactive">';
+								html += '<span class="price-lable">单&nbsp;&nbsp;&nbsp;&nbsp;价</span><spanclass="price-numble" style="color: #666;" id="moreChangePrice' + data["data"][i]["goods_id"] + '">' + data["data"][i]["price"] + '</span>';
+							html += '</div>';
+							html += '<div><span class="price-lable" >活动价:</span><span class="price-numble"id="moreChangePrice' + data["data"][i]["goods_id"] + '" style="color:red;">' + data["data"][i]["promotion_price"] + '</span>'
+						html += '</td>'; */
+						
+						html += '<td align="right">'+ data["data"][i]["price"] +'</td>';
+						html += '<td align="right">'+ data["data"][i]["promotion_price"] +'</td>';
+
+						html += '<td style="text-align:center;">';
+							if (data["data"][i]["is_open"] == 1) html += '已启用'; else html += '未启用';
+						html += '</td>';
+
+						html += '<td style="text-align:center;">';
+							if (data["data"][i]["tuangou_type"] == null) html += '--'; else html += data["data"][i]["tuangou_type_name"];
+						html += '</td>';
+
+						html += '<td style="text-align:center;">';
+							if (data["data"][i]["tuangou_money"] == null) html += '--'; else data["data"][i]["tuangou_money"];
+						html += '</td>';
+						
+						html += '<td align="center">'+ timeStampTurnTime(data["data"][i]["create_time"]) +'</td>';
+						
+						html += '<td style="text-align:center;">';
+							html += '<a style="width:100%; " href="javascript:void(0);" onclick="showUpdateGoodsPintuan(' + data["data"][i]["goods_id"] + ')" ><span class="edit">拼团设定</span></a>';
+							if (data["data"][i]["is_open"] == 1) {
+							    html += '<a  style="display: block;margin-right: 0; " href="javascript:void(0);" onclick="modifyGoodsPintuan(' + data["data"][i]["goods_id"] + ',&#39;off&#39;)" ><span class="edit">关闭拼团</span></a>';
+							} else {
+							    html += '<a  style="display: block;margin-right: 0;" href="javascript:void(0);" onclick="modifyGoodsPintuan(' + data["data"][i]["goods_id"] + ',&#39;open&#39;)" ><span class="edit">开启拼团</span></a>';
+							}
+						html += '</td>';
+					html += '</tr>';
+					$("#productTbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="9">暂无符合条件的数据记录</td></tr>';
+				$("#productTbody").html(html);
+			}
+			var totalpage = $("#page_count").val();
+			if (totalpage == 1) {
+				changeClass("all");
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			var $html = pagenumShow(jumpNumber,totalpage,{$pageshow});
+			$("#pageNumber").append($html);
+		}
+	});
+}
+
+//全选
+function CheckAll(event){
+	var checked = event.checked;
+	if(checked) $("#productTbody input[type = 'checkbox']").prop("checked",checked).parent("i").addClass("selected");
+	else $("#productTbody input[type = 'checkbox']").prop("checked",checked).parent("i").removeClass("selected");
+}
+
+//选择分类
+function CheckType(even){
+	if($(even).is(":checked")) {
+		$(even).parent().parent().find("[name='"+$(even).attr("name")+"']").attr("checked", true);
+	} else {
+		$(even).parent().parent().find("[name='"+$(even).attr("name")+"']").attr("checked", false);
+	}
+}
+
+//佣金团显示
+function tuangou_type(){
+	var token = $('#type_val').val();
+	if(token == 2){
+		$('#commission_show').show();
+		//$('#coupon_show').show();
+		$('#point_show').show();
+	}else{
+		$('#commission_show').hide();
+		//$('#coupon_show').hide();
+		$('#point_show').hide();
+	}
+}
+
+//商品是否开启拼团
+function modifyGoodsPintuan(goods_id,line){
+	if(line == "open"){
+		var is_open = 1;
+		var lingStr = "开启拼团";
+	}else{
+		var is_open = 0;
+		var lingStr = "关闭拼团";
+	}
+	$.ajax({
+		type : "post",
+		url : "{:__URL('__URL__/nspintuan/ADMIN_MODULE/Tuangou/modifyGoodsPintuan')}",
+		data : {
+			"goods_id" : goods_id,
+			"is_open":is_open
+		},
+		success : function(data) {
+			if(data['code'] <= 0){
+			    if(data['code'] == -2 ){
+                    showMessage('error', "还没有拼团信息");
+				}else{
+                    showMessage('error', data.message);
+				}
+
+			}else if(data["code"] > 0 ){
+				LoadingInfo(1);
+				showMessage('success', "商品"+lingStr+"成功");
+				/* $( "#dialog" ).dialog({
+					buttons: {
+						"确定,#0059d6": function() {
+							$(this).dialog('close');
+						}
+					},
+					contentText:"商品"+lingStr+"成功",
+					title:"消息提醒",
+					time:5
+				}); */
+			}			
+		}
+	})
+}
+
+//显示商品拼团设定
+function showUpdateGoodsPintuan(condition){
+	$("#commission_show").hide();
+	$('#coupon_show').hide();
+	$("#point_show").hide();
+	$("#goods_id").val(condition);
+	$.ajax({
+		type : "post",
+		url : "{:__URL('__URL__/nspintuan/ADMIN_MODULE/Tuangou/getPintuanDetail')}",
+		data : { "goods_id" : condition },
+		success : function(data) {
+			if(data){
+				//为复选框重新赋值和初始化
+				if(data.is_open == 1){
+					var is_open_html = '<input id="is_open" type="checkbox"  class="checkbox" checked/>';
+				}else{
+					var is_open_html = '<input id="is_open" type="checkbox"  class="checkbox" />';
+				}
+				if(data.is_show == 1){
+					var is_show_html = '<input id="is_show" type="checkbox"  class="checkbox" checked/>';
+				}else{
+					var is_show_html = '<input id="is_show" type="checkbox"  class="checkbox" />';
+				}
+				$("#is_open_box").html(is_open_html);
+				$("#is_show_box").html(is_show_html);
+				$("#is_open,#is_show").simpleSwitch({
+					"theme": "FlatRadius"
+				});
+				
+				$("#type_val").val(data.tuangou_type).selectric('refresh'); // 刷新
+				if(data.tuangou_type == 2){
+					$('#commission_show').show();
+					//$('#coupon_show').show();
+					$('#point_show').show();
+				}
+				$("#tuangou_id").val(data.tuangou_id);
+				$("#tuangou_money").val(data.tuangou_money);
+				$("#tuangou_num").val(data.tuangou_num);
+				$("#tuangou_time").val(data.tuangou_time);
+				//json转对象
+				var tuangou_content_obj = JSON.parse(data.tuangou_content_json); 
+				$("#colonel_commission").val(tuangou_content_obj.colonel_commission);
+				$('#colonel_coupon').val(tuangou_content_obj.colonel_coupon);
+				$("#colonel_point").val(tuangou_content_obj.colonel_point);
+				$("#colonel_content").val(tuangou_content_obj.colonel_content);
+			}
+		}
+	})
+	$("#editGroup").popover("hide");
+	$("#editGoodsCommissionRate").modal("show");
+}
+
+//修改商品拼团设定
+function updateGoodsPintuan(){
+	if(!validation()){
+		return false;
+	}
+	var is_open = $("#is_open").prop('checked')? 1 : 0 ;
+	var is_show = $("#is_show").prop('checked')? 1 : 0 ;
+	var tuangou_money = $("#tuangou_money").val();
+	var tuangou_num = $("#tuangou_num").val();
+	var tuangou_time = $("#tuangou_time").val();
+	var tuangou_type = $("#type_val").val();
+	var colonel_commission = $("#colonel_commission").val();
+	var colonel_coupon = $('#colonel_coupon').val();
+	var colonel_point = $("#colonel_point").val();
+	var colonel_content = $("#colonel_content").val();
+	var goods_id = $("#goods_id").val();
+	var tuangou_id = $("#tuangou_id").val();
+	$.ajax({
+		type:"post",
+		url:"{:__URL('__URL__/nspintuan/ADMIN_MODULE/Tuangou/updateGoodsPintuan')}",
+		data:{
+			'tuangou_id':tuangou_id,
+			'goods_id':goods_id,
+			'is_open':is_open,
+			'is_show':is_show,
+			'tuangou_money':tuangou_money,
+			'tuangou_num':tuangou_num,
+			'tuangou_time':tuangou_time,
+			'tuangou_type':tuangou_type,
+			'colonel_commission':colonel_commission,
+			'colonel_coupon':colonel_coupon,
+			'colonel_point':colonel_point,
+			'colonel_content' : colonel_content
+		},
+		success:function (data) {
+			$("#editGoodsCommissionRate").modal("hide");
+			if (data["code"] > 0) {
+				showMessage('success', data["message"]);
+				LoadingInfo(1);
+			}else{
+				showMessage('error', data["message"]);
+				LoadingInfo(1);
+			}
+		}
+	});
+}
+
+function validation(){
+	var tuangou_money = $("#tuangou_money");
+	var tuangou_num = $("#tuangou_num");
+	var tuangou_time = $("#tuangou_time");
+	var tuangou_type = $("#type_val");
+	if(tuangou_money.val() == 0 || tuangou_money.val() == " "){
+		tuangou_money.parent().find(".error").css("display","inline-block");
+		tuangou_money.focus();
+		return false;
+	}else{
+		$('.error').hide();
+	}
+	if(tuangou_num.val() == 0 || tuangou_num.val() == " "){
+		tuangou_num.parent().find(".error").css("display","inline-block");
+		tuangou_num.focus();
+		return false;
+	}else{
+		$('.error').hide();
+	}
+	if(tuangou_time.val() == 0 || tuangou_time.val() == " "){
+		tuangou_time.parent().find(".error").text("请输入团购有效时间").css("display","inline-block");
+		tuangou_time.focus();
+		return false;
+	}else{
+		$('.error').hide();
+	}
+	if(parseInt(tuangou_time.val()) < 1){
+		tuangou_time.parent().find(".error").text("团购有效期不能少于一个小时").css("display","inline-block");
+		tuangou_time.focus();
+		return false;
+	}else{
+		$('.error').hide();
+	}
+	if(tuangou_type.val() == 0 || tuangou_type.val() == " "){
+		tuangou_type.next().css("display","inline-block");
+		tuangou_type.focus();
+		return false;
+	}else{
+		$('.error').hide();
+	}
+	return true;
+}
+
+//商品修改分组id合计
+function goodsGroupIdCount(){
+	$("#editGroup").popover("show");
+	$(".popover").css("max-width",'1000px');
+}
+
+//隐藏商品分组
+function hideEditGroup(){
+	$("#editGroup").popover("hide");
+}
+</script>
+{/block}

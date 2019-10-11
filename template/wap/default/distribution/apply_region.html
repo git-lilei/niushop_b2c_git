@@ -1,0 +1,174 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/distribution_apply_status.css">
+{/block} 
+{block name="main"}
+{php}
+	$region_config = api("System.Distribution.regionAgentConfig");
+	$region_config = $region_config['data'];
+	
+	$shop_sale_money = api("System.Distribution.userConsume");
+	$shop_sale_money = $shop_sale_money['data'];
+	
+	$region_agent_info = api("System.Distribution.regionAgentInfo");
+	$agent_type = empty($region_agent_info['data']) ? '-1' : $region_agent_info['data']['is_audit'];
+	 
+	$shop_config = api('System.Distribution.shopConfig');
+	$shop_config = $shop_config['data'];
+
+{/php}
+	{if condition="$shop_config['is_regional_agent'] eq 0"}<!-- 功能未开启 -->
+	<div class="not-open">
+		<img src="WAP_IMG/wap_nodata.png"/>
+		<div>区域代理功能暂未开启，请联系管理人员。</div>
+	</div>
+	{else /}
+	<div class="step-process ns-border-color-gray">
+		<ul>
+			<li class="step01">
+				<p class="name ns-text-color">申请区域代理</p>
+				<span class="number ns-bg-color">1</span>
+				<span class="line line-right ns-bg-color"></span>
+			</li>
+			{if condition="$agent_type eq 0 or $agent_type eq 1"}  <!-- 待审核 -->
+			<li>
+				<p class="name ns-text-color">待审核</p>
+				<span class="line line-left ns-bg-color"></span>
+				<span class="number ns-bg-color">2</span>
+				<span class="line line-right ns-bg-color"></span>
+			</li>
+			{else /}
+			<li>
+				<p class="name ns-text-color-gray">待审核</p>
+				<span class="line line-left ns-bg-color-gray-shade-20"></span>
+				<span class="number ns-bg-color-gray-shade-20">2</span>
+				<span class="line line-right ns-bg-color-gray-shade-20"></span>
+			</li>
+			{/if}
+			{if condition="$agent_type eq 1"}  <!-- 已通过 -->
+			<li class="step03">
+				<p class="name ns-text-color">申请成功</p>
+				<span class="line line-left ns-bg-color"></span>
+				<span class="number ns-bg-color">3</span>
+			</li>
+			{else /}
+			<li class="step03">
+				<p class="name ns-text-color-gray">申请成功</p>
+				<span class="line line-left ns-bg-color-gray-shade-20"></span>
+				<span class="number ns-bg-color-gray-shade-20">3</span>
+			</li>
+			{/if}
+		</ul>
+	</div>
+	{if condition="$agent_type eq -1"}  <!-- 没申请过 -->
+	<div class="apply">
+		<p class="apply-type ns-text-color-black">
+			<label>用户消费金额：</label>
+			<span class="apply-money ns-text-color" id="user_money">{$shop_sale_money}</span>
+		</p>
+		<p class="apply-type ns-text-color-black">
+			<label>区域代理类型：</label>
+			<select id="agent_type" onchange = "change_apply_money();">
+				<option value="1" data-money = {$region_config.application_require_province}>省代</option>
+				<option value="2" data-money = {$region_config.application_require_city}>市代</option>
+				<option value="3" data-money = {$region_config.application_require_district}>区代</option>
+			</select>
+		</p>
+		<p class="apply-type ns-text-color-black" >
+			<label>真实姓名：</label>
+			<input type="text" id="user_name" class="apply-input">
+		</p>
+		<p class="apply-type ns-text-color-black" >
+			<label>联系电话：</label>
+			<input type="number" id="user_mobile" class="apply-input">
+		</p>
+		<p class="apply-address ns-text-color-black" >
+			<label>联系地址：</label>
+			<select id="seleAreaNext" onchange="GetProvince();">
+				<option value="">选择省</option>
+			</select>
+			<select id="seleAreaThird" onchange="getSelCity();">
+				<option value="">选择市</option>
+			</select>
+			<select id="seleAreaFouth">
+				<option value="-1">选择区/县</option>
+			</select>
+		</p>
+		<p class="ns-text-color"><i class="fa fa-info-circle" aria-hidden="true">&nbsp;&nbsp;最低消费<span id="apply_money">{$region_config['application_require_province']}</span>元，才可成为<span id="apply_name">省代</span></i></p>
+	</div>
+	<a href="javascript:applySubmit();" class="a-button primary">申请区域代理</a>
+	{elseif condition="$agent_type eq 0"/} <!-- 审核中 -->
+	<div class="frog"><img src="WAP_IMG/distribution/agent_apply.png" >申请正在审核中......</div>
+	<a href="{:__URL('APP_MAIN/distribution/index')}" class="a-button primary">返回推广中心</a>
+	{elseif condition="$agent_type eq 1"/} <!-- 已通过 -->
+	<script type="text/javascript">
+	location.href="{:__URL('APP_MAIN/member/index')}";
+	</script>
+	{/if}
+{/if}
+{/block}
+{block name="footer"}{/block}
+{block name="script"} 
+{if condition="$agent_type eq -1 && $shop_config['is_regional_agent'] neq 0"}  <!-- 没申请过 -->
+<script src="WAP_JS/address.js"></script>
+{/if}
+<script type="text/javascript">
+var is_repeat = true;
+function applySubmit(){
+	var agent_type=$('#agent_type').val();
+	var user_money = $("#user_money").text();
+	var apply_money = $("#apply_money").text();
+	var user_name = $("#user_name").val();
+	var user_mobile = $("#user_mobile").val();
+	var address = $('#seleAreaNext option:selected').text() + $('#seleAreaThird option:selected').text() + $('#seleAreaFouth option:selected').text();
+	if(user_name == ''){
+		toast('姓名不能为空');
+		return false;
+	}
+	if(user_mobile == ''){
+		toast('联系电话不能为空');
+		return false;
+	}
+	var reg = /^\d{11}$/;
+	if (!reg.test(user_mobile)) {
+		toast('请输入正确的手机号码');
+		return false;
+	} 
+	if(address == '' || address=='请选择省选择市选择区/县'){
+		toast('联系地址不能为空');
+		return false;
+	}
+	if(parseFloat(user_money) < parseFloat(apply_money)){
+		toast('用户消费不可小于申请区域代理最低消费');
+		return false;
+	}
+	if(is_repeat) {
+		is_repeat = false;
+		api("System.Distribution.applyRegionalAgent", {
+			'agent_type': agent_type,
+			'real_name': user_name,
+			'mobile': user_mobile,
+			'address': address
+		}, function (res) {
+			if (res.data > 0) {
+				toast('区域代理申请成功');
+				setTimeout(function () {
+					location.href = __URL(APPMAIN + '/distribution/index');
+				}, 1000);
+			} else {
+				is_repeat = true;
+				toast('区域代理申请失败');
+			}
+		});
+	}else{
+		toast('正在申请中,不可重复提交!');
+	}
+}
+function change_apply_money(){
+	var apply_money = $("#agent_type option:checked").attr("data-money");
+	var apply_name = $("#agent_type option:checked").text();
+	$("#apply_money").text(apply_money);
+	$("#apply_name").text(apply_name);
+}
+</script>
+{/block}

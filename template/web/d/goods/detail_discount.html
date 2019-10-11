@@ -1,0 +1,17 @@
+{extend name="$goods_detail_base" /}
+{block name="goods_promotion"}
+{if condition="$goods_detail['promotion_detail'] && $goods_detail['promotion_detail']['discount_detail']"}
+<!--限时折扣-->
+<div class="discount-banner ns-bg-color">
+	<i class="discount-icon"></i>
+	<div class="activity-name">{$goods_detail['promotion_detail']['discount_detail']['discount_name']}</div>
+	<div class="surplus-time" data-value="{$goods_detail['promotion_detail']['discount_detail']['end_time']}">
+		<span>{:lang('goods_distance_ends')}</span>
+		<span id="day"><i class="ns-bg-color-black">00</i>:</span>
+		<span id="hour"><i class="ns-bg-color-black">00</i>:</span>
+		<span id="min"><i class="ns-bg-color-black">00</i>:</span>
+		<span id="second"><i class="ns-bg-color-black">00</i></span>
+	</div>
+</div>
+{/if}
+{/block}

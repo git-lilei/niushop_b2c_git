@@ -1,0 +1,55 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/member_account.css">
+{/block}
+{block name="main"}
+{php}
+	$account_list = api("System.Member.accountQuery");
+	$account_list = $account_list['data'];
+{/php}
+<ul class="side-nav">
+	{foreach name="account_list" item="vo"}
+	<li id="{$vo.id}">
+		<div class="div-simply ns-border-color-gray">
+			<span>{:lang('member_full_name')}：{$vo.realname}</span>
+			<div class="pull-right">
+				{if condition="count($account_list) neq 1 && $vo.is_default neq '1'"}
+				<a href="javascript:void(0);" onclick="account_delete({$vo.id});">【{:lang('goods_delete')}】</a>
+				{/if}
+				<a href="{:__URL('APP_MAIN/member/accountedit?id='.$vo['id'])}">【{:lang('member_modify')}】</a>
+			</div>
+		</div>
+		<a href="javascript:checkAccount({$vo.id},this)'">
+			<div class="div-simply ns-border-color-gray">{:lang('member_account_type')}：{$vo.account_type_name}</div>
+			<div class="div-simply ns-border-color-gray">{:lang('member_phone_number')}：{$vo.mobile}</div>
+			{switch name="$vo.account_type"}
+			{case value="1"}
+			<div class="div-simply ns-border-color-gray">{:lang('cash_account')}：{$vo.account_number}</div>
+			<div class="div-simply ns-border-color-gray">{:lang('member_sub_branch_information')}：{$vo.branch_bank_name}</div>
+			{/case}
+			{case value="2"}
+			<!-- 微信 -->
+			{/case}
+			{case value="3"}
+			<div class="div-simply ns-border-color-gray">{:lang('cash_account')}：{$vo.account_number}</div>
+			{/case}
+			{/switch}
+		</a>
+	</li> 
+	{/foreach}
+</ul>
+{if condition = "count($account_list) eq 0"}
+<div class="empty-account">
+	<img src="WAP_IMG/login/member_none_account.png">
+	<p class="ns-text-color-gray">{:lang('you_have_not_added_your_account_yet_add_one')}!</p>
+</div>
+{/if}
+<button class="btn-save ns-bg-color" onclick="window.location.href=__URL(APPMAIN+'/member/accountedit');">{:lang('new_account')}</button>
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script>
+var flag = {$flag};
+</script>
+<script src="WAP_JS/member_account.js"></script>
+{/block}

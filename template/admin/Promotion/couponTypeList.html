@@ -1,0 +1,191 @@
+{extend name="$base" /}
+{block name="resources"}
+<style>
+.modal-infp-style{width:90%;margin:10px auto;}
+.modal-infp-style table{width:100%;}
+.modal-infp-style table tr td{border: 1px solid #e5e5e5;padding: 10px;}
+.align_left{text-align: left;}
+.align_right{text-align: right;}
+</style>
+{/block}
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<th width="20%" style="text-align:left;"><button class="btn-common btn-small" onclick="location.href='{:__URL('ADMIN_MAIN/promotion/addcoupontype')}';" style="margin:0 5px 0 0 !important;">添加优惠券</button></th>
+		<th width="10%">
+			<input type="text" id = 'search_text' placeholder="请输入优惠券名称" class="input-common" />
+			<input type="button" onclick="searchData()" value="搜索" class="btn-common" />
+		</th>
+	</tr>
+</table>
+<table class="table-class">
+		<colgroup>
+		<col style="width: 2%;">
+		<col style="width: 32%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 20%;">
+		<col style="width: 16%;">
+		</colgroup>
+	<thead>
+		<tr align="center">
+			<th>
+				<!-- <i class="checkbox-common"><input type="checkbox" ></i> -->
+			</th>
+			<th class="align_left">优惠券名称</th>
+			<th class="align_right">面额</th>
+			<th class="align_right">发放数量<span class="row-20"></th>
+			<th class="align_right">已领取数量<span class="row-20"></th>
+			<th>有效时间</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+
+<!-- 模态框（Modal） -->
+<div class="modal fade hide"  id="coupon_info" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>优惠券详情</h3>
+			</div>
+			<div class="modal-body">
+				<div class="modal-infp-style">
+					<table>
+						<tr>
+							<td>类型名</td>
+							<td id="coupon_name"></td>
+						</tr>
+						<tr>
+							<td>面额</td>
+							<td id="money"></td>
+						</tr>
+						<tr>
+							<td>发放数量</td>
+							<td id="count"></td>
+						</tr>
+						<tr>
+							<td>每人最大领取数</td>
+							<td id="max_fetch"></td>
+						</tr>
+						<tr>
+							<td>满多少元使用</td>
+							<td id="at_least"></td>
+						</tr>
+						<tr style="display:none;">
+							<td>领取人等级</td>
+							<td id="need_user_level"></td>
+						</tr>
+						<tr>
+							<td>有效时间</td>
+							<td id="time"></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/promotion/coupontypelist')}",
+		data : {
+			"page_index" : page_index, "page_size" : $("#showNumber").val(), "search_text" : search_text
+		},
+		success : function(data) {
+			if (data["data"].length > 0) {
+				$(".table-class tbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					html += '<tr align="center">';
+					// <i class="checkbox-common"><input name="sub" type="checkbox" value="'+ data["data"][i]["coupon_type_id"]+'" ></i>
+					html += '<td></td>';
+					if (data["data"][i]["coupon_name"] == null || "" == data["data"][i]["coupon_name"]) {
+						html += '<td class="align_left">--</td>';
+					} else {
+						html += '<td class="align_left">' + data["data"][i]["coupon_name"] + '</td>';
+					}
+					
+					html += '<td class="align_right">' + data["data"][i]["money"] + '</td>';;
+					html += '<td class="align_right">' + data["data"][i]["count"] + '<span class="row-20"></td>';
+					html += '<td class="align_right">' + data["data"][i]["get_num"] + '<span class="row-20"></td>';
+					if(data["data"][i]['term_of_validity_type'] == 0){
+						html += '<td>开始时间：' + timeStampTurnTime(data["data"][i]["start_time"]) + '<br/>结束时间：'+ timeStampTurnTime(data["data"][i]["end_time"]) +'</td>';
+					}else{
+						html += '<td>领取之日起' + data["data"][i]["fixed_term"] + '天内有效</td>';
+					}
+					html += '<td><a href="'+__URL('ADMIN_MAIN/Promotion/updateCouponType?coupon_type_id=' + data["data"][i]["coupon_type_id"])+'">编辑</a>';
+					
+					html += '<a href="javascript:void(0);"onclick="couponTypeInfo('+data["data"][i]["coupon_type_id"]+')">详情</a>';
+					html += '<a href="javascript:;" onclick="deleteCoupontype('+data["data"][i]["coupon_type_id"]+');">删除</a><br/>';
+					html += '<a href="' + __URL(APPMAIN+"/goods/couponreceive?coupon_type_id="+data["data"][i]['coupon_type_id']) + '" target="_blank">推广链接</a>';
+					html += '<a href="' + __URL("ADMIN_MAIN/Promotion/couponGrantLog?coupon_type_id="+data["data"][i]['coupon_type_id']) + '" >发放记录</a>'
+					html += '</td>';
+					html += '</tr>';
+					$(".table-class tbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="9">暂无符合条件的数据记录</td></tr>';
+				$(".table-class tbody").html(html);
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+function searchData(){
+	LoadingInfo(1);
+}
+
+function couponTypeInfo(coupon_type_id){
+	$("#coupon_info").modal("show");
+	$.ajax({
+		type:"post",
+		url : "{:__URL('ADMIN_MAIN/promotion/getcoupontypeinfo')}",
+		data : { "coupon_type_id" : coupon_type_id },
+		success : function(data) {
+			$("#coupon_name").text(data["coupon_name"]);
+			$("#money").text(data["money"]+"元");
+			$("#count").text(data["count"]);
+			if(data["max_fetch"] == 0){
+				$("#max_fetch").text('不限');
+			}else{
+				$("#max_fetch").text(data["max_fetch"]+"次");
+			}
+			$("#at_least").text(data["at_least"]+"元");
+			$("#time").text(timeStampTurnTime(data["start_time"])+"到"+timeStampTurnTime(data["end_time"]));
+		}
+	});
+}
+
+function deleteCoupontype(coupon_type_id){
+	$.ajax({
+		type:"post",
+		url : "{:__URL('ADMIN_MAIN/promotion/deleteCoupontype')}",
+		data : { "coupon_type_id" : coupon_type_id},
+		dataType : "json",
+		success : function(data) {
+			if (data["code"] > 0) {
+				showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/promotion/coupontypelist')}");
+			}else if(data["code"] == -1){
+				showMessage('error', '已被领取的优惠券不可删除！');
+			}else{
+				showMessage('error', data['message']);
+			}
+		}
+	})
+}
+</script>
+{/block}

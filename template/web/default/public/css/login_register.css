@@ -1,0 +1,23 @@
+.header{height: 90px; margin-bottom: 30px;}
+.header > a{display: inline-block; margin: 15px 0 15px 120px;width: 160px;height: 60px;line-height: 60px;}
+.header > a img{height: auto;width: auto;max-height: 100%;}
+.ns-main{position: relative;}
+.login-info{position: absolute; right: 0; margin-right: 20px;}
+.nav-tabs{padding-left: 120px;}
+.nav-tabs > li{width: 126px; text-align: center; line-height: 40px;}
+.tab-content{border: 1px solid; border-top: none; padding: 40px 100px 40px 60px;}
+.form-group{height: 41px; margin-bottom: 30px;}
+.form-group > label{display: inline-block; width: 150px; height: 38px; margin-right: 10px; text-align: right; line-height: 38px; vertical-align: bottom; font-weight: normal;}
+.form-group > .img{width: 100px; margin-left: 20px;}
+.form-group > .img img{cursor: pointer; height: 38px;}
+.form-group .form-item{width: 132px;}
+.check-code{display: none;}
+.form-group input{height: 38px; width: 262px; font-size: 12px;padding-left: 8px; border: 1px solid;}
+.form-group .form-checkbox{width: 13px; height: 30px; margin-right: 5px;}
+.form-group > span{display: inline-block; line-height: 37px;}
+.form-group .form-text{vertical-align: text-bottom;}
+.form-btn{margin-bottom: 20px;}
+.btn-primary{width: 270px; height: 37px; margin-left: 120px;}
+.form-group .btn{height: 38px; margin-left: 5px;}
+.form-group .btn-binding{width: 124px; height: 40px; margin-right: 20px; margin-left: 0;}
+.modal-body{overflow-y: scroll; max-height: 400px;}

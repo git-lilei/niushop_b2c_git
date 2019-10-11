@@ -1,0 +1,217 @@
+.page-layout {
+    margin: 20px 10px 0 40px;
+}
+
+.preview {
+    width: 225px;
+}
+
+.wrapper-header {
+    height: 15px;
+    background: #222222;
+}
+
+.iphone-header {
+    box-sizing: border-box;
+    position: relative;
+    height: 54px;
+    background: url('../images/iphone_title.png') no-repeat;
+    background-size: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ffffff;
+}
+
+.iphone-title {
+    width: 200px;
+    text-align: center;
+    margin-top: 15px;
+    font-size: 16px;
+    line-height: 1.5;
+    height: 27px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+.wrapper-footer {
+    height: 40px;
+    background: #222222;
+}
+
+.preview-body li {
+    background: #fff url(../images/page_layout_new.png) no-repeat;
+    position: relative;
+    border: 2px solid rgba(0, 0, 0, 0);
+    margin: 0 -2px;
+    cursor: pointer;
+}
+
+.preview-body li.selected, .preview-body li:hover {
+    border: 2px dashed #44abf7;
+}
+
+.preview-body li.item-follow-wechat-public-account {
+    height: 31px;
+	background-position: 0 -10px;
+}
+
+.preview-body li.item-banner {
+    height: 76px;
+    background-position: 0 -45px;
+}
+
+.preview-body li.item-search {
+    height: 40px;
+    background-position: 0 -125px;
+}
+
+.preview-body li.item-nav {
+    Height: 103px;
+    Background-position: 0 -169px;
+}
+
+.preview-body li.item-notice {
+    height: 37px;
+    background-position: 0 -276px;
+}
+
+.preview-body li.item-coupons {
+    height: 50px;
+    background-position: 0 -317px;
+}
+
+.preview-body li.item-games {
+    height: 62px;
+    background-position: 0 -371px;
+}
+
+.preview-body li.item-discount {
+    height: 62px;
+    background-position: 0 -437px;
+}
+
+.preview-body li.item-spell-group {
+    height: 62px;
+    background-position: 0 -569px;
+}
+.preview-body li.item-spell-bargain{
+	height: 62px;
+    background-position: 0 -503px;
+}
+.preview-body li.item-adv {
+    height: 62px;
+    background-position: 0 -569px;
+}
+
+.preview-body li.item-goods {
+    height: 92px;
+    background-position: 0 -701px;
+}
+.preview-body li.item-cube{
+	height: 67px;
+	background-position: 0 -797px;
+}
+.preview-body li.item-bottom {
+    height: 46px;
+    background-position: 0 -868px;
+}
+
+.item-title{
+	overflow: hidden;
+	line-height: 35px;
+	padding: 0 3px;
+	height: 35px;
+	border-bottom: 1px solid #ddd;
+}
+
+.item-title > a {
+	float: right;
+}
+
+.edit-wrap h4 {
+	display: inline-block;
+    font-size: 14px;
+    border-bottom: 1px solid #f7f7f7;
+    color: #333;
+	margin: 0;
+}
+
+.edit-wrap .item {
+    color: #333;
+	padding: 0 3px;
+    text-decoration: none;
+    border-radius: 3px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    line-height: 36px;
+}
+
+.edit-wrap .item label {
+    display: inline-block;
+	margin: 0;
+}
+
+.switch-wrap {
+    background-color: #fff;
+    border: 1px solid #dfdfdf;
+    border-radius: 20px;
+    cursor: pointer;
+    position: relative;
+    vertical-align: middle;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    box-sizing: content-box;
+    background-clip: content-box;
+    -webkit-box-shadow: #dfdfdf 0 0 0 0 inset;
+    box-shadow: #dfdfdf 0 0 0 0 inset;
+    -webkit-transition: border 0.4s, box-shadow 0.4s, -webkit-box-shadow 0.4s;
+    transition: border 0.4s, box-shadow 0.4s, -webkit-box-shadow 0.4s;
+    height: 20px;
+    width: 45px;
+    float: right;
+    margin-top: 5px;
+}
+
+.switch-wrap.checked {
+	margin-top: 8px;
+    border-color: #00A0DE !important;
+    box-shadow: #00A0DE 0 0 0 16px inset !important;
+    background-color: #00A0DE !important;
+    -webkit-transition: border 0.4s, box-shadow 0.4s, -webkit-box-shadow 0.4s, background-color 1.2s;
+    transition: border 0.4s, box-shadow 0.4s, -webkit-box-shadow 0.4s, background-color 1.2s;
+}
+
+.switch-wrap > small {
+    background: #fff;
+    border-radius: 100%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    position: absolute;
+    top: 0;
+    left: 0;
+    -webkit-transition: background-color 0.4s, left 0.2s;
+    transition: background-color 0.4s, left 0.2s;
+    height: 20px;
+    width: 20px;
+}
+
+.switch-wrap.checked > small {
+    left: 25px;
+    transition: background-color 0.4s, left 0.2s;
+}
+
+.form-group {
+    margin: 15px 0;
+    text-align: center;
+}
+
+.form-group button:last-child {
+    margin-left: 20px !important;
+}
+.hide {
+	display: none!important;
+}

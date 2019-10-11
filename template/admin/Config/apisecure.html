@@ -1,0 +1,55 @@
+{extend name="$base" /}
+{block name="resources"}
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>是否开启API安全：</dt>
+		<dd>
+			<div class="controls">
+				<p>
+					<input id="is_open_api_secure" type="checkbox" class="checkbox" {if condition="$api_secure['is_open_api_secure'] eq 1"}checked{/if} />
+				</p>
+			</div>
+			<p class="hint">api安全功能开启之后调用前端api需要传输签名串</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>秘钥：</dt>
+		<dd>
+			<input id="private_key" type="text" value="{$api_secure['private_key']}" class="input-common" />
+			<p class="hint">秘钥设置关系系统中api调用传输签名串的编码规则，以及会员token解析，请慎重设置，注意设置之后对应会员要求重新登录获取token</p>
+		</dd>
+		
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="save();">保存</button>
+		</dd>
+	</dl>
+</div>
+<script>
+function save() {
+	var is_open_api_secure = $("#is_open_api_secure").prop('checked') ? 1 : 0;
+	var private_key = $("#private_key").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/config/apisecure')}",
+		data : {
+			data : JSON.stringify({
+				'is_open_api_secure': is_open_api_secure,
+				'private_key': private_key
+			})
+		},
+		success : function(data) {
+			if (data['code'] > 0) {
+				showTip(data["message"],'success');
+			} else {
+				showTip(data["message"],'error');
+			}
+		}
+	});
+}
+</script>
+{/block}

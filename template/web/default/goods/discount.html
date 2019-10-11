@@ -1,0 +1,90 @@
+{extend name="$base" /}
+{block name="resources"}
+<link type="text/css" rel="stylesheet" href="WEB_CSS/goods_discount.css">
+{/block}
+{block name="lunbo"}
+{php}
+	$banner_list = api('System.Shop.advDetail', ['ap_keyword' => 'PC_DISCOUNT_SWIPER', 'export_type' => 'data']);
+{/php}
+<div class="banner-wrap">
+	{notempty name='$banner_list["data"]'}
+	<div id="banner" class="carousel slide" data-ride="carousel">
+		<ol class="carousel-indicators">
+			{foreach name="$banner_list['data']['advs']" item="vo" key="k"}
+			<li data-target="#banner" data-slide-to="{$k}" {if condition="$k==0"}class="active"{/if}></li>
+			{/foreach}
+		</ol>
+
+		<div class="carousel-inner">
+			{foreach name="$banner_list['data']['advs']" item="vo" key="k"}
+			<div class="item {if condition='$k==0'}active{/if}" style="background-color:{$vo['background']}">
+				{if $vo['adv_image'] == ''}
+				<a href="javascript:;"><img alt="轮播图" src="WEB_IMG/index/default_banner.png" ></a>
+				{else/}
+				<a href="{:__URL($vo['adv_url'])}" target="_blank" style="width: {$banner_list['data']['ap_width']}px;height: {$banner_list['data']['ap_height']}px;line-height: {$banner_list['data']['ap_height']}px;">
+					<img alt="轮播图" src="{:__IMG($vo['adv_image'])}"  onerror="this.src='WEB_IMG/index/default_banner.png'">
+				</a>
+				{/if}
+			</div>
+			{/foreach}
+		</div>
+
+		<a class="left carousel-control" href="#banner" data-slide="prev">
+			<span class="icon icon-chevron-left"></span>
+		</a>
+		<a class="right carousel-control" href="#banner" data-slide="next">
+			<span class="icon icon-chevron-right"></span>
+		</a>
+	</div>
+	{/notempty}
+</div>
+{/block}
+{block name="main"}
+{php}
+$page = input('page', 1);
+$discount_list = api("System.Goods.goodsDiscountList",['page_index' => $page]);
+$discount_list = $discount_list['data'];
+$page_count = $discount_list['page_count'];
+$total_count = $discount_list['total_count'];
+{/php}
+{notempty name="$discount_list['data']"}
+<ul class="product-list clearfix" id="product_list">
+	{volist name="$discount_list['data']" id="vo"}
+	<li class="ns-border-color">
+		<a href="{:__URL('SHOP_MAIN/goods/detail','goods_id='.$vo['goods_id'])}" target="_blank" title="{$vo.goods_name}" class="link">
+			{if $vo['pic_cover_mid']}
+			<img alt="轮播图" src="{:__IMG($vo['pic_cover_mid'])}">
+			{else /}
+			<img alt="轮播图" src="WEB_IMG/discount_product_default.png">
+			{/if}
+			<h4>{$vo.goods_name}</h4>
+		</a>
+		<div class="info start ns-border-color">
+			<div>
+				<div class="price">
+					<i class="ns-text-color">{$vo.display_price}</i>
+					<span>￥{$vo.price}</span>
+				</div>
+				<div class="tip">限时秒杀 抢先提醒</div>
+			</div>
+			<a href="{:__URL('SHOP_MAIN/goods/detail','goods_id='.$vo['goods_id'])}" target="_blank">
+			<span class="buy ns-bg-color">立即抢购</span>
+			</a>
+		</div>
+	</li>
+	{/volist}
+</ul>
+<ul class="pager" data-ride="pager" data-elements="prev,nav,next,total_page_text,goto" data-rec-per-page="{$page_size}" data-page="{$page}" data-rec-total="{$total_count}" id="my_pager"></ul>
+{else/}
+<!--<div class="empty">还没有相关内容</div>-->
+{/notempty}
+{/block}
+{block name="script"}
+<script>
+$('#my_pager').pager({
+	linkCreator: function(page, pager) {
+		return __URL("SHOP_MAIN/goods/discount?page="+page);
+	}
+});
+</script>
+{/block}

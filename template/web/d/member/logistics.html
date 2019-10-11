@@ -1,0 +1,80 @@
+{extend name="$member_base" /}
+{block name="right_main"}
+<link rel="stylesheet" type="text/css" href="WEB_CSS/member_logistics.css">
+{php}
+$logistics = api("System.Order.logistics",['order_id'=>$order_id]);
+$order = $logistics['data'];
+{/php}
+<div class="member-main">
+	<div class="box">
+		<div class="tabmenu">
+			<ul class="tab">
+				<li class="active ns-border-color text16 ns-text-color">{:lang("member_view_logistics")}</li>
+			</ul>
+		</div>
+		{foreach name="$order['goods_packet_list']" id="vo" key="k"}
+		<div class="package-info ns-border-color-gray" express-id="{$vo.express_id}">
+			<div class="tit-wrap ns-bg-color-gray-fadeout-50">
+				<ul class="package">
+					<li>{$vo.packet_name}</li>
+					<span class="sepa ns-bg-color-gray-shade-20"></span>
+					<li>{:lang("member_logistics_company")}：{if condition="$vo.express_name neq ''"}{$vo.express_name}{else /}--{/if}</li>
+					<span class="sepa ns-bg-color-gray-shade-20"></span>
+					<li>{:lang("member_logistics_express_number")}：{if condition="$vo.express_code neq ''"}{$vo.express_code}{else /}--{/if}</li>
+					<span class="sepa ns-bg-color-gray-shade-20"></span>
+					<li><a href="javascript:;" class="ns-text-color" {if $k eq 0}class="open"{/if}>{:lang("member_view_logistics")}<i class="icon-triangle"></i></a></li>
+				</ul>
+			</div>	
+			<div class="logistics-trace ns-border-color-gray ns-bg-color-gray-fadeout-50" {if $k > 0} style="display:none;" {/if}>
+				<ul></ul>
+			</div>
+		</div>
+		{/foreach}
+		<div class="order-info ns-border-color-gray">
+			<div class="left-container">
+				<dl>
+					<dt>{:lang('member_order_number')}：</dt>
+					<dd>{$order.order_no}</dd>
+				</dl>
+				<dl>
+					<dt>{:lang('member_order_status')}：</dt>
+					<dd>{$order.status_name}</dd>
+				</dl>
+				<dl>
+					<dt>{:lang('member_payment_method')}：</dt>
+					<dd>{$order.payment_type_name}</dd>
+				</dl>
+				<dl>
+					<dt>{:lang('member_payment_status')}：</dt>
+					<dd>{$order.pay_status_name}</dd>
+				</dl>
+				<dl>
+					<dt>{:lang('member_delivery_mode')}：</dt>
+					<dd>{$order.shipping_type_name}&nbsp;&nbsp;{$order['shipping_company_name']}</dd>
+				</dl>
+				{switch name="$order.shipping_type"}
+					{case value="1|3"}
+					<dl>
+						<dt>{:lang('member_receiving_information')}：</dt>
+						<dd>{$order['receiver_name']}，{$order['receiver_mobile']}，{notempty name="$order['fixed_telephone']"}{$order['fixed_telephone']}，{/notempty} {$order['address']}{if condition="$order['receiver_zip']!=''"}，{$order['receiver_zip']}{/if}</dd>
+					</dl>
+					{/case}
+					{case value="2"}
+					<dl>
+						<dt>{:lang('member_self_addressed_address')}：</dt>
+						<dd>{$order['order_pickup']['province_name']}&nbsp;{$order['order_pickup']['city_name']}&nbsp;{$order['order_pickup']['district_name']}&nbsp;{$order['order_pickup']['address']}</dd>
+					</dl>
+					{/case}
+				{/switch}
+			</div>
+			<div class="right-container ns-border-color-gray">
+				<p>{:lang("member_logistics_info_one")}</p>
+				<p>{:lang("member_logistics_info_two")}</p>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript" src="WEB_JS/member_logistics.js"></script>
+{/block}

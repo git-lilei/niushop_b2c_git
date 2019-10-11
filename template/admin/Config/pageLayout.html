@@ -1,0 +1,31 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" href="ADMIN_CSS/plugin/tooltips.css">
+<link rel="stylesheet" href="ADMIN_CSS/page_layout.css"/>
+{/block}
+{block name="main"}
+<div class="page-layout">
+	<div class="preview">
+		<div class="wrapper-header"></div>
+		<div class="iphone-header"><div class="iphone-title"></div></div>
+		<div class="preview-body">
+			<ul>
+				<li v-for="(li,index) in data" v-bind:class="[ 'draggable-element',li.className,li.selected ? 'selected' : '' ]" v-on:click="clickModule(index)" v-bind:data-index="index" v-bind:data-sort="index"></li>
+			</ul>
+		</div>
+		<div class="wrapper-footer"></div>
+		<div class="form-group"><button class="btn-common btn-big" v-on:click="save">保存</button><button class="btn-common-cancle btn-big" v-on:click="reset">重置</button></div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script>
+var value = eval('{$value}');
+var ADMINMODULE = "ADMIN_MODULE";
+var URL = "__URL__";
+</script>
+<script src="ADMIN_JS/vue.js"></script>
+<script src="ADMIN_JS/plugin/drag-arrange.js"></script>
+<script src="ADMIN_JS/plugin/jquery.pure.tooltips.js"></script>
+<script src="ADMIN_JS/page_layout.js"></script>
+{/block}

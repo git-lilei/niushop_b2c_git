@@ -1,0 +1,39 @@
+{
+    "name": "topthink/",
+    "description": "the new thinkphp framework",
+    "type": "think-framework",
+    "keywords": [
+        "framework",
+        "thinkphp",
+        "ORM"
+    ],
+    "homepage": "http://thinkphp.cn/",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "liu21st",
+            "email": "liu21st@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.0",
+        "topthink/think-installer": "^2.0",
+        "topthink/think-image":"v1.0.7",
+        "topthink/think-queue":"v1.1.4",
+        "topthink/think-mongo":"v1.7",
+        "topthink/think-helper":"v1.0.6",
+        "topthink/think-migration":"v1.0.6",
+        "topthink/think-captcha":"v1.0.7",
+        "topthink/think-worker":"v2.0.11",
+        "jaeger/querylist": "V3.2.1",
+        "jaeger/querylist-ext-request": "^1.0"
+    },
+    "require-dev": {
+         "workerman/workerman-for-win":"^3.3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "think\\": "library/think"
+        }
+    }
+}

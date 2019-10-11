@@ -1,0 +1,133 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/distribution_to_withdraw.css">
+{/block}
+{block name="main"}
+{php}
+	$result = api("System.Distribution.toWithdrawDetail");
+	$info = $result['data'];
+	$account_list = api("System.Member.defaultAccount");
+	$account_list = $account_list['data'];
+{/php}
+{notempty name="$info"}
+<div class="panel extract">
+    <div class="commision-total">
+	    <span class="span-title ns-text-color-black">可提现金额：</span>
+	    <span class="text18 ns-text-color" id="Amount">¥{$info['user_account']['commission_cash']}</span>
+    </div>
+    <div>
+	    <span class="span-title ns-text-color-black">佣金总金额：</span>
+	    <span class="text18 ns-text-color" id="MaxCashAmount">¥{$info['user_account']['commission']}</span>
+    </div>
+</div>
+<div class="panel extract-account">
+    <ul class="side-nav">
+        {if condition="count($account_list) eq 0"}
+            <li ><a href="{:__URL('APP_MAIN/member/account','flag=2')}"><span>请添加提现账号 <br></span><i class="fa fa-angle-right ns-text-color-gray"></i></a></li>
+        {else/}
+            <li>
+             {volist name="$account_list" id="vo"}
+		          {if condition="$vo.account_type == 1"}
+					<a href="{:__URL('APP_MAIN/member/account?flag=2')}">
+						<span class="ns-text-color-black">{$vo.branch_bank_name}<br>{$vo.account_number}</span>
+						<i class="fa fa-angle-right ns-text-color-gray"></i>
+					</a>
+					{elseif condition="$vo.account_type == 2" /}
+					<a href="{:__URL('APP_MAIN/member/account?flag=2')}">
+						<span class="ns-text-color-black">{$vo.account_type_name}</span>
+						<i class="fa fa-angle-right ns-text-color-gray"></i>
+					</a>
+					{elseif condition="$vo.account_type == 3" /}
+					<a href="{:__URL('APP_MAIN/member/account?flag=2')}">
+						<span class="ns-text-color-black">{$vo.account_type_name}<br>{$vo.account_number}</span>
+						<i class="fa fa-angle-right ns-text-color-gray"></i>
+					</a>
+					{/if}
+		          <input type="hidden" value="{$vo.id}" id="bank_account_id"/>
+             {/volist}
+            </li>
+        {/if}
+    </ul>
+</div>
+<div class="extract-money">
+    <div class="columns">
+        <input type="text" id="money" placeholder="请输入提取金额">
+    </div>
+    <div class="tip-text ns-text-color">最低提现金额为<span id="withdraw_cash_min">{$info['withdraw_info']['withdraw_cash_min']}</span>元 ，必须为<span id="withdraw_multiple">{$info['withdraw_info']['withdraw_multiple']}</span>的整数倍</div>
+	<p class="tip-text ns-text-color-gray text12">注:可提现金额为交易成功后7天且未提现的金额</p>
+</div>
+<button onclick="save()" class="btn primary">立即提取</button>
+{else/}
+<script type="text/javascript">
+if(window.sessionStorage){
+	sessionStorage.setItem('errorMsg', JSON.stringify({title : '{$result.title}！', message : '{$result.message}。'}));
+}
+location.href = "{:__URL('APP_MAIN/index/errorTemplate')}";
+</script>
+{:exit()}
+{/notempty}
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+ <script type="text/javascript">
+var is_repeat = true;
+function save(){
+    var bank_account_id = $("#bank_account_id").val();
+    var withdraw_no = 123456;
+    var cash = $("#money").val().trim();
+    var MaxCashAmount = $("#Amount").text().trim();
+    var withdraw_cash_min = $("#withdraw_cash_min").text().trim();
+    var withdraw_multiple = $("#withdraw_multiple").html().trim();
+    MaxCashAmount = MaxCashAmount.substr(1);
+    if(bank_account_id == null || bank_account_id == ""){
+        toast("未添加提现账号");
+        return;
+    }
+    var reg = /^\+?[1-9][0-9]*$/;
+    if (reg.test(cash)) {
+        cash = Number(cash);
+        MaxCashAmount = Number(MaxCashAmount);
+        withdraw_cash_min = Number(withdraw_cash_min);
+        if (cash > 0) {
+            if (cash <= MaxCashAmount) {
+                if (cash >= withdraw_cash_min) {
+                    if (cash % parseInt(withdraw_multiple) == 0 && parseInt(withdraw_multiple) > 0) {
+                        if(is_repeat){
+                            is_repeat = false;
+                            api("System.Distribution.applyWithdraw",{ "bank_account_id": bank_account_id, "cash": cash,"withdraw_no":withdraw_no },function (res) {
+                            	var data = res.data;
+								if (data > 0) {
+									toast("已提交申请，等待审核...");
+									window.location.href = __URL(APPMAIN+"/distribution/commissionShop");
+								} else {
+									is_repeat = true;
+									toast(data.message);
+								}
+							});
+                        }else{
+                            toast("正在审核中，请勿重复本操作！");
+                            return false;
+                        }
+                    } else {
+                       toast("提现金额必须是" + withdraw_multiple + "的整数倍");
+                        return false;
+                    }
+                } else {
+                    toast("提现金额必须大于" + withdraw_cash_min);
+                    return false;
+                }
+            } else {
+                toast("可提现金额最大为" + MaxCashAmount);
+                return false;
+            }
+        } else {
+            toast("当前不可提现");
+            return false;
+        }
+    } else {
+        toast("输入金额不合法");
+        return false;
+    }
+}
+</script>
+{/block}

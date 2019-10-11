@@ -1,0 +1,69 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<script src="ADMIN_JS/material_managedialog.js"></script>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>标题附加字：</dt>
+		<dd>
+			<input id="title" type="text" value="{$info.seo_title}" class="input-common long" />
+			<p class="hint">网页标题通常是搜索引擎关注的重点，本附加字设置出现在标题中商城名称后，如有多个附加字，建议用<i class="important-note">英文“,”</i>分隔</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>网站关键字：</dt>
+		<dd>
+			<input id="meta" type="text"  value="{$info.seo_meta}" class="input-common long" />
+			<p class="hint">关键字 meta name='keyword' 用于网站搜索引擎的优化，请用英文逗号分隔，例如”男装，女装，童装”</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>网站描述：</dt>
+		<dd>
+			<input id="desc" type="text" value="{$info.seo_desc}" class="input-common long" />
+			<p class="hint">meta name='description'出现在页面头部的Meta标签中</p>
+		</dd>
+	</dl>	
+	<dl>
+		<dt>其他页头信息：</dt>
+		<dd>
+			<textarea id="other" class="textarea-common" maxlength="50">{$info.seo_other}</textarea>
+			<p class="hint">如需在中添加其他的HTML代码，可以使用本设置，否则请留空</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="setConfigAjax();">保存</button></dd>
+	</dl>
+</div>
+<script>
+function setConfigAjax(){
+	var title = $('#title').val();
+	var meta = $("#meta").val();
+	var desc = $("#desc").val();
+	var other = $("#other").val();
+	$.ajax({
+		type:"post",
+		url : "{:__URL('ADMIN_MAIN/config/seoconfig')}",
+		data : {
+			"seo_title" : title,
+			"seo_meta" : meta,
+			"seo_desc" : desc,
+			"seo_other" : other
+		},
+		success : function(data){
+			if(data['code'] > 0){
+				showTip(data["message"],'success');
+				location.href=__URL("ADMIN_MAIN/config/seoconfig");
+			}else{
+				showTip(data["message"],'error');
+			}
+		}
+	})
+}
+</script>
+{/block}

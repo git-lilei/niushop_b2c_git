@@ -1,0 +1,87 @@
+{extend name="$base" /}
+{block name="resources"}
+<style>
+.btn-disabled{
+	background-color:#999;
+	border:1px solid #999;
+}
+</style>
+{/block}
+{block name="main"}
+<!-- 邮箱设置 -->
+<div class="set-style">
+	<dl>
+		<dt>是否开启：</dt>
+		<dd>
+			<input id="email_is_use" type="checkbox" class="checkbox"onchange="setConfigAjax()" {if condition="$config.is_use=='1'"}checked="checked"{/if}/>
+		</dd>
+	</dl>
+
+	<dl>
+		<dt>重置模板消息：</dt>
+		<dd>
+			<button class="btn-common"id="reset_button" style="vertical-align:1.5px;">重置</button>
+			<p class="hint">
+				<span>注:与项目所绑定的微信公众号的模板库必须是主营行业:消费品/消费品、副营行业:其他/其他,重置后会删除当前项目绑定微信公众号中已绑定所有模板,并重新根据现有的微信模板消息重新绑定</span>
+			</p>
+		</dd>
+	</dl>
+	
+	
+</div>
+
+
+<script>
+
+function setConfigAjax(){
+	var is_use = 0;
+	if($("#email_is_use").is(':checked')){
+		var is_use = 1;
+	}
+	$.ajax({
+		type:"post",
+		url : "{:__URL('__URL__/NsWxtemplatemsg/ADMIN_MODULE/TempMsg/config')}",
+		data:{
+			'is_use':is_use,
+			'value':''
+		},
+		success:function (data) {
+			if (data["code"] > 0) {
+				showTip(data["message"],'success');
+				location.href=__URL("ADMIN_MAIN/config/notifyindex");
+			}else{
+				showTip(data["message"],'error');
+			}
+		}
+	});
+}
+
+
+$("body").on("click", "#reset_button", function(){
+	
+	var self_obj = $(this);
+	self_obj.removeAttr("id");
+	self_obj.addClass("btn-disabled");
+	self_obj.text("重置中...");
+	
+	
+	$.ajax({
+        type : "post",
+        url :"{:__URL('__URL__/NsWxtemplatemsg/ADMIN_MODULE/TempMsg/resetTemplate')}",
+        success : function(data) {
+        	if (data["code"] > 0) {
+				showTip(data["message"],'success');
+				location.href="{:__URL('__URL__/NsWxtemplatemsg/ADMIN_MODULE/TempMsg/config')}";
+			}else{
+				showTip(data["message"],'error');
+			}
+        	self_obj.text("重置");
+        	self_obj.removeClass("btn-disabled");
+        }
+    });
+})
+
+
+
+</script>
+{/block}

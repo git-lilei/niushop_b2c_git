@@ -1,0 +1,82 @@
+<link rel="stylesheet" href="{$pc_path}/style_3.css"/>
+<article class="floor-four floor-item">
+    <header class="floor-header">
+        <div data-block-type="text" data-block-name="left_title">
+            <h1 class="floor-header-title" floor-block-name="text">{if condition="$data['text']['left_title']['value']"}{$data['text']['left_title']['value']}{else/}男装{/if}</h1>
+        </div>
+        <div  data-block-type="text" data-block-name="subheading_title">
+            <h3 class="floor-header-subheading ns-text-color-gray">{if condition="$data['text']['subheading_title']['value']"}{$data['text']['subheading_title']['value']}{else/}自在潇洒穿着感{/if}</h3>
+        </div>
+    </header>
+    <article>
+        <ul class="temp-item-list" data-block-type="product" data-block-name="middle">
+            {if condition="$data['product']['middle']"}
+            {foreach name="$data['product']['middle']" item="product"}
+            <li class="temp-list-item">
+                <a href="{:__URL('SHOP_MAIN/goods/detail?goods_id='.$product['goods_id'])}" target="_blank" class="item-pic ns-bg-color-gray">
+                    {if condition="$product['pic_cover_small'] != '' "}
+                    <img src="{:__img($product['pic_cover_small'])}">
+                    {else/}
+                    <img src="WEB_IMG/discount_product_default.png">
+                    {/if}
+                </a>
+                <ul class="item-info">
+                    <li class="item-tags">
+                        <span {if condition="$product.group_name == ''" }style="background-color:transparent;"{else/}class="ns-bg-color"{/if}>{$product.group_name}</span>
+                    </li>
+                    <li class="item-name">
+                        <a href="{:__URL('SHOP_MAIN/goods/detail?goods_id='.$product['goods_id'])}" target="_blank">{$product.goods_name}</a>
+                    </li>
+                    <li class="item-price ns-text-color">
+                    	{if condition="$product.point_exchange_type == 3"}
+                        <p>{$product.point_exchange}积分</p>
+                        {else/}
+                        <p>¥{$product.promotion_price}</p>
+                        {/if}
+                        <hr {if condition="$product.introduction == ''"} style="display: none;"{/if}>
+                    </li>
+                    <li class="item-desc ns-text-color-gray">{$product.introduction}</li>
+                </ul>
+            </li>
+            {/foreach}
+            {else/}
+            {php}for($i=0;$i<8;$i++){ {/php}
+            <li class="temp-list-item">
+                <a href="JavaScript:;" class="item-pic ns-bg-color-gray">
+                    <img>
+                </a>
+                <ul class="item-info">
+                    <li class="item-tags back-item-tags">
+                        <span class="ns-bg-color"></span>
+                    </li>
+                    <li class="item-name back-item-name">
+                        <a class="ns-bg-color-gray" href="javascript:;"></a>
+                    </li>
+                    <li class="item-price ns-text-color back-item-price">
+                        <p></p>
+                        <hr>
+                    </li>
+                    <li class="item-desc ns-text-color-gray back-item-desc ns-bg-color-gray"></li>
+                </ul>
+            </li>
+            {php} }; {/php}
+            {/if}
+        </ul>
+    </article>
+</article>
+<input type="hidden" name="floor_name" value="{$name}">
+<script type='text/javascript'>
+$(".temp-item-list > li").each(function(){
+    $(this).mouseover(function(){
+        $(this).find(".item-pic > img").css({
+            "transform": "scale(1.1)",
+            "transition": "2s"
+        });
+    }).mouseout(function(){
+        $(this).find(".item-pic > img").css({
+            "transform": "scale(1)",
+            "transition": "2s"
+        });
+    })
+});
+</script>

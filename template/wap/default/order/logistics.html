@@ -1,0 +1,106 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/order_logistics.css">
+<script src="WAP_JS/order.js"></script>
+{/block}
+{block name="main"}
+{php}
+	$order_id = request()->get('order_id', 0);
+	$logistics = api("System.Order.logistics",['order_id'=>$order_id]);
+	$order = $logistics['data']; 
+{/php}
+{notempty name="$order"}
+<div class="order-logistics">
+	<nav class="ns-border-color-gray">
+		<ul>
+			{foreach name="order['goods_packet_list']" item="vo" key=key}
+			<li><a class="ns-text-color-gray" statusid="{$key}" href="javascript:;" >{$vo.packet_name}</a></li>
+			{/foreach}
+		</ul>
+	</nav>
+	<!-- 商品列表 -->
+	{foreach name="order['goods_packet_list']" item="vo" key=k}
+	<div class="status status-{$key}" data-express-id="{$vo.express_id}" data-is-express="{$vo.is_express}">
+		<div class="goods-list-img">
+			{foreach name="vo['order_goods_list']" item="vg"}
+			<img src="{:__IMG($vg['picture_info']['pic_cover_micro'])}" />
+			{/foreach}
+		</div>
+		{if condition="$vo['is_express'] eq 1"}
+			<div  class="express-goods ns-text-color-gray">
+				<span>{:lang('goods_total')}{$vo['order_goods_list']|count}{:lang('goods_goods')}，{:lang('obey')}{$vo['express_name']}{:lang('accept_for_carriage')}</span><br/>
+				<span>{:lang('waybill_number')}：{$vo['express_code']}</span>
+			</div>
+			<!-- JS动态查询物流信息 -->
+			<div class="express-title ns-border-color-gray">物流跟踪</div>
+			<div class="express-info">
+				<ul class="js-express-info ns-border-color-gray"></ul>
+			</div>
+		{else}
+			<div class="express-goods ns-text-color-gray">
+				<span>{:lang('goods_total')}{$vo['order_goods_list']|count}{:lang('goods_goods')},{:lang('no_logistics_required')}</span><br/>
+				<span>{:lang('waybill_number')}：--</span>
+			</div>
+			<div class="express-goods ns-text-color-gray other">
+				<div>{:lang('member_logistics_tracking')}：</div>
+				<div>{:lang('no_logistics_information')}</div>
+			</div>
+		{/if}
+	</div>
+	{/foreach}
+</div>
+{else/}
+<script>history.back();</script>
+{/notempty}
+{/block}
+{block name="script"}
+<script>
+$(function(){
+	$("div[data-express-id]").each(function(){
+		var curr = $(this);
+		var express_id = curr.attr("data-express-id");
+		var is_express = curr.attr("data-is-express");
+		if(parseInt(is_express)){
+			$('.js-express-info-'+express_id).html("{:lang('in_load')}...");
+			if(express_id != undefined){
+				api("System.Order.orderExpressMessageList",{ "express_id":express_id },function (res) {
+					var data = res.data;
+					var html = '';
+					if (data["Success"]) {
+						$(".express-title").text("物流跟踪");
+						for (var i = 0; i < data["Traces"].length; i++) {
+							html += '<li class="ns-border-color-gray">';
+							var txt_color = "ns-text-color-gray";
+							var border_color = "";
+							var bg_color = "ns-bg-color-gray-shade-50";
+							if (i == 0) {
+								txt_color = "ns-text-color";
+								bg_color = "ns-bg-color";
+								border_color = "ns-border-color";
+							}
+							html += '<div class="' + txt_color + '">' + data["Traces"][i]["AcceptStation"] + '</div>';
+							html += '<div class="accept-time ' + txt_color + '">' + data["Traces"][i]["AcceptTime"] + '</div>';
+							html += '<div class="dot ' + bg_color + ' ' + border_color + '"></div>';
+							html += '</li>';
+						}
+					}else{
+						$(".express-title").text(data['Reason']);
+					}
+					curr.find('.js-express-info').html(html);
+				});
+			}
+		}
+	});
+	
+	$('.order-logistics nav li').click(function(){
+		$('.order-logistics nav li').removeClass('select ns-text-color ns-border-color');
+		$(this).addClass('select ns-text-color ns-border-color');
+		$(".status").hide();
+		$(".status-"+$(this).find('a').attr('statusid')).show();
+	});
+	
+	$('.order-logistics nav li:eq(0)').click();
+});
+</script>
+{/block}
+{block name="footer"}{/block}

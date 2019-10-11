@@ -1,0 +1,31 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/article_lists.css">
+{/block}
+{block name="main"}
+<div class="article-container">
+{php}
+	$article_class = api("System.Article.articleClassList");
+	$article_class = $article_class['data']['data'];//文章一级分类列表
+{/php}
+	{notempty name="$article_class"}
+		<ul class="article-class ns-border-color-gray"> 
+			<li class="active" data-class-id="0"><a href="javascript:;" class="ns-text-color ns-border-color" >全部</a></li>
+			{foreach name="$article_class" id="class_vo" key="k"}
+				<li data-class-id="{$class_vo.class_id}"><a href="javascript:;">{$class_vo.name}</a></li>
+			{/foreach}
+		</ul>
+	{/notempty} 
+	<!-- 文章列表 -->
+	<div class="article-list-content">
+		<ul class="article-list-container"></ul>
+	</div>
+</div>
+<input type="hidden" id="class_id" value="0">
+<input type="hidden" id="page" value="1">
+<input type="hidden" id="page_count" value="0">
+<input type="hidden" id="article_img" value="{$article_img}">
+{/block}
+{block name="script"}
+<script src="WAP_JS/article_lists.js"></script>
+{/block}

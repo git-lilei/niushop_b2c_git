@@ -1,0 +1,17 @@
+{extend name="$base" /}
+{block name="resources"}
+<link type="text/css" rel="stylesheet" href="WAP_CSS/member_bargain.css">
+{/block}
+{block name="main"}
+<div class="user-info ns-bg-color">
+	<div><img></div>
+	<h4></h4>
+</div>
+<div class="spelling-order-list"></div>
+<input type="hidden" id="ms_time" value="{:time()}"/>
+<input type="hidden" id="page_count">
+<input type="hidden" id="page">
+<input type="hidden" id="status" value="all">
+<script src="WAP_JS/member_bargain.js"></script>
+{/block}
+{block name="footer"}{/block}

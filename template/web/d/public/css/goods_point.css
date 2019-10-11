@@ -1,0 +1,19 @@
+.ns-main{width: initial;}
+.carousel .item a img{height: 300px;}
+.integral-content{margin-top: 50px;}
+.integral-content .integral-list{line-height: 33px;}
+.integral-content .integral-list > li{float: left;margin-right: 20px;vertical-align: middle;font-size: 12px;}
+.integral-content .integral-btn{display: inline-block;width: 80px;height: 30px;text-align: center;line-height: 30px;border:1px solid;}
+.exchange-list{padding-top: 10px;}
+.exchange-list li{position: relative;float: left;width: 230px;height: 359px;margin: 0 5px 10px 5px;padding: 10px;}
+.exchange-list .recommend{position: absolute;top: 11px;left: 20px;width: 40px;height: 40px;}
+.exchange-list .img{display: block;width: 212px;height: 210px;margin-bottom: 10px;text-align: center;overflow: hidden;}
+.exchange-list .img > img{height: 100%;max-width: 100%;}
+.exchange-list .exchange-text{overflow: hidden; display: block; width: 212px; line-height: 30px; font-size: 15px;text-overflow: ellipsis;white-space: nowrap;}
+.exchange-list .get-coupons{opacity: 0;width: 212px;height: 30px;border-radius: initial;}
+.exchange-list li:hover{transform: translate3d(0,-3px,0);box-shadow: 0 0 16px rgba(0,0,0,.3); transition: all .6s;}
+.exchange-list li:hover .get-coupons{opacity: 1;box-shadow: 0 0 16px rgba(0,0,0,.3);}
+.banner-wrap{position: relative;}
+.banner-wrap .carousel-inner > .item > a{display: inline-block;}
+.banner-wrap .carousel-inner > .item > a > img{max-width: 100%;max-height: 100%;height: auto;display: inline-block;}
+.banner-wrap .sidebar{width: 220px; position: absolute; left: 50%; top: 18px; margin-left: 380px;}

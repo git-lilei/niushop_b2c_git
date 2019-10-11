@@ -1,0 +1,314 @@
+{extend name="$base" /}
+{block name="resources"}
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+<style type="text/css">
+.total>div { text-align: left;font-size: 12px;width:100%;height: 43px;overflow:hidden;color:#666;font-weight: normal;}
+.total>div input { margin: 0 5px 0 0;}
+.total label {float:left;text-align: left;font-size: 12px; width:12%;overflow:hidden;color:#666;font-weight: normal;}
+.total label input {margin: 0 5px 0 0;}
+.total label {width: 7%;}
+.coupon-title{display:block;float:left;}
+.coupon-block{display:block;float:left;}
+.coupon-box{height:auto !important;padding-bottom:40px;}
+</style>
+{/block}
+{block name="main"}
+<div class="space-10"></div>
+<div class="set-style">
+	<h4><span></span>基础设置</h4>
+	<dl>
+		<dt><span class="required">*</span>等级名称：</dt>
+		<dd>
+			<input type="text" id="level_name" class="input-common"value="{$info.level_name}">
+			<p class="error">请输入等级名称</p>
+			<p class="hint">设置会员等级名称</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt><span class="required">*</span>升级条件：</dt>
+		<dd class="total">
+			<div>
+				累计积分满&nbsp;&nbsp;&nbsp;
+				<input class="input-common harf" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" type="number" min="0" id="min_integral" style="margin-bottom: 0px; " placeholder="0" value="{$info.min_integral}"><em class="unit">分</em>
+				<span class="hint">设置会员等级所需要的累计积分且必须大于等于0</span>
+			</div>
+			<div>
+				累计消费满&nbsp;&nbsp;&nbsp;
+				<input class="input-common harf" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" type="number" min="0" id="quota" style="margin-bottom: 0px; " placeholder="0"value="{$info.quota}"><em class="unit">元</em>
+				<span class="hint">设置会员等级所需要的累计消费且必须大于等于0,单位：元</span>
+			</div>
+			<div>
+				购买量满&nbsp;&nbsp;&nbsp;
+				<input class="input-common harf" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" type="number" min="0" id="order_num" style="margin-bottom: 0px; " placeholder="0"value="{$info.order_num}"><em class="unit">笔</em>
+				<span class="hint">设置会员等级所需要的购买量且必须大于等于0,单位：笔</span>
+			</div>
+			<p class="error">升级条件各值不能为负数</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>等级须知：</dt>
+		<dd>
+			<textarea id="desc" class="textarea-common">{$info.desc}</textarea>
+			<p class="hint">会员等级描述信息</p>
+		</dd>
+	</dl>
+	<h4><span></span>等级礼包</h4>
+	<dl>
+		<dt>升级礼包：</dt>
+		<dd class="total">
+			<input type="hidden" id="hidden_give_coupon" value ="{$info.give_coupon}"/>
+			<div>
+				升级送积分&nbsp;&nbsp;&nbsp;
+				<input class="input-common harf" onkeyup="this.value=this.value.replace(/^(0+)|[^\d]+/g,'')" type="number" min="0" id="give_point" style="margin-bottom: 0px; " placeholder="0"value="{:round($info.give_point)}"><em class="unit">积分</em>
+			</div>
+			<div>
+				升级送余额&nbsp;&nbsp;&nbsp;
+				<input class="input-common harf" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" type="number" min="0" id="give_money" style="margin-bottom: 0px; " placeholder="0"value="{$info.give_money}"><em class="unit">元</em>
+			</div>
+			<div class="coupon-box" style="overflow:unset">
+				<span class="coupon-title">
+				升级送优惠券&nbsp;&nbsp;&nbsp;
+				</span>
+				
+				<!-- 赠送优惠券模块 -->
+				<div class="coupon-block">
+					<div class="coupon-top-block">
+					</div>
+					<div class="add-coupon">
+						<a href="javascript:;" class="add-coupon" onclick="addCoupon();">新增</a>
+					</div>
+					<div style="clear:both;"></div>
+				</div>
+			</div>
+			<div></div>
+			<p class="error">折扣率必须为0-100的正整数</p>
+			<p class="hint">升级礼包仅在首次升入本级时候发放</p>
+		</dd>
+	</dl>
+	<h4><span></span>等级权益</h4>
+	<dl>
+		<dt><span class="required">*</span>折扣率：</dt>
+		<dd>
+			<input class="input-common harf" type="text" id="goods_discount"value="{$info.goods_discount}"><em class="unit top">%</em>
+			<p class="error">折扣率必须为0-100的正整数</p>
+			<p class="hint">折扣率单位为百分比，如输入90，表示该会员等级的用户可以以商品原价的90%购买</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="save();">保存</button>
+			<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);" >返回</button>
+		</dd>
+	</dl>
+</div>
+<script>
+var coupon_id_arr = [];
+$(function(){
+	var give_coupon_str = $("#hidden_give_coupon").val();
+	var give_coupon_arr = give_coupon_str.split(",");
+	var coupon_arr = [];
+	if(give_coupon_arr.length > 0){
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/promotion/sendcoupontypelist')}",
+			success : function(data) {
+				coupon_arr = data['data'];
+				var num = 1;
+				$.each(give_coupon_arr, function(i, item){
+					var temp_arr = item.split(":");
+					var coupon_id = temp_arr[0];
+					if(coupon_id > 0){
+						var html = '<div class="coupon-item"><select  class="select-common coupon coupon-'+num+'" temp-val="0"temp-name="">';
+						html += '<option value="0">请选择优惠券</option>';
+						if(coupon_arr.length > 0){
+							for(var i=0;i<coupon_arr.length;i++){
+								var temp_str = coupon_arr[i]['coupon_type_id']+":"+coupon_arr[i]['coupon_name'];
+								if($.inArray(temp_str,coupon_id_arr) == -1){
+									html += '<option value="'+coupon_arr[i]['coupon_type_id']+'" >'+coupon_arr[i]['coupon_name']+'</option>';
+								}
+							}
+						}else{
+							html += '<option value="0">您还未创建优惠券</option>';
+						}
+						html += '</select>&nbsp;&nbsp;&nbsp;<a href="javascript:;" class="del">删除</a></div>';
+						
+						$(".coupon-top-block").append(html);
+						$(".coupon-"+num).val(coupon_id);
+						$(".coupon-"+num).change();
+						$('.select-common').selectric();
+						num++;
+					}
+					
+				});
+			}
+		});
+	}
+	
+})
+
+var flag = false;//防止重复提交
+//保存
+function save(){
+	var level_name = $("#level_name").val();
+	var min_integral = $("#min_integral").val();
+	var quota = $("#quota").val();
+	var goods_discount = $("#goods_discount").val();
+	var desc = $("#desc").val();
+	var reg = /^(?:0|[1-9][0-9]?|100)$/;
+	var point_reg = /^\d+$/;
+	var give_point = $("#give_point").val();
+	var give_money = $("#give_money").val();
+	var give_coupon = '';
+	var order_num = $("#order_num").val();
+	$(".coupon").each(function(){
+		var temp_val = $(this).val();
+		if(temp_val > 0){
+			if(give_coupon == ''){
+				give_coupon += temp_val+":1";
+			}else{
+				give_coupon += ","+temp_val+":1";
+			}
+		}
+	})
+	
+	if (level_name == '') {
+		$("#level_name").focus().next().show().css("display","inline-block");
+		return false;
+	} else {
+		$(".error").hide();
+	}
+	
+	if(min_integral < 0){
+		$("#min_integral").focus().parent().parent().find(".error").show();
+		return false;
+	} else {
+		$(".error").hide();
+	}
+	if(min_integral.length>0 && !point_reg.test(min_integral)){
+		showTip("积分必须是整数",'error');
+		return false;
+	}
+	if(quota < 0){
+		$("#quota").focus().parent().parent().find(".error").show();
+		return false;
+	} else {
+		$(".error").hide();
+	}
+	if(order_num < 0){
+		$("#order_num").focus().parent().parent().find(".error").show();
+		return false;
+	} else {
+		$(".error").hide();
+	}
+	
+	if(!reg.test(goods_discount)){
+		$("#goods_discount").focus().parent().find('.error').show();
+		return false;
+	}else {
+		$(".error").hide();
+	}
+	
+	if(give_point.length>0 && !point_reg.test(give_point)){
+		$("#give_point").focus();
+		showTip("积分必须是整数",'error');
+		return false;
+	}
+	if(flag){
+		return false;
+	}
+	flag = true;
+	$.ajax({
+		type : "post",
+		url : "{:__url('ADMIN_MAIN/member/updateMemberLevel')}",
+		data : {
+			'level_id' : "{$info.level_id}",
+			'level_name' : level_name,
+			'order_num' : order_num,
+			'min_integral' : min_integral,
+			'quota' : quota,
+			'goods_discount' : goods_discount,
+			'desc' : desc,
+			'give_point' : give_point,
+			'give_money' : give_money,
+			'give_coupon' : give_coupon,
+		},
+		success : function(data) {
+			if (data["code"] > 0) {
+				showTip(data['message'],'success');
+				location.href="{:__url('ADMIN_MAIN/member/memberlevellist')}";
+			}else{
+				showTip(data['message'],'error');
+				flag = false;
+			}
+		
+		}
+	});
+}
+
+$("body").on("change",".coupon",function(){
+	var val = $(this).val();
+	var name = $(this).find("option:checked").text();
+	var temp_val = $(this).attr("temp-val");
+	var temp_name = $(this).attr("temp-name");
+	
+	var temp_str = temp_val+":"+temp_name;
+	
+	//移除之前的值
+	
+	if(temp_val > 0){
+		coupon_id_arr.splice($.inArray(temp_str,coupon_id_arr),1);
+	}
+	
+	$(".coupon").not(this).each(function(e){
+		if(val > 0){
+			$(this).find("option[value='"+val+"']").remove();
+		}
+		if(temp_val > 0){
+			$(this).append("<option value='"+temp_val+"'>"+temp_name+"</option>");
+		}
+	});
+	if(val > 0){
+		coupon_id_arr.push(val+":"+name);
+	}
+	$(this).attr("temp-val", val);
+	$(this).attr("temp-name", name);
+	$('.select-common').selectric();
+	console.log(coupon_id_arr);
+});
+
+//移除对象
+$("body").on("click",".del",function(){
+	$(this).parent().remove();
+});
+
+/**
+ * 优惠券
+ */
+function addCoupon(){
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/promotion/sendcoupontypelist')}",
+		success : function(data) {
+			var html = '<div class="coupon-item"><select  class="select-common coupon" temp-val="0"temp-name="">';
+			html += '<option value="0">请选择优惠券</option>';
+			if(data['data'].length > 0){
+				for(var i=0;i<data['data'].length;i++){
+					var temp_str = data['data'][i]['coupon_type_id']+":"+data['data'][i]['coupon_name'];
+					if($.inArray(temp_str,coupon_id_arr) == -1){
+						html += '<option value="'+data['data'][i]['coupon_type_id']+'" >'+data['data'][i]['coupon_name']+'</option>';
+					}
+				}
+			}else{
+				html += '<option value="0">您还未创建优惠券</option>';
+			}
+			html += '</select>&nbsp;&nbsp;&nbsp;<a href="javascript:;" class="del">删除</a></div>';
+			$(".coupon-top-block").append(html);
+			$('.select-common').selectric();
+		}
+	});
+}
+</script>
+{/block}

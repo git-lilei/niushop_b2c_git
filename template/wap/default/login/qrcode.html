@@ -1,0 +1,27 @@
+{extend name="$base" /}
+{block name="resources"}
+<style>
+.shop-qrcode{display:block;width:100%;}
+.is-weixin {text-align: center; margin-top: 10%;}
+.is-weixin img {width: 50px;margin-bottom: 10px;}
+</style>
+{/block}
+{block name="main"}
+{php}
+	$is_weixin = api("System.Config.isWeixin");
+	$is_weixin = $is_weixin['data'];
+{/php}
+{if condition="$is_weixin == -1"}
+<div class="is-weixin"><img src="WAP_IMG/login/is_weixin.png"/><p>{:lang('public_number_is_not_set_at_this_time')}</p></div>
+{elseif condition="$is_weixin == 0"/}
+<div class="is-weixin"><img src="WAP_IMG/login/is_weixin.png"/><p>{:lang('current_browser_is_not_wechat_browser')}</p></div>
+{else /}
+<img class="shop-qrcode" src="{:__URL('APP_MAIN/login/showuserqrcode?uid='.$uid.'&rand='.time())}">
+{/if}
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script type="text/javascript">
+niushop.share({flag: "qrcode_my"});
+</script>
+{/block}

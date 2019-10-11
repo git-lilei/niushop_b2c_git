@@ -1,0 +1,72 @@
+{extend name="$base" /}
+{block name="resources"}{/block}
+{block name="main"}
+<div class="space-10"></div>
+<div class="ncsc-form-goods">
+	{include file="admin/Express/expressTitle"}
+	<div class="block-basic-setting">
+		
+			<div class="set-style">
+			<h4 style = "background: #fff;"><span></span>门店运费管理</h4>
+				<dl>
+					<dt>门店运费：</dt>
+					<dd>
+						<input id="pickup_freight" class="input-common harf" type="number" min="0" placeholder="0" onkeyup="freight_change(this);" value="{$config->pickup_freight}" /><em class="unit">元</em>
+						<p class="hint">如果会员选择配送方式是门店自提对应运费</p>
+					</dd>
+				</dl>
+				<dl>
+					<dt>满X免运费：</dt>
+					<dd><input id="manjian_freight" class="input-common harf" type="number" min="0" placeholder="0" onkeyup="freight_change(this);" value="{$config->manjian_freight}" /><em class="unit">元</em></dd>
+				</dl>
+				<dl>
+					<dt>是否启用：</dt>
+					<dd>
+						<p>
+							<input id="is_enable" type="checkbox" class="checkbox" {if condition="$config->is_enable==1"} checked="checked"{/if}/>
+						</p>
+					</dd>
+				</dl>
+				<dl>
+					<dt></dt>
+					<dd><button class="btn-common btn-big" onclick="setConfigAjax();">保存</button></dd>
+				</dl>
+				
+			</div>
+	</div>
+	<!-- 基础设置 -->
+	
+</div>
+<script>
+function freight_change(event){
+	$price=$(event).val();
+	if($price.indexOf("-") != -1 || $price<0 || $price==''){
+		$(event).val(0);
+	}
+}
+function setConfigAjax(){
+	var pickup_freight = $("#pickup_freight").val();
+	var manjian_freight = $("#manjian_freight").val();
+	var is_enable = 0;
+	if($("#is_enable").is(":checked")){
+		is_enable = 1;
+	}
+	$.ajax({
+		type:"post",
+		url:"{:__URL('nspickup/ADMIN_MODULE/shop/pickupPointFreightAjax')}",
+		data:{
+			'pickup_freight':pickup_freight,
+			'manjian_freight':manjian_freight,
+			'is_enable' : is_enable
+		},
+		success:function (data) {
+			if (data["code"] > 0) {
+				showTip(data["message"],'success');
+			}else{
+				showTip(data["message"],'error');
+			}
+		}
+	});
+}
+</script>
+{/block}

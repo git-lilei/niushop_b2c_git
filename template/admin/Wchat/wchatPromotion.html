@@ -1,0 +1,180 @@
+{extend name="admin/base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/promotion_block.css">
+{/block}
+{block name="main"}
+<div class="set-style wechat">
+	<h4 class="first"><span></span>微信设置</h4>
+	<div class="flex-wrap">
+		<a class="block-diy" title="公众号设置" href = '{:__URL('ADMIN_MAIN/wchat/config')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/wchat-icon-wchat.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">公众号设置</p>
+					<p class="diy-desc">设置公众号快捷键</p>
+				</div>
+			</div>
+		</a>
+		<a class="block-diy" title="小程序设置" href = '{:__URL('ADMIN_MAIN/wchat/appletConfig')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/wchat-icon-wchatapp.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">小程序设置</p>
+					<p class="diy-desc">设置小程序快捷键</p>
+				</div>
+			</div>
+		</a>
+		<a class="block-diy" title="菜单设置" href = '{:__URL('ADMIN_MAIN/wchat/menu')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/wchat-icon-menu.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">菜单设置</p>
+					<p class="diy-desc">设置公众号菜单快捷键</p>
+				</div>
+			</div>
+		</a>
+		<a class="block-diy" title="关注设置" href = '{:__URL('ADMIN_MAIN/wchat/keyConcernConfig')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/wchat-icon-attention.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">关注设置</p>
+					<p class="diy-desc">设置一键关注快捷键</p>
+				</div>
+			</div>
+		</a>
+		
+		
+	</div>
+	
+	<h4><span></span>微信消息</h4>
+	<div class="flex-wrap">
+		<a class="block-diy" title="消息素材" href = '{:__URL('ADMIN_MAIN/wchat/materialmessage')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/wchat-icon-material.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">消息素材</p>
+					<p class="diy-desc">设置消息素材快捷键</p>
+				</div>
+			</div>
+		</a>
+		<a class="block-diy" title="关注回复" href = '{:__URL('ADMIN_MAIN/wchat/replayConfig?type=1')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/wchat-icon-attention-reply.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">关注回复</p>
+					<p class="diy-desc">设置关注回复快捷键</p>
+				</div>
+			</div>
+		</a>
+		<a class="block-diy" title="关键词回复" href = '{:__URL('ADMIN_MAIN/wchat/replayConfig?type=2')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/wchat-icon-text-reply.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">关键词回复</p>
+					<p class="diy-desc">设置关键词回复快捷键</p>
+				</div>
+			</div>
+		</a>
+		<a class="block-diy" title="默认回复" href = '{:__URL('ADMIN_MAIN/wchat/replayConfig?type=3')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/wchat-icon-default-reply.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">默认回复</p>
+					<p class="diy-desc">设置默认回复快捷键</p>
+				</div>
+			</div>
+		</a>
+	</div>	
+	
+	<h4><span></span>微信推广</h4>
+	<div class="flex-wrap">
+		<a class="block-diy" title="推广关注" href = '{:__URL('ADMIN_MAIN/wchat/weixinqrcodetemplate?type=1')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/wchat-icon-promotion.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">推广关注</p>
+					<p class="diy-desc">设置推广关注快捷键</p>
+				</div>
+			</div>
+		</a>
+		<a class="block-diy" title="推广店铺" href = '{:__URL('ADMIN_MAIN/wchat/weixinqrcodetemplate?type=2')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/wchat-icon-shop.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">推广店铺</p>
+					<p class="diy-desc">设置推广店铺快捷键</p>
+				</div>
+			</div>
+		</a>
+		<a class="block-diy hide" title="推广商品" href = ''>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/wchat-icon-goods.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">推广商品</p>
+					<p class="diy-desc">设置推广商品快捷键</p>
+				</div>
+			</div>
+		</a>
+	</div>
+	
+	
+	<h4><span></span>微信分享</h4>
+	<div class="flex-wrap">
+		<a class="block-diy" title="首页分享" href = '{:__URL('ADMIN_MAIN/wchat/shareconfig?type=3')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/wchat-icon-qrcode.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">首页分享</p>
+					<p class="diy-desc">设置首页分享快捷键</p>
+				</div>
+			</div>
+		</a>
+		<a class="block-diy" title="商品分享" href = '{:__URL('ADMIN_MAIN/wchat/shareconfig?type=2')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/wchat-icon-goods-share.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">商品分享</p>
+					<p class="diy-desc">设置商品分享快捷键</p>
+				</div>
+			</div>
+		</a>
+		<a class="block-diy" title="关注分享" href = '{:__URL('ADMIN_MAIN/wchat/shareconfig?type=1')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/wchat-icon-share.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">关注分享</p>
+					<p class="diy-desc">设置关注分享快捷键</p>
+				</div>
+			</div>
+		</a>
+	</div>
+</div>
+{/block}

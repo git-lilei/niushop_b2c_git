@@ -1,0 +1,26 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/promotion_block.css">
+{/block}
+{block name="main"}
+{notempty name="$member_action_config"}
+<div class="set-style">
+	<h4 class="first"><span></span>会员营销</h4>
+	<div class="flex-wrap">
+		{foreach name="$member_action_config" item="action"}
+		<a class="block-diy" title="{$action['title']}" href = '{:__URL('__URL__/'.$action["name"].'/ADMIN_MODULE/'.$action["index"])}'>
+		<div class="diy-content">
+			<div class="diy-icon">
+				<img src="__ROOT__/{$action['ico']}" alt="" />
+			</div>
+			<div class="diy-info">
+				<p class="diy-title">{$action['title']}</p>
+				<p class="diy-desc">{$action['description']}</p>
+			</div>
+		</div>
+		</a>
+		{/foreach}
+	</div>
+</div>
+{/notempty}
+{/block}

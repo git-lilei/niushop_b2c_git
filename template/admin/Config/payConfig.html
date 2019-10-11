@@ -1,0 +1,151 @@
+{extend name="$base" /}
+{block name="alert_info"}
+配置路径写法： 由于数字证书要求安全性比较高，所以针对独立服务器建议写绝对路径，也就是文件在服务器中的路径地址。针对虚拟主机服务器，由于只有虚拟主机的目录，只能讲数字证书放在系统内部，所以使用相对路径的写法，也就是相对系统根目录的路径。
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>应用ID：</dt>
+		<dd>
+			<input id="APP_KEY" type="text" value="{$config['value']['appid']}" class="input-common long" />
+			<p class="hint"><i class="important-note">[AppID]</i>微信支付对应公众账号APPID</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>应用密钥：</dt>
+		<dd>
+			<input id="APP_SECRET" type="text" value="{$config['value']['appkey']}" class="input-common long" />
+			<p class="hint"><i class="important-note">[AppSecrect]</i>微信支付对应公众账号APPS</p>
+		</dd>
+	</dl>
+		<dl>
+		<dt>支付专用签名串：</dt>
+		<dd>
+			<input id="paySignKey" type="text" value="{$config['value']['mch_key']}" class="input-common long" />
+			<p class="hint"><i class="important-note">[paySignKey]</i>微信商户API密钥</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>微信支付商户号：</dt>
+		<dd>
+			<input id="MCHID" type="text" value="{$config['value']['mch_id']}" class="input-common long" />
+			<p class="hint"><i class="important-note">[MCHID]</i>微信支付商户号</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>支付授权目录：</dt>
+		<dd><span class="text" style="background-color: white; border: none;min-width: 500px;display: inline-block;font-size: 13px;cursor: pointer;color:#468847;" id="empowerUrl" value="">{$root_url}</span></dd>
+	</dl>
+	
+	<dl>
+		<dt>apiclient_cert：</dt>
+		<dd>
+			<input id="apiclient_cert" type="text" class="input-common w500" placeholder="请填写绝对路径"
+			{if condition="$original_road_refund_setting_info.apiclient_cert"} value="{$original_road_refund_setting_info.apiclient_cert}"{/if}>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>apiclient_key.pem：</dt>
+		<dd>
+			<input id="apiclient_key" type="text" class="input-common w500" placeholder="请填写绝对路径"
+			{if condition="$original_road_refund_setting_info.apiclient_key"} value="{$original_road_refund_setting_info.apiclient_key}"{/if}>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否启用支付：</dt>
+		<dd>
+			<p>
+				<input id="is_use" type="checkbox" class="checkbox" {if condition="$config.is_use==1"} checked="checked"{/if}/>
+			</p>
+		</dd>
+	</dl>
+	<!-- 原路退款设置 开始-->
+
+	<dl>
+		<dt>是否启用退款：</dt>
+		<dd>
+			<p><input id="refund_is_use" type="checkbox" class="checkbox"
+			{if condition="$original_road_refund_setting_info.is_use"}checked="checked"{/if}/></p>
+			<p class="hint">需要配置微信支付同时配置好apiclient_cert和apiclient_key的绝对路径才可以进行后续操作</p>
+		</dd>
+	</dl>
+	<!-- 原路退款设置结束 -->
+	
+	<!-- 转账设置 开始-->
+	<dl>
+		<dt>是否启用转账：</dt>
+		<dd>
+			<p><input id="transfer_is_use" type="checkbox" class="checkbox" 
+			{if condition="$transfer_accounts_setting_info.is_use"}checked="checked"{/if}/></p>
+			<p class="hint">需要配置微信支付同时配置好apiclient_cert和apiclient_key的绝对路径才可以进行后续操作</p>
+		</dd>
+	</dl>
+		
+	<!-- 转账设置 结束-->
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="setConfigAjax()">保存</button>
+			<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);" >返回</button>
+		</dd>
+	</dl>
+</div>
+<script>
+function setConfigAjax(){
+	var appkey = $("#APP_KEY").val();
+	var appsecret = $("#APP_SECRET").val();
+	var paySignKey = $("#paySignKey").val();
+	var MCHID = $("#MCHID").val();
+	var is_use = 0;
+	
+	var originalRoadRefund = {};
+	originalRoadRefund.is_use = $("#refund_is_use").is(":checked") ? 1 : 0;
+	originalRoadRefund.apiclient_cert = $.trim($("#apiclient_cert").val());
+	originalRoadRefund.apiclient_key = $.trim($("#apiclient_key").val());
+	
+	var originalRoadTransfer = {};
+	originalRoadTransfer.is_use = $("#transfer_is_use").is(":checked") ? 1 : 0;
+	
+	
+	if($("#apiclient_cert").val().length>300){
+		showTip("apiclient_cert绝对路径超出字数限制","warning");
+		$("#apiclient_cert").focus();
+		return false;
+	}
+	
+	if($("#apiclient_key").val().length>300){
+		showTip("apiclient_key绝对路径超出字数限制","warning");
+		$("#apiclient_key").focus();
+		return false;
+	}
+	
+	if($("#is_use").is(":checked")){
+		is_use = 1;
+	}
+	
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/config/wchatconfig')}",
+		data:{
+			'appkey':appkey,
+			'appsecret':appsecret,
+			'paySignKey':paySignKey,
+			'MCHID':MCHID,
+			'type':'wchat',
+			'is_use' : is_use,
+			'value' : JSON.stringify(originalRoadRefund),
+			'transferValue' : JSON.stringify(originalRoadTransfer)
+		},
+		success:function (data) {
+			if (data["code"] > 0) {
+				showTip(data["message"],"success");
+				location.href=__URL("ADMIN_MAIN/config/paymentconfig");
+			}else{
+				showTip(data["message"],"error");
+			}
+		}
+	});
+}
+</script>
+{/block}

@@ -1,0 +1,43 @@
+.ns-main .n-title{line-height:50px;font-weight:700;padding:0 10px;margin:15px auto;}
+.ns-main .tip-box{width: 100%;text-align: center;margin: 80px auto;}
+.tip-box .tip-icon{display: block;width: 156px;height: 85px;margin: 0 auto;background: url(../img/goods/not_category.png) no-repeat 0 0;}
+.tip-box .tip-text{line-height: 20px;padding: 10px;}
+.ns-main .m-events-container{padding-bottom:10px;}
+.m-events-container .row{margin: 0;}
+.col-md-4:hover .u-img .u-cover{opacity:0.8;overflow:hidden;}
+.m-events-container .row .col-md-4{float: left; margin-bottom: 30px; overflow: hidden; -webkit-box-shadow: 0 1px 3px 0 rgba(0,0,0,0.20); -moz-box-shadow: 0 1px 3px 0 rgba(0,0,0,0.20); box-shadow: 0 1px 3px 0 rgba(0,0,0,0.20);width:30%;margin-right:5%;padding: 0;}
+.m-events-container .row .col-md-4:nth-child(3n){margin-right:0;}
+.col-md-4 .u-img{height: 144px; width: 100%; overflow: hidden; display: inline-block; position: relative;}
+.col-md-4 h3{margin: 0 10px 10px 10px;}
+.col-md-4 .u-desc{margin: 0 10px 10px 10px;  height: 60px; line-height: 20px; overflow: hidden;}
+.u-desc > p{word-break: break-word;}
+.col-md-4 .u-img .u-snap{width: 100%; transition: transform 1s;position: absolute; top: 0; left: 0;}
+.col-md-4 .u-img .u-cover{position: absolute; top: 0; left: 0; width: 100%; height: 144px; opacity: 0; z-index: 19;transition: all 0.5s ease-in-out; -moz-transition: all 0.5s ease-in-out; -webkit-transition: all 0.5s ease-in-out; -o-transition: all 0.5s ease-in-out;}
+.col-md-4 .u-img .u-cover .u-button{position: absolute; color: #fff; line-height: 44px; text-align: center; top: 50%; left: 50%; margin-left: -70px; margin-top: -22px; width: 140px; height: 44px; border: 1px solid #fff; border-radius: 2px;}
+.col-md-4 h3 span{display: inline-block; vertical-align: middle; width: 100%; height: 48px; line-height: 48px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; border-bottom: 1px solid;}
+/*猜你喜欢和浏览历史*/
+.ns-main .browse-history-tab{height: 40px;line-height: 40px;border-bottom: 1px solid;position: relative;z-index: 1;clear:both;}
+.ns-main .browse-history-tab span{float: left;padding: 0 20px;font-size: 14px;cursor: pointer;}
+.ns-main .browse-history-tab .browse-history-line{width: 104px;height: 2px;font-size: 0;position: absolute;left: 0;bottom: -2px;}
+.ns-main .browse-history-tab .browse-history-other{float: right;}
+.ns-main .browse-history-tab .browse-history-other .icon{float: left;width: 16px;height: 16px;margin: 12px 4px 0 0;}
+.browse-history-tab .browse-history-other .history-recommend-change .icon{background-position: -43px -78px;}
+.browse-history-tab .browse-history-other .history-recommend-change:hover .icon{background-position: -43px -99px;}
+.browse-history-tab .browse-history-other .clear-history .icon{background-position: -24px -78px;}
+.browse-history-tab .browse-history-other .clear-history:hover .icon{background-position: -24px -99px;}
+.browse-history-tab .browse-history-other .text{float: left;}
+.ns-main .browse-history-con{border: 1px solid;border-top: 0;padding: 20px;}
+.ns-main .browse-history-con .browse-history-inner{width: 100%;height: 256px;overflow: hidden;position: relative;}
+.ns-main .browse-history-con .browse-history-inner ul{overflow: hidden;width: 100%;height: 256px;}
+.browse-history-con .browse-history-inner ul.recommend-panel{position: absolute;left: 0;top: 0;}
+.browse-history-con .browse-history-inner li{width: 173px;float: left;border: 1px solid;margin-right: 10px;margin-top:16px;margin-bottom:16px;}
+.browse-history-con .browse-history-inner li img{height:100%;}
+.browse-history-con .browse-history-inner li.li-special,.ns-main .browse-history-con .browse-history-inner li:nth-last-child(1),.browse-history-inner li:nth-child(6n){padding-right: 0px;margin-right: 0px}
+.ns-main .browse-history-con .browse-history-inner .p-img{width: 100%;height: 160px;margin-bottom: 10px;text-align: center;line-height: 160px;}
+.ns-main .browse-history-con .browse-history-inner .p-img img{text-overflow:ellipsis;white-space:nowrap;overflow:hidden;}
+.ns-main .browse-history-con .browse-history-inner .p-name{line-height: 20px;height: 20px;overflow: hidden;text-overflow:ellipsis;white-space:nowrap;}
+.ns-main .browse-history-con .browse-history-inner .p-comm{height: 18px;line-height: 18px;padding: 5px 0 0;}
+.ns-main .browse-history-con .browse-history-inner .p-comm .p-price{float: left;font-weight: 400;}
+.banner-wrap{position: relative;}
+.banner-wrap .carousel-inner > .item > a{display: inline-block;}
+.banner-wrap .carousel-inner > .item > a > img{max-width: 100%;max-height: 100%;height: auto;display: inline-block;}

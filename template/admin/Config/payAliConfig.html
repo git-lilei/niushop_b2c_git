@@ -1,0 +1,100 @@
+{extend name="$base" /}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>账号：</dt>
+		<dd>
+			<input id="ali_seller" type="text" value="{$config['value']['ali_seller']}" class="input-common long" />
+			<p class="hint">支付宝账户</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>合作者身份ID：</dt>
+		<dd>
+			<input id="ali_partnerid" type="text" value="{$config['value']['ali_partnerid']}" class="input-common long" />
+			<p class="hint">支付宝合作者身份ID（PID）</p>
+		</dd>
+	</dl>
+		<dl>
+		<dt>安全校验码：</dt>
+		<dd>
+			<input id="ali_key" type="text" value="{$config['value']['ali_key']}" class="input-common long" />
+			<p class="hint">支付宝老版MD5密钥</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否启用支付：</dt>
+		<dd>
+			<p>
+				<input id="is_use" type="checkbox" class="checkbox" {if condition="$config.is_use==1"} checked="checked"{/if}/>
+			</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>是否启用退款：</dt>
+		<dd>
+			<p>
+				<input id="refund_is_use" type="checkbox" class="checkbox" {if condition="$original_road_refund_setting_info.is_use"}checked="checked"{/if} />
+			</p>
+			<p class="hint">开启支付宝支付才可以进行后续操作</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否启用转账：</dt>
+		<dd>
+			<p>
+				<input id="transfer_is_use" type="checkbox" class="checkbox" {if condition="$transfer_accounts_setting_info.is_use"}checked="checked"{/if} />
+			</p>
+			<p class="hint">开启支付宝支付才可以进行后续操作</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="setConfigAjax()">保存</button>
+			<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);" >返回</button>
+		</dd>
+	</dl>
+</div>
+<script>
+function setConfigAjax(){
+	var ali_partnerid = $("#ali_partnerid").val();
+	var ali_seller = $("#ali_seller").val();
+	var ali_key = $("#ali_key").val();
+	var is_use = 0;
+	if($("#is_use").is(":checked")){
+		is_use = 1;
+	}
+	
+	var originalRoadRefund = {};
+	originalRoadRefund.is_use = $("#refund_is_use").is(":checked") ? 1 : 0;
+	
+	var originalRoadTransfer = {};
+	originalRoadTransfer.is_use = $("#transfer_is_use").is(":checked") ? 1 : 0;
+	
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/config/alipayconfig')}",
+		data:{
+			'partnerid':ali_partnerid,
+			'seller':ali_seller,
+			'ali_key':ali_key,
+			'is_use' : is_use,
+			'type' : 'alipay',
+			'value' : JSON.stringify(originalRoadRefund),
+			'transferValue' : JSON.stringify(originalRoadTransfer)
+		},
+		success:function (data) {
+			if (data["code"] > 0) {
+				showTip(data["message"],"success");
+				location.href=__URL("ADMIN_MAIN/config/paymentconfig");
+			}else{
+				showTip(data["message"],"error");
+			}
+		}
+	});
+}
+</script>
+{/block}

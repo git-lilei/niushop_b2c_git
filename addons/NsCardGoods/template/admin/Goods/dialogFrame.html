@@ -1,0 +1,61 @@
+<style type="text/css">
+    #add_virtual_goods {
+        width: 677px;
+        left: 47%;
+    }
+    #add_virtual_goods span {
+        line-height: 7px;
+        display: block;
+        margin-top: 8px;
+    }
+    #add_virtual_goods textarea {
+        width: 100% !important;
+        height: 128px !important;
+    }
+    #add_virtual_goods span {
+        line-height: 7px;
+        display: block;
+        margin-top: 8px;
+    }
+    .modal-infp-style {
+        width: 90%;
+        margin: 10px auto;
+    }
+    .modal-infp-style table tr td {
+        border: 1px solid #e6e6e6;
+        padding: 8px;
+    }
+</style>
+<div class="modal fade hide in" id="add_virtual_goods" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false"  >
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3>添加卡密</h3>
+            </div>
+            <div class="modal-body">
+                <div class="modal-infp-style">
+                    <table>
+                        <tbody>
+                        <tr>
+                            <td>添加卡密</td>
+                            <td>
+                                <span style="font-weight: bold;color: #FF5722;">导入格式为卡号+空格+密码(可跟上附加内容)，一行一组，如AAAAA BBBBB</span><br>
+                                <textarea class="input-common" id="card_data"></textarea><span style="color: red;display: none;" id="card_msg">不可为空！</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type="hidden" id="point_id" value="5">
+                <button class="btn-common" onclick="ajaxAddVirtualGoods()">保存</button>
+                <button class="btn" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+
+</div>

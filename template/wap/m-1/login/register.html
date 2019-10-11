@@ -1,0 +1,192 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" href="WAP_CSS/login_register.css">
+{/block}
+{block name="head"}{/block}
+{block name="main"}
+{php}
+// 注册配置
+$wap_register_info = api("System.Login.registerConfig");
+$wap_register_info = $wap_register_info['data'];
+
+//QQ配置
+$qq_info = api("System.Config.qQLogin");
+$qq_info = $qq_info['data'];
+
+//微信配置
+$wchat_info = api("System.Config.wchatLogin");
+$wchat_info = $wchat_info['data'];
+
+//消息通知配置
+$notice = api("System.Config.noticeConfig");
+$notice = $notice['data'];
+{/php}
+{notempty name = "$wap_register_info"}
+<div class="content">
+	<div class="nk-top clearFloat">
+		{if condition = "(strpos($wap_register_info['reg_config']['register_info'],'mobile') !== false) && (strpos($wap_register_info['reg_config']['register_info'],'plain') !== false)"}
+		<input type="hidden" id="hidden_type" value="1">
+		<div  class='nk-cell ns-text-color-gray active'>
+			<span class="ns-text-color ns-border-color">{:lang('account_registration')}</span>
+		</div>
+		<div class="nk-cell ns-text-color-gray">
+			<span>{:lang('mobile_phone_registration')}</span>
+		</div>
+		{elseif condition="(strpos($wap_register_info['reg_config']['register_info'],'mobile') !== false) && (strpos($wap_register_info['reg_config']['register_info'],'plain') === false)" /}
+		<input type="hidden" id="hidden_type" value="2">
+		<div class="nk-cell-one active">
+			<span class="ns-text-color ns-border-color">{:lang('mobile_phone_registration')}</span>
+		</div>
+		{elseif condition="(strpos($wap_register_info['reg_config']['register_info'],'mobile') === false) && (strpos($wap_register_info['reg_config']['register_info'],'plain') !== false)" /}
+		<input type="hidden" id="hidden_type" value="3">
+		<div  class='nk-cell-one active'>
+			<span class="ns-text-color ns-border-color">{:lang('account_registration')}</span>
+		</div>
+		{/if}
+		 
+	</div>
+	<div class="log-wp">
+		{if condition = "strpos($wap_register_info['reg_config']['register_info'],'plain') !== false"}
+		<div id="nk_text1" class="nk-text1">
+			<div class="log-cont ns-border-color-gray">
+				<label class="login-txt" for="username"><span>{:lang('account_number')}</span><input type="text" name="username" id="username" placeholder="{:lang('enter_your_account_number')}"></label>
+			</div>
+			<div class="log-cont ns-border-color-gray">
+				<label for="password"><span>{:lang('password')}</span><input type="password" name="password" id="password" placeholder="{:lang('please_input_password')}" ></label>
+			</div>
+			<div class="log-cont ns-border-color-gray">
+				<label for="cfpassword"><span>{:lang('member_confirm_password')}</span><input type="password" name="cfpassword" id="cfpassword" placeholder="{:lang('confirm_password')}"></label>
+			</div>
+			{if condition="$wap_register_info['code_config']['value']['pc'] eq 1"}
+			<div class="nk-cont ns-border-color-gray">
+				<label><span>{:lang('member_verification_code')}</span>
+					<input class="account-verification " type="text" name="captcha" id="register_captcha"  placeholder="{:lang('please_enter_verification_code')}">
+					<img class="verifyimg" src=" {:__URL('SHOP_MAIN/captcha')}" onclick="this.src='{:__URL('SHOP_MAIN/captcha')}'"  alt="captcha" />
+				</label>
+			</div>
+			{/if}
+			<div class="log-protocol">
+		        <input type="checkbox" id="register_protocol">
+		        <label class="ns-text-color-black">{:lang('我已阅读并同意')}<a class="ns-text-color protocol_model">{:lang('《注册协议》')}</a></label>
+		    </div>
+			
+			<button id="login-button" class="lang-btn primary" onclick="register_member()">{:lang('register')}</button>
+			<a class="lang-btn register-immediately" href="{:__URL('APP_MAIN/login/index')}">{:lang('existing_account')},{:lang('logon_immediately')}</a>
+		</div>
+		{/if}
+		{if condition = "strpos($wap_register_info['reg_config']['register_info'],'mobile') !== false"}
+			{if condition ="strpos($wap_register_info['reg_config']['register_info'],'plain') === false"}
+				<div id="nk_text2" class="nk_text2" >
+			{else/}
+				<div id="nk_text2" class="nk_text2">
+			{/if}
+				<div class="nk-cont ns-border-color-gray">
+					<label><span class="handset">{:lang('cell_phone_number')}</span><input type="text" name="mobile" id="mobile" placeholder="{:lang('please_enter_your_cell_phone_number')}" onchange="check_mobile_is_has();"></label>
+				</div>
+				{if condition="$wap_register_info['code_config']['value']['pc'] eq 1"}
+				<div class="nk-cont ns-border-color-gray">
+					<label>
+						<span class="verification">{:lang('member_verification_code')}</span>
+						<input type="text" name="captcha" id="captcha"  placeholder="{:lang('please_enter_verification_code')}">
+						<img class="verifyimg" src=" {:__URL('SHOP_MAIN/captcha')}" onclick="this.src='{:__URL('SHOP_MAIN/captcha')}'" alt="captcha" />
+					</label>
+				</div>
+				{/if}
+				{if condition="$notice['noticeEmail'] neq 0"}
+				<div class="nk-cont ns-border-color-gray">
+					<label>
+						<span class="verification">{:lang('dynamic_code')}</span>
+						<input type="text" name="motify" placeholder="{:lang('please_enter_the_mobile_phone_dynamic_code')}" id="verify_code">
+						<input type="button" id="sendOutCode" class="ns-text-color ns-border-color sendOutCode" value="{:lang('get_dynamic_code')}">
+					</label>
+				</div>
+				{/if}
+				<div class="log-cont ns-border-color-gray">
+					<label for="password"><span class="handset-pwd">{:lang('password')}</span><input type="password" name="password" id="password_mobile" placeholder="{:lang('please_enter_your_account_password')}"></label>
+				</div>
+				<div class="log-cont ns-border-color-gray">
+					<label for="cfpassword"><span>{:lang('member_confirm_password')}</span><input class="handset-cfpaw" type="password" name="cfpassword" id="cfpassword_mobile" placeholder="{:lang('please_confirm_the_account_password')}"></label>
+				</div>
+				
+				<div class="log-protocol">
+			        <input type="checkbox" id="protocol">
+			        <label class="ns-text-color-black">{:lang('我已阅读并同意')}<a class="ns-text-color protocol_model">{:lang('《注册协议》')}</a></label>
+		   		</div>
+				
+				<button id="login-button-mobile" class="lang-btn primary" onclick="register_mobile()">{:lang('register')}</button>
+				<a class="lang-btn register-immediately" href="{:__URL('APP_MAIN/login/index')}">{:lang('existing_account')},{:lang('logon_immediately')}</a>
+			</div>
+			{/if}
+
+			{if condition="$qq_info['is_use'] eq 1"}
+				<img src="WAP_IMG/login/assistant_member.png" class="assistant-member"/>
+				<div class="login-wei">
+					<a href="{:__URL('APP_MAIN/login/oauthlogin?type=QQLOGIN')}">
+						<img src="WAP_IMG/login/qq.png"/>
+					</a>
+				</div>
+			{/if}
+			
+		</div>
+	</div>
+</div>
+
+
+<input type="hidden" id="mobile_is_has" value="1">
+
+<!-- 注册协议 -->
+{php}
+	$info = api('System.Login.registerAgreement');
+	$info = $info['data'];
+{/php}
+<div class="protocol-loading">
+	<div class="loading-box">
+		<div class="loading-title ns-border-color-gray">{$info['title']}</div>
+		<div class="loading-content">
+			<div>{$info['content']}</div>
+		</div>
+		<div class="loading-footer ns-border-color-gray">
+			<button class="primary close">{:lang('确定')}</button>
+		</div>
+	</div>
+</div>
+
+</div>
+{else/}
+<script>location.href = __URL(APPMAIN + "/login/index");</script>
+{/notempty}
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script>
+var mobile_is_use = "{$wap_register_info['login_config']['mobile_config']['is_use']}";
+var min_length_str = "{$wap_register_info['reg_config']['pwd_len']}";
+var regex_str = "{$wap_register_info['reg_config']['pwd_complexity']}";
+var username_verify = "{$wap_register_info['reg_config']['name_keyword']}";
+var lang_register = {
+	account_cannot_be_empty : "{:lang('account_cannot_be_empty')}",
+	password_cannot_empty : "{:lang('password_cannot_empty')}",
+	get_dynamic_code : "{:lang('get_dynamic_code')}",
+	confirm_password_can_not_be_empty : "{:lang('confirm_password_can_not_be_empty')}",
+	two_password_input_is_inconsistent : "{:lang('two_password_input_is_inconsistent')}",
+	verification_code_cannot_be_null : "{:lang('verification_code_cannot_be_null')}",
+	phone_number_cannot_empty : "{:lang('phone_number_cannot_empty')}",
+	mobile_phone_number_is_wrong : "{:lang('mobile_phone_number_is_wrong')}",
+	mobile_phone_is_registered : "{:lang('mobile_phone_is_registered')}",
+	mobile_phone_dynamic_password_can_not_be_empty : "{:lang('mobile_phone_dynamic_password_can_not_be_empty')}",
+	user_name_cannot_contain_chinese_characters : "{:lang('user_name_cannot_contain_chinese_characters')}",
+	user_name_canno_be_mailbox : "{:lang('user_name_canno_be_mailbox')}",
+	user_name_canno_be_phone : "{:lang('user_name_canno_be_phone')}",
+	username_cannot_includ : "{:lang('username_cannot_includ')}",
+	such_characters : "{:lang('such_characters')}",
+	minimum_password_length : "{:lang('minimum_password_length')}",
+	password_cannot_includ_chinese_characters : "{:lang('password_cannot_includ_chinese_characters')}",
+	password_must_contain_numbers : "{:lang('password_must_contain_numbers')}",
+	password_must_have_lowercase_letters : "{:lang('password_must_have_lowercase_letters')}",
+	password_must_have_uppercase_letters : "{:lang('password_must_have_uppercase_letters')}",
+	password_must_contain_symbols : "{:lang('password_must_contain_symbols')}",
+	agreement_registration_agreement : "{:lang('agreement_registration_agreement')}",
+};
+</script>
+<script src="WAP_JS/login_register.js"></script>
+{/block}

@@ -1,0 +1,379 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" href="WEB_CSS/goods_list.css">
+<link type="text/css" rel="stylesheet" href="WEB_CSS/like_and_history.css">
+{/block}
+{block name="seo"}
+<meta name="keywords" content="{$seo_config.seo_meta},{$web_info['title']}搜索是最智能的商品搜索引擎，通过大数据的运营，准确的理解商品与用户，提供精准的个性化搜索体验。" />
+<meta name="description" content="{$seo_config.seo_desc},{$title_before}"/>
+{/block}
+{block name="main"}
+{php}
+$goods_list = $data['goods_list']; // 商品列表
+$total_count = $goods_list['total_count']; // 总条数
+
+$screen_brand = $data['category_brands']; // 品牌筛选项
+$screen_spec = $data['goods_spec_array']; // 规格筛选项
+$screen_attr = $data['attr_or_spec']; // 属性筛选项
+
+$selected_spec = $data['spec_array']; // 已选择的规格
+$selected_attr = $data['attr_array']; // 已选择的属性
+
+$sales_goods_list = api("System.Goods.saleGoodsList",['page_size'=>3]);//销量排行
+$sales_goods_list = $sales_goods_list['data'];
+
+$new_goods_list = api("System.Goods.newGoodsList",['page_size'=>3,'category_id'=>$params['category_id']]);//销量排行
+$new_goods_list = $new_goods_list['data'];
+{/php}
+
+{if !empty($params['brand_name']) || !empty($selected_spec) || !empty($selected_attr) || !empty($params['min_price']) || !empty($screen_spec) || !empty($screen_attr) }
+<div class="w1210 ns-border-color-gray goods-list">
+	{if !empty($params['brand_name']) || !empty($selected_spec) || !empty($selected_attr) || !empty($params['min_price'])}
+	<!--已选-->
+	<div class="wrap ns-border-color-gray key ns-bg-color-gray-fadeout-50 clearfix">
+        <div class="key">已选：</div>
+        <div class="value selected">
+            <ul class="clearfix">
+                <!-- 取消品牌 -->
+                {if !empty($params['brand_name'])}
+                <li class="ns-border-color-hover ns-border-color-gray ns-bg-color-gray-fadeout-50" data-type="brand"><span>品牌：</span><span class="ns-text-color">{$params['brand_name']}</span><i class="ns-bg-color-hover ns-text-color-gray">×</i></li>
+                {/if}
+				<!-- 取消价格 -->
+				{if !empty($params['min_price'])}
+				<li class="ns-border-color-hover ns-border-color-gray ns-bg-color-gray-fadeout-50" data-type="price"><span>价格：</span><span class="ns-text-color">{$params['min_price']|round}-{$params['max_price']|round}</span><i class="ns-bg-color-hover ns-text-color-gray">×</i></li>
+                {/if}
+                <!-- 取消规格 -->
+                {if !empty($selected_spec)}
+                    {foreach name="selected_spec" item="vo"}
+                    <li class="ns-border-color-hover ns-border-color-gray ns-bg-color-gray-fadeout-50" data-type="spec" data-spec="{$vo[0]}" data-spec-value="{$vo[1]}"><span>{$vo[2]}：</span><span class="ns-text-color">{$vo[3]}</span><i class="ns-bg-color-hover ns-text-color-gray">×</i></li>
+                    {/foreach}
+                {/if}
+                <!-- 取消属性 -->
+                {if !empty($selected_attr)}
+                    {foreach name="$selected_attr" item="vo"}
+                    <li class="ns-border-color-hover ns-border-color-gray ns-bg-color-gray-fadeout-50" data-type="attr" data-attr-value="{$vo[0]}" data-attr-value-name="{$vo[1]}" data-attr-value-id="{$vo[2]}"><span>{$vo[0]}：</span><span class="ns-text-color">{$vo[1]}</span><i class="ns-bg-color-hover ns-text-color-gray">×</i></li>
+                    {/foreach}
+                {/if}
+            </ul>
+        </div>
+	</div>
+	{/if}
+
+	{if !isset($params['brand_name'])}
+	{notempty name="$screen_brand"}
+	<!-- 品牌筛选-->
+		<div class="wrap ns-border-color-gray key ns-bg-color-gray-fadeout-50 clearfix">
+	 		<div class="key">品牌：</div>
+		 	<div class="value brand">
+				<ul class="clearfix all-show">
+					{foreach name="$screen_brand" item="vo"}
+						<li class="ns-border-color-hover ns-border-color-gray" brand-id="{$vo.brand_id}" brand-name="{$vo.brand_name}">
+							<a href="javascript:;" title="360" class="ns-border-color-hover ns-text-color">
+								<i></i>
+								{notempty name="$vo['brand_pic']"}
+								<img src="{:__IMG($vo['brand_pic'])}" width="102" height="36">
+								{/notempty}
+								{$vo.brand_name}
+							</a>
+						</li>
+					{/foreach}
+				</ul>
+				<div class="confirm-select">
+					<button class="btn cancel-multiple-selection">取消</button>
+					<button class="btn btn-primary">确认</button>
+				</div>
+		 	</div>
+		 	<div class="operation">
+		 		{if count($screen_brand) > 12}<a href="javascript:;" class="more-btn">更多</a>{/if}
+			 	<a href="javascript:;" class="multiple-selection-btn ns-border-color-gray">多选</a>
+		 	</div>
+		</div>
+		{/notempty}
+	{/if}
+
+	{notempty name="$screen_spec"}
+		<!-- 规格筛选-->
+		{foreach name="$screen_spec" item="vo"}
+			{notempty name="$vo['values']"}
+			<div class="wrap ns-border-color-gray key ns-bg-color-gray-fadeout-50 clearfix">
+		        <div class="key">{$vo.spec_name}：</div>
+			    <div class="value line spec">
+			        <ul class="clearfix">
+						{foreach name="$vo['values']" item="so"}
+		                    <li data-spec-id="{$vo.spec_id}" data-spec-value-id="{$so.spec_value_id}"><a href="javascript:;">{$so.spec_value_name}</a></li>
+						{/foreach}
+			        </ul>
+		        </div>
+		        <div class="operation">
+			        {if count($vo['values']) > 12}<a href="javascript:;" class="more-btn ns-border-color-gray">更多</a>{/if}
+			    </div>
+	        </div>
+			{/notempty}
+		{/foreach}
+	{/notempty}
+
+	{notempty name="$screen_attr"}
+	<!-- 属性筛选 -->
+		{foreach name="$screen_attr" item="vo"}
+			{notempty name="$vo['value_items']"}
+			<div class="wrap ns-border-color-gray key ns-bg-color-gray-fadeout-50 clearfix">
+		        <div class="key">{$vo.attr_value_name}：</div>
+			    <div class="value line attr">
+			        <ul class="clearfix">
+		                {foreach name="$vo['value_items']" item="ao"}
+		                <li data-attr-value="{$vo.attr_value_name}" data-attr-value-name="{$ao}" data-attr-value-id="{$vo.attr_value_id}"><a href="javascript:;">{$ao}</a></li>
+		                {/foreach}
+			        </ul>
+		        </div>
+		        <div class="operation">
+			        {if count($vo['value_items']) > 13}<a href="javascript:;" class="more-btn ns-border-color-gray">更多</a>{/if}
+			    </div>
+	        </div>
+			{/notempty}
+		{/foreach}
+	{/notempty}
+
+	<!-- 价格筛选 -->
+	<!--<div class="wrap ns-border-color-gray key ns-bg-color-gray-fadeout-50 clearfix">-->
+        <!--<div class="key">价格：</div>-->
+	    <!--<div class="value line price">-->
+	        <!--<ul class="clearfix">-->
+	            <!--<li min-price="0" max-price="100"><a href="javascript:;">0-100</a></li>-->
+	        <!--</ul>-->
+        <!--</div>-->
+        <!--<div class="operation">-->
+	        <!--<a href="javascript:;" class="more-btn ns-border-color-gray">更多</a>-->
+	    <!--</div>-->
+    <!--</div>-->
+
+</div>
+{/if}
+
+<ol class="breadcrumb">
+	<li><a href="{:__URL('SHOP_MAIN')}">{:lang('home_page')}</a></li>
+	<li class="active">{$data['current_category']['category_name']}</li>
+</ol>
+
+<div class="w1210 clearfix product-main">
+	<aside class="ns-border-color-gray">
+        <h4>新品推荐</h4>
+        <ul>
+			{notempty name="$new_goods_list"}
+	        	{foreach name="$new_goods_list" item="vo"}
+	            <li>
+	                <a target="_blank" href="{:__URL('SHOP_MAIN/goods/detail?goods_id='.$vo['goods_id'])}" class="p-img">
+	                    <img src="{:__IMG($vo['pic_cover_mid'])}">
+	                </a>
+	                <a target="_blank" href="{:__URL('SHOP_MAIN/goods/detail?goods_id='.$vo['goods_id'])}" class="p-name">{$vo.goods_name}</a>
+	                <div class="p-price ns-text-color">￥{$vo.promotion_price}</div>
+	                <div class="p-review ns-text-color-gray">已有<a href="javascript:;" target="_blank" class="ns-text-color">{$vo.sales}</a>人购买</div>
+	            </li>
+	            {/foreach}
+            {else/}
+            	<p class="empty-tip">暂无推荐商品</p>
+	        {/notempty}
+        </ul>
+
+        <h4>销量排行</h4>
+        <ul>
+	        {notempty name="$sales_goods_list"}
+				{foreach name="$sales_goods_list" item="vo"}
+	            <li>
+	                <a target="_blank" href="{:__URL('SHOP_MAIN/goods/detail?goods_id='.$vo['goods_id'])}" class="p-img">
+	                    <img src="{:__IMG($vo['pic_cover_mid'])}">
+	                </a>
+	                <a target="_blank" href="{:__URL('SHOP_MAIN/goods/detail?goods_id='.$vo['goods_id'])}" class="p-name">{$vo.goods_name}</a>
+	                <div class="p-price ns-text-color">￥{$vo.promotion_price}</div>
+	                <div class="p-review ns-text-color-gray">已有<a href="javascript:;" target="_blank" class="ns-text-color">{$vo.sales}</a>人购买</div>
+	            </li>	
+	            {/foreach}
+            {else/}
+            	<p class="empty-tip">暂无推荐商品</p>
+	        {/notempty}
+        </ul>
+    </aside>
+	
+	<article>
+		<div class="filter ns-border-color-gray">
+            <div class="f-line top ns-border-color-gray ns-bg-color-gray-fadeout-60">
+                <div class="f-sort">
+                    <a href="javascript:;" data-type="default" data-sort="asc" {if empty($params.order) || $params.order eq 'default'}class="ns-bg-color ns-border-color"{else/}class="ns-border-color-gray-shade-10 ns-border-color-hover"{/if}>
+                        <span>综合</span>
+                    </a>
+                    <a href="javascript:;" data-type="sales" {eq name="$params.sort" value="asc"}data-sort="desc"{else}data-sort="asc"{/eq} {eq name="$params.order" value="sales"}class="ns-bg-color ns-border-color"{else/}class="ns-border-color-gray-shade-10 ns-border-color-hover"{/eq}>
+                        <span>销量</span>
+                    </a>
+                    <a href="javascript:;" data-type="price" {eq name="$params.sort" value="asc"}data-sort="desc"{else}data-sort="asc"{/eq} {eq name="$params.order" value="price"}class="ns-bg-color ns-border-color"{else/}class="ns-border-color-gray-shade-10 ns-border-color-hover"{/eq}>
+                        <span>价格</span>
+                    </a>
+                    <a href="javascript:;" data-type="is_new" {eq name="$params.sort" value="asc"}data-sort="desc"{else}data-sort="asc"{/eq} {eq name="$params.order" value="is_new"}class="ns-bg-color ns-border-color"{else/}class="ns-border-color-gray-shade-10 ns-border-color-hover"{/eq}>
+                        <span>新品</span>
+                    </a>
+                </div>
+
+				<div class="f-price">
+					<div class="price-form">
+						<input type="text" class="form-control ns-border-color-gray-shade-10" placeholder="￥" onkeyup="this.value = positiveInteger(this.value)" onchange="this.value = positiveInteger(this.value)">
+						<span>-</span>
+						<input type="text" class="form-control ns-border-color-gray-shade-10" placeholder="￥" onkeyup="this.value = positiveInteger(this.value)" onchange="this.value = positiveInteger(this.value)">
+					</div>
+					<div class="price-operation clearfix ns-border-color-gray">
+						<a href="javascript:;" class="pull-left empty">清空</a>
+						<a href="javascript:;" class="btn pull-right confirm">确定</a>
+					</div>
+				</div>
+
+            </div>
+            <div class="f-line address ns-border-color-gray ns-bg-color-gray-fadeout-60">
+                <!--<div class="f-store">-->
+                    <!--<div class="delivery-location ns-text-color-gray">配送至</div>-->
+                    <!--<div class="area">-->
+                        <!--<div class="curr-area-text ns-border-color-gray-shade-10"><span>山西晋中市榆次区张庆乡</span><i class="icon icon-angle-down"></i></div>-->
+                        <!--<div class="area-content-wrap ns-border-color-gray key ns-bg-color-gray-fadeout-50">-->
+                            <!--<div class="area-tab ns-border-color">-->
+                                <!--<a title="山西" class="area-title province-title ns-border-color ns-text-color">请选择</a>-->
+                                <!--<a title="晋中市" class="area-title dis-no ns-border-color-gray"><span>晋中市</span><i class="icon icon-angle-down"></i></a>-->
+                                <!--<a title="榆次区" class="area-title dis-no ns-border-color-gray"><span>榆次区</span><i class="icon icon-angle-down"></i></a>-->
+                                <!--<a class="area-title dis-no ns-border-color-gray" title="张庆乡"><span>张庆乡</span><i class="icon icon-angle-down"></i></a>-->
+                            <!--</div>-->
+                            <!--<div>-->
+                                <!--<ul class="area-list province"><li><a href="javascript:void(0);">北京市</a></li><li></ul>-->
+                                <!--<ul class="area-list city dis-no"><li class="ns-text-color"><a href="javascript:void(0)">太原市</a></li></ul>-->
+	                            <!--<ul class="area-list district dis-no"><li class="ns-text-color"><a href="javascript:void(0)">榆次区</a></li></ul>-->
+                                <!--<ul class="area-list dis-no"><li class="ns-text-color"><a href="javascript:void(0)">张庆乡</a></li></ul>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <div class="f-feature">
+                    <ul>
+                        <li>
+                            <a href="javascript:;" data-type="stock" {if $params['stock'] eq 1}class="selected ns-text-color" data-status="0"{else/}data-status="1"{/if}>
+                                <i class="{if $params['stock'] eq 1}fa fa-check-square ns-text-color{else/}fa fa-square-o ns-text-color-gray ns-text-color-hover{/if}"></i>
+                                <span>仅显示有货</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="javascript:;" data-type="shipping_fee" {if $params['shipping_fee'] eq 0 && $params['shipping_fee'] neq ''}class="selected ns-text-color" data-status="1"{else/}data-status="0"{/if}>
+	                            <i class="{if $params['shipping_fee'] eq 0 && $params['shipping_fee'] neq ''}fa fa-check-square ns-text-color{else/}fa fa-square-o ns-text-color-gray ns-text-color-hover{/if}"></i>
+                                <span>仅显示包邮</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <!--<div class="f-search dis-no">-->
+                    <!--<input type="text" class="form-control" placeholder="在结果中搜索">-->
+                    <!--<span class="input-group-btn">-->
+                        <!--<button class="btn btn-default" type="button">确定</button>-->
+                    <!--</span>-->
+                <!--</div>-->
+            </div>
+        </div>
+
+		{notempty name="$goods_list['data']"}
+		<div class="product-list">
+		    <ul class="clearfix">
+		    	{foreach name="$goods_list['data']" key="k" item="vo"}
+		        <li data-index="{$k}" class="ns-border-color-gray-fadeout-30-hover">
+		            <div class="p-img" data-index="{$k}">
+		                <a target="_blank" href="{:__URL('SHOP_MAIN/goods/detail?goods_id='.$vo['goods_id'])}">
+		                    <img src="{:__IMG($vo['pic_cover_mid'])}">
+	                    </a>
+		            </div>
+		            <div class="p-scroll">
+		                <span class="ps-prev disabled ns-text-color-gray ns-bg-color-gray ns-border-color-gray" data-operation="prev" data-index="{$k}">
+		                    <i class="icon icon-caret-left"></i>
+		                </span>
+		                <span class="ps-next ns-text-color-gray ns-bg-color-gray ns-border-color-gray" data-operation="next" data-index="{$k}">
+		                    <i class="icon icon-caret-right"></i>
+		                </span>
+		                <div class="ps-wrap">
+		                    <ul class="ps-main">
+			                    {foreach name="$vo['img_list']" key="img_k" item="img"}
+	                    	 	<li class="ps-item" data-index="{$k}" data-max-src="{:__IMG($img['pic_cover_mid'])}">
+		                            <img src="{:__IMG($img['pic_cover_small'])}" class="{if condition='$img_k==0'}ns-border-color{else/}ns-border-color-gray{/if}">
+		                        </li>
+			                    {/foreach}
+		                    </ul>
+		                </div>
+		            </div>
+		            <div class="p-price ns-text-color">
+		                <i>{$vo.display_price}</i>
+		            </div>
+		            <div class="p-name">
+		                <a target="_blank" href="{:__URL('SHOP_MAIN/goods/detail?goods_id='.$vo['goods_id'])}">{$vo.goods_name}</a>
+		            </div>
+	                <div class="p-commit ns-text-color-gray">已有<a target="_blank" href="{:__URL('SHOP_MAIN/goods/detail?goods_id='.$vo['goods_id'])}" class="ns-text-color">{$vo.sales}</a>人购买</div>
+		            <div class="p-icons">
+		            	{if $vo.is_hot} <i class="icons icons-hot">热卖</i> {/if}
+		            	{if $vo.is_new} <i class="icons icons-new">新品</i> {/if}
+		            	{if $vo.is_recommend} <i class="icons icons-recommend">精品</i> {/if}
+		            </div>
+		        </li>
+				{/foreach}
+	        </ul>
+        </div>
+
+		<ul class="pager" data-ride="pager" data-elements="prev,nav,next,total_page_text,goto" data-rec-per-page="{$page_size}" data-page="{$params['page']}" data-rec-total="{$total_count}" id="myPager"></ul>
+		{else/}
+		<div class="notice-search">
+			<i class="ns-icon"></i>
+			<span class="ns-text-color">抱歉，没有找到您需要的商品</span>
+		</div>
+		{/notempty}
+	</article>
+</div>
+<div class="like-history-container">
+	<div id="guessYouLike" class="carousel slide" data-ride="carousel">
+		<div class="wrap-head clear">
+			<div class="tab">
+				<ul>
+					<li class="ns-text-color ns-border-color" data-type="guessYouLike">猜你喜欢</li>
+					<li data-type="history">浏览历史</li>
+				</ul>
+			</div>
+		</div>
+	    <input type="hidden" id="max_page" value="{$guess_member_like_list['data']['count']/5|ceil}">
+	    <!-- 轮播项目 -->
+	    <div class="carousel-container" id="guess_you_like_container">
+		    <div class="carousel-inner">
+	       	</div>
+	       	<div class="switch-box">
+	       	</div> 
+	    </div>
+	</div>
+
+	<div id="history" class="carousel slide history" data-ride="carousel" style="display: none;">
+		<div class="wrap-head clear">
+			<div class="tab">
+				<ul>
+					<li data-type="guessYouLike">猜你喜欢</li>
+					<li class="ns-text-color ns-border-color" data-type="history">浏览历史</li>
+				</ul>
+			</div>
+		</div>	    
+	    <!-- 轮播项目 -->
+    	<div class="carousel-container">
+    		<div class="carousel-inner"></div>
+	    	<div class="switch-box"></div>
+    	</div>
+      	<div class="empty-wai"></div>
+	</div>
+</div>	
+{/block}
+{block name="script"}
+<script>
+{notempty name="$params"}var Params = '{$params|json_encode}';{else/} var Params = '';{/notempty}
+var oldParams = {};
+if(Params != '') oldParams = JSON.parse(Params);
+</script>
+<script src="WEB_JS/goods_list.js"></script>
+<script>
+$('#myPager').pager({
+	linkCreator: function(page, pager) {
+		return urlBindParams(paramsUnique({page : page}, oldParams));
+	}
+});
+</script>
+<script src="WEB_JS/like_and_history.js"></script>
+{/block}

@@ -1,0 +1,33 @@
+@CHARSET "UTF-8";
+.step-process{background: #fff; border-bottom: 1px dashed;padding: 10px 0;}
+.step-process ul{overflow: hidden;margin: 0 auto;width: 90%;}
+.step-process ul li{float: left; margin: 20px 0;}
+.step-process .name{font-size: 12px; text-align: center;}
+.step-process .step01 .name{text-align: left;}
+.step-process .number{display: inline-block; width: 20px; height: 20px; line-height: 20px; border-radius: 50%;color: #fff; font-weight: bold; text-align: center; vertical-align: middle;}
+.step-process .line{display: inline-block; height: 2px; width: 58px;vertical-align: middle;}
+.step-process .line-right{margin-left: -5px;}
+.step-process .line-left{margin-right: -5px;}
+.step-process .step03 .name{text-align: right;}
+.w107 {width: 107px!important;}
+/* 申请股东 */
+.apply{background-color: #fff; overflow: hidden; text-align: center; padding: 5px 10px;}
+.apply h4{height: 30px; margin-top: 10px; font-size: 16px;font-weight: normal;line-height: 30px;}
+.apply hr{width: 92%; margin: auto; border: solid; border-width: 1px 0 0; clear: both; height: 0;}
+.apply p{text-align: left; margin-top: 10px; margin-bottom: 10px;}
+/* 申请区域代理 */
+.apply-type{height: 60px; line-height: 60px; text-align: center; font-size: 14px;}
+.apply-type select{width: 60%; padding: 5px;}
+/* 审核中 */
+.frog{margin: 70px 20px 0 20px; text-align: center;}
+.frog img{width: 107px; display: block; margin: 40px auto 10px;}
+.a-button{width: 54%; height: 36px; display: inherit; margin: auto; text-align: center; line-height: 36px; border-radius: 4px; margin-top: 15px; font-size: 15px;}
+/* 区域代理 */
+.apply .apply-type{margin-top: 0; margin-bottom: 0; height: 40px; line-height: 40px;}
+/* 区域分销申请 */
+.not-open{margin-top: 40px;text-align: center;}
+.not-open img{width: 60px;margin-bottom: 10px}
+.apply .apply-input {width: 56%;padding: 5px;margin: 0;height: 30px;box-sizing: border-box;line-height: 30px;}
+.apply .apply-address {margin-top: 0;margin-bottom: 0;height: 40px;line-height: 40px;}
+.apply .apply-address select{padding: 5px;width: 20%;background: #fff;}
+.apply label{width: 100px;display: inline-block;text-align: right;}

@@ -1,0 +1,76 @@
+{extend name="$member_base" /}
+{block name="right_main"}
+<link rel="stylesheet" href="WEB_CSS/member_address.css">
+{php}
+$address_data = api('System.Member.addressDetail', ['id' => $address_id]);
+$address_data = $address_data['data'];
+{/php}
+<div class="member-main">
+	<div class="main-top">
+		<div class="title">{notempty name="$address_id"}编辑收货地址{else/}新增收货地址{/notempty}</div>
+	</div>
+	<form class="form-horizontal address-form">
+  		<div class="form-group">
+    		<label class="col-sm-2 ns-text-color-gray"><span class="ns-text-color">*</span> {:lang('member_consignee_name')}</label>
+		 	<div class="col-md-6 col-sm-6">
+      			<input type="text" class="form-control ns-border-color-gray-shade-10" name="consigner" placeholder="请输入收货人姓名" {notempty name="$address_data.consigner"}value="{$address_data.consigner}"{/notempty}>
+    		</div>
+  		</div>
+  		<div class="form-group">
+    		<label class="col-sm-2 ns-text-color-gray"><span class="ns-text-color">*</span> {:lang('member_distribution_area')}</label>
+		 	<div class="col-md-3 col-sm-3">
+		 		<select name="province" class="form-control ns-border-color-gray-shade-10">
+		 			<option value="0">请选择省</option>
+		 		</select>
+		 	</div>
+		 	<div class="col-md-3 col-sm-3">
+		 		<select name="city" class="form-control ns-border-color-gray-shade-10">
+		 			<option value="0">请选择市</option>
+		 		</select>
+		 	</div>
+		 	<div class="col-md-3 col-sm-3">
+		 		<select name="district" class="form-control ns-border-color-gray-shade-10">
+		 			<option value="0">请选择区/县</option>
+		 		</select>
+		 	</div>
+  		</div>
+  		<div class="form-group">
+    		<label class="col-sm-2 ns-text-color-gray"><span class="ns-text-color">*</span> {:lang('member_detailed_address')}</label>
+		 	<div class="col-md-6 col-sm-6">
+      			<input type="text" class="form-control ns-border-color-gray-shade-10" name="address" placeholder="请输入详细地址" {notempty name="$address_data.address"}value="{$address_data.address}"{/notempty}>
+    		</div>
+  		</div>
+  		<div class="form-group">
+    		<label class="col-sm-2 ns-text-color-gray"><span class="ns-text-color">*</span> {:lang('member_phone')}</label>
+		 	<div class="col-md-6 col-sm-6">
+      			<input type="text" class="form-control ns-border-color-gray-shade-10" name="mobile" placeholder="请输入联系方式" {notempty name="$address_data.mobile"}value="{$address_data.mobile}"{/notempty}>
+    		</div>
+  		</div>
+  		<div class="form-group">
+    		<label class="col-sm-2 ns-text-color-gray">{:lang('member_fixed_telephone')}</label>
+		 	<div class="col-md-6 col-sm-6">
+      			<input type="text" class="form-control ns-border-color-gray-shade-10" name="phone" placeholder="请输入固定电话" {notempty name="$address_data.phone"}value="{$address_data.phone}"{/notempty}>
+    		</div>
+  		</div>
+  		{notempty name="$address_data"}<input type="hidden" name="id" value="{$address_data.id}">{/notempty}
+  		<div class="form-group">
+    		<label class="col-sm-2 ns-text-color-gray"></label>
+		 	<div class="col-md-6 col-sm-6">
+		 		<button type="button" class="btn btn-primary" onclick="save();">保存</button>
+    		</div>
+  		</div>
+	</form>
+</div>
+<script src="WEB_JS/member_address.js"></script>
+<script>
+$(function(){
+	{notempty name="$address_data"}
+		getProvince('[name="province"]', {$address_data.province});
+		getCity('[name="city"]', {$address_data.province}, {$address_data.city});
+		getDistrict('[name="district"]', {$address_data.city}, {$address_data.district});
+	{else/}
+		getProvince('[name="province"]');
+	{/notempty}
+})
+</script>
+{/block}

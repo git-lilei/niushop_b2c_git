@@ -1,0 +1,323 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/product.css">
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+<link href="__STATIC__/blue/css/order/ns_orderlist.css" rel="stylesheet" type="text/css" />
+<style>
+.cell i {display: block;}
+.table-main label {margin: 8px 0 0 0;}
+.table-class tr:NTH-CHILD(even) {background: #fff;}
+.table-title th{padding: 10px;border-bottom: 1px solid #e5e5e5;font-weight: normal;background: #F3F1F1 !important;}
+input[type="radio"], input[type="checkbox"] {margin: -1px 5px 0 0;}
+[class^="icon-"]:before, [class*=" icon-"]:before {text-decoration: inherit;display: inline-block;speak: none;}
+[class^="icon-"], [class*=" icon-"] {font-family: FontAwesome;font-weight: normal;font-style: normal;text-decoration: inherit;-webkit-font-smoothing: antialiased;}
+.table th{font-weight: normal;}
+.table th, .table td {vertical-align: middle;}
+.tab-content{overflow: visible;}
+.refund-error{color:red;font-weight:normal;font-size:14px;}
+.order-nav{border-bottom: none;}
+.order-nav .nav-ul li a{padding: 5px 15px;}
+.ns-main{margin-top: 0;}
+</style>
+{/block}
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<th align="left">
+			<nav class="order-nav">
+				<ul class="nav-ul">
+					<button class="btn-common" onclick="pintuanFinish(0, this)">全部</button>
+					<button class="btn-common-white" onclick="pintuanFinish(1, this)">未成团</button>
+					<button class="btn-common-white" onclick="pintuanFinish(2, this)">成团</button>
+					<button class="btn-common-white" onclick="pintuanFinish(-1, this)">失败</button>
+				</ul>
+			</nav>
+		</th>
+		<th>
+			创建时间：
+			<input type="text" id="startDate" class="input-common middle" placeholder="请选择开始日期" onclick="WdatePicker()" />
+			&nbsp;-&nbsp;
+			<input type="text" id="endDate" placeholder="请选择结束日期" class="input-common middle" onclick="WdatePicker()" />
+			团长名：<input id="group_name" class="input-common middle" type="text" value="">
+			<button onclick="searchData()" class="btn-common">搜索</button>
+		</th>
+	</tr>
+</table>
+<div id="myTabContent" class="tab-content">
+	<div class="tab-pane active">
+		<table class="table-class" border="0">
+			<colgroup>
+				<col style="width: 2%;">
+				<col style="width: 10%;">
+				<col style="width: 12%;">
+				<col style="width: 10%;">
+				<col style="width: 10%;">
+				<col style="width: 10%;">
+				<col style="width: 10%;">
+				<col style="width: 10%;">
+				<col style="width: 16%;">
+				<col style="width: 10%;">
+			</colgroup>
+			<tbody>
+				<tr class="table-title" >
+					<th><i class="checkbox-common"><input id="ckall" type="checkbox" ></i></th>
+					<th>团长</th>
+					<th style="padding-right: 55px;">联系方式</th>
+					<th>价格</th>
+					<th>成团</th>
+					<th>拼团模式</th>
+					<th>商品</th>
+					<th>状态</th>
+					<th>时间</th>
+					<th>操作</th>
+				</tr>
+			</tbody>
+			<tbody id="productTbody" style="border: 0;"></tbody>
+		</table>
+	</div>
+</div>
+{/block}
+
+{block name="script"}
+{include file="admin/pageCommon" /}
+<div class="modal fade hide" id="confirmRefund" tabindex="-1" aria-labelledby="确认退款" aria-hidden="true" data-backdrop="static" style="width: 650px; top:50%;">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3>确认退款</h3>
+			</div>
+			<div class="modal-body">
+				<h4 class="refund-error">是否确认退款</h4>
+			</div>
+			<div class="modal-footer">
+				<!-- 温馨提示 -->
+				<div class="refunds-block js-not-configured-prompt"></div>
+				<input type="hidden" id="refurn_tuangou_group_id">
+				<button class="btn-common js-confirm-refund-ok disabled" onclick="pintuanGroupRefund();">确认</button>
+				<button class="btn" data-dismiss="modal" aria-hidden="true">取消</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script src="__STATIC__/js/limit_input_digit.js"></script>
+<script>
+function searchData(){
+	LoadingInfo(1);
+}
+
+function pintuanFinish(status, event){
+	$(".order-nav .nav-ul button").attr("class", "btn-common-white");
+	$(event).attr("class", "btn-common");
+
+	if(status == 'unfinded' || status == 0){
+		LoadingInfo(1);
+	}else{
+		LoadingInfo(1,status);
+	}
+}
+
+function LoadingInfo(pageIndex,status) {
+	var start_date = $("#startDate").val();
+	var end_date = $("#endDate").val();
+	var is_open = $("#is_open").val();
+	var group_name =$("#group_name").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('__URL__/nspintuan/ADMIN_MODULE/Tuangou/pintuanList')}",
+		data : {
+			"pageIndex" : pageIndex,
+			"start_date":start_date,
+			"end_date":end_date,
+			"group_name":group_name,
+			"status":status,
+			"page_size":$("#showNumber").val()
+		},
+		success : function(data) {
+			$("#page_count").val(data["page_count"]);
+			$("#pageNumber a").remove();
+			if (data["data"].length > 0) {
+				$("#productTbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					var status_name = '';
+					if(data['data'][i]['status'] == 1){
+						status_name = "拼团中";
+					}else if(data['data'][i]['status'] == 2){
+						status_name = "已完成";
+					}else if(data['data'][i]['status'] == -2){
+						status_name = "已退款";
+					}else{
+						status_name = "待开启";
+					}
+					html += '<tr align="center" style="background:#fff;">';
+					html += '<td style="background:none;"><i class="checkbox-common"><input name="sub" type="checkbox" value="'+ data['data'][i]['group_id']+'" ></i></td>';
+					html += '<td style="background: white;"><div class="priceaddactive"><span class="price-lable">'+ data["data"][i]['group_name'] +'</span><span class="price-numble"></span></div></td>';
+					html += '<td style="background: white;"><div class="priceaddactive"><span class="price-lable">'+ data["data"][i]['user_tel'] +'</span><span class="price-numble"></span></div></td>';
+					
+					html += '<td style="background: white;"><div class="priceaddactive"><span class="price-lable">'+ data['data'][i]['tuangou_money'] +'元</span><span class="price-numble"></span></div></td>';	
+					switch(data['data'][i]['status']){
+						case -1 :
+							html += '<td style="background: white;"><div class="priceaddactive"><span class="price-lable" >失败<br></span><span class="price-numble">已参团人数：'+ data['data'][i]['real_num'] +'</span><br><span class="price-numble">团购总人数：'+ data['data'][i]['tuangou_num'] +'</span><br></div></td>';
+							break;
+						case 1  :
+							html += '<td style="background: white;"><div class="priceaddactive"><span class="price-lable" >进行中<br></span><span class="price-numble">已参团人数：'+ data['data'][i]['real_num'] +'</span><br><span class="price-numble">团购总人数：'+ data['data'][i]['tuangou_num'] +'</span><br></div></td>';
+						break;
+						case 2  :
+							html += '<td style="background: white;"><div class="priceaddactive"><span class="price-lable" >成功<br></span><span class="price-numble">已参团人数：'+ data['data'][i]['real_num'] +'</span><br><span class="price-numble">团购总人数：'+ data['data'][i]['tuangou_num'] +'</span><br></div></td>';
+						break;
+						case -2  :
+						html += '<td style="background: white;"><div class="priceaddactive"><span class="price-lable" >已退款<br></span><span class="price-numble">已参团人数：'+ data['data'][i]['real_num'] +'</span><br><span class="price-numble">团购总人数：'+ data['data'][i]['tuangou_num'] +'</span><br></div></td>';
+						break;
+						default :
+							html += '<td></td>';
+						break;
+					}
+					html += '<td style="background: white;"><div class="priceaddactive"><span class="price-lable">'+ data['data'][i]['tuangou_type_name'] +'</span><spanclass="price-numble"></span></div></td>';
+					var url = "{:__URL('APP_MAIN/goods/detail?goods_id='.'" + data["data"][i]["goods_id"] + "')}";
+					html += '<td style="background: white;"><a href="' + url + '"><div class="priceaddactive"><span class="price-lable">'+ data['data'][i]['goods_name'] +'</span><span class="price-numble"></span></div></a></td>';
+					html += '<td style="background: white;"><div class="priceaddactive"><span class="price-lable">'+ status_name +'</span><span class="price-numble"></span></div></td>';
+					html += '<td style="background: white;"><div class="priceaddactive"><span class="price-lable">开团时间：<br>'+ timeStampTurnTime(data["data"][i]['create_time']) +'</span><br><span class="price-numble">截团时间：<br>'+ timeStampTurnTime(data['data'][i]['end_time']) +'</span></div></td>';
+					html += '<td style="background: white;">';
+					if(data['data'][i]['status'] == 1){
+						if(data['data'][i]['is_recommend'] == 1){
+							html += '<a href="javascript:;" onclick="is_recommends('+ data['data'][i]['group_id'] +',&#39;offopen&#39;)"><div class="priceaddactive"><span class="price-lable"></span><spanclass="price-numble">关闭首页推荐</span></div></a>';
+						}else{
+							html += '<a href="javascript:;" onclick="is_recommends('+ data['data'][i]['group_id'] +',&#39;on&#39;)"><div class="priceaddactive"><span class="price-lable"></span><spanclass="price-numble">开启首页推荐</span></div></a>';
+						}
+					}else if(data['data'][i]['status'] == -1 && data['data'][i]['real_num'] > 0){
+						html += '<a href="javascript:;" onclick="pintuanGroupComplete('+ data['data'][i]['group_id'] +',&#39;on&#39;)"><div class="priceaddactive"><span class="price-lable"></span><spanclass="price-numble">拼团完成</span></div></a>';
+						html += '<a href="javascript:;" onclick="tuangouRefund('+ data['data'][i]['group_id'] +',&#39;on&#39;)"><div class="priceaddactive"><span class="price-lable"></span><spanclass="price-numble">退款</span></div></a>';
+					}else{
+						html += '<a href="javascript:;")><div class="priceaddactive"><span class="price-lable"></span><spanclass="price-numble"></span></div></a>';
+					}
+					html += '<a href="'+ __URL('ADMIN_MAIN/order/orderlist?tuangou_group_id='+data['data'][i]['group_id'])+'")><div class="priceaddactive"><span class="price-lable"></span><spanclass="price-numble">查看拼团订单</span></div></a>';
+					html += '</td>';
+					html += '</tr>';
+					$("#productTbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="10">暂无符合条件的数据记录</td></tr>';
+				$("#productTbody").html(html);
+			}
+			var totalpage = $("#page_count").val();
+			if (totalpage == 1) {
+				changeClass("all");
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			var $html = pagenumShow(jumpNumber,totalpage,{$pageshow});
+			$("#pageNumber").append($html);
+		}
+	});
+}
+
+function is_recommends(group_id,line){
+	if(line == "on"){
+		var is_recommend = 1;
+		var lingStr = "开启首页推荐";
+	}else{
+		var is_recommend = 0;
+		var lingStr = "关闭首页推荐";
+	}
+	$.ajax({
+		type : "post",
+		url : "{:__URL('__URL__/nspintuan/ADMIN_MODULE/Tuangou/tuangouGoodsIsRecommend')}",
+		data : {
+			"group_id" : group_id,
+			"is_recommend":is_recommend
+		},
+		success : function(data) {
+			if(data["code"] > 0 ){
+				LoadingInfo(1);
+				$( "#dialog" ).dialog({
+					buttons: {
+						"确定,#62c462": function() {
+							$(this).dialog('close');
+						}
+					},
+					contentText:""+lingStr+"成功",
+					title:"消息提醒",
+					time:5
+				});
+			}
+		}
+	})
+}
+
+//全选
+function CheckAll(event){
+	var checked = event.checked;
+	if(checked) $("#productTbody input[type = 'checkbox']").prop("checked",checked).parent("i").addClass("selected");
+	else $("#productTbody input[type = 'checkbox']").prop("checked",checked).parent("i").removeClass("selected");
+}
+
+//选择分类
+function CheckType(even){
+	if($(even).is(":checked")) {
+		$(even).parent().parent().find("[name='"+$(even).attr("name")+"']").attr("checked", true);
+	} else {
+		$(even).parent().parent().find("[name='"+$(even).attr("name")+"']").attr("checked", false);
+	}
+}
+
+/**
+ * 已关闭的拼团  使其拼团完成
+ */
+function pintuanGroupComplete(group_id){
+	$.ajax({
+		type : "post",
+		url : "{:__URL('__URL__/nspintuan/ADMIN_MODULE/Tuangou/pintuanGroupComplete')}",
+		data : {
+			"group_id" : group_id
+		},
+		success : function(data) {
+			if(data["code"] > 0 ){
+				LoadingInfo(1);
+				$( "#dialog" ).dialog({
+					buttons: {
+						"确定,#62c462": function() {
+							$(this).dialog('close');
+						}
+					},
+					contentText:""+lingStr+"成功",
+					title:"消息提醒",
+					time:5
+				});
+			}
+		}
+	})
+}
+
+/**
+ * 是否确定退款
+ */
+function tuangouRefund(group_id){
+	$("#refurn_tuangou_group_id").val(group_id);
+	$("#confirmRefund").modal("show");
+}
+
+/**
+ * 关闭后的拼团  退款
+ */
+function pintuanGroupRefund(){
+	var group_id = $("#refurn_tuangou_group_id").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('__URL__/nspintuan/ADMIN_MODULE/Tuangou/tuangouGroupRefund')}",
+		async : false,
+		data : {
+			"group_id" : group_id
+		},
+		success : function(data) {
+			if(data["code"] > 0 ){
+				$("#confirmRefund").modal("hide");
+				showMessage("success", "退款完成");
+				LoadingInfo(1);
+			}else{
+				showMessage("error", "退款失败");
+			}
+		}
+	})
+}
+</script>
+{/block}

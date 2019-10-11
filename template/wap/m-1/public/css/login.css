@@ -1,0 +1,46 @@
+body{background-color: #fff;}
+.content{max-width: 648px; margin: 0 auto;}
+/* 账号登录start */
+#nk_text1{display: block;}
+.active > span{border-bottom: 1px solid;}
+.log-wp{padding: 0 10px; margin-bottom: 20px;}
+.log-box .log-cont{position: relative; display: block; height: 45px; width: 80%; margin-left: 10%; border-bottom: #e9ecee 1px solid; background: #fff;}
+.log-box .log-cont label{position: absolute; left: 0; width: 100%;}
+.log-cont label input{height: 44px; font-size: 14px; border: none; padding: 5px 1px; width: 70%; background: #fff !important;}
+.log-box .log-cont label span.username{width: 30px; height: 30px; text-indent: -9999px; display: inline-block; background: url("../img/login/username.png") no-repeat; background-size: 30px 30px; position: relative; vertical-align: middle;}
+.log-box .log-cont label span.password{width: 30px; height: 30px; text-indent: -9999px; display: inline-block; background: url(../img/login/password.png) no-repeat; background-size: 30px 30px; position: relative; vertical-align: middle;}
+.log-box .log-cont label span.captcha-code{width: 30px; height: 30px; text-indent: -9999px; display: inline-block; background: url(../img/login/captcha_code.png) no-repeat; background-size: 30px 30px; vertical-align: middle;}
+.log-cont .login-captcha input#login_captcha{width: 50%;}
+.verify{display: inline-block;}
+.verify img{width: 110px;}
+.lang-btn{display: block; width: 85%; height: 35px; padding: 0 10px; margin: 15px auto 0; border: none; border-radius: 2px;}
+.log-wp .msg{width: 80%; margin: 10px auto;}
+.line-pic{width: 80% !important; margin-left: 10%; margin-top: 20px;}
+.login-wei-two{text-align: center; float: left; margin: 0.5rem 17%; width: 16%; height: auto;}
+.login-wei-two img{width: 40px; height: 40px;}
+.login-mode{margin: 0 10%; overflow: hidden;}
+/* 手机动态登录start */
+.nk-cont{position: relative; display: block; height: 45px; border-bottom: #e9ecee 1px solid; margin-left: 10%; background: #fff; width: 85%; font-size: 14px;}
+.nk-cont label input{height: 100%; font-size: 12px;border: none; padding: 5px 1px; width: 38%;}
+#sendOutCode{width: 80px; height: 25px; background-color: transparent; border: 1px solid; margin-left: 10px; border-radius: 20px;}
+.register-immediately{text-align: center; line-height: 35px; border: 1px solid; background-color: transparent;}
+#nk_text2{display: none;}
+/* 忘记密码start */
+.forget-password{position: fixed; top: 0; width: 100%; height: 100%; z-index: 999999; background: rgba(0, 0, 0, 0.75); display: none;}
+.findback{text-align: center; background: #FFF; display: none; z-index: 19891015; position: fixed; top: 35%; width: 80%; margin-left: 10%; padding: 0% 5%; border-radius: 10px;}
+.findback a{display: block !important; float: left !important; padding: 10% 8%; width: 45%; font-size: 12px;}
+.findback a:nth-child(2){float: right !important;}
+.findback img{position: relative; width: 70% !important;}
+.findback p{height: 30px; line-height: 30px; margin-top: 5px;}
+.login-wei{text-align: center; margin: 1rem 17%; height: auto;}
+.login-wei img{width: 40px; height: 40px;}
+.log-wp .title{position: relative; display: block; width: 80%; margin-left: 10%; font-size: 18px; margin-top: 5%; line-height: 40px; margin-bottom: 10px;}
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus{box-shadow: 0 0 0 60px #fff inset;}
+#msgback{float: left;}
+#mobile_login, #account_login{float: right;}
+#account_login{display: none;}
+.clear{clear: both;}
+.msg.cl{width: 80%; margin: 15px auto;}
+.assistant-member{width: 80% !important; margin-left: 10%; margin-top: 25px;}

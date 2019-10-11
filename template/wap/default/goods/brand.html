@@ -1,0 +1,33 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/goods_brand.css">
+<link rel="stylesheet" href="WAP_PLUGIN/swiper/css/swiper.min.css"/>
+<script src="WAP_PLUGIN//swiper/js/swiper.min.js"></script>
+{/block}
+{block name="main"}
+{php}
+   $plat_adv_list = api("System.Shop.advDetail",['ap_keyword' => 'WAP_BRAND_SWIPER', 'export_type' => 'data']);
+{/php}
+
+<div class="mescroll" id="brand_scroll">
+	{notempty name="$plat_adv_list['data']"}
+	    <div class="swiper-container">
+	        <div class="swiper-wrapper">
+	        {foreach name="$plat_adv_list['data']['advs']" item="vo"}
+	            <div class="swiper-slide">
+	                <a href="{:__URL('APP_MAIN' . $vo['adv_url'])}" style="height:{$plat_adv_list['data']['ap_height']}px;line-height:{$plat_adv_list['data']['ap_height']}px;">
+	                    <img src="{:__IMG($vo.adv_image)}" alt="{:lang('carousel_figure')}" class="w100">
+	                </a>
+	            </div>
+	        {/foreach}
+	        </div>
+	    </div>
+	{/notempty}
+
+	<div class="brand-container"></div>
+</div>
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script src="WAP_JS/goods_brand.js"></script>
+{/block}

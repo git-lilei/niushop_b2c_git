@@ -1,0 +1,150 @@
+{extend name="$base" /}
+{block name="resources"}
+<script type="text/javascript" charset="utf-8" src="ADMIN_JS/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="ADMIN_JS/ueditor/ueditor.all.common.js"></script>
+<style>
+	#editor{width: 100%; height: 320px;}
+	.high{height:540px;}
+</style>
+{/block} 
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt><span class="required">*</span>标题：</dt>
+		<dd>
+			<input id="title" type="text" class="input-common long" />
+		</dd>
+	</dl>
+	<dl style="display:none;">
+		<dt>标题图片：</dt>
+		<dd>
+			<div class="upload-btn-common">
+				<div>
+					<input class="input-file" name="file_upload" id="uploadLogo" type="file" onchange="imgUpload(this);" title="上传">
+					<input type="hidden" id="logo" value="">
+				</div>
+				
+				<input type="text" id="text_logo" class="input-common" readonly="readonly" value="">
+				<em>上传</em>
+				<img id="preview_logo" src="__STATIC__/blue/img/upload-common-select.png" data-src="" data-html="true" data-container="body" data-placement="top" data-trigger="manual" data-original-title="" title="">
+			</div>
+			<p class="hint">
+				<span style="color:orange;">建议使用宽100像素-高100像素内的GIF或PNG透明图片；点击下方"提交"按钮后生效。</span>
+			</p>
+			<p class="error">请上传图片</p>
+		</dd>
+	</dl>
+	<dl style="display:none;">
+		<dt>链接地址：</dt>
+		<dd>
+			<input id="link_url" type="text" class="input-common long" />
+		</dd>
+	</dl>
+	<dl>
+		<dt>所属分类：</dt>
+		<dd>
+			<select id="class_id" class="select-common">
+			{volist name="help_class_list" id="v"}
+				<option value="{$v['class_id']}">{$v['class_name']}</option>
+			{/volist}
+			</select>
+		</dd>
+	</dl>
+	<dl class="high">
+		<dt><span class="required">*</span>内容：</dt>
+		<dd>
+			<script id="editor" type="text/plain"></script>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否显示：</dt>
+		<dd>
+			<input id="is_visibility" type="checkbox" class="checkbox" checked="checked"/>
+		</dd>
+	</dl>
+	<dl>
+		<dt>排序：</dt>
+		<dd>
+			<input id="sort" class="input-common harf" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" />
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="setConfigAjax();">保存</button>
+			<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);" >返回</button>
+		</dd>
+	</dl>
+</div>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script>
+var ue = UE.getEditor('editor', {"initialFrameHeight" : 450});
+var if_submit  = false;
+function setConfigAjax() {
+	var title = $("#title").val();
+	var class_id = $("#class_id").val();
+	var link_url = $("#link_url").val();
+	var image = $("#logo").val();
+	var content = UE.getEditor('editor').getContent();
+	var is_visibility = $("#is_visibility").is(":checked") ? 1 : 0;
+	var sort = $("#sort").val();
+	if(title == ""){
+		showTip("请输入标题",'warning');
+		return;
+	}
+	if(content == ""){
+		showTip("请输入内容",'warning');
+		return;
+	}
+	if(!if_submit){
+		if_submit = true;
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/config/adddocument')}",
+			data : {
+				'title' : title,
+				'class_id' : class_id,
+				'link_url' : link_url,
+				'content' : content,
+				'image' : image,
+				'is_visibility' : is_visibility,
+				'sort' : sort
+			},
+			success : function(data) {
+				if_submit  = false;
+				if (data["code"] > 0) {
+					showTip(data["message"],'success');
+					window.location.href = "{:__URL('ADMIN_MAIN/config/helpdocument')}";
+				} else {
+					showTip(data["message"],'error');
+				}
+			}
+		});
+	}
+}
+
+//图片上传
+function imgUpload(event) {
+	var fileid = $(event).attr("id");
+	var id = $(event).next().attr("id");
+	var data = { 'file_path' : "config" };
+	uploadFile({
+		url: __URL(ADMINMAIN + '/config/uploadimage'),
+		fileId: fileid,
+		data : data,
+		callBack: function (res) {
+			if(res.code){
+				$("#" + id).val(res.data.path);
+				$("#text_" + id).val(res.data.path);
+				$("#preview_"+ id).attr("data-src",__IMG(res.data.path));
+				showTip(res.message,"success");
+			}else{
+				showTip(res.message,"error");
+			}
+		}
+	});
+}
+</script>
+{/block}

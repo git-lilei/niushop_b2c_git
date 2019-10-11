@@ -1,0 +1,107 @@
+{extend name="$base" /}
+{block name="main"}
+<div class="set-style">
+
+	<div class="set-item">
+		<dl>
+			<dt>签到送积分：</dt>
+			<dd>
+				<p><input id="sign_point" type="number" value="{$reward_rule_info.sign_point}"  min="0" onkeyup="value=value.replace(/[^\d+]/g,'')" class="input-common harf" ><em class="unit">分</em></p>
+			</dd>
+		</dl>
+			<dl>
+			<dt></dt>
+			<dd>
+				<p>
+					<input id="sign_open" type="checkbox" onchange="setMemberActionConfig();" class="checkbox" {if condition="$member_action_config['sign_integral'] eq 1"}checked="checked"{/if} >
+				</p>
+				<p class="hint">是否启用签到送积分</p>
+			</dd>
+		</dl>
+		<dl>
+			<dt>签到送优惠券：</dt>
+			<dd>
+				<select class="row-no-radius select-common" id="sign_coupon">
+					<option value="">请选择优惠券种类</option>
+					{foreach name="$coupon_list" item="v"}
+						{if condition="$v['coupon_type_id'] == $reward_rule_info['sign_coupon']"}
+						<option value="{$v.coupon_type_id}" selected="selected">{$v.coupon_name}</option>
+						{else/}
+						<option value="{$v.coupon_type_id}">{$v.coupon_name}</option>
+						{/if}
+					{/foreach}
+				</select>
+			</dd>
+		</dl>
+		<dl>
+			<dt></dt>
+			<dd>
+				<p>
+					<input id="sign_coupon_open" type="checkbox" onchange="setMemberActionConfig();" class="checkbox" {if condition="$member_action_config['sign_coupon'] eq 1"}checked="checked"{/if} class="input-common" >
+				</p>
+				<p class="hint">是否启用签到送优惠券</p>
+			</dd>
+		</dl>
+	</div>
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="save();" style="margin:20px 0 20px 205px;">保存</button>
+		</dd>
+	</dl>
+</div>
+<script>
+function setMemberActionConfig(){
+	if($("#sign_open").prop("checked")){
+		var sign = 1;
+	}else{
+		var sign = 0;
+	}
+	if($("#sign_coupon_open").prop("checked")){
+		var sign_coupon_open = 1;
+	}else{
+		var sign_coupon_open = 0;
+	}
+	$.ajax({
+		type : 'post',
+		url : "{:__URL('__URL__/NsMemberSign/ADMIN_MODULE/MemberSign/setMemberActionConfig')}",
+		data : { 'sign':sign, 'sign_coupon':sign_coupon_open },
+		success : function(data){
+			//alert(JSON.stringify(data));
+		}
+	})
+}
+
+function save() {
+	var sign_point = $("#sign_point").val();
+	var sign_coupon = $("#sign_coupon").val();
+	if ($("#sign_coupon_open").prop("checked")) {
+		if (sign_coupon == "") {
+			showMessage("error", "请选择优惠券种类");
+			return;
+		}
+	}
+	if ($("#sign_open").prop("checked")) {
+		if (sign_point == 0) {
+			showMessage("error", "请设置签到积分");
+			return;
+		}
+	}
+	$.ajax({
+		type: 'post',
+		url : "{:__URL('__URL__/NsMemberSign/ADMIN_MODULE/MemberSign/index')}",
+		data: {
+			"sign_point": sign_point,
+			'sign_coupon': sign_coupon
+		},
+		success: function (data) {
+			if (data['code'] >= 0) {
+				showMessage("success", "设置成功！", "{:__URL('__URL__/NsMemberSign/ADMIN_MODULE/MemberSign/index')}");
+			} else {
+				showMessage("error", "设置失败");
+			}
+		}
+	})
+}
+</script>
+{/block}

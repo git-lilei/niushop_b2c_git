@@ -1,0 +1,49 @@
+{extend name="$base" /}
+{block name="resources"}
+<link href="WAP_CSS/distribution_team.css" rel="stylesheet" type="text/css" />
+{/block}
+{block name="main"}
+{php}
+	$promoter_id = request()->get("promoter_id", "");
+	$team_list = api("System.Distribution.myTeam",['promoter_id' => $promoter_id]);
+	$team_list = $team_list['data'];
+{/php}
+{notempty name="$team_list"}
+<article class="team">
+{if condition="count($team_list) >0"}
+	{foreach name="team_list" item="vo" key="key"}
+		{if condition="count($vo) >0"}
+			{switch name="key"}
+				{case value="array_one"}<div class="team-title">{:lang('subordinate_member')}</div>{/case}
+				{case value="array_two"}<div class="team-title">{:lang('lower_level_member')}</div>{/case}
+				{case value="array_three"}<div class="team-title">{:lang('next_lower_member')}</div>{/case}
+			{/switch}
+			{foreach name="vo" item="team"}
+			<div class="team-item ns-border-color-gray">
+				{if $team['user_info']['user_headimg']}
+				<img src="{:__IMG($team['user_info']['user_headimg'])}"/>
+				{else /}
+				<img src="{:__IMG($default_headimg)}"/>
+				{/if}
+				<div class="team-info">
+					<strong class="ns-text-color-black">{$team["user_info"]["nick_name"]}</strong>
+					<strong class="role-name ns-text-color">({$team["role_name"]})</strong><br>
+					{notempty name="$team['recommender_name']"}
+					<strong class="role-user ns-text-color-gray">{:lang('referrer')}：{$team["recommender_name"]}</strong><br>
+					{/notempty}
+					<time class="ns-text-color-gray">{:lang('registration_time')}：{:getTimeStampTurnTime($team["user_info"]["reg_time"])}</time>
+				</div>
+			</div>
+			{/foreach}
+		{/if}
+	{/foreach}
+{else/}
+	<p class="empty">{:lang('you_not_have_team')}</p>
+{/if}
+</article>
+{else/}
+<script>location.href = __URL(APPMAIN + "/distribution/applyPromoter");</script>
+{/notempty}
+{/block}
+{block name="footer"}{/block}
+{block name="script"}{/block}

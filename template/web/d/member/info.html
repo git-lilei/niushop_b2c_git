@@ -1,0 +1,104 @@
+{extend name="$member_base" /}
+{block name="right_main"}
+<link href="__STATIC__/webuploader/webuploader.css" rel="stylesheet">
+<link rel="stylesheet" href="WEB_CSS/member_info.css">
+{php}
+$member_detail = api("System.Member.memberInfo");
+$member_detail = $member_detail['data'];
+{/php} 
+<div class="member-main">
+	<ul class="nav nav-tabs">
+  		<li class="active"><a data-tab href="#base_info">基本信息</a></li>
+  		<li><a data-tab href="#update_face">头像照片</a></li>
+	</ul>
+	<div class="tab-content">
+  		<div class="tab-pane active" id="base_info">
+  			<div class="form-horizontal">
+			   
+			  	<div class="form-group">
+				    <label class="col-sm-2">用户名：</label>
+				    <div class="col-sm-3">
+				      	<p class="form-control-static personal-nick">{$member_detail['user_info']['user_name']}</p>
+				    </div>
+			  	</div>
+
+			  	<div class="form-group">
+				    <label class="col-sm-2">昵称：</label>
+				    <div class="col-sm-3">
+				      	<input type="text" class="form-control" name="nick_name" value="{$member_detail['user_info']['nick_name']}" placeholder="">
+				    </div>
+			  	</div>
+
+			  	<div class="form-group">
+				    <label class="col-sm-2">真实姓名：</label>
+				    <div class="col-sm-3">
+				      	<input type="text" class="form-control" name="real_name" value="{$member_detail['user_info']['real_name']}" placeholder="">
+				    </div>
+			  	</div>
+
+			  	<div class="form-group">
+				    <label class="col-sm-2">出生日期：</label>
+				    <div class="col-sm-3">
+				      	<input type="date" class="form-control" name="birthday" value="{$member_detail['user_info']['birthday']}" placeholder="">
+				    </div>
+			  	</div>
+			  	<div class="form-group">
+				    <label class="col-sm-2">性别：</label>
+				    <div class="col-sm-3">
+				      	<input type="radio" name="sex" value="0" id="baomi" {if $member_detail['user_info']['sex'] == 0} checked="checked" {/if}/>
+						<label for="baomi">{:lang('member_secrecy')} </label>
+
+						<input type="radio" name="sex" value="1" id="nan" {if $member_detail['user_info']['sex'] == 1} checked="checked" {/if}/>
+						<label for="nan">{:lang('member_man')}</label>
+
+						<input type="radio" name="sex" value="2" id="nv" {if $member_detail['user_info']['sex'] == 2} checked="checked" {/if}/>
+						<label for="nv">{:lang('member_woman')} </label>
+				    </div>
+			  	</div>
+			  	<div class="form-group">
+				    <label class="col-sm-2">所在地：</label>
+				    <div class="col-sm-3">
+				      	<input type="text" class="form-control" name="location" value="{$member_detail['user_info']['location']}" placeholder="">
+				    </div>
+			  	</div>
+
+			  	<div class="form-group">
+				    <label class="col-sm-2">QQ：</label>
+				    <div class="col-sm-3">
+				      	<input type="text" class="form-control" name="user_qq" value="{$member_detail['user_info']['user_qq']}" placeholder="">
+				    </div>
+			  	</div>
+
+			  	<div class="form-group">
+			   		<div class="col-sm-offset-2 col-sm-10">
+			   			<button class="btn btn-primary" type="button" onclick="updateBasicsInfo();">保存</button>
+				   	</div>
+			  	</div>
+		  	</div>
+  		</div>
+
+		<div class="tab-pane" id="update_face">
+			<form class="form-horizontal">
+		  		<div class="form-group">
+			    	<label class="col-sm-2">头像预览</label>
+				    <div class="col-sm-10">
+			      		<p class="hint ns-text-color">完善个人信息资料，上传头像图片有助于您结识更多的朋友。 <br/>头像最佳默认尺寸为120x120像素。</p>
+					    <div class="head-img ns-border-color-gray ">
+		              		<img src="{:__IMG($member_detail['user_info']['user_headimg'])}" id="headimg">
+						</div>
+					</div>
+		  		</div>
+			  	<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-10">
+			   			<button class="btn btn-primary js-save" type="button">保存</button>
+					</div>
+			  	</div>
+			</form>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript" src="__STATIC__/webuploader/webuploader.js"></script>
+<script src="WEB_JS/member_info.js"></script>
+{/block}

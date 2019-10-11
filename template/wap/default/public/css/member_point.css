@@ -1,0 +1,15 @@
+table tr th, table tr td{padding: 0.5625rem 0.625rem; font-size: 0.875rem;}
+.account-box{border-top: 1px solid;padding: 45px 0 15px; text-align: center;}
+.account-box .account-title{font-size: 16px; font-weight: 200; line-height: 45px; color: #fff;}
+.account-box .balance{font-size: 42px; color: #fff;}
+.declaration-title{background-color:#fff; padding: 10px; border-bottom: 1px solid;}
+.declaration-content{padding: 10px;}
+.ns-table{background-color: #fff;}
+.ns-table .ns-table-wrap{width: 100%; padding-top: 0.2rem;border-bottom: 1px solid;}
+.table-wrap-title{overflow: hidden; height: 30px; line-height: 30px;}
+.table-wrap-title > span:nth-child(1){margin-left: 15px;}
+.table-wrap-title > span:nth-child(2){margin-right: 30px; font-size: 20px;}
+.table-wrap-time{height: 30px;line-height: 30px;padding-left: 15px;}
+.table-wrap-text{margin: 0 15px 5px 15px; font-size: 12px; word-break: break-all;}
+.p-style{color: #fff;}
+.empty{text-align: center;padding: 10px;}

@@ -1,0 +1,16 @@
+@charset "utf-8";
+.member-main{background: #fff; overflow: hidden; margin-top: 20px; padding: 20px;}
+.balance-info{padding: 20px 30px; display: flex;}
+.balance-info .pull-left{flex-grow: 0.6;}
+.balance-info > div{flex: 1;}
+.balance-info .title{font-weight: 700; font-size: 16px;}
+.balance-info .price{font-weight: 700; font-size: 24px; line-height: 1.2;}
+.balance-info .price em{font-style: normal; font-size: 50px;}
+.balance-info .price .recharge{font-size: 14px; font-weight: normal;}
+.balance-info .pull-right .list li{height: 26px; line-height: 26px; font-size: 12px;}
+.balance-info .pull-right .list li em.money{font-weight: 700; font-size: 16px;}
+.balance-info .pull-right .list li .icon{width: 15px; height: 15px; display: inline-block; background: url(../img/member/balance_icon.png) no-repeat; position: relative; top: 4px; margin-right: 5px;}
+.balance-info .pull-right .list li .balance-lock-icon{background-position-y: -17px;}
+.balance-info .pull-right .list li .status-icon{background-position-y: -34px;}
+.balance-detailed{margin-top: 10px;}
+.table{margin: 0;font-size: 12px;}

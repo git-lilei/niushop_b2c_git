@@ -1,0 +1,170 @@
+{extend name="$base" /}
+{block name="resources"}{/block}
+{block name="main"}
+<div class="options-btn">
+	<button class="btn-common-delete btn-small" onclick="batchDelete()">批量删除</button>
+	<button class="btn-common btn-small" onclick="addGoodsSpec()">添加规格</button>
+</div>
+<table class="table-class">
+	<colgroup>
+		<col style="width: 2%;">
+		<col style="width: 20%;">
+		<col style="width: 45%;">
+		<col style="width: 5%;">
+		<col style="width: 10%;">
+		<col style="width: 5%;">
+		<col style="width: 10%;">
+	</colgroup>
+	<thead>
+		<tr class="headtitle">
+			<th><i class="checkbox-common"><input type="checkbox"  ></i></th>
+			<th align="left">规格名称</th>
+			<th align="left">规格属性</th>
+			<th>启用</th>
+			<th>是否参与筛选</th>
+			<th>排序</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+function setGoodsSpecField(id, name, e){
+	if(name == 'is_visible'){
+		var value = $(e).attr("is_visible");
+	}else if(name == 'is_screen'){
+		var value = $(e).attr("is_screen");
+	}else if(name == 'sort'){
+		var value = $(e).val();
+	}
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/goods/setgoodsspecfield')}",
+		data:{ 'id' : id, 'name' : name, 'value' : value },
+		success: function (data) {
+			if(data['code'] > 0){
+				if(name == 'is_visible'){
+					if(value == 1){
+						$("#isvisible_"+id).attr("is_visible", '0').html('<img src="ADMIN_IMG/checked.png" alt="" width="15"/>');
+					}else{
+						$("#isvisible_"+id).attr("is_visible", '1').html('<img src="ADMIN_IMG/un_checked.png" alt="" width="15"/>');
+					}
+				}
+				if(name == 'is_screen'){
+					if(value == 1){
+						$("#isscreen_"+id).attr("is_screen", '0').html('<img src="ADMIN_IMG/checked.png" alt="" width="15"/>');
+					}else{
+						$("#isscreen_"+id).attr("is_screen", '1').html('<img src="ADMIN_IMG/un_checked.png" alt="" width="15"/>');
+					}
+				}
+				LoadingInfo(getCurrentIndex(1,'.table-class tbody'));
+				showTip(data["message"],'success');
+			}else{
+				showMessage(data["message"],'error');
+			}
+		}
+	}); 
+}
+
+/* 跳转到添加规格 */
+function addGoodsSpec() {
+	location.href = __URL("ADMIN_MAIN/goods/addgoodsspec");
+}
+
+//批量删除
+function batchDelete(){
+	var spec_ids = [];
+	$(".table-class tbody input[type='checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			spec_ids.push($(this).val());
+		}
+	});
+	if(spec_ids.length==0){
+		showTip("请选择需要操作的记录","warning");
+		return false;
+	}
+	delSpec(spec_ids);
+}
+
+//加载数据
+function LoadingInfo(page_index) {
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/goods/goodsspeclist')}",
+		data : { "page_index" : page_index, "page_size" : $("#showNumber").val() },
+		success : function(data) {
+			if (data["data"].length > 0) {
+				$(".table-class tbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					var spec_value_name_list = data["data"][i]["spec_value_name_list"];
+					if(spec_value_name_list.length>80){
+						spec_value_name_list = spec_value_name_list.substring(0,77) + "...";
+					}
+					html += '<tr align="center">';
+					html += '<td ><i class="checkbox-common"><input name="sub" type="checkbox" value="'+ data["data"][i]["spec_id"] +'" ></i></td>';
+					html += '<td align="left">' + data['data'][i]['spec_name'] + '</td>';
+					html += '<td style="overflow:hidden; text-overflow: ellipsis;text-align: left;">' + spec_value_name_list + '</td>';
+					if(data["data"][i]["is_visible"]){
+						html += '<td ><a href="javascript:;" class="is_visible" id="isvisible_'+data["data"][i]["spec_id"]+'" is_visible="0" onclick="setGoodsSpecField('+data["data"][i]["spec_id"]+', \'is_visible\' , this)"><img src="ADMIN_IMG/checked.png" alt="" width="15"/></a></td>';
+					}else{
+						html += '<td ><a href="javascript:;" class="is_visible" id="isvisible_'+data["data"][i]["spec_id"]+'" is_visible="1" onclick="setGoodsSpecField('+data["data"][i]["spec_id"]+', \'is_visible\', this)"><img src="ADMIN_IMG/un_checked.png" alt="" width="15"/></a></td>';
+					}
+					
+					if(data["data"][i]["is_screen"] == 1){
+						// html += '<td style="width:10%;"><a href="javascript:;" class="is_visible" id="isscreen_'+data["data"][i]["spec_id"]+'" is_screen="0" onclick="setGoodsSpecField('+data["data"][i]["spec_id"]+', \'is_screen\' , this)"><i class="fa fa-check text-success text-active"></i></a></td>';
+						html += '<td ><a href="javascript:;" class="is_visible" id="isscreen_'+data["data"][i]["spec_id"]+'" is_screen="0" onclick="setGoodsSpecField('+data["data"][i]["spec_id"]+', \'is_screen\' , this)"><img src="ADMIN_IMG/checked.png" alt="" width="15"/></a></td>';
+					}else{
+						// html += '<td style="width:10%;"><a href="javascript:;" class="is_visible" id="isscreen_'+data["data"][i]["spec_id"]+'" is_screen="1" onclick="setGoodsSpecField('+data["data"][i]["spec_id"]+', \'is_screen\', this)"><i class="fa fa-times text-danger text"></i></a></td>';
+						html += '<td ><a href="javascript:;" class="is_visible" id="isscreen_'+data["data"][i]["spec_id"]+'" is_screen="1" onclick="setGoodsSpecField('+data["data"][i]["spec_id"]+', \'is_screen\', this)"><img src="ADMIN_IMG/un_checked.png" alt="" width="15"/></a></td>';
+					}
+					html += '<td ><input type="number" id="sort" class="input-common input-common-sort" value="' + data["data"][i]["sort"] + '" onchange="setGoodsSpecField('+data["data"][i]["spec_id"]+', \'sort\', this);"/></td>';
+
+					html += '<td ><a href="'+__URL('ADMIN_MAIN/goods/updategoodsspec?spec_id=' + data["data"][i]["spec_id"])+'">修改</a>  <a href="javascript:delSpec(' + data["data"][i]["spec_id"] + ')">删除</a></td> ';
+					html += '</tr>';
+					$(".table-class tbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="9">暂无符合条件的数据记录</td></tr>';
+				$(".table-class tbody").html(html);
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+/* 删除属性 */
+function delSpec(spec_id) {
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/goods/deletegoodsspec')}",
+					data : { 'spec_id' : spec_id.toString() },
+					dataType : "json",
+					success : function(data) {
+						if (data['code'] > 0) {
+							LoadingInfo(getCurrentIndex(spec_id,'.table-class tbody'));
+							showTip(data['message'],"success");
+						}else if(data['code'] == 0){
+							showTip(data['message'],"error");
+						}else if(data['code'] == -1){
+							showTip("当前规格正在使用中，不能删除！","warning");
+						}
+					}
+				});
+			},"取消,#f5f5f5,#666" : function(){
+				$(this).dialog('close');
+			}
+		},
+		contentText:"你确定删除吗？",
+		title:"消息提醒"
+	});
+}
+</script>
+{/block}

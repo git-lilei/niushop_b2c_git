@@ -1,0 +1,64 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_JS/layui/css/layui.css" />
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/block.css" />
+<link type="text/css" rel="stylesheet" href="{$theme_css}">
+{/block}
+{block name="main"}
+<div class="set-style">
+		<dl>
+			<dt><span class="color-red"></span>楼层名称</dt>
+			<dd>
+				<p><input name="" id="floor_name" value="{$block_info['name']}" type="text" style="width:300px;" class="input-common"></p>
+			</dd>
+		</dl>
+		<dl>
+			<dt>是否开启</dt>
+			<dd>
+				<div class="controls">
+					<p>
+						<input id="is_use" type="checkbox"  class="checkbox" {if condition="$block_info['is_use'] eq 1"}checked{/if}/>
+					</p>
+				</div>
+			</dd>
+		</dl>
+		<dl>
+			<dt>楼层模板</dt>
+			<dd>
+				<div class="controls">
+					<select name="block_template" id="class_id" class="select-common" onchange="blockTemplate()">
+					   <option value="">请选择</option>
+					   {foreach name="$block_template_list" item="block" key="k"}
+						<option value="{$block}"  {if condition="$block==$block_info['block_template']"}selected="selected"{elseif condition="$k==0"}selected="selected"}{/if}>{$block}</option>
+					   {/foreach}
+					</select>
+				</div>
+			</dd>
+		</dl>
+	</div>
+	
+	<section class="block-main" {if condition="$block_html"}style="display:block;"{/if}>{$block_html}</section>
+
+<div class="layui-form">
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <input type="hidden" name="block_id" value="{$block_info['id']}"/>
+            <input type="hidden" name="pc_template" value="{$pc_template['pc_template'] ? $pc_template['pc_template'] :$pc_template}" />
+            <input type="button" value="保存" class="layui-btn" onclick="save()">
+            <button type="reset" class="layui-btn layui-btn-primary" onclick="javascript:history.back(-1);">返回</button>
+        </div>
+    </div>
+
+</div>
+{/block}
+{block name="script"}
+<script src="ADMIN_JS/layui/layui.js"></script>
+<script>
+var session_data = null;
+{if condition="$block_info['value']!=''"}
+session_data = eval('({$block_info['value']})');
+{/if}
+</script>
+<script src="ADMIN_JS/block_template.js"></script>
+{/block}

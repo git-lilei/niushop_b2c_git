@@ -1,0 +1,132 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<script src="ADMIN_JS/material_managedialog.js"></script>
+{/block}
+{block name="main"}
+<div class="set-style">
+
+	<!--<dl>-->
+		<!--<dt>后台网站风格：</dt>-->
+		<!--<dd>-->
+			<!--<p>-->
+				<!--<select id="style_id_admin" class="select-common">-->
+					<!--{volist name="style_list_admin" id="v"}-->
+					<!--<option value="{$v['style_id']}" {if condition="$website['style_id_admin'] eq $v['style_id']"} selected="selected"{/if}>{$v['style_name']}</option>-->
+					<!--{/volist}-->
+				<!--</select>-->
+			<!--</p>-->
+		<!--</dd>-->
+	<!--</dl>-->
+	<dl>
+		<dt>网站访问模式：</dt>
+		<dd>
+			<p>
+				<select id="visit_pattern" name="visit_pattern" class="select-common">
+					<option value="0" {if condition="$website['url_type'] eq 0"} selected="selected"{/if}>兼容模式</option>
+					<option value="1" {if condition="$website['url_type'] eq 1"} selected="selected"{/if}>pathinfo模式</option>
+				</select>
+			</p>
+			<p class="hint" >伪静态只支持<i class="important-note">pathinfo</i>模式，如果开启伪静态，请选择<i class="important-note">pathinfo</i>模式
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>PC端商城运营状态：</dt>
+		<dd>
+			<div class="total">
+				<label for="navigationtype1" class="radio inline normal">
+					<i class="radio-common {if condition="$website.web_status eq 1"}selected{/if}">
+						<input type="radio" value="1" name="navigationtype" id="navigationtype1"  {if condition="$website.web_status eq 1"}checked{/if}/>
+					</i>
+					<span>开启</span>
+				</label>
+				<label for="navigationtype2" class="radio inline normal">
+					<i class="radio-common {if condition="$website.web_status eq 2"}selected{/if}">
+						<input type="radio" value="2" name="navigationtype" id="navigationtype2"  {if condition="$website.web_status eq 2"}checked{/if}/>
+					</i>
+					<span>关闭</span>
+				</label>
+				<label for="navigationtype3" class="radio inline normal">
+					<i class="radio-common {if condition="$website.web_status eq 3"}selected{/if}">
+						<input type="radio" value="3" name="navigationtype" id="navigationtype3"  {if condition="$website.web_status eq 3"}checked{/if}/>
+					</i>
+					<span>关闭后访问WAP端</span>
+				</label>
+			</div>
+			<p class="hint">电脑端站点运营或关闭，关闭时其他人无法访问，但不影响管理员访问</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>WAP端商城运营状态：</dt>
+		<dd>
+			<div class="total">
+				<label for="waptype1" class="radio inline normal">
+					<i class="radio-common {if condition="$website.wap_status eq 1"}selected{/if}">
+						<input type="radio" value="1" name="waptype" id="waptype1"  {if condition="$website.wap_status eq 1"}checked{/if}/>
+					</i>
+					<span>开启</span>
+				</label>
+				<label for="waptype2" class="radio inline normal">
+					<i class="radio-common {if condition="$website.wap_status eq 2"}selected{/if}">
+						<input type="radio" value="2" name="waptype" id="waptype2" {if condition="$website.wap_status eq 2"}checked{/if}/>
+					</i>
+					<span>关闭</span>
+				</label>
+				<label for="waptype3" class="radio inline normal">
+					<i class="radio-common {if condition="$website.wap_status eq 3"}selected{/if}">
+						<input type="radio" value="3" name="waptype" id="waptype3" {if condition="$website.wap_status eq 3"}checked{/if}/>
+					</i>
+					<span>关闭后访问PC端</span>
+				</label>
+			</div>
+			<p class="hint">WAP站点运营或关闭，关闭时其他人无法访问，但不影响管理员访问</p>
+		</dd>
+	</dl>
+
+	<dl  class="reason">
+		<dt>网站关闭原因：</dt>
+		<dd>
+			<textarea name="store_zy" rows="2" id="close_reason" class="textarea-common">{$website.close_reason}</textarea>
+			<p class="hint">请填写站点关闭原因，将在前台显示</p>
+		</dd>
+	</dl>
+
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="setConfigAjax();">保存</button></dd>
+	</dl>
+</div>
+<script>
+function setConfigAjax() {
+	var web_style_admin = $("#style_id_admin").val();//后台网站风格
+	var visit_pattern = $("#visit_pattern").val();
+	var web_status = $("input[name='navigationtype']:checked").val();
+	var wap_status = $("input[name='waptype']:checked").val();
+	var close_reason = $("#close_reason").val();
+	
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/config/visitconfig')}",
+		data : {
+			'web_style_admin' : web_style_admin,
+			'visit_pattern' : visit_pattern,
+			'web_status' : web_status,
+			'wap_status' : wap_status,
+			'close_reason' : close_reason
+		},
+		success : function(data) {
+			if (data["code"] > 0) {
+				showTip(data["message"],"success");
+				window.location.href = "{:__URL('ADMIN_MAIN/config/visitconfig')}";
+			} else {
+				showTip(data["message"],"error");
+			}
+		}
+	});
+}
+</script>
+{/block}

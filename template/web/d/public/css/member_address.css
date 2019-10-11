@@ -1,0 +1,12 @@
+@charset "utf-8";
+.member-main{background: #fff; overflow: hidden; margin-top: 20px; padding: 20px;}
+.address-add{margin-bottom: 10px;}
+.address-list .item{margin-bottom: 10px; border: 1px solid; position: relative;padding: 0 10px 10px 10px;}
+.address-list .item:last-child{margin-bottom: 0;}
+.address-list .item .title{padding-left: 10px; line-height: 35px; height: 35px;}
+.address-list .item .title label{font-weight: 700;}
+.address-list .item .title span{margin: 0 0 0 10px; font-size: 12px;padding: 2px; color: #fff;}
+.address-list .item .info{line-height: 25px;}
+.address-list .item .info label{float: left; width: 70px;text-align: right;}
+.address-list .address-tool{position: absolute; bottom: 10px; right: 10px; font-size: 12px;}
+.address-list .address-tool a{margin-left: 5px; cursor: pointer;}

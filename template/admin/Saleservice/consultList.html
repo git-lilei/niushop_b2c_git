@@ -1,0 +1,285 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/product.css">
+<style type="text/css">
+.tr-title {height: 30px;border: 1px solid rgba(234, 233, 233, 0.51);}
+.table-class tbody td a{margin-left:0;}
+.more-search{line-height: 20px;outline: none;}
+.ns-main{margin-top: 0;}
+#consult dt{width:80px !important;}
+#consult dd{word-wrap: break-word;}
+.consult_content { word-wrap: break-word;  word-break: break-all; overflow: hidden; text-overflow: ellipsis;}
+</style>
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+{/block}
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<td width="9%" style="text-align:left;">
+			<button class="btn-common-delete btn-small" onclick="batchDelete()">批量删除</button>
+		</td>
+		<td class="default-condition">
+			咨询时间：
+			<input type="text" id="startDate" class="input-medium input-common middle" placeholder="请选择开始日期" onclick="WdatePicker()" />
+			&nbsp;-&nbsp;
+			<input type="text" id="endDate" placeholder="请选择结束日期" class="input-medium input-common middle" onclick="WdatePicker()" />
+			<button class="btn-common" onclick="LoadingInfo(1)">搜索</button>
+			<button onclick="openSeniorSearch('.default-condition')" value="搜索" class="btn-common" >高级搜索</button>
+		</td>
+	</tr>
+</table>
+
+<!-- 高级搜索 -->
+<div class="nui-condition">
+	<div class="c-item-column">
+		<label for="goods_name">商品名称：</label>
+		<input id="goods_name" class="input-medium input-common middle" type="text" placeholder="请输入商品名称" >
+	</div>
+	
+	<div class="c-item-column">
+		<label for="ct_id">咨询类型：</label>
+		<select id="ct_id" class="select-common middle">
+			<option value="">全部</option>
+			{foreach name="ct_list" item="v"}
+			<option value="{$v['ct_id']}">{$v['ct_name']}</option>
+			{/foreach}
+		</select>
+	</div>
+	
+	<div class="c-item-column">
+		<label>咨询时间：</label>
+		<input type="text" id="startDate" class="input-medium input-common middle" placeholder="请选择开始日期" onclick="WdatePicker()" />
+			&nbsp;-&nbsp;
+		<input type="text" id="endDate" placeholder="请选择结束日期" class="input-medium input-common middle" onclick="WdatePicker()" />
+	</div>
+	
+	<br />
+	<div class="c-operation">
+		<button onclick="LoadingInfo(1)"  value="搜索" class="btn-common" >搜索</button>
+		<a href="javascript:clearCondition();">清空筛选条件</a>
+	</div>
+	<a href="javascript:retractSeniorSearch();" class="retract">收起↑</a>
+</div>
+
+<table class="table-class">
+	<colgroup>
+		<col style="width: 2%;">
+		<col style="width: 20%;">
+		<col style="width: 20%;">
+		<col style="width: 30%;">
+		<col style="width: 20%;">
+	</colgroup>
+	<thead>
+		<tr class="table-title" style="background: white; z-index: 10; border: 1px solid #E3E3E3;">
+			<th align="center">
+				<i class="checkbox-common"><input type="checkbox" ></i>
+			</th>
+			<th colspan="2" align="left">商品</th>
+			<th align="left">咨询用户</th>
+			<th colspan="1" style="text-align: center;">咨询时间</th>
+			<th style="text-align: center;">操作</th>
+		</tr>
+	</thead>
+	<tbody id="productTbody" style="border: 0px;"></tbody>
+</table>
+
+<input type="hidden" id="type" value="{$type}">
+<div class="modal fade hide" id="consult" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>咨询管理</h3>
+			</div>
+			<div class="modal-body">
+					<div class="set-style">
+						<dl>
+							<dt>咨询内容：</dt>
+							<dd id="consult_content">
+							</dd>
+						</dl>
+						<dl>
+							<dt>回复内容：</dt>
+							<dd>
+								<textarea id="consult_reply" class="textarea-common" ></textarea>
+							</dd>
+						</dl>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<input type="hidden" id="consult_id" >
+				<button type="button" class="btn-common" data-dismiss="modal" onclick="replyConsultAjax()">保存</button>
+				<button type="button" class="btn" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+//隐藏商品分组
+function hideEditGroup(){
+	$("#editGroup").popover("hide");
+}
+
+function hideSetRecommend(){
+	$("#setRecommend").popover("hide");
+}
+
+function LoadingInfo(page_index) {
+	$(".more-search-container").slideUp();
+	timeStampTurnTime(1403058804);
+	var ct_id = $("#ct_id").val();
+	var type = $("#type").val();
+	var start_date = $("#startDate").val();
+	var end_date = $("#endDate").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/saleservice/consultlist')}",
+		data : {
+			"page_index" : page_index,
+			"ct_id" : ct_id,
+			'type' : type,
+			'page_size' : $("#showNumber").val(),
+			"start_date":start_date,
+			"end_date":end_date,
+			"goods_name" : $("#goods_name").val()
+		},
+		success : function(data) {
+			if (data["data"].length > 0) {
+				$("#productTbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					html += '<tr class="tr-title"><td class="td-'+ data["data"][i]["consult_id"]+'" align="center" rowspan="2"><i class="checkbox-common"><input value="'
+						+ data["data"][i]["consult_id"]
+						+ '" name="sub" data-state="'+data["data"][i]["state"]+'" type="checkbox" ></i></td>';
+					html += '<td colspan="2"  align="left" style="border-left:1px solid #e5e5e5;"><a href="'+__URL('SHOP_MAIN/goods/detail?goods_id='+ data["data"][i]["goods_id"])+'" target="_blank">'+ data["data"][i]["goods_name"] + '</a></td>';
+					if(data["data"][i]["uid"] == 0){
+						html += '<td align="left"><span class="pro-code">游客</span></td>';
+					}else{
+						html += '<td align="left"><span class="pro-code">'+data["data"][i]["member_name"]+'</span></td>';
+					}
+					html += '<td align="center" style="border-right:1px solid #e5e5e5;">'+timeStampTurnTime(data["data"][i]["consult_addtime"]);
+					html += '</div></td>';
+					html += '<td align="center" rowspan="2">';
+					if(data["data"][i]["consult_reply"] != ''){
+						html += '<a href="javascript:;" data-placement="bottom" data-original-title="编辑" onclick="replyConsult('+ data["data"][i]["consult_id"]+ ',this)">编辑</a>&nbsp;';
+					}else{
+						html += '<a href="javascript:;" data-placement="bottom" data-original-title="回复" onclick="replyConsult(' + data["data"][i]["consult_id"] + ',this)">回复</a>&nbsp;';
+					}
+					
+					html += '<a href="javascript:void(0)" data-placement="bottom" onclick="deleteConsult(' + data["data"][i]["consult_id"] + ')" data-original-title="删除">删除</a></td>';
+					html += '</tr>';
+					
+					html += '<tr>';
+					html += '<td colspan="4" style="width: 90%;">';
+					html += '<p><span>咨询内容:</span> <span class="consult_content">'+ data["data"][i]["consult_content"]+'</span></p>';
+					if(data["data"][i]["consult_reply"] != ''){
+						html += '<p><span>回复内容:</span> <span class="consult_reply">'+ data["data"][i]["consult_reply"]+'</span></p>';
+					}
+					html += '</td>';
+					
+					html += '</tr>';
+					$("#productTbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="6" style="text-align: center;">暂无符合条件的数据记录</td></tr>';
+				$("#productTbody").html(html);
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+function batchDelete() {
+	var consult_id= [];
+	$("#productTbody input[type='checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			consult_id.push($(this).val());
+		}
+	});
+	if(consult_id.length ==0){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#0059d6,#fff": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:"请选择需要操作的记录",
+			title:"消息提醒",
+		});
+		return false;
+	}
+	deleteConsult(consult_id);
+}
+
+// 删除
+function deleteConsult(consult_id){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/saleservice/deleteconsult')}",
+					data : { "consult_id" : consult_id.toString() },
+					dataType : "json",
+					success : function(data) {
+						if(data['code'] > 0){
+							LoadingInfo(getCurrentIndex(consult_id,'#productTbody','tr[class="tr-title"]'));
+							showMessage('success', data['message']);
+						}else{
+							showMessage('error', data['message']);
+						}
+					}
+				});
+			},
+			"取消,#f5f5f5,#666" : function(){
+				$(this).dialog('close');
+			}
+		},
+		contentText:"你确定删除吗？",
+		title:"消息提醒"
+	});
+}
+
+//回复 弹出框
+function replyConsult(consult_id, event){
+	var consult_content = $(event).parents('tr').next().find('.consult_content').html();
+	var consult_reply = $(event).parents('tr').find('.consult_reply').html();
+	if(consult_reply == undefined){
+		consult_reply = '';
+	}
+	$("#consult_reply").val(consult_reply);
+	$("#consult").modal('show');
+	$("#consult_id").val(consult_id);
+	$("#consult_content").html(consult_content);
+}
+
+// 回复提交
+function replyConsultAjax(){
+	var consult_id = $("#consult_id").val();
+	var consult_reply = $("#consult_reply").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/saleservice/replyconsultAjax')}",
+		data : { "consult_id" : consult_id, "consult_reply" : consult_reply },
+		success : function(data) {
+			if(data['code'] > 0){
+				LoadingInfo(getCurrentIndex(consult_id,'#productTbody','tr[class="tr-title"]'));
+				showMessage('success', data['message']);
+			}else{
+				showMessage('error', data['message']);
+			}
+		}
+	});
+}
+
+// 点击显示更多搜索
+$(".more-search").click(function(){
+	$(".more-search-container").slideToggle();
+})
+</script>
+{/block}

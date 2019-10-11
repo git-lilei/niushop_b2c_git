@@ -1,0 +1,120 @@
+{extend name="$base" /}
+{block name="resources"}
+<link type="text/css" rel="stylesheet" href="WEB_CSS/goods_combo.css">
+{/block}
+{block name="main"}
+{php}
+	$data = api('NsCombopackage.ComboPackage.comboPackageById', ['combo_id' => $combo_id, 'curr_id' => $curr_id]);
+	$combo_package = $data['data']['combo_package'];
+{/php}
+{if !empty($combo_package)}
+<div class="container">
+	<ul class="w1200">
+		{foreach name="$combo_package.goods_list" item="goods_info" key="k"}
+		<li data-goods-id="{$goods_info.goods_id}" class="ns-border-color-gray">
+			{notempty name="$goods_info['sku_picture_list']"}
+				{foreach name="$goods_info.sku_picture_list" item ="img" }
+					<input type="hidden" data-spec-value-id="sku-pic-{$img.spec_value_id}" data-big-img="{:__IMG($img['album_picture_list'][0]['pic_cover_big'])}" data-picture-id="{$img['album_picture_list'][0]['pic_id']}" />
+				{/foreach}
+			{else /}
+				{foreach name="$goods_info.img_list" item ="img" key = "k"}
+					<input type="hidden" data-big-img="{:__IMG($img['pic_cover_big'])}" data-picture-id="{$img['pic_id']}" />
+				{/foreach}
+			{/notempty}
+			<div class="goods-info w1200">
+				<a href="{:__URL('SHOP_MAIN/goods/detail','goods_id='.$goods_info['goods_id'])}" target="_blank" class="goods-preview ns-border-color-gray w150">
+					<img src="{:__IMG($goods_info.default_gallery_img)}" id="goods_img">
+				</a>
+				<div class="detail-info">
+					<h1 class="text14">
+						<a href="{:__URL('SHOP_MAIN/goods/detail','goods_id='.$goods_info['goods_id'])}" target="_blank">{$goods_info.goods_name}</a>
+					</h1>
+					<div class="attribute text14">
+						<span>{:lang("goods_stock")}：</span>
+						<strong id="goods_stock">{$goods_info.stock}{:lang("goods_piece")}</strong>
+					</div>
+					<div class="choose">
+						{foreach name="goods_info['sku_list']" item="pro_skus" key="k"}
+						<input type="hidden" id="goods_sku{$k}" value="{$pro_skus.attr_value_items};" stock="{$pro_skus.stock}" skuid="{$pro_skus.sku_id}" skuname="{$pro_skus.sku_name}" price="{$pro_skus.price}"/>
+						{/foreach}
+						{foreach name="goods_info['spec_list']" item="spec" key="k"}
+						<dl>
+							<dt class="ns-text-color-gray">{$spec.spec_name}</dt>
+							<dd>
+								<ul>
+								{foreach name="spec.value" item="spec_value" key="key"}
+								{if condition="$spec_value['spec_id'] eq $spec['spec_id']"}
+									<li class="goods-spec-item{if condition="$key==0"} selected ns-border-color{else/} ns-border-color-gray{/if}" data-goods-id="{$goods_info['goods_id']}">
+										{switch name="$spec_value.spec_show_type"}
+												{case value="1"}
+												<a href="javascript:;" title="{$spec_value.spec_value_name}">
+													<span class="value-label" id="{$spec.spec_id}:{$spec_value.spec_value_id}">{$spec_value.spec_value_name}</span>
+												</a>
+												{/case}
+												{case value="2"}
+												<a href="javascript:;" title="{$spec_value.spec_value_name}">
+													{if condition="$spec_value.spec_value_data == ''"}
+													<span class="value-label" id="{$spec.spec_id}:{$spec_value.spec_value_id}">{$spec_value.spec_value_name}</span>
+													{else/}
+													<img src="{:__IMG($spec_value.spec_value_data)}">
+													<span class="value-label" id="{$spec.spec_id}:{$spec_value.spec_value_id}" data-show-big-pic="{:__IMG($spec_value.spec_value_data_big_src)}" data-picture-id="{$spec_value.picture_id}">{$spec_value.spec_value_name}</span>
+													{/if}
+												</a>
+												{/case}
+												{case value="3"}
+												<!-- 颜色 -->
+												<a href="javascript:;" title="{$spec_value.spec_value_name}">
+													{if condition="$spec_value.spec_value_data == ''"}
+													<span class="value-label" id="{$spec.spec_id}:{$spec_value.spec_value_id}">{$spec_value.spec_value_name}</span>
+													{else/}
+													<span id="{$spec.spec_id}:{$spec_value.spec_value_id}">
+														<b style="background: {$spec_value.spec_value_data};"></b>
+														{$spec_value.spec_value_name}
+													</span>
+													{/if}
+												</a>
+												{/case}
+										{/switch}
+									</li>
+									{/if}
+								{/foreach}
+								</ul>
+							</dd>
+						</dl>
+						{/foreach}
+					</div>
+				</div>
+			</div>
+		</li>
+		{/foreach}
+		<li class="ns-border-color-gray">
+			<div class="buy-wrap">
+				<div class="price-wrap">
+					<p>
+						<span class="text14 ns-text-color-gray">{:lang("package_price")}：</span>
+						<span class="ns-text-color">￥<b id="combo_package_price" class="text14">{$combo_package.combo_package_price}</b></span>
+					</p>
+					<p>
+						<span class="text14 ns-text-color-gray">{:lang("original_price")}：</span>
+						￥<span id="original_price" class="text14">&nbsp;{$combo_package.original_price}</span>
+					</p>
+				</div>
+				<a href="javascript:void(0);" class="btn-settlement ns-bg-color text18" id="js-immediate-purchase">{:lang("goods_immediate_purchase")}</a>
+			</div>
+			<div class="package-wrap">
+				<span>{:lang("goods_purchase")}</span>
+				<input class="ns-border-color-gray" type="number" value="1" id="buy_num" onkeyup="this.value=this.value.replace(/\D/g,'')" min="1"/>
+				<span>{:lang("goods_tao")}</span>
+				<b class="ns-text-color">({:lang("save_the_price")}<span id="save_the_price">{$combo_package.save_the_price}</span>)</b>
+			</div>
+		</li>
+	</ul>
+</div>
+<input type="hidden" id="hidden_combo_id" value="{$combo_id}">
+{else /}
+<script>window.location.href="{:__URL('SHOP_MAIN')}"</script>
+{/if}
+{/block}
+{block name="script"}
+<script type="text/javascript" src="WEB_JS/goods_combo.js"></script>
+{/block}

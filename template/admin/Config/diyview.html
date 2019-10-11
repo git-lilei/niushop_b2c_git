@@ -1,0 +1,367 @@
+{extend name="admin/base" /}
+{block name="resources"}
+<style>
+.flex-wrap{width: 100%;display: flex;flex-wrap: wrap;margin: -5px auto -9px;}
+.block-diy{width: 20%;box-sizing: border-box;padding: 0 7.5px;margin-top: 15px;z-index: 1;}
+.block-diy  .diy-content{padding: 15px 10px 15px 15px;margin-bottom: 0;color: #5e6166;font-size: 12px;background-color: #f5f7fa;overflow: hidden;z-index: 1;display: flex;cursor: pointer;}
+.block-diy  .diy-content .diy-icon{flex: none;height: 40px;width: 40px;line-height:42px;position: relative;}
+.block-diy  .diy-content .diy-info{margin-left: 10px;}
+.block-diy  .diy-content .diy-info .diy-title{height: 24px;line-height: 25px;margin: 0;font-size: 14px;font-weight: bold;color: #5e6166;}
+.block-diy  .diy-content .diy-info .diy-desc{color: #aaa;font-size: 12px;font-weight: 400;margin: 0;height: 23px;line-height: 23px;overflow: hidden;text-overflow: ellipsis;}
+.block-diy .diy-content{transition: all .3s;}
+.block-diy .diy-content:hover{box-shadow: 0 2px 5px 0 rgba(2,31,65,.1)}
+.diy-icon img {width: 100%;}
+.set-style h4{box-sizing: border-box;background: #fff;}
+.set-style h4.first{margin: 5px 0px 0px 0px;}
+</style>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<h4 class="first"><span></span>电脑端装修</h4>
+	<div class="flex-wrap">
+		
+		<a class="block-diy" title="模板选择" href = '{:__URL('ADMIN_MAIN/config/pctemplate')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/diy-pc-icon-template.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">模板选择</p>
+					<p class="diy-desc">设置电脑端模板</p>
+				</div>
+			</div>
+		</a>
+		
+		<a class="block-diy" title="导航设置" href = '{:__URL('ADMIN_MAIN/config/shopnavigationlist?nav_type=1')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/diy-pc-icon-navigation.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">导航设置</p>
+					<p class="diy-desc">设置电脑端顶部导航菜单</p>
+				</div>
+			</div>
+		</a>
+		
+		<a class="block-diy" title="商品楼层" href="{:__URL('ADMIN_MAIN/block/goodsFloorBlock')}">
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/diy-pc-icon-floor.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">商品楼层</p>
+					<p class="diy-desc">设置电脑端首页楼层板块</p>
+				</div>
+			</div>
+		</a>
+		
+		<a class="block-diy" title="热门搜索" href="{:__URL('ADMIN_MAIN/config/searchConfig?type=hot')}">
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/diy-pc-icon-hot.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">热门搜索</p>
+					<p class="diy-desc">设置搜索栏热门关键字</p>
+				</div>
+			</div>
+		</a>
+		
+		<a class="block-diy" title="默认搜索" href="{:__URL('ADMIN_MAIN/config/searchConfig?type=default')}">
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/diy-pc-icon-default.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">默认搜索</p>
+					<p class="diy-desc">设置搜索栏默认搜索关键字</p>
+				</div>
+			</div>
+		</a>
+		
+		<a class="block-diy" title="广告管理" href="{:__URL('ADMIN_MAIN/system/shopadvpositionlist?terminal=1')}">
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/diy-pc-icon-adv.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">广告管理</p>
+					<p class="diy-desc">设置电脑端广告页面</p>
+				</div>
+			</div>
+		</a>
+		
+		<a class="block-diy" title="商家服务" href="{:__URL('ADMIN_MAIN/config/merchantService')}">
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/diy-pc-icon-service.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">商家服务</p>
+					<p class="diy-desc">设置电脑端底部商家服务功能</p>
+				</div>
+			</div>
+		</a>
+		
+		<a class="block-diy" title="SEO设置" href="{:__URL('ADMIN_MAIN/config/seoConfig')}">
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/diy-pc-icon-seo.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">SEO设置</p>
+					<p class="diy-desc">设置SEO</p>
+				</div>
+			</div>
+		</a>
+		<a class="block-diy" title="版权设置" href="{:__URL('ADMIN_MAIN/config/copyrightinfo')}">
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/diy-pc-icon-copy.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">版权设置</p>
+					<p class="diy-desc">设置网站底部版权（针对授权用户）</p>
+				</div>
+			</div>
+		</a>
+		
+		<a class="block-diy" title="友情链接" href="{:__URL('ADMIN_MAIN/config/linklist')}">
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/diy-pc-icon-friend.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">友情链接</p>
+					<p class="diy-desc">设置电脑端友情链接</p>
+				</div>
+			</div>
+		</a>
+		
+		<a class="block-diy" title="分类显示" href="{:__URL('ADMIN_MAIN/config/webcategorydisplay')}">
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/diy-wap-icon-type.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">分类显示</p>
+					<p class="diy-desc">设置PC端分类显示</p>
+				</div>
+			</div>
+		</a>
+		
+	    <a class="block-diy" title="设置浮层" href="{:__URL('ADMIN_MAIN/config/webfloat')}">
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/diy-pc-icon-webFloat.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">首页浮层</p>
+					<p class="diy-desc">PC端首页浮层设置</p>
+				</div>
+			</div>
+		</a>
+	
+	</div>
+	
+	<h4><span></span>手机端装修</h4>
+	<div class="flex-wrap">
+		<a class="block-diy" title="模板选择" href = '{:__URL('ADMIN_MAIN/config/fixedtemplate')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/diy-wap-icon-template.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">模板选择</p>
+					<p class="diy-desc">设置手机端模板</p>
+				</div>
+			</div>
+		</a>
+		
+		<a class="block-diy" title="首页排版" href="{:__URL('ADMIN_MAIN/config/pagelayout')}">
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/diy-wap-icon-page-layout.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">首页排版</p>
+					<p class="diy-desc">定制手机端首页排版</p>
+				</div>
+			</div>
+		</a>
+			
+		<a class="block-diy" title="首页导航" href = '{:__URL('ADMIN_MAIN/config/shopNavigationList?nav_type=2')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/diy-wap-icon-nav.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">首页导航</p>
+					<p class="diy-desc">设置手机端中部导航菜单</p>
+				</div>
+			</div>
+		</a>
+		
+<!-- 		<a class="block-diy" title="商品楼层" href="{:__URL('ADMIN_MAIN/system/goodscategoryblock')}"> -->
+<!-- 			<div class="diy-content"> -->
+<!-- 				<div class="diy-icon"> -->
+<!-- 					<img src="ADMIN_IMG/diy-wap-icon-floor.png" alt="" /> -->
+<!-- 				</div> -->
+<!-- 				<div class="diy-info"> -->
+<!-- 					<p class="diy-title">商品楼层</p> -->
+<!-- 					<p class="diy-desc">设置手机端首页商品楼层板块</p> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+<!-- 		</a> -->
+		
+		<a class="block-diy" title="分类显示" href="{:__URL('ADMIN_MAIN/config/wapcategorydisplay')}">
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/diy-wap-icon-type.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">分类显示</p>
+					<p class="diy-desc">设置手机端分类显示</p>
+				</div>
+			</div>
+		</a>
+		
+		<a class="block-diy" title="广告管理" href="{:__URL('ADMIN_MAIN/system/shopadvpositionlist?terminal=2')}">
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/diy-wap-icon-adv.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">广告管理</p>
+					<p class="diy-desc">设置手机端广告页面</p>
+				</div>
+			</div>
+		</a>
+		
+		<a class="block-diy" title="商品推荐" href="{:__URL('ADMIN_MAIN/config/goodsRecommend')}">
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/diy-wap-icon-goods-recommand.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">商品推荐</p>
+					<p class="diy-desc">设置商品推荐</p>
+				</div>
+			</div>
+		</a>
+		
+		<!-- 11<a class="block-diy" title="首页魔方" href="{:__URL('ADMIN_MAIN/config/shopCube')}">
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/diy-wap-icon-goods-cube.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">首页魔方</p>
+					<p class="diy-desc">设置首页魔方</p>
+				</div>
+			</div>
+		</a> -->
+		
+		{if condition="addon_is_exit('NsDiyView') == 1"}
+		<a class="block-diy" title="微页面" href='{:__URL('__URL__/NsDiyView/ADMIN_MODULE/config/wapcustomTemplateList')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img  src="ADMIN_IMG/diy-wap-icon-customize.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">微页面</p>
+					<p class="diy-desc">手机端首页模板自定义设置</p>
+				</div>
+			</div>
+		</a>
+		{/if}
+		
+		<a class="block-diy" title="底部导航" href='{:__URL('ADMIN_MAIN/config/wapBottomType')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img  src="ADMIN_IMG/diy-wap-icon-type-bottom.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">底部导航</p>
+					<p class="diy-desc">手机端底部导航设置</p>
+				</div>
+			</div>
+		</a>
+	
+		<a class="block-diy" title="设置浮层" href='{:__URL('ADMIN_MAIN/config/wapFloat')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img  src="ADMIN_IMG/diy-wap-icon-wapFloat.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">首页浮层</p>
+					<p class="diy-desc">手机端首页浮层设置</p>
+				</div>
+			</div>
+		</a>
+
+		<a class="block-diy" title="个人中心入口管理" href="{:__URL('ADMIN_MAIN/config/wapEntranceManage')}">
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img  src="ADMIN_IMG/diy-wap-icon-type.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">个人中心入口</p>
+					<p class="diy-desc">手机端个人中心入口管理</p>
+				</div>
+			</div>
+		</a>
+	</div>
+
+	<h4><span></span>小程序端装修</h4>
+	<div class="flex-wrap">
+		<a class="block-diy" title="首页导航" href = '{:__URL('ADMIN_MAIN/config/shopNavigationList?nav_type=3')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/diy-wap-icon-nav.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">首页导航</p>
+					<p class="diy-desc">设置小程序端中部导航菜单</p>
+				</div>
+			</div>
+		</a>
+		<a class="block-diy" title="分类显示" href="{:__URL('ADMIN_MAIN/config/appletcategorydisplay')}">
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/diy-wap-icon-type.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">分类显示</p>
+					<p class="diy-desc">设置小程序端</p>
+				</div>
+			</div>
+		</a>
+		<a class="block-diy" title="广告管理" href="{:__URL('ADMIN_MAIN/system/shopadvpositionlist?terminal=3')}">
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/diy-wap-icon-adv.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">广告管理</p>
+					<p class="diy-desc">设置小程序端广告页面</p>
+				</div>
+			</div>
+		</a>
+		{if condition="addon_is_exit('NsDiyView') == 1"}
+		<a class="block-diy" title="微页面" href='{:__URL('__URL__/NsDiyView/ADMIN_MODULE/config/wapcustomTemplateList?type=2')}' style="display: none;">
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img  src="ADMIN_IMG/diy-wap-icon-customize.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">微页面</p>
+					<p class="diy-desc">小程序首页模板自定义设置</p>
+				</div>
+			</div>
+		</a>
+		{/if}
+	</div>
+</div>
+{/block}

@@ -1,0 +1,233 @@
+{extend name="$member_base" /}
+{block name="right_main"}
+<link rel="stylesheet" href="WEB_CSS/member_security.css">
+{php}
+// 验证码配置
+$login_verify_code = api("System.Config.loginVerifyCode");
+$login_verify_code = $login_verify_code['data'];
+$login_verify_code = $login_verify_code['value'];
+// 会员信息
+$member_detail = api("System.Member.memberInfo");
+$member_detail = $member_detail['data'];
+{/php}
+<div class="member-main">
+	{switch name="$type"}
+		{case value="password"}
+		<!-- 修改密码 -->
+		<section>
+			<div class="main-top">
+				<div class="title">修改登录密码</div>
+			</div>
+			<div class="setting-cont clearfix">
+				<div class="stepflex ns-border-color-gray stepflex-te">
+					<dl class="normal doing ns-border-color">
+						<dt class="s-num ns-bg-color">1</dt>
+						<dd class="s-text ns-text-color">密码修改</dd>
+					</dl>
+					<dl class="last ns-border-color-gray">
+						<dt class="s-num ns-bg-color-gray">2</dt>
+						<dd class="s-text ns-text-color-gray"> 完成</dd>
+					</dl>
+				</div>
+				<div class="form-horizontal">
+				  	<div class="form-group">
+				    	<label class="col-sm-2">原密码</label>
+			    		<div class="col-md-6 col-sm-10">
+			      			<input type="password" class="form-control" name="old_password" placeholder="请输入原密码">
+			    		</div>
+				  	</div>
+
+				  	<div class="form-group">
+				    	<label class="col-sm-2">新密码</label>
+				    	<div class="col-md-6 col-sm-10">
+				      		<input type="password" class="form-control" name="new_password" placeholder="请输入新密码">
+				    	</div>
+				  	</div>
+
+				  	<div class="form-group">
+				    	<label class="col-sm-2">确认密码</label>
+				    	<div class="col-md-6 col-sm-10">
+				      		<input type="password" class="form-control" name="re_new_password" placeholder="请再次确认密码">
+				    	</div>
+				  	</div>
+
+				  	{if $login_verify_code['pc']}
+				  	<div class="form-group">
+				    	<label class="col-sm-2">验证码</label>
+			    		<div class="col-md-3 col-sm-5">
+			      			<input type="text" class="form-control" name="captcha" placeholder="请输入验证码">
+			    		</div>
+				    	<div class="col-md-3 col-sm-5">
+					      	<img class="verifyimg" src="{:__URL('SHOP_MAIN/captcha')}"  onclick="this.src='{:__URL('SHOP_MAIN/captcha?tag=1')}'+'&send='+Math.random()" alt="captcha"/>
+				    	</div>
+				  	</div>
+				  	{/if}
+				  
+				  	<div class="form-group">
+				    	<div class="col-sm-offset-2 col-sm-10">
+				      		<button class="btn btn-primary" type="button" onclick="memberInfoOperation.confirm(this);">提交</button>
+				    	</div>
+				  	</div>
+				</div>
+			</div>
+		</section>
+		{/case}
+		{case value="email"}
+		<!-- 绑定邮箱 -->
+		<section>
+			<div class="main-top">
+				<div class="title">邮箱绑定</div>
+			</div>
+			<div class="setting-cont clearfix">
+				<div class="stepflex ns-border-color-gray  stepflex-te">
+					<dl class="normal doing ns-border-color">
+						<dt class="s-num ns-bg-color">1</dt>
+						<dd class="s-text ns-text-color">邮箱绑定</dd>
+					</dl>
+					<dl class="last ns-border-color-gray">
+						<dt class="s-num ns-bg-color-gray">2</dt>
+						<dd class="s-text ns-text-color-gray"> 完成</dd>
+					</dl>
+				</div>
+				<div class="form-horizontal">
+			  		<div class="form-group">
+				    	<label class="col-sm-2">邮箱地址</label>
+				    	<div class="col-md-6 col-sm-10">
+				      		<input type="text" class="form-control" name="email" placeholder="请输入您的邮箱地址">
+			    		</div>
+				  	</div>
+
+				  	{if $login_verify_code['pc']}
+				  	<div class="form-group">
+				    	<label class="col-sm-2">验证码</label>
+			    		<div class="col-md-3 col-sm-5">
+			      			<input type="text" class="form-control" name="captcha" placeholder="请输入验证码" id="captcha">
+			    		</div>
+				    	<div class="col-md-3 col-sm-5">
+					      	<img class="verifyimg" src="{:__URL('SHOP_MAIN/captcha')}"  onclick="this.src='{:__URL('SHOP_MAIN/captcha?tag=1')}'+'&send='+Math.random()" alt="captcha"/>
+				    	</div>
+				  	</div>
+				  	{/if}
+
+				  	<div class="form-group">
+				    	<label class="col-sm-2">邮箱验证码</label>
+			    		<div class="col-md-3 col-sm-5">
+				      		<input type="text" class="form-control" name="code" placeholder="请输入邮箱验证码">
+		    			</div>
+				    	<div class="col-md-3 col-sm-5">
+				      		<button class="btn btn-primary code" type="button" onclick="memberInfoOperation.sendEmailCaptcha(this);">获取验证码</button>
+			   		 	</div>
+				  	</div>
+				  
+					<div class="form-group">
+						<div class="col-sm-offset-2 col-sm-10">
+				      		<button class="btn btn-primary" type="button" onclick="memberInfoOperation.confirm(this);">提交</button>
+				    	</div>
+				  	</div>
+				</div>
+			</div>
+		</section>
+		{/case}
+		{case value="mobile"}
+		<!-- 绑定手机 -->
+		<section>
+			<div class="main-top">
+				<div class="title">手机绑定</div>
+			</div>
+			<div class="setting-cont clearfix">
+				<div class="stepflex ns-border-color-gray  stepflex-te">
+					<dl class="normal doing ns-border-color">
+						<dt class="s-num ns-bg-color">1</dt>
+						<dd class="s-text ns-text-color">绑定手机</dd>
+					</dl>
+					<dl class="last ns-border-color-gray">
+						<dt class="s-num ns-bg-color-gray">2</dt>
+						<dd class="s-text ns-text-color-gray"> 完成 </dd>
+					</dl>
+				</div>
+				<div class="form-horizontal">
+			  		<div class="form-group">
+				    	<label class="col-sm-2">手机号码</label>
+				    	<div class="col-md-6 col-sm-10">
+				      		<input type="text" class="form-control" value="" name="mobile" placeholder="请输入您的手机号码">
+				    	</div>
+				  	</div>
+			  		{if $login_verify_code['pc']}
+				  	<div class="form-group">
+				    	<label class="col-sm-2">验证码</label>
+			    		<div class="col-md-3 col-sm-5">
+			      			<input type="text" class="form-control" name="captcha" placeholder="请输入验证码">
+			    		</div>
+				    	<div class="col-md-3 col-sm-5">
+					      	<img class="verifyimg" src="{:__URL('SHOP_MAIN/captcha')}"  onclick="this.src='{:__URL('SHOP_MAIN/captcha?tag=1')}'+'&send='+Math.random()" alt="captcha"/>
+				    	</div>
+				  	</div>
+				  	{/if}
+
+				  	<div class="form-group">
+				    	<label class="col-sm-2">手机验证码</label>
+			    		<div class="col-md-3 col-sm-5">
+				      			<input type="text" class="form-control" name="code" placeholder="请输入手机验证码">
+			    		</div>
+				    	<div class="col-md-3 col-sm-5">
+					      	<button class="btn btn-primary code" onclick="memberInfoOperation.sendSmsCaptcha(this);" type="button">获取验证码</button>
+				    	</div>
+				  	</div>
+					
+				  	<div class="form-group">
+				    	<div class="col-sm-offset-2 col-sm-10">
+				      		<button class="btn btn-primary" type="button" onclick="memberInfoOperation.confirm(this);">提交</button>
+				    	</div>
+				  	</div>
+				</div>
+			</div>
+		</section>
+		{/case}
+		{default/}
+	    <section class="clearfix">
+			<div class="security-column ns-border-color-gray clearfix">
+				<div class="pull-left column-icon">
+					<i class="icon icon-check-board icon-3x"></i>
+				</div>
+				<div class="pull-left column-desc">
+					<p class="title">登陆密码</p>
+					<p class="introduce ns-text-color-gray">互联网账号存在被盗风险，建议您定期更改密码以保护账户安全</p>
+				</div>
+				<div class="pull-left column-operation">
+					<button class="btn btn-primary" type="button" onclick="location.href=__URL(SHOPMAIN +'/member/security?type=password')">修改</button>
+				</div>
+			</div>
+			<div class="security-column ns-border-color-gray clearfix">
+				<div class="pull-left column-icon">
+					<i class="icon icon-check-board icon-3x"></i>
+				</div>
+				<div class="pull-left column-desc">
+					<p class="title">邮箱绑定 {notempty name="$member_detail['user_info']['user_email']"}{$member_detail['user_info']['user_email']|hideStr}{/notempty}</p>
+					<p class="introduce ns-text-color-gray">验证后，可用于快速找回登录密码及支付密码</p>
+				</div>
+				<div class="pull-left column-operation">
+					<button class="btn btn-primary" type="button" onclick="location.href=__URL(SHOPMAIN +'/member/security?type=email')">修改</button>
+				</div>
+			</div>
+			<div class="security-column ns-border-color-gray clearfix">
+				<div class="pull-left column-icon">
+					<i class="icon icon-check-board icon-3x"></i>
+				</div>
+				<div class="pull-left column-desc">
+					<p class="title">手机验证 {notempty name="$member_detail['user_info']['user_tel']"}{$member_detail['user_info']['user_tel']|hideStr}{/notempty}</p>
+					<p class="introduce ns-text-color-gray">验证后，可用于快速找回登录密码及支付密码，接收账户余额变动提醒</p>
+				</div>
+				<div class="pull-left column-operation">
+					<button class="btn btn-primary" type="button" onclick="location.href=__URL(SHOPMAIN +'/member/security?type=mobile')">修改</button>
+				</div>
+			</div>
+		</section>
+	{/switch}
+</div>
+{/block}
+{block name="script"}
+<script src="WEB_JS/member_security.js"></script>
+<script>
+memberInfoOperation.type = '{$type}';
+</script>
+{/block}

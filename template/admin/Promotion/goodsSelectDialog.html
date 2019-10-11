@@ -1,0 +1,225 @@
+<style>
+.table-class tr th{padding:5px;}
+.table-class tr td{text-align: center;}
+input[type="radio"]{margin-top:6px;}
+.total{width: 100%;overflow: hidden;}
+.total label {float:left;text-align: left;font-size: 15px; width:10%;overflow:hidden;color:#666;font-weight: normal;line-height: 32px;margin-bottom:0}
+.total label input {margin: 0 5px 0 0;}
+input[name='discount']{vertical-align:-1px;width:60px;}
+.select-tip{margin-left:10px;}
+.layui-layer-iframe{border:4px solid #f8f8f8;border-top:0;}
+</style>
+<!-- 弹出框的样式 -->
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<!-- 插件js -->
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<!-- 调用插件的js -->
+<script src="ADMIN_JS/material_managedialog.js"></script>
+
+<!-- 切换全部与部分 -->
+<dl style="display:none;" id="select-box">
+	<dt>参与商品：</dt>
+	<dd>
+		<div class="total" id="is_all">
+			<label for="navigationtype1" class="in">
+				<i class="radio-common selected">
+					<input type="radio" value="1" name="range_type"  checked="checked" id="navigationtype1" />
+				</i>
+				<span>全部</span>
+			</label>
+			<label for="navigationtype2" class="out">
+				<i class="radio-common">
+					<input type="radio" value="0" name="range_type"  id="navigationtype2"/>
+				</i>
+				<span>部分</span>
+			</label>
+		</div>
+	</dd>
+</dl>
+<!-- 弹框按钮 -->
+<dl class="js-select-goods" style="display:none;">
+	<dt>选择商品：</dt>
+	<dd>
+		<button class="btn-common" onclick="open_Goods_Select_List()">选择商品</button><span class="select-tip"></span>
+		<p class="error"></p>
+	</dd>
+</dl>
+<!-- 已选择商品的列表 -->
+<dl>
+	<dd class="goods-list" style="width:100%;display:none;margin-left: 0;">
+		<table class="table-class">
+			<colgroup>
+				<col width="40%">
+				<col width="20%">
+				<col width="10%">
+				<col width="15%">
+				<col width="10%">
+			</colgroup>
+			<thead>
+				<tr>
+					<th>商品名称</th>
+					<th>价格</th>
+					<th>库存</th>
+					<th id="action-th"></th>
+					<th>操作</th>
+				</tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+	</dd>
+</dl>
+
+<script>
+//商品id数组
+var BatchSend = [];
+//加载次数
+var load_num = 1;
+//layer索引
+var layer_index = 1;
+
+$(function(){
+	//对某些特殊页面进行特殊操作
+	var action = $("#action").val();
+	if(action == 'discount'){
+		$("#action-th").html('折扣')
+	}else if(action == 'package'){
+		$(".select-tip").html('组合套餐商品不能少于两种不能多于六种');
+	}
+	//是否显示全部与部分
+	var is_show_select = $("#is_show_select").val();
+	if(is_show_select === '1'){
+		$("#select-box").show();
+	}
+	//如果是修改 初始化选中状态
+	var range_type = $("#range_type").val();
+	if(range_type === '0'){
+		$("input[name='range_type']").eq(0).parent("i").removeClass('selected');
+		$("input[name='range_type']").eq(1).click().parent("i").addClass('selected');
+		$(".goods-list").show();
+		refreshSelectGoods();
+	}
+	//如果是修改 初始化商品id数组
+	var goods_id_array = $("#goods_id_array").val();
+	if(goods_id_array != ''){
+		BatchSend = goods_id_array.split(",");
+	}
+});
+
+//刷新选择的商品
+function refreshSelectGoods(){
+	var discount_id = $("#discount_id").val();
+	var goods_id_array = $("#goods_id_array").val();
+	if(goods_id_array.length > 0){
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/goods/getDialogGoodsList')}",
+			data : {
+				"goods_id_array" : goods_id_array,
+				"type" : "selected",
+				"discount_id" : discount_id
+			},
+			async : false,
+			success : function(data) {
+				var html = '';
+				var action = $("#action").val();
+				if (data["data"].length > 0) {
+					for (var i = 0; i < data["data"].length; i++) {
+						
+						html += '<tr>';
+							html += '<i class="checkbox-common"><input value="' + data["data"][i]["goods_id"] + '"  type="hidden"></i>';
+
+							html += '<td style="text-align:left;">' + data["data"][i]["goods_name"] + '</td>';
+
+							html += '<td class="goods_price">' + data["data"][i]["price"] + '</td>';
+							
+							html += '<td>' + data["data"][i]["stock"]  + '</td>';
+							
+							if(action == "discount"){				
+								html += '<td><input type="number" name="discount" class="input-common short" onchange="discount(this);" goodsid="'+ data["data"][i]["goods_id"] +'" value="'+ data['data'][i]['discount'] +'"><em class="unit">折</em></td>';	
+							}else{
+								html += '<td></td>';
+							}
+							
+							html += '<td><label for=""><i class="fa fa-times" aria-hidden="true fa-2x" onclick="cancelSelect(' + data["data"][i]["goods_id"] + ',this)"></i></label></td>';
+
+						html += '</tr>';
+					}
+				}
+				$(".goods-list .table-class tbody").html(html);
+				load_num ++;
+				$(".error").hide();
+				if(action == 'package'){
+					calculate_original_price();
+				}
+			}
+		})
+	}else{
+		$(".goods-list .table-class tbody").html("");
+	}
+}
+
+/*
+ * 打开选择商品列表弹窗
+ */
+function open_Goods_Select_List(){
+	var goods_id_array = $("#goods_id_array").val(),
+		limit = $("#select-goods-limit").val();
+		
+	layer_index = layer.open({
+		type: 2,
+		title: '选择商品',
+		shadeClose: true,
+		shade: 0.8,
+		area: ['960px', '570px'],
+		btn : ['确认', '取消'],
+		content: __URL('ADMIN_MAIN/promotion/goodsSelectList?limit=' + encodeURIComponent(limit) + '&goods_id_array=' + goods_id_array),
+		yes : function(index, layero){
+			var iframeWin = window[layero.find('iframe')[0]['name']];
+			iframeWin.returnData(function(data){
+				GoodsCallBack(data.toString());
+			});
+		}
+	});
+	
+}
+
+/*
+ * 获取选择数据的回调
+ */
+function GoodsCallBack(goods_id_array){
+	$("#goods_id_array").val(goods_id_array);
+	BatchSend = goods_id_array.split(",");
+	refreshSelectGoods();
+	layer.close(layer_index);
+}
+
+//商品取消选择
+function cancelSelect(goods_id,event){
+	for(var i = 0; i < BatchSend.length; i++){
+		if(BatchSend[i] == goods_id){
+			BatchSend.splice(i,1);
+		}
+	}
+  	$("#goods_id_array").val(BatchSend.toString());
+  	$(event).parents('tr').remove();
+  	$(".error").hide();
+  	
+  	var action = $("#action").val();
+  	if(action == 'package'){
+		calculate_original_price();
+	}
+}
+
+/*
+ * 全部与部分商品切换
+ */
+$("input[name='range_type']").bind('click',function(){
+	var value = $(this).val();
+	if(value == 1){
+		$(".js-select-goods,.goods-list").hide();
+	}else{
+		$(".js-select-goods,.goods-list").show();
+	}
+})
+</script>

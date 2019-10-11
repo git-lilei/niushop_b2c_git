@@ -1,0 +1,83 @@
+{extend name="$base" /}
+{block name="resources"}
+<link href="__STATIC__/webuploader/webuploader.css" rel="stylesheet">
+<link rel="stylesheet" href="WAP_CSS/order_evaluate.css">
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1087048_ti88xqkwo0p.css">
+{/block}
+{block name="main"}
+{php}
+$order_id = request()->get('order_id', '');
+if($again){
+	$info = api("System.Order.reviewEvaluateDetail",["order_id"=>$order_id]);
+}else{
+	$info = api("System.Order.evaluationDetail",["order_id"=>$order_id]);
+}
+$info = $info['data'];
+if(!empty($info)){
+	$order_no = $info['order_no'];
+	$list = $info['list'];
+}
+{/php}
+<div class="evaluate-container">
+	{foreach name="$list" item="vo" key="k"}
+	<div class="evaluate-item" data-value="{$vo.order_goods_id}">
+		<div class="head-warp">
+			<a href="javascript:;" class="goods-img">
+				<img src="{$vo['picture_info']['pic_cover_micro']}">
+			</a>
+			{neq name="$again" value="1"}
+			<div class="score clearfix">
+				<span class="tit ns-text-color-gray">描述相符</span>
+				<ul class="star clearfix">
+					<li class="ns-text-color"><i class="iconfont iconxing"></i></li>
+					<li class="ns-text-color"><i class="iconfont iconxing"></i></li>
+					<li class="ns-text-color"><i class="iconfont iconxing"></i></li>
+					<li class="ns-text-color"><i class="iconfont iconxing"></i></li>
+					<li class="ns-text-color"><i class="iconfont iconxing"></i></li>
+				</ul>
+			</div>
+			{/neq}
+		</div>
+		<div class="body-wrap">
+			<textarea class="ns-bg-color-gray-fadeout-60" placeholder="您的评价可以帮助其他人哦~"></textarea>
+			<ul class="evaluate-img-group clearfix">
+				<li class="upload-li">
+					<div class="box">
+						<div class="upload ns-border-color-gray-shade-20 upload{$k}">
+							<div class="upload-shade ns-text-color-gray">
+								<div>
+									<i class="iconfont iconxiangji"></i>
+									<p><span class="num">6</span>/6</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+	{/foreach}
+</div>
+{/block}
+{block name="footer"}
+<div style="height: 50px;"></div>
+<footer class="evaluate-footer clearfix">
+	{neq name="$again" value="1"}
+	<span class="pull-left">
+		<i class="iconfont iconcheckbox ns-text-color"></i><span>匿名评价</span>
+	</span>
+	{/neq}
+	<span class="pull-right">
+		<a class="ns-bg-color sub-btn" href="javascript:;">发表</a>
+	</span>
+</footer>
+{/block}
+{block name="script"}
+<script>
+var again = {eq name="$again" value="1"}true;{else/}false;{/eq}
+var order_id = '{$order_id}';
+var order_no = '{$order_no}';
+</script>
+<script type="text/javascript" src="__STATIC__/webuploader/webuploader.js"></script>
+<script type="text/javascript" src="WAP_JS/order_evaluate.js"></script>
+{/block}

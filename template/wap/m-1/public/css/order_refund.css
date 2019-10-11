@@ -1,0 +1,48 @@
+@CHARSET "UTF-8";
+.return-process{border-bottom: 1px dashed;}
+.return-process ul{list-style: none; margin: 0 auto 20px auto; width: 300px;}
+.return-process li{float: left; margin-top: 20px;}
+.return-process .name{margin: 0;font-size: 12px; text-align: center;}
+.return-process .number{display: inline-block; width: 20px; height: 20px; line-height: 20px; border-radius: 50%;color: #fff; font-weight: bold; text-align: center; vertical-align: middle;}
+.return-process .prcess-line{display: inline-block; height: 2px; width: 60px;vertical-align: middle;}
+.return-process .prcess-line-l{margin-right: -5px;}
+.return-process .prcess-line-r{margin-left: -5px;}
+.return-process .step01 .name{text-align: left;}
+.return-process .step03 .name{text-align: right;}
+.return-process .selected .name{color: inherit;}
+#form1{margin: 0;}
+#form1 .row{margin: 0; border-bottom: 1px solid; background-color: #fff;}
+.columns label{width: 24%; float: left; font-size: 12px; text-align: center; margin-bottom: 0; line-height: 40px;height: 40px;}
+.columns .columns-select{width: 72%; float: right; font-size: 12px; position: relative;}
+.columns-select:after{content: " "; display: inline-block; -webkit-transform: rotate(45deg); transform: rotate(45deg); height: 6px; width: 6px; border-width: 2px 2px 0 0; border-color: #C8C8CD; border-style: solid; position: absolute; top: 50%; right: 15px; margin-top: -3px;}
+.columns .columns-input{width: 72%; float: right; font-size: 12px; line-height: 40px;}
+.columns .columns-input input{border: 0; outline: 0; -webkit-appearance: none; background-color: transparent; color: inherit; height: 1.41176471em; line-height: 1.41176471;}
+.columns select{padding-right: 30px; -webkit-appearance: none; border: 0; outline: 0; background-color: transparent; font-size: 12px; height: 40px; position: relative; z-index: 1;}
+textarea{border: none; font-size: 12px; width: 94%; height: 60px; resize: none; outline: none; background: #fff; padding: 10px 3%;}
+a.button{display: block; width: 80%; margin: 10px auto 0; text-align: center; border-radius: 5px; border: 1px solid; color: #fff; font-size: 16px; height: 40px; line-height: 40px;}
+.row{margin-bottom: 10px !important;}
+.color-red{margin-right: 5px;}
+.columns{overflow: hidden; width: 100%;}
+.maxRefund{font-size: 12px; border: 0;}
+.description-block{display: none; text-align: center;}
+.clear{clear: both; zoom: 1;}
+.seller-agree{margin: 20px 15px 0 15px;}
+.seller-agree h5{margin: 20px 0 5px 0; overflow: hidden; font-size: 14px;}
+.seller-agree h5 small{display: block; margin: 8px 0 10px 0;}
+.seller-agree .explanation{margin: 0; font-size: 12px;}
+.seller-agree .address{margin: 0; line-height: 1.3; font-style: normal;}
+.seller-agree .tel{margin-left: 10px;}
+.seller-agree .express-form{margin-top: 10px;}
+.return-success{margin: 20px 15px 0 15px;}
+.return-success .text{overflow: hidden;}
+.return-success .text h4{margin-top: 10px;}
+.return-success .text .time{margin: 0;font-size: 14px;}
+.return-success .text .money{margin: 0;}
+.none-goods{margin: 20px 15px 0 15px;}
+.none-goods .text{overflow: hidden;}
+.none-goods .text h4{margin-top: 10px;}
+.wait-seller-agree{margin: 20px 15px 0 15px;}
+.wait-seller-agree .text{overflow: hidden;}
+.wait-seller-agree .text h4{margin-top: 10px;}
+.express-form .row label{width: 80px; font-size: 12px; line-height: 1.2rem;}
+.express-form .row input[type="text"]{border: 1px solid; padding: 5px;}

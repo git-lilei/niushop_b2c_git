@@ -1,0 +1,163 @@
+<style type="text/css">
+/* 属性设置 */
+.add_attribute{
+	display: block;
+    background: #00A0DE;
+    float: left;
+    padding: 0px 12px;
+    margin: 2px 5px 5px 0px;
+    line-height: 30px;
+}
+.attribute_main{float: left;margin-top: 20px;}
+.attribute_item {
+   border: 1px solid #AAA;
+    padding: 4px 4px;
+    display: inline-block;
+    margin-right: 10px;
+    margin-bottom: 5px;
+    min-width: 30px;
+    text-align: center;
+    position: relative;
+    border-radius: 2px;
+    line-height: 18px;
+    max-height: 45px;
+}
+.attribute_item span{font-size: 13px;   -moz-user-select:none;/*火狐*/
+    -webkit-user-select:none;/*webkit浏览器*/
+    -ms-user-select:none;/*IE10*/
+    -khtml-user-select:none;/*早期浏览器*/
+      user-select:none;}
+
+.attribute_item .close-modal {
+    display: none;
+    top: -8px;
+    right: -8px;
+    width: 18px;
+    height: 18px;
+    font-size: 14px;
+    line-height: 16px;
+    border-radius: 9px;
+	position: absolute;
+    z-index: 2;
+    color: #fff;
+    text-align: center;
+    cursor: pointer;
+    background: rgba(153, 153, 153, 0.6);
+}
+.attribute_item:hover .close-modal{display: block;}
+.attribute_item .close-modal:hover{
+	background: #000000;
+}
+.attribute_item input[type="color"]{width: 50px;border: 0px;margin: 0px;padding: 0px;}
+/* 编辑规格 */
+#attribute_set{width: 150px;}
+</style>
+
+<div class="attribute_main">
+	{foreach name="info['spec_value_list']" item="v" key=key+1}
+		<div class="attribute_item" name="spec_value_id_{$key}" value="{$v['spec_value_id']}">
+			<span style="font-size: 14px;" >{$v['spec_value_name']}</span>
+			<div class="close-modal">×</div>
+		</div>
+	{/foreach}
+	
+</div>
+<input type="text" id = "attribute_set"  name = "attribute_set" placeholder="添加属性（按Enter键完成）" style="display: none;"/> 
+<script type="text/javascript">
+$(function(){
+	$('#attribute_set').keyup(function(event){	
+		
+		var attribute_value = $(this).val();
+		var attribute_main_html = '';
+		if(event.keyCode == 13 && attribute_value.length != 0){
+			
+			var show_type = $("input[name='show_type']:checked").val();
+			
+			attribute_main_html+='<div class="attribute_item add">';
+			attribute_main_html+='<span style="font-size: 14px;">'+attribute_value+'</span>';
+			if(show_type == 2){
+				attribute_main_html+='<input type="color" class="input-common-color">';	
+			}
+			attribute_main_html+='<div class="close-modal">×</div>';
+			attribute_main_html+='</div>';
+			$('.attribute_main').append(attribute_main_html);
+			$(this).val('');
+			load();
+		}
+	});
+	load();
+	
+	$("input[name='show_type']").click(function(){
+		
+		var show_type = $(this).val();
+		if(show_type == 2){
+			$('.attribute_main .attribute_item').each(function(){
+				$(this).append('<input type="color" class="input-common-color">');
+				var value = $(this).attr('value');
+				if(value !=''){
+					setGoodsField('spec_value_data',value,$(this).find('input'));
+				}
+			})
+		}else if(show_type == 1){
+			$('.attribute_main .attribute_item').each(function(){
+				var value = $(this).attr('value');
+				if(value !=''){
+					setGoodsField('spec_value_data_del',value,$(this).find('input'));	
+				}
+			});
+			$('.attribute_main input[type="color"]').remove();
+		}
+	})
+});
+
+function load(){
+	$('.attribute_item .close-modal').click(function(){
+
+		var spec_value_obj = $(this).parent('.attribute_item');
+		var spec_value_id = spec_value_obj.attr('value');
+		var spec_id = $("#spec_id").val();
+		
+		if(spec_value_id > 0){
+	
+			$.ajax({
+				type : "post",
+				url : "{:__URL('ADMIN_MAIN/goods/deletegoodsspecvalue')}",
+				data : { 'spec_id' : spec_id, 'spec_value_id' : spec_value_id },
+				dataType : "json",
+				success : function(data) {
+					if (data['code'] > 0) {
+						spec_value_obj.remove();
+					}else if(data['code'] == 0){
+						showMessage('error', data["message"]);
+					}else if(data['code'] == -1){
+						showMessage('error', '当前属性正在使用中，不能删除！');
+					}else if(data['code'] == -2){
+						showMessage('error', '当前属性已经是最后一个，不能删除！');
+					}
+				}
+			});
+		}else{
+			spec_value_obj.remove();
+		}
+		
+	});
+	
+	$('.attribute_item span').dblclick(function(){
+		$(this).html('<input type="text" name="set_spec_value" value="'+$(this).text()+'" style="width:50px;"/>');
+		setSpecValue();
+	})
+}
+
+function setSpecValue(){
+	$('.attribute_item span input').keyup(function(event){	
+		var value = $(this).val();
+		if(event.keyCode == 13 && value.length != 0){
+			var set_spec_value = $(this).val();
+			
+			var set_spec_id = $(this).parent('span').parent('.attribute_item').attr('value');
+			$(this).parent('span').html(set_spec_value);
+			setGoodsField('spec_value_name',set_spec_id,this);
+		}
+	})
+}
+</script>

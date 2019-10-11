@@ -1,0 +1,46 @@
+{extend name="$member_base" /}
+{block name="right_main"}
+<link rel="stylesheet" href="WEB_CSS/member_collection.css">
+{php}
+$collection = api("System.Member.collection",['page_index'=>$page_index]);
+$collection = $collection['data'];
+$page_count = $collection['page_count'];
+$total_count = $collection['total_count'];
+{/php}
+<div class="member-main">
+	<div class="main-top">
+		<div class="title">{:lang("my_collection")}</div>
+	</div>
+	<ul class="collection-list">
+		{if condition="$page_count == 0"}
+			<div class="collect-empty">{:lang('member_collect_favorite_goods')}</div>
+		{else /}
+			{foreach name="$collection['data']" item="goods" key="k"}
+				{notempty name="$goods['goods_id']"}
+				<li class="collection-item ns-border-color-gray">
+					<div class="cancel ns-bg-color-gray">
+						<a href="javascript:;">{:lang('member_cancel')}</a>
+						<input type="hidden" value="{$goods.fav_id}">
+					</div>
+					<a href="{:__URL('SHOP_MAIN/goods/detail','goods_id='.$goods['goods_id'])}" target="_blank" title="{$goods.goods_name}">
+						<img src="{:__IMG($goods['pic_cover_mid'])}">
+						<p>{$goods.goods_name}</p>
+						<p>￥{$goods.promotion_price}</p>
+					</a>
+				</li>
+				{/notempty}
+			{/foreach}
+		{/if}
+	</ul>
+</div>
+
+<ul class="pager" data-ride="pager" data-elements="prev,nav,next,total_page_text,goto" data-rec-per-page="{$page_size}" data-page="{$page_index}" data-rec-total="{$total_count}" id="myPager"></ul>
+{/block}
+{block name="script"}
+<script>
+var lang_collection = {
+	member_abolish_successful : '{:lang("member_abolish_successful")}'
+};
+</script>
+<script type="text/javascript" src="WEB_JS/member_collection.js"></script>
+{/block}

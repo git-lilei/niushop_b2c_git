@@ -1,0 +1,156 @@
+{extend name="$base" /}
+{block name="resources"}{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt><span class="color-red">*</span>标题：</dt>
+		<dd>
+			{if condition="$app_upgrade"}
+			<input id="title" type="text" class="input-common" value="{$app_upgrade.title}" />
+			{else/}
+			<input id="title" type="text" class="input-common" />
+			{/if}
+		</dd>
+	</dl>
+	<dl>
+		<dt>App类型：</dt>
+		<dd>
+			{if condition="$app_upgrade"}
+			<select id="app_type" class="select-common">
+				<option {if condition="$app_upgrade.app_type=='Android'"} selected="selected" {/if}>Android</option>
+				<option {if condition="$app_upgrade.app_type=='IOS'"} selected="selected" {/if}>IOS</option>
+			</select>
+			{else/}
+			<select id="app_type" class="select-common">
+				<option>Android</option>
+				<option>IOS</option>
+			</select>
+			{/if}
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="color-red">*</span>版本号：</dt>
+		<dd>
+			{if condition="$app_upgrade"}
+			<input id="version_number" type="text" class="input-common" value="{$app_upgrade.version_number}" />
+			{else/}
+			<input id="version_number" type="text" class="input-common" />
+			{/if}
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>App文件上传：</dt>
+		<dd>
+			<div class="upload-btn-common">
+				<div>
+					<input class="input-file" name="file_upload" id="uploadFile" type="file" onchange="imgUpload(this);" title="上传">
+					<input type="hidden" id="download_address" value="{if condition="$app_upgrade.download_address"}{$app_upgrade.download_address}{/if}" />
+				</div>
+				<input type="text" id="text_download_address" class="input-common" readonly="readonly" value="{if condition="$app_upgrade.download_address"}{$app_upgrade.download_address}{/if}" />
+				<em>上传</em>
+			</div>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt><span class="color-red">*</span>更新日志：</dt>
+		<dd>
+			{if condition="$app_upgrade"}
+			<textarea id="update_log" class="textarea-common">{$app_upgrade.update_log}</textarea>
+			{else/}
+			<textarea id="update_log" class="textarea-common"></textarea>
+			{/if}
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="save();">保存</button>
+			<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);" >返回</button>
+		</dd>
+	</dl>
+</div>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script>
+{if condition="$app_upgrade"}
+var id = "{$app_upgrade.id}";
+{else/}
+var id = 0 ;
+{/if}
+function save() {
+	var title = $("#title").val();
+	var app_type = $("#app_type").val();
+	var version_number = $("#version_number").val();
+	var download_address = $("#download_address").val();
+	var update_log = $("#update_log").val();
+	
+	if(title.length==0){
+		showTip("请输入标题","warning");
+		$("#title").focus();
+		return;
+	}
+	
+	if(version_number.length==0){
+		showTip("请输入版本号","warning");
+		$("#version_number").focus();
+		return;
+	}
+	
+	if(download_address.length==0){
+		showTip("请输入App下载地址","warning");
+		$("#download_address").focus();
+		return;
+	}
+	
+	if(update_log.length==0){
+		showTip("请输入更新日志","warning");
+		$("#update_log").focus();
+		return;
+	}
+	
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/config/editAppUpgrade')}",
+		data : {
+			'id' : id,
+			'title' : title,
+			'app_type' : app_type,
+			'version_number' : version_number,
+			'download_address' : download_address,
+			'update_log' : update_log
+		},
+		success : function(data) {
+			if (data["code"] > 0) {
+				showTip(data["message"],'success');
+				window.location.href = "{:__URL('ADMIN_MAIN/config/appUpgradeList')}";
+			} else {
+				showTip(data["message"],'error');
+			}
+		}
+	});
+}
+
+//上传
+function imgUpload(event) {
+	var fileid = $(event).attr("id");
+	var data = { 'file_path' : "app_upgrade" };
+	var id = $(event).next().attr("id");
+	uploadFile({
+		url: __URL(ADMINMAIN + '/config/uploadcompressedfile'),
+		fileId: fileid,
+		data :data,
+		callBack: function (res) {
+			if(res.code){
+				$("#"+id).val(res.data.path);
+				$("#text_" + id).val(res.data.path);
+				showTip(res.message,"success");
+			}else{
+				showTip(res.message,"error");
+			}
+		}
+	});
+}
+</script>
+{/block}

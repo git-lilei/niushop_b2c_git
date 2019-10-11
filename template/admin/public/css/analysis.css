@@ -1,0 +1,44 @@
+@CHARSET "UTF-8";
+
+.basic_data_ons{
+	width: 100%;
+    height: 120px;
+    box-sizing: border-box;
+    border: 1px solid #e6e9f0;
+}
+.basic_data_ons	.basic_data_ons_son{
+    width: 100%;
+    height: 30px;
+    line-height: 30px;
+    font-size: 13px;
+    border-bottom: 1px solid #e6e9f0;
+    text-indent: 10px;
+    background: #f5f7fa;
+}
+.basic_data_ons .basic_data_ons_son_list{
+	width: 100%;
+	height: 84%;
+}
+.basic_data_ons .basic_data_ons_son_list li{
+	width: 25%;
+	height: 100%;
+	float: left;
+}
+.basic_data_ons .basic_data_ons_son_list li .basic_data_ons_son_list_nvs{
+    width:80%;
+	height:80%;
+	margin:0 auto;
+	text-align:center;
+}
+.basic_data_ons .basic_data_ons_son_list li .basic_data_ons_son_list_nvs p{
+      line-height: 30px;
+    font-size: 13px;
+    color: #5e6166;
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+.basic_data_ons .basic_data_ons_son_list li .basic_data_ons_son_list_nvs cite{
+    line-height: 39px;
+    font-size: 20px;
+    color: #00A0DE;
+}

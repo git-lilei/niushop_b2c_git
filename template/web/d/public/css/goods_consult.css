@@ -1,0 +1,46 @@
+.goods-consult-wrap{overflow: hidden;}
+.goods-consult-wrap .consult-wrap{width: 980px;float: right;}
+.goods-consult-wrap .consult-wrap .title-bar{border-top: 1px solid;}
+.goods-consult-wrap .consult-wrap .title-bar h4{padding: 15px 25px;line-height: 20px;border-left: 1px solid; border-right: 1px solid;}
+.goods-consult-wrap .consult-wrap .top-wrap{padding: 9px; margin-bottom: 50px;border: 1px solid;overflow:hidden;}
+.goods-consult-wrap .consult-wrap .top-wrap .consult-tips{width: 88%;height: 65px;float: left;position: relative;z-index: 1;}
+.goods-consult-wrap .consult-wrap .top-wrap .consult-tips i{background: url(../img/goods/ncs_public_img.png)no-repeat -80px 3px;width: 147px;height: 65px;position: absolute;top: 0;left: 0;}
+.goods-consult-wrap .consult-wrap .top-wrap .consult-tips p{line-height: 18px;position: absolute;z-index: 1;top: 28px;left: 64px;}
+.goods-consult-wrap .consult-wrap .top-wrap .consult-ask{float: right;padding: 20px 10px 10px;}
+.goods-consult-wrap .consult-wrap .consult-nav{border:1px solid;border-top: none;}
+.goods-consult-wrap .consult-wrap .consult-nav ul{overflow: hidden;border-top: 1px solid;}
+.goods-consult-wrap .consult-wrap .consult-nav ul li{float: left;}
+.goods-consult-wrap .consult-wrap .consult-nav ul li a{display: block;padding: 15px 25px;line-height: 20px;}
+.goods-consult-wrap .consult-wrap .consult-main,.goods-consult-wrap .consult-wrap .commend-main{padding: 20px 0 0 0;border: solid;border-width: 0 1px 1px;}
+.goods-consult-wrap .consult-wrap .consult-main .no-record{text-align: center;height: 70px;padding: 15px 0;}
+.goods-consult-wrap .consult-wrap .commend-main .consult-list{padding: 6px;}
+.goods-consult-wrap .consult-wrap .commend-main .consult-list dl{font-size: 0; display: block; margin-bottom: 4px;}
+.goods-consult-wrap .consult-wrap .commend-main .consult-list dt{line-height: 20px; vertical-align: top; text-align: right; display: inline-block; width: 10%;font-weight: normal;}
+.goods-consult-wrap .consult-wrap .commend-main .consult-list dd{line-height: 20px; vertical-align: top; text-align: left; display: inline-block; width: 90%;}
+.goods-consult-wrap .consult-wrap .commend-main .consult-list dd p{display: inline-block; width: 100%; white-space: pre-wrap; word-wrap: break-word;}
+.goods-consult-wrap .consult-wrap .pager{margin-bottom:20px;}
+.goods-consult-wrap .consult-wrap .consultation-title{margin: 20px 0 10px;clear: both;}
+.consult-form{padding: 10px 15px;border: 1px solid;}
+.consult-form dl{font-size: 0;margin-bottom: 10px;}
+.consult-form dl>*{line-height: 20px;vertical-align: top;display: inline-block;}
+.consult-form dl dt{width: 70px;font-weight:normal;}
+.consult-form dl dd{position: relative;z-index: 1;}
+.consult-form dl dd label{vertical-align: top;display: flex;margin-right: 20px;float: left;}
+.consult-form dl dd .code{width: 124px;height: 48px;border: solid 1px;position: absolute;z-index: 9;top: -54px;left: -15px;display: none;}
+.consult-form dl dd .code img{width: 100px;height: 40px;position: absolute;z-index: 1;top: 4px;left: 4px;}
+.consult-form dl dd .code .close{display: block;width: 10px;height: 10px;padding: 1px;position: absolute;z-index: 1;top: 4px;right: 4px;}
+.consult-form dl dd .code .close i{background: url(../img/goods/ncs_public_img.png) no-repeat -41px -8px;display: block;width: 10px;height: 10px;opacity: 0.5;}
+.consult-form dl dd .counter{line-height: 20px;vertical-align: top; display: inline-block; margin-left: 10px;}
+.consult-form dl dd textarea{vertical-align: top;display: inline-block;height: 66px;padding: 4px;border: 1px solid;outline: 0 none;margin-top: 5px;resize:none;}
+.consult-form dl dd .captcha{display: inline-block;min-height: 20px;padding: 5px;text-align: center;border: 1px solid;}
+.goods-consult-wrap .goods-info{width: 210px;position: relative;z-index: 1;float: left;}
+.goods-consult-wrap .goods-info .title{height: 30px;padding: 5px 10px;border: solid;border-width: 1px 1px 0 1px;}
+.goods-consult-wrap .goods-info .content{border: 1px solid;padding: 10px;}
+.goods-consult-wrap .goods-info .content .goods-name{width: 100%;height: 36px;font-weight:normal;overflow: hidden;line-height:18px;text-overflow:ellipsis;white-space:normal;}
+.goods-consult-wrap .goods-info .content .goods-name a{display:block;width:100%;height:100%;}
+.goods-consult-wrap .goods-info .content .goods-pic{width: 190px;height: 160px;margin: 10px auto 0;}
+.goods-consult-wrap .goods-info .content .goods-pic a{text-align: center;vertical-align: middle;display: block;width: 190px;height: 160px;overflow: hidden;}
+.goods-consult-wrap .goods-info .content .goods-pic img{max-width: 160px;max-height: 160px;}
+.goods-consult-wrap .goods-info .content .goods-foot{overflow: hidden;padding-left: 8px; padding-top: 5px;}
+.goods-consult-wrap .goods-info .content .goods-foot span {float: left;}
+.goods-consult-wrap .goods-info .content .goods-foot span:last-child{width:120px;text-overflow: ellipsis; overflow: hidden;white-space: normal;}

@@ -1,0 +1,717 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" href="WAP_CSS/liMarquee.css">
+<link rel="stylesheet" href="WAP_CSS/index.css"/>
+<link rel="stylesheet" href="WAP_PLUGIN/swiper/css/swiper.min.css"/>
+<script src="WAP_PLUGIN/swiper/js/swiper.min.js"></script>
+{/block}
+{block name="head"}{/block}
+{block name="main"}
+{php}
+$page_layout = api("System.Config.wapPageLayout");
+$page_layout = $page_layout['data'];
+if(empty($page_layout)){
+	$page_layout = array( [ "tag" => "follow-wechat", "isVisible" => true ], [ "tag" => "banner", "isVisible" => true ], [ "tag" => "search", "isVisible" => true ], [ "tag" => "nav", "isVisible" => true ],
+			[ "tag" => "notice", "isVisible" => true ], [ "tag" => "coupons", "isVisible" => true ], [ "tag" => "games", "isVisible" => true ], [ "tag" => "discount", "isVisible" => true ],
+			[ "tag" => "games", "isVisible" => true ], [ "tag" => "spell-group", "isVisible" => true ], [ "tag" => "adv", "isVisible" => true ], [ "tag" => "goods", "isVisible" => true ],
+			[ "tag" => "bottom", "isVisible" => true ]);
+}
+
+//WAP端首页浮层
+$wap_floating = api('System.Shop.wapFloating');
+$wap_floating = $wap_floating['data'];
+{/php}
+{notempty name="$wap_floating"}
+{if condition="$wap_floating['is_show'] == 1"}
+<div class="wap-floating">
+	<a class="close-wrap" href="javascript:;"><img src="WAP_IMG/index/floating_layer_close.png"></a>
+	<a class="img-wrap" href="{$wap_floating['nav_url']}"><img src="{:__IMG($wap_floating.nav_icon)}" alt="浮层图片" /></a>
+</div>
+{/if}
+{/notempty}
+
+<div class="pay-layout">
+{foreach name="$page_layout" item="vo" key="k"}
+
+    {if condition="$vo['tag'] == 'follow-wechat'"}
+    
+        {if condition="$vo['isVisible']"}
+        <!--关注微信公众号，标识：是否显示顶部关注  0：[隐藏]，1：[显示]-->
+            {if condition="$is_subscribe == 1"}
+            <div class="follow-wechat-account">
+	            <img src="WAP_IMG/index/follow_wechat_account_close.png" onclick="$('.follow-wechat-account').hide();"/>
+                <div class="foucs-on-block">
+                    <div class="foucs-block">
+                        {if condition="$source_img_url != ''"}
+                        <img src="{:__IMG($source_img_url)}">
+                        {else/}
+                        <img src="{:__IMG($web_info['web_wechat_share_logo'])}">
+                        {/if}
+                    </div>
+                    {if condition="$source_user_name != ''"}
+                    <p>{:lang("i_am_your_best_friend")}<span class="ns-text-color">{$source_user_name}</span>,{:lang("recommended_to_you_business_from_now")}</p>
+                    {else/}
+                    <p>{$platform_shop_name}</p>
+                    {/if}
+                    <button type="button" class="btn primary">{:lang("click_on_the_attention")}</button>
+                    <div class="mask"></div>
+                </div>
+            </div>
+            {/if}
+            <!-- 微信公众号弹出层 -->
+            <div class="wechat-popup">
+                <div>
+                    <img src="{:__IMG($web_info.web_qrcode)}"/>
+                    <p class="ns-text-color-gray">{:lang("press_two_dimensional_code_public_concern_WeChat")}</p>
+                </div>
+            </div>
+        {/if}
+    
+    {elseif condition="$vo['tag']=='banner'"}
+        
+        {if condition="$vo['isVisible']"}
+        <!--轮播图-->
+            {php}
+            $plat_adv_list = api("System.Shop.advDetail",['ap_keyword' => 'WAP_INDEX_SWIPER', 'export_type' => 'data']);
+            {/php}
+            {notempty name="$plat_adv_list['data']"}
+                <div class="swiper-container">
+                    <div class="swiper-wrapper">
+                    {foreach name="$plat_adv_list['data']['advs']" item="vo"}
+                        <div class="swiper-slide">
+                            <a href="{:__URL('APP_MAIN' . $vo['adv_url'])}" style="height:{$plat_adv_list['data']['ap_height']}px;line-height:{$plat_adv_list['data']['ap_height']}px;">
+                                <img src="{:__IMG($vo.adv_image)}" alt="{:lang('carousel_figure')}">
+                            </a>
+                        </div>
+                    {/foreach}
+                    </div>
+                </div>
+           	{/notempty}
+        {/if}
+    
+    {elseif condition="$vo['tag']=='search'"}
+    
+        {if condition="$vo['isVisible']"}
+        <!-- 搜索栏 -->
+        <div class="control-search">
+            <div class="control-search-input ns-bg-color-gray-fadeout-60">
+                <button type="button" class="search-button custom-search-button ns-border-color-gray">{:lang('search')}</button>
+                <input type="text" class="search-input custom-search-input ns-text-color-gray" placeholder="{:lang('search_goods')}">
+            </div>
+        </div>
+        {/if}
+    
+    {elseif condition="$vo['tag']=='nav'"}
+        
+        {if condition="$vo['isVisible']"}
+        <!--导航栏-->
+            {php}
+            $navigation_list = api("System.Shop.shopNavigationList",['page_index'=>1,'page_size'=>0,'type'=>2,'is_show'=>1,'order' => 'sort desc']);
+            $navigation_list = $navigation_list['data']['data'];
+            {/php}
+            {notempty name="$navigation_list" item="vo"}
+            <nav class="navi">
+                {foreach name="$navigation_list" item="vo"}
+                    {if condition='$vo.nav_type eq 0'}
+                    <a class="nav-item" href="{:__URL('APP_MAIN'.$vo.nav_url)}">
+                    {else/}
+                    <a class="nav-item" href="{$vo.nav_url}">
+                    {/if}
+                        <div>
+                            <img src="{:__IMG($vo.nav_icon)}">
+	                        <span class="ns-text-color-black">{$vo.nav_title}</span>
+                        </div>
+                    </a>
+                {/foreach}
+            </nav>
+            {/notempty}
+        {/if}
+    
+    {elseif condition="$vo['tag']=='notice'"}
+    
+        <!-- 公告 -->
+        {if condition="$vo['isVisible']"}
+            {php}
+            $notice = api("System.Shop.shopNoticeList");
+            $notice = $notice['data']['data'];
+            {/php}
+            {notempty name="$notice"}
+            <input type="hidden" id="hidden_notice_count" value="{$notice|count}">
+            <div class="hot ns-border-color-gray-fadeout-50">
+                <div class="notice-img">
+                    <img src="WAP_IMG/index/hot.png">
+                </div>
+                <div class="dowebok dowebok-block">
+                    <ul>
+                        {foreach name="notice" id="vo"}
+	                    <li>
+                            <a href="{:__URL('APP_MAIN/notice/detail?id='.$vo.id)}">{$vo.notice_title}</a>
+	                    </li>
+                        {/foreach}
+                    </ul>
+                </div>
+            </div>
+            {/notempty}
+        {/if}
+    
+    {elseif condition="$vo['tag']=='coupons'"}
+        
+        {if condition="$vo['isVisible']"}
+            <!--优惠券-->
+            {php}
+            $coupon_list = api("System.Member.canReceiveCouponQuery",['uid'=>$uid]);
+            $coupon_list = $coupon_list['data'];
+            {/php}
+            {notempty name="$coupon_list"}
+            <div class="coupon-container">
+                <div  class="coupon-all">
+                    {volist name="coupon_list" id="vo" }
+                    {if condition="$vo.max_fetch == $vo.received_num"}
+                    <div class="receive-coupons type_color" data-max-fetch="{$vo.max_fetch}" data-received-num="{if !empty($uid)}{$vo.received_num}{else/}0{/if}">
+                        <div class="coupon-left">
+                        	<span class="money-number">￥{$vo['money']}</span>
+                        	<p class="explanation">满{$vo.at_least}可用</p>
+                        </div>
+                        <div class="get ns-text-color coupon-right type_top">已领取</div>
+                    </div>
+                    {else/}
+                    <div class="receive-coupons" data-max-fetch="{$vo.max_fetch}" data-received-num="{if !empty($uid)}{$vo.received_num}{else/}0{/if}" onclick="couponReceive(this,{$vo.coupon_type_id})">
+                        <div class="coupon-left">
+                        	<span class="money-number">￥{$vo['money']}</span>
+                        	<p class="explanation">满{$vo.at_least}可用</p>
+                        </div>
+                        <div class="get ns-text-color coupon-right">领取</div>
+                    </div>
+                    {/if}
+                    {/volist}
+                </div>
+            </div>
+            {/notempty}
+        {/if}
+    
+    {elseif condition="$vo['tag']=='games'"}
+        
+        {if condition="$vo['isVisible']"}
+        <!--游戏活动-->
+            {php}
+            $game_list = api("System.Promotion.promotionGamesList",['condition'=>['status' => 1,"activity_images" => ["neq",""]],'order'=>'game_id desc']);
+            $game_list = $game_list['data'];
+            {/php}
+            {if !empty($game_list["data"])}
+            <div class="promotion-game-content">
+                {if !empty($game_list["data"])}
+                <ul class="gameList">
+                    {volist name="$game_list['data']" id="vo"}
+                    <li><a href="{:__URL('APP_MAIN/game/index?gid='.$vo['game_id'])}"><img src="{:__IMG($vo['activity_images'])}" ></a></li>
+                    {/volist}
+                </ul>
+                {/if}
+            </div>
+            {/if}
+        {/if}
+    
+    {elseif condition="$vo['tag']=='discount'"}
+        
+        {if condition="$vo['isVisible']"}
+        <!--限时折扣-->
+            {php}
+            $discount_data = api("System.Goods.newestDiscount");
+            $discount = $discount_data['data'];
+            {/php}
+            {if !empty($discount)}
+                <div class="group-list-box">
+	                <div class="group-list-box-in">
+	                    <div class="controltype" onclick="location.href='{:__URL("APP_MAIN/goods/discount")}'">
+	                        <div class="title ns-text-color-black discount-title">
+	                        	<!-- <img src="WAP_IMG/index/discoun_title.png" /> -->
+	                        	<span class="module-title spike">限时秒杀</span>
+	                        </div>
+	                        <div class="discount-title-right">
+	                        	<time class="remaining-time" starttime="{$discount.start_time|date='Y-m-d H:i:s',###}" endtime="{$discount.end_time|date='Y-m-d H:i:s',###}">
+                                      <span class="day ns-bg-color-black">0</span>
+                                      <span class="hours">00</span>
+                                      <em>:</em>
+                                      <span class="min ns-bg-color-black">00</span>
+                                      <em>:</em>
+                                      <span class="seconds ns-bg-color-black">00</span>
+                                  </time>
+	                        </div>
+	                    </div>
+	                    <div class="discount-list">
+	                        <ul>
+	                            {volist name="$discount['goods_list']" id="vo" key = "k"}
+                                    {if $k lt 3}
+    	                            <li>
+    	                            	 <div class="goods-pic">
+    	                                    <a class="nav-item" href="{:__URL('APP_MAIN/goods/detail?goods_id='.$vo['goods_id'])}">
+    	                                        <img src="{:__IMG($vo['picture_info']['pic_cover_small'])}">
+    	                                    </a>
+    	                                </div>
+    	                                <div class="goods-info">
+    	                                    <a href="{:__URL('APP_MAIN/goods/detail?goods_id='.$vo['goods_id'])}">
+    	                                        <div class="goods-name">{$vo.goods_name}</div>
+    	                                        <span class="goods-price ns-text-color"><i>￥</i>{$vo.promotion_price}</span>
+    	                                    </a>
+    	                                </div>
+    	                            </li>
+                                    {/if}
+	                            {/volist}
+	                        </ul>
+	                    </div>
+	                </div>
+                </div>
+            {/if}
+        {/if}       
+    {elseif condition="$vo['tag']=='spell-bargain'"}
+    	
+      {if condition="$vo['isVisible']"}
+    	{if condition="addon_is_exit('NsBargain') == 1"}
+    		{php}
+    			 $bargain_list = api("NsBargain.Bargain.bargainList",['page_size'=>5]);
+    			 $bargain_list = $bargain_list['data'];
+    		{/php}
+    		{notempty name="$bargain_list['data']"}
+	        <!-- 砍价 -->
+		    <div class="spelling-block">
+			     <header>
+			         <div class="ns-text-color-black assemble-title bargain-title"><span class="module-title bargain">疯狂砍价</span></div>
+			         <a href="{:__URL('APP_MAIN//goods/bargain')}">更多&nbsp;&gt;</a>
+			     </header>
+			     <ul>
+			         {foreach name="$bargain_list['data']" item="vo" key="k"}
+			         <li onclick="location.href='{:__URL('APP_MAIN/goods/detail?goods_id='.$vo.goods_id.'&bargain_id='.$vo.bargain_id)}'">
+			             <div>
+			                 <img src="{:__IMG($vo.pic_cover_mid)}" class="lazy_load pic">
+			             </div>
+			             <footer class="ns-border-color-gray">
+			                 <p class="ns-text-color-black">{$vo.goods_name}</p>
+			                 <div class="assemble-tag">
+			                 	<div class="people-num ns-text-color">砍价</div>
+			                 	{eq name="$vo['shipping_fee']" value="0"}<div class="people-num ns-text-color">包邮</div>{/eq}
+			                 </div>
+			                 <div class="assemble-foot">
+			               	  	<div class="tuangou-money ns-text-color bargain-price">￥{$vo.promotion_price}</div>
+			                    <div class="assemble-foot-right">
+			                     	<div class="mui-btn mui-btn-danger primary go-bargain">发起砍价</div>
+			                     </div>
+			                 </div>
+			             </footer>
+			         </li>
+			         {/foreach}
+			     </ul>
+			 </div>
+			 {/notempty}
+		 {/if}
+      {/if}
+    {elseif condition="$vo['tag']=='spell-group'"}
+        
+        {if condition="$vo['isVisible']"}
+        <!--拼团推荐-->
+			{if condition="addon_is_exit('NsPintuan') == 1"}
+            {php}
+
+            $pintuan_list = api("NsPintuan.Pintuan.goodsList",['page_size'=>5,'condition'=> json_encode(['npg.is_open' => 1, 'npg.is_show' => 1]),'order'=>'npg.create_time desc']);
+            $pintuan_list = $pintuan_list['data'];
+            {/php}
+            {notempty name="$pintuan_list['data']"}
+            <div class="spelling-block">
+                <header>
+                    <div class="ns-text-color-black assemble-title"><span class="module-title assemble">拼团抢购</span></div>
+                    <a class="assemble-title-right" href="{:__URL('APP_MAIN/goods/pintuan')}">更多&nbsp;&gt;</a>
+                </header>
+                <ul>
+                    {foreach name="$pintuan_list['data']" item="vo" key="k"}
+                    <li onclick="location.href='{:__URL('APP_MAIN/goods/detail?goods_id='.$vo.goods_id)}'">
+                        <div>
+                            <img src="{:__IMG($vo.pic_cover_mid)}" class="pic">
+                        </div>
+                        <footer class="ns-border-color-gray">
+                            <p class="ns-text-color-black">{$vo.goods_name}</p>
+                            <div class="assemble-tag">
+                            	<div class="already-num ns-text-color ns-bg-color-fadeout-80">已抢{$vo.sales}件</div>
+                            	<div class="people-num ns-text-color ns-border-color-fadeout-80">{$vo.tuangou_num}人团</div>
+                            	<div class="people-num ns-text-color ns-border-color-fadeout-80">包邮</div>
+                            </div>
+                            <div class="assemble-foot">
+	                            <div class="assemble-foot-left">
+	                            	 <div class="tuangou-money ns-text-color">￥{$vo.tuangou_money}</div>
+	                                <div class="original-money ns-text-color-gray">单买价{$vo.promotion_price}</div>
+	                            </div>
+                               <div class="assemble-foot-right">
+                                	<div class="mui-btn-danger primary">GO</div>
+                                	<div class="goin ns-border-color ns-text-color">去拼团</div>
+                                </div>
+                            </div>
+                        </footer>
+                    </li>
+                    {/foreach}
+                </ul>
+            </div>
+            {/notempty}
+            {/if}
+        {/if}
+    
+    {elseif condition="$vo['tag']=='adv'"}
+        
+        {if condition="$vo['isVisible']"}
+        <!--广告位-->
+        {/if}
+    
+    {elseif condition="$vo['tag']=='goods'"}
+        
+        {if condition="$vo['isVisible']"}
+        <!--推荐商品（新品 精品 热卖、楼层等推荐商品）-->
+            <!--推荐商品（新品 精品 热卖、楼层等推荐商品）-->
+			{php}
+				$new_goods_list = api("System.Goods.newGoodsList", ["page_size" => 4]);
+				$new_goods_list = $new_goods_list['data'];
+			{/php}
+			{notempty name="$new_goods_list"}
+			<!-- 新品 -->
+			<div class="floor">
+				<div class="category-name ">
+					<div class="floor-list-title">
+						<div class="floor-title-left">
+							<div class="floor-title-left-second ns-border-color-gray"></div>
+						</div>
+						<span class="floor-left-nav ns-text-color-black">新品</span>
+						<div class="floor-title-right">
+							<div class="floor-title-left-second ns-border-color-gray"></div>
+						</div>
+					</div>
+				</div>
+				<section class="members-goods-pic ns-border-color-gray">
+					<ul>
+						{foreach name="$new_goods_list" item="list" key='k'}
+						<li class="gooditem">
+							<div class="imgs">
+								<a href="{:__URL('APP_MAIN/goods/detail?goods_id='.$list['goods_id'])}">
+									<img src="{:__IMG($list['pic_cover_mid'])}" >
+								</a>
+							</div>
+							<div class="info">
+								<p class="goods-title">
+									<a class="ns-text-color-black" href="{:__URL('APP_MAIN/goods/detail?goods_id='.$list['goods_id'])}">{$list.goods_name}</a>
+								</p>
+								<div class="goods-info">
+									<span class="goods-price ns-text-color">
+										{in name="$list.point_exchange_type" value="0,2"}
+										<em>￥{$list.promotion_price}</em>
+										{else/}
+											{if $list['point_exchange_type'] == 1 && $list['promotion_price'] > 0}
+												<em>￥{$list.promotion_price}+{$list.point_exchange}积分</em>
+											{else/}
+												<em>{$list.point_exchange}积分</em>
+											{/if}
+										{/in}
+									</span>
+									<div class="add_cart" onclick="window.location.href='{:__URL('APP_MAIN/goods/detail?goods_id='.$list['goods_id'])}'">
+										<img src="WAP_IMG/index/add_cart.png" />
+									</div>
+								</div>
+							</div>
+						</li>
+						{/foreach}
+					</ul>
+				</section>
+			</div>
+			{/notempty}
+			{php}
+				$recommend_goods_list = api("System.Goods.recommendGoodsList", ["page_size" => 4]);
+				$recommend_goods_list = $recommend_goods_list['data'];
+			{/php}
+			{notempty name="$recommend_goods_list"}
+			<!-- 精品 -->
+			<div class="floor">
+				<div class="category-name">
+					<div class="floor-list-title">
+						<div class="floor-title-left">
+							<div class="floor-title-left-second ns-border-color-gray"></div>
+						</div>
+						<span class="floor-left-nav ns-text-color-black">精品</span>
+						<div class="floor-title-right">
+							<div class="floor-title-left-second ns-border-color-gray"></div>
+						</div>
+					</div>
+				</div>
+				<section class="members-goods-pic ns-border-color-gray">
+					<ul>
+						{foreach name="$recommend_goods_list" item="list" key='k'}
+						<li class="gooditem">
+							<div class="imgs">
+								<a href="{:__URL('APP_MAIN/goods/detail?goods_id='.$list['goods_id'])}">
+									<img src="{:__IMG($list['pic_cover_mid'])}" >
+								</a>
+							</div>
+							<div class="info">
+								<p class="goods-title">
+									<a class="ns-text-color-black" href="{:__URL('APP_MAIN/goods/detail?goods_id='.$list['goods_id'])}">{$list.goods_name}</a>
+								</p>
+								<div class="goods-info">
+									<span class="goods-price ns-text-color">
+										{in name="$list.point_exchange_type" value="0,2"}
+										<em>￥{$list.promotion_price}</em>
+										{else/}
+											{if $list['point_exchange_type'] == 1 && $list['promotion_price'] > 0}
+												<em>￥{$list.promotion_price}+{$list.point_exchange}积分</em>
+											{else/}
+												<em>{$list.point_exchange}积分</em>
+											{/if}
+										{/in}
+									</span>
+									<div class="add_cart" onclick="window.location.href='{:__URL('APP_MAIN/goods/detail?goods_id='.$list['goods_id'])}'">
+										<img src="WAP_IMG/index/add_cart.png"  />
+									</div>
+								</div>
+							</div>
+						</li>
+						{/foreach}
+					</ul>
+				</section>
+			</div>
+			{/notempty}
+			{php}
+				$hot_goods_list = api("System.Goods.hotGoodsList", ["page_size" => 4]);
+				$hot_goods_list = $hot_goods_list['data'];
+			{/php}
+			{notempty name="$hot_goods_list"}
+			<!-- 热卖 -->
+			<div class="floor">
+				<div class="category-name">
+					<div class="floor-list-title">
+						<div class="floor-title-left">
+							<div class="floor-title-left-second ns-border-color-gray"></div>
+						</div>
+						<span class="floor-left-nav ns-text-color-black">热卖</span>
+						<div class="floor-title-right">
+							<div class="floor-title-left-second ns-border-color-gray"></div>
+						</div>
+					</div>
+					<a class="assemble-title-right" href="{:__URL('APP_MAIN/goods/lists')}">更多&nbsp;&gt;</a>
+				</div>
+				<section class="members-goods-pic ns-border-color-gray">
+					<ul>
+						{foreach name="$hot_goods_list" item="list" key='k'}
+						<li class="gooditem">
+							<div class="imgs">
+								<a href="{:__URL('APP_MAIN/goods/detail?goods_id='.$list['goods_id'])}">
+									<img src="{:__IMG($list['pic_cover_mid'])}" >
+								</a>
+							</div>
+							<div class="info">
+								<p class="goods-title">
+									<a class="ns-text-color-black" href="{:__URL('APP_MAIN/goods/detail?goods_id='.$list['goods_id'])}">{$list.goods_name}</a>
+								</p>
+								<div class="goods-info">
+									<span class="goods-price ns-text-color">
+										{in name="$list.point_exchange_type" value="0,2"}
+										<em>￥{$list.promotion_price}</em>
+										{else/}
+											{if $list['point_exchange_type'] == 1 && $list['promotion_price'] > 0}
+												<em>￥{$list.promotion_price}+{$list.point_exchange}积分</em>
+											{else/}
+												<em>{$list.point_exchange}积分</em>
+											{/if}
+										{/in}
+									</span>
+									<div class="add_cart" onclick="window.location.href='{:__URL('APP_MAIN/goods/detail?goods_id='.$list['goods_id'])}'">
+										<img src="WAP_IMG/index/add_cart.png" />
+									</div>
+								</div>
+							</div>
+						</li>
+						{/foreach}
+					</ul>
+				</section>
+			</div>
+			{/notempty}
+            {php}
+            $block_list = api("System.Goods.goodsCategoryBlockWap");
+            $block_list = $block_list['data'];
+            {/php}
+            <!-- 楼层版块 -->
+            {foreach name="$block_list['data']" item="class"}
+            {notempty name="$class['goods_list']"}
+            <div class="floor">
+            	{if $class['img']}
+             	<div><img src="{:__IMG($class['img'])}" /></div>
+             	{/if}
+                <div class="category-name">
+                    <div class="floor-list-title">
+                        <div class="floor-title-left">
+                            <div class="floor-title-left-second ns-border-color-gray"></div>
+                        </div>
+                        <span class="floor-left-nav ns-text-color-black"><a href="{:__URL('APP_MAIN/goods/lists')}">{$class.recommend_name}</a></span>
+                        <div class="floor-title-right">
+                            <div class="floor-title-left-second ns-border-color-gray"></div>
+                        </div>
+                    </div>
+                </div>
+                <section class="members-goods-pic ns-border-color-gray">
+                    <ul>
+                        {foreach name="class.goods_list" item="list" key='k'}
+                        <li class="gooditem">
+                            <div class="imgs">
+                                <a href="{:__URL('APP_MAIN/goods/detail?goods_id='.$list['goods_id'])}">
+                                    <img src="{:__IMG($list['pic_cover_small'])}" >
+                                </a>
+                            </div>
+                            <div class="info">
+                                <p class="goods-title">
+                                    <a class="ns-text-color-black" href="{:__URL('APP_MAIN/goods/detail?goods_id='.$list['goods_id'])}">{$list.goods_name}</a>
+                                </p>
+                                <div class="goods-info">
+	                                <span class="goods-price ns-text-color">
+	                                    {in name="$list.point_exchange_type" value="0,2"}
+	                                    <em>￥{$list.promotion_price}</em>
+	                                    {else/}
+	                                        {if $list['point_exchange_type'] == 1 && $list['promotion_price'] > 0}
+	                                            <em>￥{$list.promotion_price}+{$list.point_exchange}积分</em>
+	                                        {else/}
+	                                            <em>{$list.point_exchange}积分</em>
+	                                        {/if}
+	                                    {/in}
+	                                </span>
+                                	<div class="add_cart" onclick="window.location.href='{:__URL('APP_MAIN/goods/detail?goods_id='.$list['goods_id'])}'">
+										<img src="WAP_IMG/index/add_cart.png" />
+									</div>
+                                </div>
+                            </div>
+                        </li>
+                        {/foreach}
+                    </ul>
+                </section>
+            </div>
+            {/notempty}
+            {/foreach}
+        {/if}
+    {elseif condition="$vo['tag']=='cube'"}
+        {if condition="$vo['isVisible']"}
+            {php}
+                $magiccube = api("System.Config.wapHomeMagicCube");
+                $magiccube = $magiccube['data'];
+            {/php}
+            {notempty name="magiccube"}
+            <!-- 首页魔方 -->
+            <div class="magiccube-warp">
+                <div class="box">
+                    {if count($magiccube) eq 1}
+                        <!-- 一行一个 -->
+                        <div class="layout-one">
+                            <div class="item" style="width: 100%;height: 100%;">
+                                <a href="{:__URL('APP_MAIN'.$magiccube[0]['url'])}"  target="_blank">
+                                    <img src="{:__IMG($magiccube[0]['imgPath'])}">
+                                </a>
+                            </div>
+                        </div>
+                    {elseif count($magiccube) eq 2}
+                        <!-- 一行两个 -->
+                        <div class="layout-two">
+                            {for start="0" end="2" }
+                            <div class="item">
+                                <a href="{:__URL('APP_MAIN'.$magiccube[$i]['url'])}"  target="_blank">
+                                    <img src="{:__IMG($magiccube[$i]['imgPath'])}">
+                                </a>
+                            </div>
+                            {/for}
+                        </div>
+                    {elseif count($magiccube) eq 3}
+                        <!-- 一左两右 -->
+                        <div class="layout-three">
+                            <div class="left">
+                                <div class="item">
+                                    <a href="{:__URL('APP_MAIN'.$magiccube[0]['url'])}"  target="_blank">
+                                        <img src="{:__IMG($magiccube[0]['imgPath'])}">
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="right">
+                                {for start="1" end="3" }
+                                <div class="item">
+                                    <a href="{:__URL('APP_MAIN'.$magiccube[$i]['url'])}"  target="_blank">
+                                        <img src="{:__IMG($magiccube[$i]['imgPath'])}">
+                                    </a>
+                                </div>
+                                {/for}
+                            </div>
+                        </div>
+                    {elseif count($magiccube) eq 4}
+                        <!-- 一左三右 -->
+                        <div class="layout-four">
+                            <div class="left">
+                                <div class="item">
+                                    <a href="{:__URL('APP_MAIN'.$magiccube[0]['url'])}"  target="_blank">
+                                        <img src="{:__IMG($magiccube[0]['imgPath'])}">
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="right">
+                                <div class="top">
+                                    <div class="item">
+                                        <a href="{:__URL('APP_MAIN'.$magiccube[1]['url'])}"  target="_blank">
+                                            <img src="{:__IMG($magiccube[1]['imgPath'])}">
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="buttom">
+                                    {for start="2" end="4" }
+                                    <div class="item">
+                                        <a href="{:__URL('APP_MAIN'.$magiccube[$i]['url'])}"  target="_blank">
+                                            <img src="{:__IMG($magiccube[$i]['imgPath'])}">
+                                        </a>
+                                    </div>
+                                    {/for}
+                                </div>
+                            </div>
+                        </div>
+                    {/if}
+                </div>
+            </div>
+            {/notempty}
+        {/if}
+    {/if}
+{/foreach}
+</div>
+
+<div class="foot-nav">
+	{empty name="$uid"}
+	<a href="{:__URL('APP_MAIN/login/index')}" class="ns-border-color-gray-shade-10 ns-text-color-gray">{:lang("login")}</a>
+	<a href="{:__URL('APP_MAIN/login/register')}" class="ns-border-color-gray-shade-10 ns-text-color-gray">{:lang("register")}</a>
+	{/empty}
+	<a href="javascript:;" onclick="locationShop();" class="ns-border-color-gray-shade-10 ns-text-color-gray">{:lang("pc_version")}</a>
+	<a href="{:__URL('APP_MAIN/member/index')}" class="ns-border-color-gray-shade-10 ns-text-color-gray">{:lang("member_member_center")}</a>
+	<a href="{:__URL('APP_MAIN/help/index')}" class="ns-text-color-gray">{:lang('shop_help_center')}</a>
+</div>
+
+<div class="ns-copyright">
+{php}
+    $copyright = api('System.Config.copyRight');
+    $copyright = $copyright['data'];
+{/php}
+{if $copyright['is_load'] > 0}
+    {notempty name="$copyright['bottom_info']['copyright_logo']"}
+        <img src="{:__IMG($copyright['bottom_info']['copyright_logo'])}">
+    {else/}
+        <img src="WAP_IMG/logo_copy.png">
+    {/notempty}
+    {notempty name="$copyright['bottom_info']['copyright_companyname']"}
+        <a href="{$copyright['bottom_info']['copyright_link']}" target="_blank" class="ns-text-color-gray">{$copyright['bottom_info']['copyright_companyname']}</a>
+    {else/}
+        <a href="http://www.niushop.com.cn" target="_blank" class="ns-text-color-gray">山西牛酷信息科技有限公司&nbsp;提供技术支持</a>
+    {/notempty}
+{else/}
+    <img src="WAP_IMG/logo_copy.png">
+    <a href="http://www.niushop.com.cn" target="_blank" class="ns-text-color-gray">山西牛酷信息科技有限公司&nbsp;提供技术支持</a>
+{/if}
+</div>
+{/block}
+{block name="script"}
+<script src="WAP_JS/jquery.liMarquee.js"></script>
+<script>
+var lang_index = {
+	activity_over : "{:lang('activity_over')}",
+	days : "{:lang('days')}"
+};
+</script>
+<script src="WAP_JS/index.js"></script>
+{/block}

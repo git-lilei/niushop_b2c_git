@@ -1,0 +1,83 @@
+{extend name="$base" /}
+{block name="resources"}
+<style>
+.table-logo{
+    display: inline-block;
+    width: 40px;
+    float: left;
+    padding: 8px;
+}
+.table-pay{
+    display: block;
+    width: 120px;
+    overflow: hidden;
+    margin-top: 9px;
+}
+.table-desc{
+    display: inline-block;
+    color: rgba(179, 178, 178, 0.89);
+}
+.pay-start,.pay-close{margin-left:0px!important;}
+</style>
+{/block}
+{block name="main"}
+<table class="table-class">
+	<colgroup>
+		<col width="83%">
+		<col width="10%">
+	</colgroup>
+	<thead>
+		<tr class="table-title" style="background: white;z-index: 10;border: 1px solid #E3E3E3;">
+			<th class="tal">支付方式</th>
+			<th style="text-align: center;">操作</th>
+		</tr>
+	</<thead>
+	<tbody>
+		{volist name="pay_list" id="pay_obj"}
+		<tr>
+			<td>
+				<div class="table-logo"><img src="__ROOT__/{$pay_obj.logo}"/></div>
+				<span class="table-pay">{$pay_obj.pay_name}</span>
+				<span class="table-desc">{$pay_obj.desc}</span> 
+			</td>
+			<td style="text-align: center;line-height:59px;">
+				<a href="{$pay_obj['url']}">配置</a>
+			</td>
+		</tr>
+		{/volist}
+	</tbody>
+</table>
+<script>
+function set_status(type,event){
+	var status = $(event).attr('status');
+	if(status == 1){
+		var change_status = 0;
+	}
+	else{
+		var change_status = 1;
+	}
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/config/setstatus')}",
+		data : {
+			'is_use' : change_status,
+			'type' : type
+		},
+		success : function(data) {
+			if (data["code"] > 0) {
+				if(status == 1){
+					$(event).attr('status', 0);
+					$(event).find('img').attr('src', 'ADMIN_IMG/un_checked.png');
+				}else{
+					$(event).attr('status', 1);
+					$(event).find('img').attr('src', 'ADMIN_IMG/checked.png');
+				}
+				showTip(data["message"],"success");
+			}else{
+				showTip(data["message"],"error");
+			}
+		}
+	});
+}
+</script>
+{/block}

@@ -1,0 +1,37 @@
+@charset "utf-8";
+*{padding: 0; margin: 0;}
+.body{background: #f0f2f5; min-height: 100%; font-family: PingFangSC-Light, 'helvetica neue', arial, 'hiragino sans gb', 'microsoft yahei ui', 'microsoft yahei', simsun, sans-serif;}
+.clear:after{content: ""; clear: both; display: table;}
+/*顶部*/
+.header{position: relative; overflow: hidden; box-shadow: 0 2px 3px #e2e9ee; background: #fff;}
+.header .container{margin: 0 auto; width: 1200px;}
+.header .container .logo{margin: 20px 0; width: 280px;}
+.header .container .logo img{max-width: 100%; vertical-align: middle;}
+.pay-body{width: 1200px; min-height: 400px; margin: 20px auto; background: #fff;}
+.pay-body .payment-wrap{padding: 40px; overflow: hidden;}
+.payment-top{padding-bottom: 10px;}
+.payment-left{float: left; height: 30px; line-height: 30px;}
+.payment-top .payment-left .payment-tit{font-size: 14px; margin-top: 5px;}
+.payment-right{float: right; height: 30px; line-height: 30px;}
+.payment-top .payment-right .cost{font-size: 14px; margin-top: 5px;}
+.payment-top .payment-right .cost .price{}
+.payment-top .payment-right .cost .price .unit-icon{vertical-align: top; font-size: 16px; line-height: 20px; margin-right: 5px;}
+.payment-top .payment-right .cost .price em{font-size: 30px; line-height: 30px; font-weight: 400; font-style: normal;}
+.payment-mod{padding: 15px;margin-top: 10px}
+.payment-mod .payment-left label span{font-size: 14px; margin-right: 10px;}
+.payment-mod .payment-left span.payment-balance-num{font-size: 14px;}
+.payment-mod .payment-right .cost{font-size: 14px; margin-top: 5px;}
+.payment-mod .payment-right .cost .price .unit-icon{vertical-align: middle; font-size: 16px; line-height: 20px; margin-right: 5px;}
+.payment-mod .payment-right .cost .price em{font-size: 14px; line-height: 14px; vertical-align: middle; font-weight: bold; font-style: normal;}
+.payment-icon-list{margin-top: 15px; background-color: #fff; padding: 20px; border: 1px solid;}
+.payment-icon-list ul{padding: 10px 0;}
+.payment-icon-list ul li{border-radius: 2px; display: inline-block; position: relative; border-left: 1px solid; padding: 0 15px;}
+.payment-icon-list ul li:first-child{border-left: none;}
+.payment-icon-list ul li img{border-style: none;}
+.payment-icon-list p.payment-icon-txt{font-size: 12px;}
+.payment-checkbox{width: 16px; height: 16px; cursor: pointer; vertical-align: middle; outline: 0;background-image: url(../../img/pay/pay.png); -webkit-appearance: none; border: 0; background-position: -2px -1px; margin-right: 5px;}
+.payment-checkbox:checked{background-position: -74px -1px;}
+.payment-checkbox[disabled]{background-position: -92px -1px;}
+.payment-checkbox[disabled]:checked{background-position: -110px -1px;}
+.payment-checkbox[disabled]:hover{cursor: not-allowed;}
+.payment-btn{height: 33px; min-width: 24px; padding: 0 20px; border: 1px solid; border-radius: 2px;color: #fff; font-size: 14px; line-height: 33px; text-align: center; display: inline-block; cursor: pointer; outline: 0; float: right; margin-top: 10px; text-decoration: none;}

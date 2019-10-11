@@ -1,0 +1,58 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt><span class="color-red">*</span>商品标签名称：</dt>
+		<dd>
+			<p><input id="group_name" type="text" class="input-common"></p>
+			<p class="error">请输入商品标签名称</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>排序：</dt>
+		<dd>
+			<p><input id="sort" type="number" class="input-common harf"></p>
+			<p class="error">请输入序号</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>标签图片：</dt>
+		<dd>
+			<div class="upload-btn-common">
+				<div>
+					<input class="input-file" name="file_upload" id="uploadGroup_pic" type="file" onchange="imgUpload(this);" title="上传">
+					<input type="hidden" id="group_pic" value="" />
+				</div>
+				<input type="text" id="text_group_pic" class="input-common" readonly="readonly" value="" />
+				<em>上传</em>
+				
+				<img id="preview_group_pic" src="__STATIC__/blue/img/upload-common-select.png" data-html="true" data-container="body" data-placement="top" data-trigger="manual"/>
+
+			</div>
+			<p class="hint">
+				<span>建议使用<i class="important-note">宽200</i>像素-<i class="important-note">高60</i>像素内的<i class="important-note">GIF</i>或<i class="important-note">PNG</i>透明图片；点击下方"保存"按钮后生效。</span>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>商品标签描述：</dt>
+		<dd>
+			<p><textarea class="textarea-common" id="group_dec"></textarea></p>
+			<p class="error">请输入商品标签描述</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="addGoodsGroupAjax();">保存</button>
+			<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);">返回</button>	
+		</dd>
+	</dl>
+</div>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script src="ADMIN_JS/goods/goods_group_edit.js"></script>
+{/block}

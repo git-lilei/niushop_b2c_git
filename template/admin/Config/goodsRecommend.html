@@ -1,0 +1,299 @@
+{extend name="$base" /}
+{block name="resources"}
+<style  type="text/css">
+input[type="radio"]{margin-top:6px;}
+.total{width: 100%;overflow: hidden;}
+.total label {float:left;text-align: left;font-size: 15px; width:10%;overflow:hidden;color:#666;font-weight: normal;line-height: 32px;margin-bottom:0px}
+.total label input {margin: 0 5px 0 0;}
+.mTop{margin-top: 5px;}
+.goods-item {
+    width: 7%;
+    float: left;
+    margin-left: 1%;
+}
+.goods-img {
+	width: 100%;
+	height: 70px;
+}
+.goos-title{
+	float:left;
+	margin-left:10px;
+}
+.goods-item {
+	position: relative;
+    border: 1px solid #d3d3d3;
+	margin-bottom:20px;
+    overflow: hidden;
+}
+.goods-name {
+    position: absolute;
+    bottom: 0;
+    background: rgba(0,0,0,.5);
+    color: #fff;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+	height: 27px;
+    line-height: 30px;
+	padding: 0 10px;
+    box-sizing: border-box;
+}
+.clear {
+	clear: both;
+}
+.goods-list {
+	float:left;
+	width: 1000px;
+	margin-top: 10px;
+}
+.CommodityMum{
+	margin-left:25px;
+	margin-right:15px;
+	border-left:1px solid #e1e7f1; 
+	padding-left:15px;
+}
+.CommoditySource{
+	padding-left:15px; 
+	border-left:1px solid #e1e7f1;
+	margin-left:15px;
+}
+.CommodityEditor{
+	position: absolute;
+	font-size: 12px;
+	right: 65px;
+	border: none;
+	background-color: #fff;
+	color: #00a0de;
+}
+.Delete{
+	position: absolute;
+	font-size: 12px;
+	right: 20px;
+	border: none;
+	background-color: #fff;
+	color: #ccc;
+}
+.upload-btn-common>em {
+	line-height: 30px;
+	height: 30px;
+}
+</style>
+{/block}
+{block name="main"}
+<div class="space-10"></div>
+<div class="set-style">
+	<dd>
+		<button class="btn-common" onclick="open_Goods_Select_List()">添加</button>
+		<span class="select-tip"></span>
+		<p class="error"></p>
+	</dd>
+</div>
+<div class="set-style">
+	<div class='select-goods'>
+		<!-- 所有决定商品弹框内容的条件和存放商品id的隐藏域 -->
+		<span id="goods-condition">
+			<input type="hidden" name="type" value="2"/>
+			<input type="hidden" name="stock" value="1"/>
+			<input type="hidden" name="goods_type" value="1"/>
+			<input type="hidden" name="is_have_sku" value="1"/>
+			<input type="hidden" name="state" value="1"/>
+			<input type="hidden" id="goods_id_array" value="">
+			<input type="hidden" id="range_type" value="">
+			<input type="hidden" id="is_show_select" value="1">
+			<input type="hidden" id="action" value="">
+		</span>
+		{include file="admin/Config/goodsSelectDialog" /}
+	</div>
+</div>
+{foreach $recommend_list['data'] as $k => $v}
+<div class="recommend_list" style="border:1px solid #e1e7f1; margin-top:10px;;">
+	<dd style="border-bottom:1px solid #e1e7f1; background-color:#f3f7fd; margin-left:0;padding:6px 0; position:relative;">
+		<span style="border-left:3px solid #00a0de;padding-left:3px;margin-left:15px;">{$v['recommend_name']}</span>
+		<span class="CommodityMum">商品数量：
+			{if $recommend_list['data'] != '' && $v['type'] == 7}
+				{$v['goods_list']|count}
+			{else /}
+				{$v['show_num']}
+			{/if}
+		</span>
+		<span class="CommoditySource">商品来源:</span>
+		<span style="background-color:#e3e9f3;font-size:12px; margin-left:3px;border-radius:3px;padding:1px 4px;color:#a5a5a5;">{$v['name']}</span>
+		{if $v['type'] == 7}
+		<button class="CommodityEditor"  data-recommend-id="{$v['id']}" data-type-name="" data-id="{$v['alis_id']}" data-num="{$v['show_num']}" data-name="{$v['recommend_name']}" goods_id_array="{$v['goods_id_array']}" type="{$v['type']}" onclick="open_Goods_Select_List(this)">商品编辑</button>
+		{elseif $v['type'] == 2 /}
+		<button class="CommodityEditor"  data-recommend-id="{$v['id']}" data-type-name="" data-id="{$v['alis_id']}" data-num="{$v['show_num']}" data-name="{$v['recommend_name']}" goods_id_array="" type="{$v['type']}" onclick="open_Goods_Select_List(this)" type="{$v['type']}" onclick="open_Goods_Select_List(this)">商品编辑</button>
+		{else /}
+		<button class="CommodityEditor"  data-recommend-id="{$v['id']}" data-type-name="" data-id="{$v['alis_id']}" data-num="{$v['show_num']}" data-name="{$v['recommend_name']}" goods_id_array="" type="{$v['type']}" onclick="open_Goods_Select_List(this)">商品编辑</button>
+		{/if}
+		<button class="Delete" data-recommend-id="{$v['id']}" data-type-name="" data-id="{$v['alis_id']}" data-num="{$v['show_num']}" data-name="{$v['recommend_name']}" goods_id_array="" type="{$v['type']}" onclick="deleteRecommend('{$v['id']}')">删除</button>
+		
+	</dd>
+	<dl>
+		<dd style="margin-left: 31px;margin-top:20px;">
+			<span style="vertical-align:top;">条幅： &nbsp;&nbsp;</span>
+			<div style="display:inline-block;";>
+				<div class="upload-btn-common" >
+					<div>
+						<input class="input-file" data-id="{$v['id']}" name="file_upload" data-k="{$k}" id="recommend_img_{$k}" type="file" onchange="imgUpload(this);">
+						<input type="hidden" class="default_recommend_img" id="default_recommend_img_{$k}" value="{$v.img}" />
+					</div>
+					<input type="text" id="text_default_recommend_img_{$k}" class="input-common" readonly="readonly" value="{if condition="$v['img']"}{$v.img}{/if}" />
+					<em>上传</em>
+					<img id="preview_default_recommend_img_{$k}" src="__STATIC__/blue/img/upload-common-select.png" {if condition="$v.img"}data-src="{:__IMG($v.img)}"{/if} data-html="true" data-container="body" data-placement="top" data-trigger="manual"/>
+				</div>
+				<p class="hint">
+					<span>建议使用<i class="important-note">宽280</i>像素-<i class="important-note">高50</i>像素内的<i class="important-note">GIF</i>或<i class="important-note">PNG</i>透明图片</span>
+				</p>
+			</div>
+			
+		</dd>
+	</dl>
+	<span class="goos-title">商品内容：</span>
+	<div class="goods-list">
+		{foreach $v['goods_list'] as $key => $val}
+		<div class="goods-item"  title="{$val['goods_name']}">
+			<img class="goods-img" src="{:__IMG($val['pic_cover_small'])}" onerror="javascript:this.src='ADMIN_IMG/recommend_default.png';">
+			<div class="goods-name">{$val['goods_name']}</div>
+		</div>
+		{/foreach}
+	</div>
+	<div class="clear"></div>
+</div>
+
+{/foreach}
+<input type="hidden" id="hidden_recommend_id">
+<input type="hidden" id="coupon_type_id" value="{$coupon_type_info.coupon_type_id}"/>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script>
+var flag = false;//防止重复提交
+function save() {
+	var type = $('input[name="select-type"]:checked').val();
+	var input_id = $('input[name="select-type"]:checked').attr('id');
+	var id = $('.'+input_id).find('select').val();
+	var num = $('.show-num input').val();
+	var hidden_recommend_id = $('#hidden_recommend_id').val();
+	var recommend_name = $('#recommend_name').val();
+	if(type == 4) {
+		type = $('#goods-recommend').val();	
+	}
+	if(type == 2) {
+		var category_ids = $(".goods-category-container .select-category").attr('data-value');
+		var	category_id_arr = category_ids != undefined && category_ids != '' ? category_ids.split(',') : [];
+		var category_id_1 = category_id_arr[0] != undefined ? category_id_arr[0] : 0;
+		var category_id_2 = category_id_arr[1] != undefined ? category_id_arr[1] : 0;
+		var category_id_3 = category_id_arr[2] != undefined ? category_id_arr[2] : 0;
+		if(category_id_3 != 0){
+			id = category_id_3;
+		}else if(category_id_2 != 0) {
+			id = category_id_2;
+		}else if(category_id_1 != 0) {
+			id = category_id_1;
+		}
+	}
+	
+	if(type == 7) {
+		var goods_id_array = $("#goods_id_array").val();
+		data = {
+			'type' : type,
+			'alis_id' : goods_id_array,
+			'recommend_id' : hidden_recommend_id,
+			'recommend_name' : recommend_name,
+		} 
+	}else if(type == 4 || type == 5 || type == 6) {
+		data = {
+				'type' : type,
+				'alis_id' : 0,
+				'num' : num,
+				'recommend_name' : recommend_name,
+				'recommend_id' : hidden_recommend_id
+			} 
+	}else {
+		data = {
+			'type' : type,
+			'alis_id' : id,
+			'num' : num,
+			'recommend_name' : recommend_name,
+			'recommend_id' : hidden_recommend_id
+		} 
+	}
+	if(flag) return;
+	flag = true;
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/Config/goodsRecommend')}",
+		data : data,
+		success : function(data) {
+		 	layer.close(layer_index);
+			if (data["code"] > 0) {
+				showMessage('success', data["message"]);
+				location.reload();
+			}else{
+				showMessage('error', data["message"]);
+				flag = false;
+			}
+		}
+	});
+}
+
+function deleteRecommend(id){
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/Config/deleteGoodsRecommend')}",
+		data : {'id' : id},
+		success : function(data) {
+		 	layer.close(layer_index);
+			if (data['code'] > 0) {
+				showMessage('success', data["message"]);
+				location.reload();
+			}else{
+				showMessage('error', data["message"]);
+				flag = false;
+			}
+		}
+	});
+}
+
+function imgUpload(event) {
+//图片上传
+	var fileid = $(event).attr("id");
+	var id = $(event).next().attr("id");
+	var data = { 'file_path' : "config" };
+	uploadFile({
+		url: __URL(ADMINMAIN + '/config/uploadimage'),
+		fileId: fileid,
+		data : data,
+		callBack: function (res) {
+			if(res.code){
+				var k = $(event).attr('data-k');
+				var id = $(event).next().attr("id");
+				$("#default_recommend_img_" + k).val(res.data.path);
+				$("#text_default_recommend_img_" + k).val(res.data.path);
+				$("#preview_default_recommend_img_"+ k).attr("data-src",__IMG(res.data.path));
+				var id = $(event).attr('data-id');
+				saveRecommendImg(id, res.data.path);
+			}else{
+				showTip(res.message,"error");
+			}
+		}
+	});
+}
+
+//条幅保存
+function saveRecommendImg(id, img) {
+	$.ajax({
+		type:"post",
+		url : "{:__URL('ADMIN_MAIN/config/saveRecommendImg')}",
+		data : { "id" : id, 'img' : img },
+		success : function(data){
+			if(data['code'] > 0){
+				showTip(data.message,"success");
+			}else{
+				showTip(data.message,"error");
+			}
+		}
+	})
+}
+</script>
+{/block}

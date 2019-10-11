@@ -1,0 +1,62 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<script src="ADMIN_JS/material_managedialog.js"></script>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>选择群组：</dt>
+		<dd>
+			<label class="radio inline normal">
+				<i class="radio-common selected">
+					<input type="radio" name="group" value="1" checked="checked">
+				</i>
+				<span>全部</span>
+			</label>
+			<label class="radio inline normal">
+				<i class="radio-common">
+					<input type="radio" name="group" value="0">
+				</i>
+				<span>指定群组</span>
+			</label>
+			<p class="hint"></p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>群发消息：</dt>
+		<dd>
+			<textarea id="send_message" class="textarea-common" maxlength="50"></textarea>
+			<p class="hint"></p>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="setMessageAjax();">保存</button></dd>
+	</dl>
+</div>
+<script>
+function setMessageAjax(){
+	var group = $("input[name='group']:checked").val();
+	var send_message = $("#send_message").val();
+	$.ajax({
+		type:"post",
+		url : "{:__URL('ADMIN_MAIN/Wchat/sendGroupMessage')}",
+		data : {
+			"group" : group,
+			"send_message" : send_message,
+		},
+		success : function(data){
+			if(data['code'] > 0){
+				showTip(data["message"],'success');
+				location.href=__URL("ADMIN_MAIN/Wchat/sendGroupMessage");
+			}else{
+				showTip(data["message"],'error');
+			}
+		}
+	})
+}
+</script>
+{/block}

@@ -1,0 +1,129 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/goods_combo.css">
+{/block}
+{block name="main"}
+{php}
+	$combo_package = api("NsCombopackage.ComboPackage.comboPackageGoodsQuery",["goods_id"=>$goods_id]);
+	$combo_package = $combo_package['data'];
+{/php}
+{notempty name="$combo_package"} 
+<article class="combo-package">
+	<div class="combo-package-list">
+		{foreach name="$combo_package" item="vo" key="k"}
+		<div class="combo-package-content" data-id="{$vo.id}" data-package-price = "{$vo.combo_package_price}" data-original-price = "{$vo.original_price}" data-save-the-price = "{$vo.save_the_price}">
+			<div class="combo-package-name ns-text-color-black ns-bg-color-gray-fadeout-60">
+				<div class="radio">
+					<input type="radio" name="combo-item" {if condition="$k == 0"}checked{/if} value="{$vo.id}">
+					<label>
+						<span>{$vo.combo_package_name}</span>
+						<span>{:lang("package_price")}：{$vo.combo_package_price}</span>
+					</label>
+				</div>
+			</div>
+			<div class="goods-info ns-border-color-gray-fadeout-50" data-goods-id="{$vo.main_goods.goods_id}">
+				<div class="goods-img">
+					<a href="{:__URL('APP_MAIN/goods/detail','goods_id='.$vo['main_goods']['goods_id'])}">
+						<img src="{:__IMG($vo.main_goods.pic_cover_mid)}" class="lazy_load pic" >
+					</a>
+				</div>
+				<div class="data-info">
+					<p class="goods-name">{$vo.main_goods.goods_name}</p>
+					<div class="price ns-text-color">￥{$vo.main_goods.price}</div>
+					{if condition="$vo['main_goods'] && count($vo['main_goods']['sku_list']) > 1"}
+					<p class="select-sku ns-text-color-gray" onclick="selectSku({$vo.main_goods.goods_id},{$vo.id})">
+						<span>已选规格：{$vo['main_goods']['sku_list'][0]['sku_name']}</span>
+						<i class="fa fa-angle-right fa-lg"></i>
+					</p>
+					{/if}
+				</div>
+				<input type="hidden" data-goods-id="{$vo['main_goods']['sku_list'][0]['goods_id']}" data-stock="{$vo['main_goods']['sku_list'][0]['stock']}" data-price="{$vo['main_goods']['sku_list'][0]['price']}" value="{$vo['main_goods']['sku_list'][0]['sku_id']}" data-sku-name="{$vo['main_goods']['sku_list'][0]['sku_name']}">
+			</div>
+			{foreach name="$vo['goods_array']" item="to"}
+			<div class="goods-info ns-border-color-gray-fadeout-50 " data-goods-id="{$to['goods_id']}">
+				<div class="goods-img">
+					<a href="{:__URL('APP_MAIN/goods/detail','goods_id='.$to['goods_id'])}">
+						<img src="{:__IMG($to.pic_cover_mid)}" class="lazy_load pic" >
+					</a>
+				</div>
+				<div class="data-info">
+					<p class="goods-name">{$to.goods_name}</p>
+					<div class="price ns-text-color">￥{$to.price}</div>
+					{if condition="count($to['sku_list']) > 1"}
+					<p class="select-sku" onclick="selectSku({$to['goods_id']},{$vo.id})">
+						<span>已选规格：{$to['sku_list'][0]['sku_name']}</span>
+						<i class="fa fa-angle-right fa-lg"></i>
+					</p>
+					{/if}
+				</div>
+				<input type="hidden" value="{$to['sku_list'][0]['sku_id']}" data-goods-id="{$to['goods_id']}" data-stock="{$to['sku_list'][0]['stock']}" data-price="{$to['sku_list'][0]['price']}" data-sku-name="{$to['sku_list'][0]['sku_name']}">
+			</div>
+			{/foreach}
+		</div>
+		{/foreach}
+	</div>
+	
+	<footer>
+		<div class="combo-package-info">
+			<p>
+				<span class="package-price">{:lang("package_price")}：</span>
+				<b class="ns-text-color" id="package_price">￥0.00</b>
+			</p>
+			<p>
+				<span class="original-price">{:lang("original_price")}</span>
+				<del id="original_price">￥0.00</del>
+		        <span class="save-the-price" id="save_the_price">{:lang("save_the_price")}￥0.00</span>
+			</p>
+		</div>
+		<button type="button" class="btn primary" id="js-immediate-purchase">{:lang("goods_buy_now")}</button>
+	</footer>
+	<div></div>
+	
+	<div class="widgets-cover">
+		<div class="cover-content">
+			<div class="sku-wrap">
+				<div class="header">
+					<div class="img-wrap">
+						<img alt="选中的产品图" class="js-thumbnail">
+					</div>
+					<div class="main">
+						<div class="price ns-text-color">￥0.00</div>
+						<div class="stock">{:lang('goods_stock')}0{if condition ="empty($goods_detail['goods_unit'])"}{:lang('goods_piece')}{else/}{$goods_detail['goods_unit']}{/if}</div>
+						<div class="sku-info">请选择：<span>-</span></div>
+					</div>
+					<a class="sku-close"><img src="WAP_IMG/goods/close.png"/></a>
+				</div>
+				<div class="body">
+					<hr class="ns-border-color-gray">
+					<div class="body-item">
+						<ul class="sku-list-wrap"></ul>
+					</div>
+				</div>
+				<div class="footer ns-bg-color">{:lang('goods_determine')}</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="js-sku-list"></div>
+	<input type="hidden" id="hidden_point_exchange_type">
+	<input type="hidden" id="hidden_point_exchange">
+	
+</article>
+{else/}
+<script>history.back();</script>
+{/notempty}
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script>
+var combo_lang = {
+	homebuying_restrictions : "{:lang('homebuying_restrictions')}",
+	goods_integral : "{:lang('goods_integral')}",
+	left : "{:lang('left')}",
+	goods_stock : "{:lang('goods_stock')}",
+	goods_piece : '{if condition ="empty($goods_detail['goods_unit'])"}{:lang('goods_piece')}{else/}{$goods_detail['goods_unit']}{/if}',
+	save_the_price : '{:lang("save_the_price")}'
+};
+</script>
+<script src="WAP_JS/goods_combo.js"></script>
+{/block}

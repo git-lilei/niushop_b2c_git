@@ -1,0 +1,68 @@
+{extend name="$member_base" /}
+{block name="right_main"}
+<link rel="stylesheet" href="WEB_CSS/member_withdrawal.css">
+{php}
+$balance_withdraw_list = api("System.Member.withdrawRecordList", ['page_index' => $page_index, 'page_size' => $page_size, 'order' => 'ask_for_date desc']);
+$balance_withdraw_list = $balance_withdraw_list['data'];
+$total_count = $balance_withdraw_list['total_count'];
+{/php}
+<div class="member-main">
+	<div class="main-top clearfix">
+		<h3 class="title pull-left">提现记录</h3>
+	</div>
+	<table class="table table-borderless withdrawal-record">
+		<colgroup>
+            <col width="20%">
+            <col width="10%">
+            <col width="15%">
+          	<col width="15%">
+            <col width="10%">
+            <col width="20%">
+          	<col width="10%">
+        </colgroup>
+		<thead>
+			<tr>
+	      		<th class="align-center">提现流水号</th>
+	      		<th class="align-center">账号类型</th>
+	      		<th class="align-center">提现账户</th>
+	      		<th class="align-center">手机号</th>
+	      		<th class="align-right">金额</th>
+	      		<th class="align-center">提现时间</th>
+	      		<th class="align-center">提现状态</th>
+		    </tr>
+	  	</thead>
+		<tbody>
+			{notempty name="$balance_withdraw_list['data']"}
+				{foreach name="$balance_withdraw_list['data']" item="vo"}
+				<tr>
+					<td class="align-center">{$vo.withdraw_no}</td>
+					<td class="align-center">{$vo.bank_name}</td>
+					<td class="align-center">{$vo.account_number}</td>
+					<td class="align-center">{$vo.mobile}</td>
+					<td class="align-right">{$vo.cash}</td>
+					<td class="align-center">{$vo.ask_for_date|date="Y-m-d H:i:s",###}</td>
+					<td class="align-center">{$vo.status}</td>
+				</tr>
+				{/foreach}
+			{else/}
+			<tr>
+				<td colspan="7" class="align-center">当前还没有提现记录！</td>
+			</tr>
+			{/notempty}
+		</tbody>
+	</table>
+</div>
+
+{if condition="$total_count>0"}
+<ul class="pager" data-ride="pager" data-elements="prev,nav,next,total_page_text,goto" data-rec-per-page="{$page_size}" data-page="{$page_index}" data-rec-total="{$total_count}" id="myPager"></ul>
+{/if}
+{/block}
+{block name="script"}
+<script>
+$('#myPager').pager({
+	linkCreator: function(page, pager) {
+		return __URL("SHOP_MAIN/member/withdrawal?page="+page);
+	}
+});
+</script>
+{/block}

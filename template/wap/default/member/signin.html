@@ -1,0 +1,98 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/member_signin.css">
+{/block}
+{block name="main"}
+{php}
+	$flag = request()->get('flag', '');
+	$url = request()->get('url', '');
+	
+	$isSign = api("NsMemberSign.MemberSign.isSignIn");
+	$isSign  = $isSign['data'];
+	
+	$sign_records = api("NsMemberSign.MemberSign.signInRecords");
+	$records = $sign_records['data'];
+	
+	$mon_t = date("t");
+	$year =  date("Y");
+	$month =  date("m");
+	$day = date("d");
+	
+	$BeginDate=date('Y-m-01', strtotime(date("Y-m-d")));
+	$week= Date("w", strtotime(Date($BeginDate))) ;
+
+	$sign_config = api("NsMemberSign.MemberSign.getSignInConfig");
+	$sign_config = $sign_config['data'];
+	
+{/php}
+<div class="wrap">
+	<div class="signin-top">
+		{if condition="$isSign eq 0"}
+		<div>签到</div>
+		{else/}
+		<div class="signined_statu ns-bg-color-gray-shade-20">已签到</div>
+		{/if}
+	</div>
+	<div class="signin-content">
+		<p class="date">{$year}年{$month}月</p>
+		{if condition="($sign_config['sign_integral'] neq 0 && $sign_config.integral_info['sign_point'] gt 0) || ($sign_config['sign_coupon'] neq 0 && !empty($sign_config.coupon_info['coupon_name']))"}
+		<p class="reward ns-text-color-gray">
+			{if condition="$sign_config['sign_integral'] neq 0 && $sign_config.integral_info['sign_point'] gt 0"}
+				签到奖励 <strong class="ns-text-color">{$sign_config.integral_info['sign_point']}积分</strong>&nbsp;
+			{/if}
+			{if condition="$sign_config['sign_coupon'] neq 0 && !empty($sign_config.coupon_info['coupon_name'])"}
+				 赠送一张<strong class="ns-text-color">{$sign_config.coupon_info['coupon_name']}</strong>
+			{/if}
+		</p>
+		{/if}
+		<ul class="week ns-bg-color-gray-fadeout-60">
+			<li class="ns-text-color-gray">日</li>
+			<li class="ns-text-color-gray">一</li>
+			<li class="ns-text-color-gray">二</li>
+			<li class="ns-text-color-gray">三</li>
+			<li class="ns-text-color-gray">四</li>
+			<li class="ns-text-color-gray">五</li>
+			<li class="ns-text-color-gray">六</li>
+		</ul>
+		<ul class="day">
+			{for start="0" end="$week" step="1" name="i"}
+				<li class="ns-text-color-gray"></li>
+			{/for}
+			{foreach name="records" item="vo" key="k"}
+				{if condition="$vo gt 0"}
+					<li class="ns-text-color-gray"><div class="signed"><i class="fa fa-check-circle ns-text-color"></i></div><p>已签到</p></li>
+				{else/}
+					{if condition=" $day eq $k"}
+						{if condition="$vo neq 0"}
+						<li class="ns-text-color-gray"><div class="signed"><i class="fa fa-check-circle ns-text-color"></i></div><p>已签到</p></li>
+						{else/}
+						<li class="curr-day ns-text-color-gray"><div class="curr-tips ns-bg-color">{$k}</div></li>
+						{/if}
+					{else/}
+					<li class="ns-text-color-gray">{$k}</li>
+					{/if}
+				{/if}
+			{/foreach}
+		</ul>
+	</div>
+	<div class="signin-rule ns-bg-color-lighten-20">活动规则</div>
+</div>
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script>
+$(function () {
+	$(".signin-top div").click(function () {
+		$(this).text("已签到").addClass("ns-bg-color-gray-shade-20");
+		$('.curr-day').html('').append('<div class="signed"><i class="fa fa-check-circle ns-text-color"></i></div><p>已签到</p>');
+		api("NsMemberSign.MemberSign.signIn",{},function (res) {
+			if(res.data > 0){
+				toast('签到成功');
+			}else{
+				toast(res.message);
+			}
+		})
+	});
+});
+</script>
+{/block}

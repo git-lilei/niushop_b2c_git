@@ -1,0 +1,67 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" href="WAP_CSS/goods_coupon_receive.css" />
+{/block}
+{block name="head"}{/block}
+{block name="main"}
+{php}
+	$coupon_type_id = request()->get('coupon_type_id', 0);
+	if(!empty($coupon_type_id)){
+		$info = api("System.Goods.getCoupon",["coupon_type_id"=>$coupon_type_id]);
+		$info = $info['data'];
+		if(!empty($info)){
+			$data = $info['data'];
+			$code_path = $info['path'];
+		}
+	}
+{/php}
+{notempty name="$info"}
+<section class="container">
+	<div class="content">
+		<div class="wx-code"><img src="{:__IMG($code_path)}"></div>
+		<div class="get-coupon">
+			<span >{$data['coupon_name']}</span><br>
+			<span class="ns-text-color coupon-price"><b>￥{$data['money']}</b></span><br>
+			<span class="coupon-name ns-text-color-gray">{if condition="$data['range_type'] eq 1"}全场产品可使用{else/}仅限购买部分商品{/if}(&nbsp;满{$data['at_least']}使用)</span><br>
+			<span class="get-span ns-bg-color " onclick="getcoupon({$data['coupon_type_id']})">领取</span>
+			<i class="ns-text-color-gray">注:扫描二维码或点击右上角进行分享</i>
+		</div>
+	</div>
+</section>
+{else/}
+<script>location.href = __URL(APPMAIN)</script>
+{/notempty}
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script>
+$(document).ready(function(){
+	var mobileratio = $(window).height();
+	$(".content").css({
+		height : mobileratio +'px',
+	});
+});
+//领取优惠券
+function getcoupon(coupon_type_id){
+	if(uid == ""){
+		location.href=__URL(APPMAIN+'/login/index');
+		return;
+	}
+	api("System.Goods.receiveGoodsCoupon",{ 'coupon_type_id' : coupon_type_id },function (res) {
+		if(res.code==0){
+			toast("恭喜您，领取成功");
+		}else{
+			if(res.data == "-2009"){
+				location.href=__URL(APPMAIN+'/login/index');
+			}else if(res.data == "-2010"){
+				toast("您已领取过，请勿重复领取");
+				$(".get-span").addClass("ns-bg-color-gray , ns-bg-color").text("您已领取过","warning");
+			}else{
+				toast(res.data["message"]);
+				$(".get-span").addClass("ns-bg-color-gray ").text(res.data["message"]);
+			}
+		}
+	});
+}
+</script>
+{/block}

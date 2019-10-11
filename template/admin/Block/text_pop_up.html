@@ -1,0 +1,92 @@
+<style>
+.text-pop-up .layui-layer-content{overflow: initial;}
+.text-pop-up .layui-form{padding: 10px;}
+.layui-input, .layui-select, .layui-textarea {
+    font-size: 12px;
+    height: 30px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+</style>
+<div class="layui-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label sm">文本</label>
+        <div class="layui-input-block">
+            <input type="text" name="title" {notempty name="$data"}value="{$data['value']}"{/notempty} required  lay-verify="text" placeholder="请输入文本内容" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label sm">链接地址</label>
+        <div class="layui-input-block">
+            <select name="text_link" lay-filter="text_link">
+                <option value="">请选择</option>
+                {foreach name="$diy_view_link" item="link"}
+                <option value="{$link['nav_url']}">{$link['nav_title']}</option>
+                {/foreach}
+                <option value="0" data-diy="diy">自定义链接</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item" style="margin-bottom: 0;">
+        <label class="layui-form-label sm"></label>
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="text_save">确定</button>
+        </div>
+    </div>
+
+    {notempty name="$data && $data['link']"}
+    <input id="hidden_text_link" type="hidden" value="{$data['link']}">
+    {/notempty}
+</div>
+<script>
+layui.use('form', function(){
+    var form = layui.form;
+    //设置选中链接地址
+    if ($("#hidden_text_link").length>0 && $("#hidden_text_link").val() != "") {
+        if ($(".text-pop-up select[name='text_link'] option[value='" + $("#hidden_text_link").val() + "']").text() != "") {
+            $(".text-pop-up select[name='text_link'] option[value='" + $("#hidden_text_link").val() + "']").attr("selected", "selected");
+        } else {
+            $(".text-pop-up select[name='text_link'] option[data-diy]").attr("selected", "selected");
+        }
+    }
+
+    form.render();
+
+    form.verify({
+        text: function(value, item){ //value：表单的值、item：表单的DOM对象
+            if($.trim(value).length == 0){
+                return '文本内容不能为空';
+            }
+        }
+    });
+
+    form.on('select(text_link)', function(data){
+
+        if($(data.elem).find("option[data-diy]:selected").text()){
+
+            layer.prompt(function(value, index, elem){
+                if(/^(http|https)\S+$/.test(value)){
+                    $(".text-pop-up select[name='text_link'] option[data-diy]").attr("value",value);
+                    form.render("select");
+                    layer.close(index);
+                }else{
+                    layer.msg("链接地址格式错误");
+                }
+            });
+        }
+    });
+
+    form.on('submit(text_save)', function(data){
+        var obj = {
+            value : data.field.title,
+            link : data.field.text_link
+        };
+
+        block.setData(obj);
+        layer.close(block.layer_open_index);
+        return false;
+    });
+});
+</script>

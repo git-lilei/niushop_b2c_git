@@ -1,0 +1,106 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/distribution_apply_promoter.css">
+{/block}
+{block name="main"}
+<div class="apply-promoter">
+	{if condition="$info['promoter_info'] neq '' and $reapply eq 0"}
+		{if condition="$info['promoter_info']['is_audit'] eq 0"/}
+			 <div class="frog ns-text-color-gray">
+			    <img src="WAP_IMG/distribution/agent_apply.png" class="w107">{:lang('申请正在审核中......')}
+			</div>
+			<a href="javascript:location.href='{:__URL('APP_MAIN/member/index')}'" class="btn primary">{:lang('返回会员中心')}</a>
+		{elseif condition="$info['promoter_info']['is_audit'] eq -1"/}
+			 <div class="frog ns-text-color-gray">
+			    <img src="WAP_IMG/distribution/agent_apply.png" class="w107">{:lang('申请已被拒绝......')}
+			</div>
+		{elseif condition="$info['promoter_info']['is_audit'] eq 1"/}
+			<script type="text/javascript">
+			location.href = "{:__URL('APP_MAIN/distribution/index')}";
+			</script>
+		{/if}
+	{else/}
+		<p class="title-img"><img src="WAP_IMG/distribution/apply_promoter.png" /></p>
+	   	{if $promoter_level}
+		<div class="apply-content">
+			<p class="apply_title_one ns-text-color-black ns-border-color">{:lang('申请等级')} <span class="title_two ns-text-color-gray">{:lang('添加信息，立刻赚钱')}</span></p>
+		    <div class="content-wrap ns-border-color-gray">
+                <a href="javascript:;" class="ns-text-color-black ns-border-color-gray">
+	                {$promoter_level.level_name}（{:lang('消费满')}{$promoter_level.level_money}/{:lang('已消费')}{$shop_sale_money}）
+	                <i class="checkbox fa fa-check-circle ns-text-color"></i>
+	            </a>
+		     </div>
+		</div>
+		<div class="apply-content">
+			<p class="apply_title_one ns-text-color-black ns-border-color">{:lang('申请信息')}</p>
+			<div class="content-wrap ns-border-color-gray">
+	            <label class="weui_label ns-text-color-black">{:lang('店铺名称')}</label>
+                <input class="weui_input" type="text" id="promoter_shop_name" placeholder="{:lang('请输入店铺名称')}">
+			</div>
+		</div>
+		<a href="javascript:applyPromoter()" class="btn primary">{:lang('申请')}</a>
+		{else /}
+		<div class="no-apply">{:lang('暂无可申请等级')}</div>
+		{/if} 
+	{/if}
+		
+	{if $info['promoter_level']}
+	<div class="apply-content-desc ns-text-color-gray">
+		<div>{:lang('等级说明：')}</div>
+		{foreach $info['promoter_level'] as $k => $v}
+		<p>{$v['level_name']}:{:lang('需消费满')}{$v['level_money']},{:lang('本店销售佣金比率：')}{$v['level_0']}%,{:lang('给上级的佣金比率：')}{$v['level_1']}%,{:lang('给上上级的佣金比率：')}{$v['level_2']}%;</p>
+		{/foreach}
+	</div>
+	{/if}
+	
+	<div class="apply-content">
+		<div class="apply-title-item ns-border-color-gray-fadeout-50">
+			<i class="apply-add"></i>
+			<p class="item-title ns-text-color-black">{:lang('无门槛加入')}</p>
+			<p class="text12 ns-text-color-gray">{:lang('零成本、不囤货，轻松获利')}</p>
+		</div>
+		<div class="apply-title-item ns-border-color-gray-fadeout-50">
+			<i class="extension"></i>
+			<p class="item-title ns-text-color-black">{:lang('多维度推广')}</p>
+			<p class="text12 ns-text-color-gray">{:lang('商品、商铺、二维码任选')}</p>
+		</div>
+		<div class="apply-title-item ns-border-color-gray-fadeout-50">
+			<i class="team"></i>
+			<p class="item-title ns-text-color-black">{:lang('新增团队玩法')}</p>
+			<p class="text12 ns-text-color-gray">{:lang('支持线上组件团队，奖励更多')}</p>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script type="text/javascript">
+var is_repeat = true;
+function applyPromoter(){
+    if(Number('{$promoter_level[0]["level_money"]}')>Number("{$shop_sale_money}")){
+        toast("{:lang('您未满足消费条件!')}");
+        return false;
+    }
+    var promoter_shop_name = $("#promoter_shop_name").val();
+    if(promoter_shop_name==''){
+        toast("{:lang('名称不能为空')}");
+        $("#promoter_shop_name").focus();
+        return false;
+    }
+   if(is_repeat){
+        is_repeat = false;
+        api("System.Distribution.applyPromoter",{ "promoter_shop_name" : promoter_shop_name },function (res) {
+			if(res.data > 0){
+				toast("{:lang('已提交申请,等待审核')}");
+				location.reload();
+			}else{
+				is_repeat = true;
+				toast("{:lang('申请失败')}");
+			}
+		});
+   }else{
+      toast("{:lang('请勿重复提交申请！')}");
+   }
+}
+</script>
+{/block}

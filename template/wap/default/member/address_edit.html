@@ -1,0 +1,65 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/member_address_edit.css">
+{/block}
+{block name="main"}
+{php}
+	$id = request()->get('id', '');
+	$goods_id = request()->get('goods_id', '');
+	$bargain_id = request()->get('bargain_id', '');
+	$flag = request()->get('flag', '');
+	$pre_url = request()->get('url', '');
+	if($id) {
+		$address_info = api('System.Member.addressDetail', ['id' => $id]);
+		$address_info = $address_info['data'];
+	}
+{/php}
+<form class="form-info">
+	<div class="div-item ns-border-color-gray">
+		<span class="ns-text-color-black">{:lang('member_full_name')}</span>
+		<input type="text" placeholder="{:lang('please_enter_the_recipient_name')}" id="Name" value="{notempty name="$address_info"}{$address_info['consigner']}{/notempty}" />
+	</div>
+	<div class="div-item ns-border-color-gray">
+		<span class="ns-text-color-black">{:lang('member_phone')}</span>
+		<input type="text" placeholder="{:lang('member_enter_your_phone_number')}" id="Moblie" value="{notempty name="$address_info"}{$address_info['mobile']}{/notempty}" />
+	</div>
+	<div class="div-item ns-border-color-gray">
+		<span class="ns-text-color-black">{:lang('member_fixed_telephone')}</span> <input type="text" id="phone" placeholder="{:lang('member_fixed_telephone')}（选填）" value="{notempty name="$address_info"}{$address_info['phone']}{/notempty}" />
+	</div>
+	<div class="div-item ns-border-color-gray">
+		<span class="ns-text-color-black">{:lang('goods_province')}</span>
+		<select id="seleAreaNext" onchange="GetProvince();">
+			<option value="">{:lang('member_select_province')}</option>
+		</select>
+	</div>
+	<div class="div-item ns-border-color-gray">
+		<span class="ns-text-color-black">{:lang('city')}</span>
+		<select id="seleAreaThird" onchange="getSelCity();">
+			<option value="">{:lang('member_select_city')}</option>
+		</select>
+	</div>
+	<div class="div-item ns-border-color-gray">
+		<span class="ns-text-color-black">{:lang('county')}</span>
+		<select id="seleAreaFouth">
+			<option value="-1">{:lang('goods_select_district_or_county')}</option>
+		</select>
+	</div>
+	<div class="div-item ns-border-color-gray">
+		<span class="ns-text-color-black">{:lang('member_detailed_address')}</span>
+		<input type="text" placeholder="{:lang('please_enter_detailed_address')}" id="AddressInfo" value="{notempty name="$address_info"}{$address_info['address']}{/notempty}" />
+	</div>
+</form>
+<button onclick="saveAddress()" class="btn-save primary">{:lang('member_preservation')}</button>
+<input type="hidden" id="ref_url" value="{$pre_url}">
+<input type="hidden" id="hidden_flag" value="{$flag}" />
+<input type="hidden" id="hidden_goods_id" value="{$goods_id}" />
+<input type="hidden" id="hidden_bargain_id" value="{$bargain_id}" />
+<input type="hidden" id="adressid" value="{$address_info['id'] ? $address_info['id'] : ''}">
+<input type="hidden" id="provinceid" value="{$address_info['province'] ? $address_info['province'] : -1}">
+<input type="hidden" id="cityid" value="{$address_info['city'] ? $address_info['city'] : -1}">
+<input type="hidden" id="districtid" value="{$address_info['district'] ? $address_info['district'] : -1}">
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script src="WAP_JS/address.js"></script>
+{/block}

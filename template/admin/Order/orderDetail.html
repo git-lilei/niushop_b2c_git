@@ -1,0 +1,561 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/order.css">
+<style>
+.silider-express{padding-left: 10px;background: #fff;font-size: 12px;}
+.logistics-tracking{padding-left:5px;}
+.popover-content{width:700px;}
+.popover{max-width:900px;}
+.order_spec span{
+	padding:8px 15px;
+	margin-left:10px;
+	float:right;
+	border:1px solid #ccc;
+	cursor: pointer;
+}
+.order_spec span:hover{
+	border:1px solid #0689e1;
+}
+.order_spec{
+	overflow:hidden;
+	margin-top: 15px;
+    margin-right: 20px;
+}
+.ui-step-4 li{width:33.33%;}
+.virtual-goods-table{width:100%;text-align: center;}
+.virtual-goods-table th{font-weight: normal;padding:10px;border-bottom:1px solid #e5e5e5;}
+.virtual-goods-table td{padding:10px;}
+</style>
+{/block}
+{block name="main"}
+
+<div class="space-10"></div>
+<div class="mod-table">
+
+<div class="step-region clearfix">
+	<div class="info-region">
+		<div class="info-div">订单信息<span class="secured-title">担保交易</span></div>
+		<table class="info-table">
+		<tbody>
+			<tr><th>订单编号：</th><td>{$order['order_no']}</td></tr>
+			<tr><th>订单交易号：</th><td>{$order['out_trade_no']}</td></tr>
+			<tr><th>订单类型：</th><td>{$order['order_type_name']}</td></tr>
+			{if condition="$order['promotion_type'] > 0"}
+				<tr>
+					<th>营销活动：</th>
+					<td>{$order['promotion_type_name']}</td>
+				</tr>
+			{/if}
+			<tr><th>付款方式：</th><td>{$order['payment_type_name']}</td></tr>
+			<tr><th>买家：</th><td><span>{$order['user_name']}</span></td></tr>
+			<tr><th>买家IP：</th><td><span>{$order['buyer_ip']}</span></td></tr>
+		</tbody>
+		</table>
+		<div class="dashed-line"></div>
+		<table class="info-table">
+			<tbody>
+				{if condition="$order['order_pickup']['contact'] != ''"}
+					<tr>
+						<th>联系姓名：</th>
+						<td>{$order['order_pickup']['contact']}</td>
+					</tr>
+				{/if}
+				
+				{if condition="$order['order_pickup']['phone'] != ''"}
+					<tr>
+						<th>联系电话：</th>
+						<td>{$order['order_pickup']['phone']}</td>
+					</tr>
+				{/if}
+				
+				{if condition="$order['order_pickup']['picked_up_code'] != ''"}
+					<tr>
+						<th>自提码：</th>
+						<td>{$order['order_pickup']['picked_up_code']}</td>
+					</tr>
+				{/if}
+		
+				{if condition="$order['order_type']==6"}
+				<!--预售-->
+					{if condition="$order['order_status'] == 7"}
+					<tr>
+						<th>预计发货时间：</th>
+						<td>{:getTimeStampTurnTime($presell_order['presell_delivery_time'])}</td>
+					</tr>
+					{/if}
+				{/if}
+			
+				<tr><th>配送方式：</th><td>{$order['shipping_type_name']}&nbsp;&nbsp;{$order['shipping_company_name']}</td></tr>
+				{if $order['shipping_type'] eq 1}
+					<!-- 只有物流配送才有配送时间 -->
+				<tr>
+					<th>配送时间：</th>
+					{if condition="$order['shipping_time']>0"}
+					<td>{$order['shipping_time']|getTimeStampTurnTimeByYmd} {$order.distribution_time_out}</td>
+					{else/}
+					<td>工作日、双休日与节假日均可送货</td>
+					{/if}
+				</tr>
+				{elseif $order['shipping_type'] eq 3 && $order['shipping_status'] eq 1}
+					<!-- 本地配送 -->
+				<tr>
+					<th>配送信息：</th>
+					<td>
+						<p>配送单号：{$order['distribution_info']['express_no']}</p>
+						<p>配送人：{$order['distribution_info']['order_delivery_user_name']}</p>
+						<p>配送人手机号：{$order['distribution_info']['order_delivery_user_mobile']}</p>
+						<p>备注：{$order['distribution_info']['remark']} </p>
+					</td>
+				</tr>
+				{/if}
+				{switch name="$order.shipping_type"}
+					{case value="1"}
+					<!-- 物流 -->
+					<tr>
+						<th>收货信息：</th>
+						<td>
+							<p>{$order['receiver_name']}，{$order['receiver_mobile']}，{notempty name="$order['fixed_telephone']"}{$order['fixed_telephone']}，{/notempty} {$order['address']}&nbsp;{if condition="$order['receiver_zip']!=''"}&nbsp;，{$order['receiver_zip']}{/if}</p>
+						</td>
+					</tr>
+					{/case}
+					{case value="2"}
+					<!-- 自提 -->
+					<tr>
+						<th>自提地址：</th>
+						<td>
+							<p>{$order['order_pickup']['province_name']}&nbsp;{$order['order_pickup']['city_name']}&nbsp;{$order['order_pickup']['district_name']}&nbsp;{$order['order_pickup']['address']}</p>
+						</td>
+					</tr>
+					{/case}
+				{/switch}
+				
+				{if condition="!empty($order['buyer_invoice_info'])"}
+				<tr>
+					<th>发票抬头：</th>
+					<td>
+						{if condition="!empty($order['buyer_invoice_info'][0])"}
+						{$order['buyer_invoice_info'][0]}
+						{/if}
+					</td>
+				</tr>
+				<tr>
+					<th>纳税人识别号：</th>
+					<td>
+						{if condition="!empty($order['buyer_invoice_info'][2])"}
+						{$order['buyer_invoice_info'][2]}
+						{else/}
+						-
+						{/if}
+					</td>
+				</tr>
+				<tr>
+					<th>发票内容：</th>
+					<td>
+						{if condition="!empty($order['buyer_invoice_info'][1])"}
+						{$order['buyer_invoice_info'][1]}
+						{/if}
+					</td>
+				</tr>
+				{/if}
+				<tr>
+					<th>买家留言：</th>
+					{if condition="$order['buyer_message'] !=''"}
+					<td>{$order['buyer_message']}</td>
+					{else/}
+					<td>此订单没有留言</td>
+					{/if}
+				</tr>
+				{if condition="$order['seller_memo'] != ''"}
+					<tr>
+						<th>卖家备注：</th>
+						<td>{$order['seller_memo']}</td>
+					</tr>
+				{/if}
+			</tbody>
+		</table>
+		{if addon_is_exit('Nsfx')}
+			<div class="dashed-line"></div>
+		
+			<table class="info-table">
+				<tbody>
+					<tr>
+
+					<tr>
+						<th>分销佣金：</th>
+						<td>
+							<span>{$order['distribution']['commission_distribution_money']}元(总)</span>
+							{if !empty($order['distribution']['commission_distribution_list'])}
+								{foreach $order['distribution']['commission_distribution_list'] as $k => $v}
+									<p>⊥ {$v['level_name']}   <span>姓名:{$v['user_info']['nick_name']}</span><span>佣金:{$v['commission_money']}</span></p>
+								{/foreach}
+							{/if}
+
+						</td>
+					</tr>
+
+					<tr>
+						<th>股东分红：</th>
+						<td>
+							<span>{$order['distribution']['commission_partner_money']}元(总)</span>
+							{if !empty($order['distribution']['commission_partner_list'])}
+								{foreach $order['distribution']['commission_partner_list'] as $k => $v}
+									<p>⊥<span>姓名:{$v['user_info']['nick_name']}</span><span>佣金:{$v['commission_money']}</span></p>
+								{/foreach}
+							{/if}
+						</td>
+					</tr>
+
+					<tr>
+						<th>代理佣金：</th>
+						<td>
+							<span>{$order['distribution']['commission_region_agent_money']}元(总)</span>
+							{if !empty($order['distribution']['commission_region_agent_list'])}
+								{foreach $order['distribution']['commission_region_agent_list'] as $k => $v}
+									<p>⊥ {$v['level_name']}<span>姓名:{$v['user_info']['nick_name']}</span><span>佣金:{$v['commission']}</span></p>
+								{/foreach}
+							{/if}
+						</td>
+					</tr>	
+				</tbody>
+			</table>
+		{/if}
+	</div>
+	<div class="state-region">
+		<div style="padding: 0px 0px 30px 40px;">
+			<div class="state-title"><span class="icon info">!</span>订单状态：{$order['status_name']}</div>
+			<div class="state-action">
+			{volist name="order['operation']" id="v" empty=""}
+				<button class="zent-btn zent-btn-primary test-send-goods" onclick="operation('{$v['no']}',{$order['order_id']})">{$v['name']}</button>
+			{/volist}
+			</div>
+		</div>
+		<div class="state-remind-region">
+			<div class="dashed-line"></div>
+			<div class="state-remind"><div class="tixing">{$title_name}提醒：</div>
+				<ul><li>如果无法发货，请及时与买家联系并说明情况后进行退款；</li>
+				<li>买家申请退款后，须征得买家同意后再发货，否则买家有权拒收货物；</li>
+				<li>买家付款后超过7天仍未发货，将有权申请客服介入发起退款维权；</li></ul>
+			</div>
+		</div>
+	</div>
+</div>
+<table class="ui-table ui-table-simple goods-table order-detail-goods-table">
+	<thead>
+		<tr>
+			<th style="width:8%;">商品图</th>
+			<th class="cell-10" style="width:30%;">商品</th>
+			<th style="width:8%;">价格(元)</th>
+			
+			{if condition="$order['order_type']==6"}
+			<th style="width:8%;">预售金(元)</th>
+			<th style="width:8%;">尾款(元)</th>
+			{/if}
+			
+			<th style="width:10%;">数量</th>
+			<th style="width:10%;">调整金额(元)</th>
+			<th class="cell-13" style="width:10%;">小计(元)</th>
+			<th style="width:10%;">配送状态</th>
+			
+			{if condition="$order['order_type']==2"}
+				<!--虚拟商品的操作-->
+				{if condition="$order['order_status'] == 4"}
+				<th style="width:10%;text-align: center;">操作</th>
+				{/if}
+			{/if}
+		</tr>
+	</thead>
+	<tbody>
+	<!-- 待发货商品 -->
+	{if $order['order_goods_no_delive']}
+		{volist name="order['order_goods_no_delive']" id="vo"}
+			<tr class="test-item">
+				<td class="td-goods-image" rowspan="1">
+					<div class="ui-centered-image" style="width: 48px; height: 48px;">
+						<img src="{:__IMG($vo['picture_info']['pic_cover_micro'])}" style="max-width: 48px; max-height: 48px;">
+					</div>
+				</td>
+				<td class="cell-10" style="width:200px;">
+					<a href="{:__URL('SHOP_MAIN/goods/detail','goods_id='.$vo['goods_id'])}" target="_blank">{$vo['goods_name']}</a>
+					<p class="c-gray">{$vo['sku_name']}</p>
+					{if condition="$vo.gift_flag > 0"}
+					<i style="font-size:12px;margin:0 5px 0 0;padding:1px 4px;border-radius:3px;display:inline-block;color:#FFF;background-color:#de533c;height:16px;line-height: 16px;overflow:hidden;font-style:normal;">赠品</i>
+					{/if}
+				</td>
+				<td>{$vo['price']}</td>
+				{if condition="$order['order_type']==6"}
+				<td>{$presell_order['presell_money']}</td>
+				<td>{$vo['price'] - $presell_order['presell_money'] }</td>
+				{/if}
+				<td>{$vo['num']}</td>
+				<td>{$vo['adjust_money']}</td>
+				<td><p>{$vo['goods_money']}</p></td>
+				<td>
+					<p>{$vo['shipping_status_name']}</p>
+					{if condition="$vo['refund_status'] neq 0"}
+						<p><a href="{:__URL('ADMIN_MAIN/order/orderrefunddetail','itemid='.$vo['order_goods_id'])}">{$vo['status_name']}</a></p>
+					{/if}
+				</td>
+				
+				{if condition="$order['order_type']==2"}
+					<!--虚拟商品的操作-->
+					{if condition="$order['order_status'] == 4"}
+					<td style="text-align: center;"><a href="javascript:selectVirtualCode();">详情</a></td>
+					{/if}
+				{/if}
+				
+			</tr>
+			<tr><td colspan="10"></td></tr>
+		{/volist}
+	{/if}
+	<!-- 已发货 -->
+	{if $order['goods_packet_list']}
+	{volist name="order['goods_packet_list']" id="v" key=key}
+		<tr style="background-color:#f2f2f2;color:#999;font-weight:bold;">
+		<td colspan="9"><a href="javascript:;" style="color:rgba(34, 34, 34, 0.71);font-size:14px;">{$v['packet_name']}</a>&nbsp;&nbsp;&nbsp;&nbsp;
+		{if condition="$v['is_express'] eq 1"}
+			{$v['express_name']}&nbsp;&nbsp;运单号:{$v['express_code']}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:;" data-html="true" class="logistics-tracking" data-container="body" data_express="{$v['express_name']}" data-placement="top" data-trigger="manual" goods_id="{$v['express_id']}" data-show="1">物流跟踪</a>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:;" onclick="operation('update_express',{$order['order_id']})" >修改运单号 </a>
+		{/if}
+		</td>
+		</tr>
+		{volist name="$v['order_goods_list']" id="vo"}
+		<tr class="test-item">
+			<td class="td-goods-image" rowspan="1">
+				<div class="ui-centered-image" style="width: 48px; height: 48px;">
+					<img src="{:__IMG($vo['picture_info']['pic_cover_micro'])}" style="max-width: 48px; max-height: 48px;">
+				</div>
+			</td>
+			<td class="cell-10" style="width:200px;">
+				<a href="{:__URL('SHOP_MAIN/goods/detail','goods_id='.$vo['goods_id'])}" target="_blank">{$vo['goods_name']}</a>
+				<p class="c-gray">{$vo['sku_name']}</p>
+				{if condition="$vo.gift_flag > 0"}
+					<i style="font-size:12px;margin:0 5px 0 0;padding:1px 4px;border-radius:3px;display:inline-block;color:#FFF;background-color:#de533c;height:16px;line-height: 16px;overflow:hidden;font-style:normal;">赠品</i>
+				{/if}
+			</td>
+			<td>{$vo['price']}</td>
+			<td>{$vo['num']}</td>
+			<td>{$vo['adjust_money']}</td>
+			<td><p>{$vo['goods_money']}</p></td>
+			<td>
+				<p>
+					{$vo['shipping_status_name']}
+					{if condition="$vo['refund_status'] neq 0"}
+						<p><a href="{:__URL('ADMIN_MAIN/order/orderrefunddetail','itemid='.$vo['order_goods_id'])}">{$vo['status_name']}</a></p>
+					{/if}
+				</p>
+			</td>
+		</tr>
+		{/volist}
+	{/volist}
+	{/if}
+	</tbody>
+	<tfoot>
+		<tr>
+			<td colspan="9" class="text-right">
+				<span>商品总金额：￥{$order['goods_money']}，</span>
+				
+				{if condition="$order['user_platform_money']>0"}
+				<span>余额支付：￥{$order['user_platform_money']}，</span>
+				{/if}
+				
+				{if condition="$order['coupon_money']>0"}
+				<span>优惠券：￥{$order['coupon_money']}，</span>
+				{/if}
+				
+				{if condition="$order['tax_money']>0"}
+				<span>发票税额：￥{$order['tax_money']}，</span>
+				{/if}
+				
+				{if condition="$order['promotion_money']>0"}
+					{switch name="$order['promotion_type']"}
+					{case value="MANJIAN"}<span>满减优惠：￥{$order['promotion_money']}，</span>{/case}
+					{case value="ZUHETAOCAN"}<span>套餐优惠：￥{$order['promotion_money']}，</span>{/case}
+					{/switch}
+				{/if}
+				
+				{if condition="$order['point']>0"}
+				<span>使用积分：{$order['point']}，</span>
+				{/if}
+				
+				{if condition="$order['order_type']==6"}
+				<span> 还需支付尾款：<b class="real-pay c-red">￥{$order['pay_money']}</b></span>
+				{else/}
+				<span> 实际需支付：<b class="real-pay c-red">￥{$order['pay_money']}</b></span>
+				{/if}
+				<span>（含运费 ￥{$order['shipping_money']}）</span>
+			</td>
+		</tr>
+	</tfoot>
+</table>
+
+<table class="ui-table ui-table-simple goods-table order-detail-goods-table" style="border-top:none;">
+	<thead>
+		<tr>
+			<th>订单日志</th>
+		</tr>
+	</thead>
+	<tbody>
+	{volist name="order['order_action']" id="v1"}
+		<tr class="test-item">
+			<td class="td-goods-image" colspan="9">
+			 操作备注：&nbsp;&nbsp; {$v1.user_name}&nbsp;&nbsp;&nbsp;于&nbsp;&nbsp;&nbsp;{$v1.action_time | getTimeStampTurnTime}&nbsp;&nbsp;&nbsp;【{$v1.action}】
+			</td>
+		</tr>
+	{/volist}
+	</tbody>
+</table>
+
+<div class="order_spec">
+{if condition = "$next_order[0] neq ''"}
+	{if condition = "$order_type eq 7"}
+		<a href="{:__URL('ADMIN_MAIN/order/bargainOrderDetail','order_id='.$next_order[0]['order_id'])}">
+			<span>下一单</span></a>
+	{else /}
+		<a href="{:__URL('ADMIN_MAIN/order/orderdetail','order_id='.$next_order[0]['order_id'])}">
+		<span>下一单</span></a>
+	{/if}
+{/if}
+
+{if condition = "$prev_order[0] neq ''"}
+
+	{if condition = "$order_type eq 7"}
+		<a href="{:__URL('ADMIN_MAIN/order/bargainOrderDetail','order_id='.$prev_order[0]['order_id'])}">
+			<span>上一单</span></a>
+	{else /}
+		<a href="{:__URL('ADMIN_MAIN/order/orderdetail','order_id='.$prev_order[0]['order_id'])}">
+		<span>上一单</span></a>
+	{/if}
+{/if}
+</div>
+
+</div>
+
+{if condition="$order.virtual_goods_list"}
+<div class="modal fade hide" id="selectVirtualCode" tabindex="-1" aria-labelledby="查看虚拟码" aria-hidden="true" data-backdrop="static" style="width: 1000px; overflow: overlay;top:50%;left:50%;">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+				<h3>虚拟商品</h3>
+			</div>
+			<div class="modal-body">
+				<table class="virtual-goods-table">
+					<colgroup>
+						<col width="10%">
+						<col width="15%">
+						<col width="10%">
+						<col width="10%">
+						<col width="15%">
+						<col width="7%">
+						<col width="10%">
+						<col width="7%">
+						<col width="16%">
+					</colgroup>
+					<tr>
+						<th style="text-align: left;">虚拟码</th>
+						<th style="text-align: left;">虚拟商品名称</th>
+						<th>金额</th>
+						<th>有效期/天</th>
+						<th>到期时间</th>
+						<th>使用次数</th>
+						<th>限制使用次数</th>
+						<th>使用状态</th>
+						<th>产品信息</th>
+					</tr>
+					{foreach name="order.virtual_goods_list" item="vg"}
+					<tr>
+						<td style="text-align: left;">{$vg.virtual_code}</td>
+						<td style="text-align: left;">{$vg.virtual_goods_name}</td>
+						<td>￥{$vg.money}</td>
+						<td>{$vg.validity_period}天</td>
+						<td>{$vg.end_time|getTimeStampTurnTime}</td>
+						<td>{$vg.use_number}</td>
+						<td>{$vg.confine_use_number}</td>
+						<td>{$vg.use_status_msg}</td>
+						<td> <div class="product_des">
+							<span class="password" data-pw="{$vg.remark}">*******</span><a href="javascript:;">显示</a>
+						</div></td>
+					</tr>
+					{/foreach}
+				</table>
+			</div>
+			<!-- <div class="modal-footer">
+				温馨提示
+			</div> -->
+		</div>
+	</div>
+</div>
+{/if}
+<input type="hidden" id="order_id" value="{$order['order_id']}" />
+<script type="text/javascript">
+$(function(){
+	//查询物流
+	$(".logistics-tracking").mouseover(function(){
+		$(".logistics-tracking").removeAttr("data-show");
+		$(this).attr("data-show",1);
+	});
+	var html = '';
+	$(".logistics-tracking").hover(function(){
+			
+		var curr = $(this);
+		var order_goods_id = curr.attr('goods_id');
+		var express_name = curr.attr('data_express');
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/order/getexpressinfo')}",
+			data : {"order_goods_id":order_goods_id},
+			beforeSend : function(){
+				html = '<div class="silider-express">';
+				html += '<div class="mask-layer-loading" style="text-align:center;">';
+				html += '<img src="ADMIN_IMG/mask_load.gif"/>';
+				html += '<div style="text-align:center;margin-top:10px;">努力加载中...</div>';
+				html += '</div>';
+				html += '</div>';
+				$(".logistics-tracking").popover({content : html});
+				curr.popover("show");
+			},
+			success : function(data) {
+				if(data["Success"]){
+					html = '<div class="silider-express">';
+					html += '<div class="express_names">快递公司:'+express_name+'</div>';
+					html += '<div>';
+					html += '<div>物流跟踪：</div>';
+					if (data["Traces"].length > 0) {
+						for (var i = 0; i < data["Traces"].length; i++){
+								html += '<p style="width:76%;float:left;">'+ data["Traces"][i]["AcceptStation"]+'</p>';
+								html += '<p style="width:24%;float:right;">'+ data["Traces"][i]["AcceptTime"]+'</p>';
+						}
+					} 
+					html += '</div>';
+			 		html += '</div>';
+				}else{
+					html = '<div class="silider-express">'+ data["Reason"] +'</div>';
+				}
+		 		curr.popover("destroy");
+				curr.popover({content : html});
+				curr.popover("show");
+			}
+		});
+	},function(){
+		$(this).popover("hide");
+	});
+	
+	$('.product_des a').click(function(){
+		
+		var pwd_obj = $('.product_des .password');
+		var pwd_obj_val = pwd_obj.attr('data-pw');
+		pwd_obj.html(pwd_obj_val);
+		$(this).hide();
+	})
+	
+});
+
+function selectVirtualCode(){
+	$("#selectVirtualCode").css({
+		"margin-top" : "-" + (($('#selectVirtualCode').outerHeight())/2)+"px",
+		"margin-left" : "-" + (($('#selectVirtualCode').outerWidth())/2)+"px"
+	}).modal("show");
+}
+</script>
+{include file="admin/Order/orderAction"/}
+{/block}

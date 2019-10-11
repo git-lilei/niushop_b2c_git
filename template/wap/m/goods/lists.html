@@ -1,0 +1,196 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/goods_lists.css">
+{/block}
+{block name="seo"}
+<meta name="keywords" content="{$seo_config.seo_meta},{$web_info['title']}{:lang('搜索是最智能的商品搜索引擎，通过大数据的运营，准确的理解商品与用户，提供精准的个性化搜索体验。')}" />
+<meta name="description" content="{$seo_config.seo_desc},{$title_before}"/>
+{/block}
+{block name="head"}
+{php}
+
+	$goodsCategoryList = api("System.Goods.goodsCategoryTree");
+	$goodsCategoryList = $goodsCategoryList['data'];
+
+	$category_brands = $data['category_brands']; // 品牌筛选项
+	$goods_spec_array = $data['goods_spec_array']; // 规格筛选项
+	$attr_or_spec = $data['attr_or_spec']; // 属性筛选项
+	
+	// 搜索记录
+    $searchRecord = $_COOKIE['searchRecordWap'];
+    $searchRecord = !empty($searchRecord) ? json_decode($searchRecord, true) : [];
+{/php}
+<div id="head">
+	<div class="search-container ns-text-color-gray">
+		<div class="cancel">{:lang('取消')}</div>
+		<div class="classify head-btn"><i class="icon icon-list-ul"></i>{:lang('分类')}</div>
+		<div class="search-tab ns-bg-color-gray-fadeout-60">
+			<i class="icon icon-search"></i>
+			<input type="text" class="search" placeholder="{:lang('请输入您要搜索的商品')}" {notempty name="$params.keyword"}value="{$params.keyword}"{/notempty}/>
+		</div>
+		<div class="head-btn search-list"><i class="icon icon-bars"></i>{:lang('列表')}</div>
+	</div>
+	<ul class="sort-tab ns-border-color-gray">
+		<li data-order-type="" data-sort="">
+			<span class="ns-text-color">{:lang('综合')}</span>
+		</li>
+		<li data-order-type="sales" data-sort="asc">
+			<span>{:lang('销量')}</span>
+		</li>
+		<li class="screen-price" data-order-type="price" data-sort="asc">
+			<span>{:lang('价格')}</span>
+			<div class="price-pic">
+				<i class="icon icon-angle-up"></i>
+				<i class="icon icon-angle-down"></i>
+			</div>
+		</li>
+		{if !empty($category_brands) || !empty($goods_spec_array) || !empty($attr_or_spec)}
+		<li class="sort-screen">
+			<span>{:lang('筛选')}</span>
+		</li>
+		{/if}
+	</ul>
+</div>
+{/block}
+{block name="main"}
+<div class="search-page">
+	<div class="history">
+		<div class="history-text ns-border-color-gray">
+			<span>{:lang('历史搜索')}</span>
+			<span class="ns-text-color-gray">{:lang('清除搜索记录')}</span>
+		</div>
+		<ul class="history-list">
+			{notempty name="$searchRecord"}
+				{foreach name="$searchRecord" item="vo"}
+					<li class="ns-bg-color-gray-shade-20"><a href="{:__URL('APP_MAIN/goods/lists')}">{$vo}</a></li>
+				{/foreach}
+			{/notempty}
+		</ul>
+	</div>
+</div>
+
+<div class="classify-content">
+	<ul class="primary-classification">
+		{empty name="category_id"}
+		<li onclick="location.href='{:__URL(\'APP_MAIN/goods/lists\')}'" class="ns-text-color">{:lang('全部分类')}</li>
+		{else/}
+		<li onclick="location.href='{:__URL(\'APP_MAIN/goods/lists\')}'">{:lang('全部分类')}</li>
+		{/empty}
+		{foreach name="$goodsCategoryList" item="vo"}
+		<li onclick="categoryGoods(this)" data-category-id="{$vo['category_id']}" {if condition="$vo['category_id'] eq $category_id"}class="ns-text-color"{/if}>{$vo.category_name}</li>
+		{/foreach}
+	</ul>
+	<ul class="two-stage-classification">
+		{foreach name="$goodsCategoryList" item="vo"}
+			{foreach name="$vo['child_list']" item="to"}
+			<li onclick="categoryGoods(this)" {if condition="$to['category_id'] eq $params['category_id']"}class="ns-text-color"{/if}  {if condition="$to['pid'] eq $params['category_id']"} style="display:block;"{/if} data-pid="{$to.pid}" data-category-id="{$to['category_id']}"><a href="{:__URL('APP_MAIN/goods/lists','category_id='.$to['category_id'])}">{$to.category_name}</a></li>
+			{/foreach}
+		{/foreach}
+	</ul>
+</div>
+
+{if !empty($params['category_id'])}
+<div class="sift-cover">
+	<div class="sift-head">
+		<span>{:lang('筛选')}</span>
+	</div>
+	<ul class="sift-body">
+		{notempty name="$category_brands"}
+		<li data-old-height="75" class="ns-border-color-gray">
+			{if condition="count($category_brands) > 2"}
+			<div class="condition-name click-down" is_open="0"><span>{:lang('品牌')}</span><i class="icon icon-angle-down"></i></div>
+			{else/}
+			<div class="condition-name" is_open="0"><span>{:lang('品牌')}</span></div>
+			{/if}
+			<div class="condition-value" data-screen-type="brand">
+				<a href="javascript:;" class="all ns-border-color ns-text-color">{:lang('全部')}</a>
+				{foreach name="category_brands" item="brand" key="k"}
+				<a href="javascript:;" class="ns-bg-color-gray-fadeout-60 ns-border-color-gray-shade-10" data-brand-id="{$brand.brand_id}">{$brand.brand_name}</a>
+				{/foreach}
+			</div>
+		</li>
+		{/notempty}
+		{if condition="count($attr_or_spec) gt 0 "}
+			{foreach name="attr_or_spec" item="vo" key="key"}
+				{if condition="$vo.type neq 1 and $vo.value neq ''"}
+					{if condition="$vo.is_search eq '1'"}
+						<li data-old-height="75" class="ns-border-color-gray">
+							{if condition="count($vo['value_items']) > 2"}
+							<div class="condition-name click-down" is_open="0"><span>{$vo.attr_value_name}</span><i class="icon icon-angle-down"></i></div>
+							{else/}
+							<div class="condition-name" is_open="0"><span>{$vo.attr_value_name}</span></div>
+							{/if}
+							<div class="condition-value" data-screen-type="attr">
+								<a href="javascript:;" class="all ns-border-color ns-text-color">{:lang('全部')}</a>
+								{foreach name="vo.value_items" item="value" key="k"}
+								{notempty name ="$value"}
+								<a href="javascript:;" class="ns-bg-color-gray-fadeout-60 ns-border-color-gray-shade-10" data-attr-value="{$vo.attr_value_name},{$value},{$vo.attr_value_id}">{$value}</a>
+								{/notempty}
+								{/foreach}
+							</div>
+						</li>
+					{/if}
+				{/if}
+			{/foreach}
+		{/if}
+		{if condition="count($goods_spec_array) gt 0 "}
+			{foreach name="goods_spec_array" item="vo" key="key"}
+				{if condition="$vo.is_screen eq 1 and $vo.spec_name neq ''"}
+				<li data-old-height="75" class="ns-border-color-gray">
+					{if condition="count($vo['values']) > 2"}
+					<div class="condition-name click-down" is_open = "0"><span>{$vo.spec_name}</span><i class="icon icon-angle-down" aria-hidden="true"></i></div>
+					{else/}
+					<div class="condition-name" is_open = "0"><span>{$vo.spec_name}</span></div>
+					{/if}
+					<div class="condition-value" data-screen-type="spec">
+						<a href="javascript:;" class="all ns-border-color ns-text-color">{:lang('全部')}</a>
+						{foreach name="vo.values" item="value" key="k"}
+						<a href="javascript:;" class="ns-bg-color-gray-fadeout-60 ns-border-color-gray-shade-10" data-spec-value="{$value.spec_id}:{$value.spec_value_id}">{$value.spec_value_name}</a>
+						{/foreach}
+					</div>
+				</li>
+				{/if}
+			{/foreach}
+		{/if}
+		<li data-old-height="67" class="ns-border-color-gray">
+			<div class="condition-name" is_open = "0"><span>{:lang('价格区间(元)')}</span></div>
+			<div class="price-section">
+				<div class="price-range-input">
+					<input type="number" class="min-price ns-bg-color-gray" placeholder="{:lang('最低价')}" id="min_price"/>
+					<span class="ns-text-color-gray">——</span>
+					<input type="number" class="max-price ns-bg-color-gray" placeholder="{:lang('最高价')}" id="max_price"/>
+				</div>
+			</div>
+		</li>
+	</ul>
+	<div class="clear-search ns-border-color-gray">
+		<button class="ns-bg-color-gray">{:lang('清除选项')}</button>
+	</div>
+	<div class="sift-foot">
+		<button class="cancel ns-bg-color-gray">{:lang('取消')}</button>
+		<button class="sure ns-bg-color">{:lang('确定')}</button>
+	</div>
+</div>
+{/if}
+
+<div id="search_list_mescroll" class="mescroll">
+	<ul class="list-content"></ul>
+</div>
+
+<!-- 价格从高到低 -->
+<input type="hidden" id="price-high" data-order-type="ng.promotion_price" data-sort="desc" />
+<!-- 价格从低到高 -->
+<input type="hidden" id="price-low" data-order-type="ng.promotion_price" data-sort=asc />
+<!-- 种类 -->
+<input type="hidden" id='category_id' value="{$params.category_id}" />
+<!-- 筛选属性值 -->
+<input type="hidden" id="attr">
+<!-- 筛选规格 -->
+<input type="hidden" id="spec">
+<!-- 品牌id -->
+<input type="hidden" id="brand_id" value="{$brand_id}">
+<input type="hidden" id="keyword" {notempty name="$params.keyword"}value="{$params.keyword}"{else/}value=""{/notempty}>
+{/block}
+{block name="script"}
+<script src="WAP_JS/goods_lists.js"></script>
+{/block}

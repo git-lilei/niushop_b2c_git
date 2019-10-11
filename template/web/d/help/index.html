@@ -1,0 +1,46 @@
+{extend name="$base" /}
+{block name="resources"}
+<link type="text/css" rel="stylesheet" href="WEB_CSS/article.css" />
+{/block}
+{block name="seo"}
+<meta name="keywords" content="{$seo_config.seo_meta},{$web_info['title']}_帮助中心" />
+<meta name="description" content="{$seo_config.seo_desc},{$help_document_info.title}"/>
+{/block}
+{block name="main"}
+<div class="help">
+	<ol class="breadcrumb">
+		<li><a href="{:__URL('SHOP_MAIN')}">{:lang('home_page')}</a></li>
+		<li class="active">{:lang('shop_help_center')}</li>
+	</ol>
+	<div class="category">
+		<h3 class="ns-bg-color">{:lang('shop_help_center')}</h3>
+		<ul>
+			{foreach name="$platform_help_class" id="class_vo"}
+			<li>
+				<div class="ns-bg-color-gray">
+					<a href="javascript:;" title="{$class_vo.class_name}">{$class_vo.class_name}</a>
+					<span><i class="{if condition="$class_vo['class_id'] eq $class_id"}icon-sort-up{else/}icon-sort-down{/if}"></i></span>
+				</div>
+				<ul {if condition="$class_vo['class_id'] neq $class_id"}class="dis-no"{/if}>
+					{foreach name="$platform_help_document" id="document_vo"}
+					{if condition="$document_vo['class_id'] eq $class_vo['class_id']"}
+					<li>
+						<a href="{:__URL('SHOP_MAIN/help/index','id='.$document_vo['id'].'&class_id='.$document_vo['class_id'])}" target="_self" title="{$document_vo.title}" {if condition="$document_vo['id'] eq $id"}class="ns-text-color"{/if}>{$document_vo.title}</a>
+					</li>
+					{/if}
+					{/foreach}
+				</ul>
+			</li>
+			{/foreach}
+		</ul>
+	</div>
+	<div class="detail">
+		<h3 class="ns-border-color-gray">{$help_document_info['title']}</h3>
+		<div class="content">{$help_document_info['content']}</div>
+	</div>
+</div>
+<input type="hidden" value="{$id}" id="hidden_id" />
+{/block}
+{block name="script"}
+<script type="text/javascript" src="WEB_JS/help.js"></script>
+{/block}

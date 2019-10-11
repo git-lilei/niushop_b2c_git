@@ -1,0 +1,9 @@
+@charset "utf-8";
+.member-main{background: #fff; overflow: hidden; margin-top: 20px; padding: 20px;}
+.form-horizontal .balance{font-size: 18px; font-weight: 600; line-height: 20px; padding-top: 7px; display: block;}
+.form-horizontal .account-list li{padding: 10px; border: 2px dashed; width: 240px; height: 130px; float: left; margin: 0 15px 15px 0; position: relative; line-height: 26px; cursor: pointer;}
+.form-horizontal .account-list li.add-account i{position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 20px;}
+.form-horizontal .account-list li .operation{position: absolute; z-index: 5; right: 10px; top: 5px; line-height: 1;}
+.form-horizontal .account-list li .operation .icon-times{position: relative; top: -1px;}
+.form-horizontal .tip-text{display: inline-block; margin-left: 5px;}
+.empty{padding: 50px 0;}

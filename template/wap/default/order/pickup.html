@@ -1,0 +1,25 @@
+{extend name="$base" /}
+{block name="resources"}
+<style type="text/css">
+body{background-color: #fff;}
+.share-box{padding: 60px 0 15px;}
+.share-box-top{text-align:center;height:30px;line-height:30px;}
+.share-box-middle-qrcode{width:40%;margin:30px auto 20px;}
+.share-box-middle-qrcode img{width:100%;}
+</style>
+{/block}
+{block name="main"}
+{php}
+$order_id = input('order_id', 0);
+$data = api('System.Order.getPickupQecode', ['order_id' => $order_id]);
+$data = $data['data'];
+{/php}
+<div class="share-box">
+	<div class="share-box-middle-qrcode">
+		<img src="{:__IMG($data['path'])}"/>
+	</div>
+    <div class="share-box-top">请将该提货码出示给门店审核人员进行提货</div>
+</div>
+{/block}
+{block name="bottom"}{/block}
+

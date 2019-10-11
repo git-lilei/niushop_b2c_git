@@ -1,0 +1,255 @@
+{extend name="$base" /}
+{block name="resources"}
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+<style  type="text/css">
+input[type="radio"]{margin-top:6px;}
+.total{width: 100%;overflow: hidden;}
+.total label {float:left;text-align: left;font-size: 15px; width:10%;overflow:hidden;color:#666;font-weight: normal;line-height: 32px;margin-bottom:0px}
+.total label input {margin: 0 5px 0 0;}
+.w250{width:250px!important;}
+</style>
+{/block}
+{block name="main"}
+<div class="space-10"></div>
+<div class="set-style">
+	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;活动名称：</dt>
+		<dd>
+			<input type="text" id="group_name" class="input-common">
+			<p class="error">请输入活动名称</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;活动时间：</dt>
+		<dd>
+			<input class="input-medium input-common harf" type="text" id="start_time" style="width:250px;"onclick="WdatePicker({skin:'twoer',dateFmt:'yyyy-MM-dd HH:mm:ss'})" placeholder="请选择开始时间">
+			<span class="mlr5">-</span> 
+			<input class="input-medium input-common harf" size="15" type="text" id="end_time" style="width:250px;"onclick="WdatePicker({skin:'twoer',dateFmt:'yyyy-MM-dd HH:mm:ss'})" placeholder="请选择结束时间">
+			<p class="error">请输入有效时间</p>
+			<p class="error">活动结束时间不能小于当前时间</p>
+			<p class="error">活动结束时间不能小于开始时间</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;最大购买量：</dt>
+		<dd><input class="input-mini w70 input-common harf" onkeyup="value=value.replace(/\D/g,'')" type="number" id="max_num"><em class="unit">件</em>
+			<p class="error">请输入最大购买量</p>
+		</dd>
+	</dl>
+<!-- 	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;最小购买量：</dt>
+		<dd><input class="input-mini w70 input-common" onkeyup="value=value.replace(/\D/g,'')" type="text" id="min_num"><span class="help-inline">个</span>
+			<p class="error">请输入最小购买量</p>
+		</dd>
+	</dl> -->
+	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;价格阶梯：</dt>
+		<dd>
+			<span class="help-inline">最小购买</span> <input class="input-mini w70 input-common harf" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" type="number" data="num" value=""><em class="unit">件</em><br/>
+			<span class="help-inline">购买价格</span> <input class="input-mini w70 input-common harf" onkeyup='this.value=this.value.replace(/\D/gi,"")' type="number" data="price" value=""><em class="unit">元</em>
+		</dd>
+	</dl>
+	<dl>
+		<dt>活动说明：</dt>
+		<dd>
+			<textarea name="store_zy" rows="2" id="remark" class="textarea-common" ></textarea>
+			<p class="error">请输入活动说明</p>
+		</dd>
+	</dl>
+	<!-- ******************************************* start 选择商品 start ******************************************* -->
+	<!-- 
+		is_limit_sku 是否限制只查询单规格商品 1限制 0不限制
+		is_many_select 是否可多选 1可多选 0只能单选
+		is_limit_skock 是否只查询有库存的商品 1只查询有库存商品 0不限制
+		is_limit_state 是否只查询已上架商品 1只查询上架商品 0不限制
+		is_limit_goods_type 是否限制只查询实物商品 1限制 0不限制
+	 -->
+	<input type="hidden" id="range_type" value="0">
+	<input type="hidden" id="is_show_select" value="0">
+	<input type="hidden" id="goods_id_array" value="">
+	<input type="hidden" id="select-goods-limit" value='{"is_limit_sku" : 0, "is_many_select" : 0, "is_limit_skock" : 1, "is_limit_state" : 1, "is_limit_goods_type" : 0}'>
+	{include file="admin/Promotion/goodsSelectDialog"/}
+	<!-- ******************************************* end 选择商品 end ******************************************* -->
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="addGroupBuy();">保存</button>
+			<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);">返回</button>
+		</dd>
+	</dl>
+</div>
+
+<script>
+var flag = false;//防止重复提交
+function addGroupBuy(){
+	
+	var group_name = $("#group_name").val();
+	var start_time = $("#start_time").val();
+	var end_time = $("#end_time").val();
+	var max_num = $("#max_num").val();
+//	var min_num = $("#min_num").val();
+	var remark = $("#remark").val();
+	var num_arr = $("input[data='num']");
+	var price_arr = $("input[data='price']");
+	
+	var dataTime = nowDate();
+	var now = new Date(dataTime.replace("-", "/").replace("-", "/"));
+	var end = new Date(end_time.replace("-", "/").replace("-", "/"));
+	var start = new Date(start_time.replace("-", "/").replace("-", "/"));
+	if(end < now){
+		$("#end_time").next().next('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(end < start){
+		$("#end_time").next().next().next('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	
+	var ladder_arr = [];
+	for(var i=0;i < num_arr.length;i ++){
+		var num = num_arr.eq(i).val();
+		var price = price_arr.eq(i).val();
+		ladder_arr[i] = [num,price];
+	}
+	var ladder_json = JSON.stringify(ladder_arr);
+	
+	var goods_id = $("#goods_id_array").val();
+	if(verify()){
+		if(flag){
+			return;
+		}
+		flag = true;
+		$.ajax({
+			type : "post",
+			url : "{:__URL('__URL__/nsgroupbuy/ADMIN_MODULE/promotion/ajaxAddUpdateGroupBuy')}",
+			data : {
+				'group_name': group_name,
+				'goods_id': goods_id,
+				'start_time': start_time,
+				'end_time': end_time,
+				'max_num' : max_num,
+				'price_json' : ladder_json,
+				'remark' : remark,
+			},
+			success : function(data) {
+				
+				if (data["code"] > 0) {
+					showMessage('success', data["message"]);
+					location.href=__URL("__URL__/nsgroupbuy/ADMIN_MODULE/promotion/groupBuyList");
+				}else{
+					showMessage('error', data["message"]);
+					flag = false;
+				}
+			}
+		});
+	}
+}
+
+function verify(){
+	var group_name = $("#group_name").val();
+	var goods_id = $("#goods_id_array").val();
+	var start_time = $("#start_time").val();
+	var end_time = $("#end_time").val();
+	var max_num = $("#max_num").val();
+/* 	var min_num = $("#min_num").val(); */
+	var remark = $("#remark").val();
+	var num_arr = $("input[data='num']");
+	var price_arr = $("input[data='price']");
+	$(".error").hide();
+	
+	if(group_name == ''){
+		$("#group_name").next().show();
+		return false;
+	}
+	
+	if(start_time == ''){
+		$("#start_time").focus().parent().find('.error').html('请选择活动开始时间').show();
+		return false;
+	}
+	
+	if(end_time == ''){
+		$("#end_time").focus().parent().find('.error').html('请选择活动结束时间').show();
+		return false;
+	}
+	
+	//最大购买数量
+	if(max_num == ''){
+		$("#max_num").focus().next().next().html('请输入最大购买数量').show();
+		return false;
+	}else if(max_num == 0){
+		$("#max_num").focus().next().next().html('最大购买数量必须大于零').show();
+		return false;
+	}
+	
+	//最小购买数量
+/* 	if(min_num == ''){
+		$("#min_num").focus().next().next().html('请输入最小购买数量').show();
+		return false;
+	}else if(Number(min_num) >= Number(max_num)){
+		$("#min_num").focus().next().next().html('最小购买数量必须小于最大购买数量').show();
+		return false;
+	} */
+	
+/* 	min_num = Number(min_num); */
+	max_num = Number(max_num);
+	//购买数量
+	for(var i=0;i < num_arr.length;i ++){
+		var num = Number(num_arr.eq(i).val());
+		if(num_arr.eq(i).val() == ''){
+			num_arr.eq(i).focus().parent().find('.error').html('请输入购买数量').show();
+			return false;
+		}else if(num == 0){
+			num_arr.eq(i).focus().parent().find('.error').html('购买数量不可为零').show();
+			return false;
+		}else if( num > max_num){
+			num_arr.eq(i).focus().parent().find('.error').html('购买数量不可超过最大购买量').show();
+			return false;
+		}
+		
+		if(price_arr.eq(i).val() == ''){
+			price_arr.eq(i).focus().parent().find('.error').html('请输入购买价格').show();
+			return false;
+		}else if(!/^[1-9][0-9]*(\.[0-9]{1,2})?$/.test(price_arr.eq(i).val())){
+			price_arr.eq(i).focus().parent().find('.error').html('请输入正确的购买价格，价格最多可保留两位有效位数').show();
+			return false;
+		}
+	}
+	
+	if(BatchSend.length == 0 || $("#goods_id_array").val() == ""){
+		$(".js-select-goods").find(".error").html('请选择团购商品').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	
+	return true;
+}
+
+	$("input,textarea").bind('keyup',function(){
+		$(".error").hide();
+	});
+	
+	$("select").bind('change',function(){
+		$(".error").hide();
+	});
+	
+function nowDate(){
+	var myDate = new Date();
+	//获取当前年
+	var year=myDate.getFullYear();
+	//获取当前月
+	var month=myDate.getMonth()+1;
+	//获取当前日
+	var date=myDate.getDate(); 
+	var h=myDate.getHours();//获取当前小时数(0-23)
+	var m=myDate.getMinutes();//获取当前分钟数(0-59)
+	var s=myDate.getSeconds();
+	var now=year+'-'+month+"-"+date+" "+h+':'+m+":"+s;
+	return now;
+}
+</script>
+{/block}

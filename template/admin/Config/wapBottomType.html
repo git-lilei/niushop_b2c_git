@@ -1,0 +1,373 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/wap_bottom_type.css">
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+{/block}
+{block name="main"}
+<div class="ns-main">
+	<article class="custom-template">
+		<header data-custom-flag="CustomTemplateName">
+			<img src="__STATIC__/wapCustomTemplate/images/titlebar.png">
+		</header>
+		<div class="custom-main"  style="padding-bottom: 500px;">
+			<div class="control-footer">
+				<ul></ul>
+			</div>
+		</div>
+	</article>
+	
+	<article class="pt-left">
+		<div class="cont">
+			<div class="control-edit">
+				<label class="radio inline normal">
+					<span>展示页面：</span>
+				</label>
+				{foreach $show_page as $k => $v}
+				<label class="radio inline normal">
+					{if strpos($info['data']['showPage'], $k) !== false }
+					<i class="checkbox-common selected">
+						<input type="checkbox"  checked="checked" name="showpage" value="{$k}">
+					</i>
+					{else /}
+					<i class="checkbox-common ">
+						<input type="checkbox"  name="showpage" value="{$k}">
+					</i>
+					{/if}
+					<span>{$v}</span>
+				</label>
+				{/foreach}
+			</div>
+			<div class="clear"></div>
+			<div class="control-edit text-color">
+				<label>文字颜色：</label>
+				<input id="nav-text-color" type="color" class="input-common harf" onchange="saveData()" value="{$info['data']['color']}"  placeholder="#333333">
+			</div>
+			<div class="control-edit text-color">
+				<label>选中颜色：</label>
+				<input id="nav-text-hover-color" type="color" class="input-common harf" onchange="saveData()" value="{$info['data']['color_hover']}" placeholder="#126AE4">
+			</div>
+			
+			<div class="control-footer-list"></div>
+			<button class="btn-common control-add-buttom" onclick="add()">添加</button>
+			
+			<div style="text-align:center;padding:10px;">
+				<button class="btn-common btn-big js-save" onclick="save()">保存</button>
+				<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);">返回</button>
+			</div>
+			<div class="main-bottom"></div>
+	</article>
+</div>
+<script>
+//默认
+var footer_data = '{$footer_data}';
+
+var new_data = {$info['template_data'] ? $info['template_data']: '""'};
+var save_footer_data = {
+	'is_text' : 1,
+	'is_background' : 1,
+	'color' : '',
+	'color_hover' : '',
+	'showPage' : "{$info['data']['showPage'] ? $info['data']['showPage'] : ''}",
+	'template_data' : new_data ? new_data : footer_data,
+};
+
+init();
+function init() {
+	if(new_data == '') {
+		$.each(footer_data, function(i, e) {
+			add(e, i);
+		})
+	}else {
+		$.each(new_data['template_data'], function(i, e) {
+			add(e, i);
+		})
+	}
+	saveData();
+}
+
+/**
+ * [设置链接地址公共]
+ */
+$(".js-link li[class!='js-custom-link']").live("click",function(){
+
+	var text = $(this).text();
+	var href = $(this).attr("data-href");
+	$(this).parent().parent().parent().find(".selected").text(text).attr("data-href",href).css("display","inline-block");
+	saveData();
+});
+
+/**
+ * [自定义链接公共]
+ */
+$(".js-custom-link").live("click",function(){
+	$(this).parent().parent().parent().find(".float-link-custom").show();
+});
+
+/**
+ * [自定义链接公共]->确定（可能会有多个需要进行拼装）
+ */
+$(".float-link-custom .btn-common").live("click",function(){
+
+	var value = $(this).prev().val();
+	if(value.length){
+		$(this).parent().parent().parent().find(".selected").text(value).attr("data-href",value).css("display","inline-block");
+		$(this).parent().parent().parent().find(".float-link-custom").hide();
+		saveData();
+	}else{
+		showTip("请输入链接地址","warning");
+	}
+});
+ 
+/**
+ * 添加菜单
+ */
+ function add(arr){
+	 var length = $('.control-footer-list> .footer').length;
+	 if(length == 5) {
+		$('.control-add-buttom').hide();
+	 }
+	 if(length > 5) {
+		showTip('最大展示6个菜单',"error");
+		return;
+	 }
+	 var i = ++length;
+	 var link_arr = {$link_arr ? $link_arr : ''};
+	 if(arr) {
+		 var html = '';
+		 html += '<div class="control-edit footer">';
+		 html += '<div class="imglist">';
+		 html += '	<div class="add-img js-img-footer">';
+		 html += '		<div class="img-block" style="display:block;">';
+		 html += '			<img id="img_footer'+i+'" style="max-height:100%;" src="'+__IMG(arr.img_src)+'">';
+	 	 html += '		</div>';
+		 html += '		<span>';
+		 html += '			<input class="input-file" id="upload_footer_img'+i+'" name="file_upload" type="file" onchange="imgUpload(this);" data-index="'+i+'" title=" ">';
+		 html += '			<input type="hidden" class="hidden_img" id="footer'+i+'" value="'+arr.img_src+'">';
+		 html += '		</span>';
+		 html += '			<p id="text_footer'+i+'" style="display:none;">未选中的图片<br><span>建议尺寸25*25</span></p>';
+		 html += '		</div>';
+		 html += '		<div class="add-img js-img-footer-hover">';
+		 html += '			<div class="img-block" style="display:block;">';
+		 html += '				<img id="img_footer_hover'+i+'" style="max-height:100%;" src="'+__IMG(arr.img_src_hover)+'">';
+		 html += '		</div>';
+		 html += '		<span>';
+		 html += '			<input class="input-file" id="upload_footer_hover_img'+i+'" name="file_upload" type="file" onchange="imgUpload(this);" data-index="'+i+'" title=" ">';
+	 	 html += '				<input type="hidden" class="hidden_img" id="footer_hover'+i+'" value="'+arr.img_src_hover+'">';
+		 html += '			</span>';
+		 html += '			<p id="text_footer_hover'+i+'" style="display:none;">选中后的图片<br><span>建议尺寸25*25</span></p>';
+		 html += '	</div>';
+		 html += '</div>';
+		 html += '	<div class="info" data-index="0">';
+		 html += '	<button class="btn-common control-del-btn" onclick="del(this)">删除</button>';
+		 html += '	<div class="control-edit footer-menu-name">';
+		 html += '		<label>菜单名称：</label>';
+		 html += '		<input type="text" class="input-common harf" onchange="saveData()" value="'+arr.menu_name+'" placeholder="请输入菜单名称">';
+		 html += '	</div>';
+		 html += '	<div class="control-edit link">';
+		 html += '		<label>链接地址：</label>';
+	 	 html += '		<span class="selected" style="display:inline-block;" title="'+arr.href+'" data-href="'+arr.href+'">'+arr.href_name+'</span>';
+		 html += '		<div class="custom-input">';
+		 html += '		<div class="float-link-custom">';
+		 html += '			<div class="arrow"></div>';
+		 html += '			<input type="text" class="input-common" placeholder="链接地址：http://example.com">';
+		 html += '			<button class="btn-common">确定</button>';
+		 html += '			<button class="btn-common-cancle">取消</button>';
+		 html += '			</div>';
+		 html += '		</div>';
+		 html += '		<div class="dropdown">';
+		 html += '			<a class="dropdown-toggle" data-toggle="dropdown" id="dLabel" role="button">';
+		 html += '				设置链接地址';
+		 html += '				<b class="caret"></b>';
+		 html += '			</a>';
+		 html += '			<ul class="dropdown-menu js-link" role="menu" aria-labelledby="dLabel">';
+		 html += '				<li class="js-custom-link">自定义链接</li>';
+		{foreach $link_arr as $k => $v}
+			 html += '			<li data-href="{$k}">{$v}</li>';
+		{/foreach}
+		 html += '			</ul>';
+		 html += '	</div>';
+		 html += '	</div>';
+		 html += '</div>';
+		 html += '</div>';
+		 html += '</div>';
+	 }else {
+		 var html = '';
+		 html += '<div class="control-edit footer">';
+		 html += '<div class="imglist">';
+		 html += '	<div class="add-img js-img-footer">';
+		 html += '		<div class="img-block" style="display:block;">';
+		 html += '			<img id="img_footer'+i+'" style="max-height:100%;" src="public/static/wapCustomTemplate/images/control_footer_home.png">';
+	 	 html += '		</div>';
+		 html += '		<span>';
+		 html += '			<input class="input-file" id="upload_footer_img'+i+'" name="file_upload" type="file" onchange="imgUpload(this);" data-index="'+i+'" title=" ">';
+		 html += '			<input type="hidden" class="hidden_img" id="footer'+i+'" value="public/static/wapCustomTemplate/images/control_footer_home.png">';
+		 html += '		</span>';
+		 html += '			<p id="text_footer'+i+'" style="display:none;">未选中的图片<br><span>建议尺寸25*25</span></p>';
+		 html += '		</div>';
+		 html += '		<div class="add-img js-img-footer-hover">';
+		 html += '			<div class="img-block" style="display:block;">';
+		 html += '				<img id="img_footer_hover'+i+'" style="max-height:100%;" src="public/static/wapCustomTemplate/images/control_footer_home_selected.png">';
+		 html += '		</div>';
+		 html += '		<span>';
+		 html += '			<input class="input-file" id="upload_footer_hover_img'+i+'" name="file_upload" type="file" onchange="imgUpload(this);" data-index="'+i+'" title=" ">';
+	 	 html += '				<input class="hidden_img" type="hidden" id="footer_hover'+i+'" value="public/static/wapCustomTemplate/images/control_footer_home_selected.png">';
+		 html += '			</span>';
+		 html += '			<p  id="text_footer_hover'+i+'" style="display:none;">选中后的图片<br><span>建议尺寸25*25</span></p>';
+		 html += '	</div>';
+		 html += '</div>';
+		 html += '	<div class="info" data-index="0">';
+		 html += '	<button class="btn-common control-del-btn" onclick="del(this)">删除</button>';
+		 html += '	<div class="control-edit footer-menu-name">';
+		 html += '		<label>菜单名称：</label>';
+		 html += '		<input type="text" class="input-common harf" onchange="saveData()" value="首页" placeholder="请输入菜单名称">';
+		 html += '	</div>';
+		 html += '	<div class="control-edit link">';
+		 html += '		<label>链接地址：</label>';
+		 html += '		<span class="selected" style="display:inline-block;" title="public/static/wapCustomTemplate/images/control_footer_home_selected.png" data-href="' + __URL('APP_MAIN/index') + '">店铺首页</span>';
+		 html += '		<div class="custom-input">';
+		 html += '		<div class="float-link-custom">';
+		 html += '			<div class="arrow"></div>';
+		 html += '			<input type="text" class="input-common" placeholder="链接地址：http://example.com">';
+		 html += '			<button class="btn-common">确定</button>';
+		 html += '			<button class="btn-common-cancle">取消</button>';
+		 html += '			</div>';
+		 html += '		</div>';
+		 html += '		<div class="dropdown">';
+		 html += '			<a class="dropdown-toggle" data-toggle="dropdown" id="dLabel" role="button">';
+		 html += '				设置链接地址';
+		 html += '				<b class="caret"></b>';
+		 html += '			</a>';
+		 html += '			<ul class="dropdown-menu js-link" role="menu" aria-labelledby="dLabel">';
+		 html += '				<li class="js-custom-link">自定义链接</li>';
+		{foreach $link_arr as $k => $v}
+			 html += '			<li data-href="{$k}">{$v}</li>';
+		{/foreach}
+		 html += '			</ul>';
+		 html += '	</div>';
+		 html += '	</div>';
+		 html += '</div>';
+		 html += '</div>';
+		 html += '</div>';
+	 }
+	 
+	 $('.control-footer-list').append(html);
+	 saveData();
+ }
+ 
+ function imgUpload(event) {
+	var fileid = $(event).attr("id");
+	var index = $(event).attr("data-index");
+	var data = { 'file_path' : "custom_template" };
+	var id = $(event).next().attr("id");
+	var del_img = $(event).parent().parent().find("i");
+	
+	uploadFile({
+		url: __URL(ADMINMAIN + '/goods/uploadimage'),
+		fileId: fileid,
+		data : data,
+		callBack: function (res) {
+			if(res.code){
+				$("#" + id).val(res.data.path);
+				$("#img_" + id).attr("src",__IMG(res.data.path)).css("max-height","100%").parent().show();
+				$("#text_" + id).hide();
+				showTip(res.message,"success");
+				saveData();
+			}else{
+				showTip(res.message,"error");
+			}
+		}
+	});
+}
+
+//删除
+function del(obj){
+	var length = $('.control-edit.footer').length;
+	if(length < 3) {
+		showTip('至少显示2个菜单',"error");
+		return;
+	}
+	$(obj).parents('.control-edit.footer').remove();
+	if(length < 6) {
+		$('.control-add-buttom').show();
+	 }
+	saveData();
+}
+
+//数据刷新
+function saveData() {
+	var arr = [];
+	var color = $('#nav-text-color').val();
+	var color_hover = $('#nav-text-hover-color').val();
+	$('.control-edit.footer').each(function(i, e) {
+		var menu_name = $(e).find('.footer-menu-name .input-common.harf').val();
+		var href = $(e).find('.control-edit.link .selected').attr('data-href');
+		var href_name = $(e).find('.control-edit.link .selected').text();
+		var img_src = $(e).find('.add-img.js-img-footer .hidden_img').val();
+		var img_src_hover = $(e).find('.add-img.js-img-footer-hover .hidden_img').val();
+		arr[i] = {};
+		arr[i]['menu_name'] = menu_name;
+		arr[i]['href'] = href;
+		arr[i]['href_name'] = href_name;
+		arr[i]['img_src'] = img_src;
+		arr[i]['img_src_hover'] = img_src_hover;
+		arr[i]['color'] = color;
+		arr[i]['color_hover'] = color_hover;
+	});
+	save_footer_data['template_data'] = arr;
+	save_footer_data['is_text'] = 1;
+	save_footer_data['is_background'] = 0;
+	save_footer_data['color'] = color;
+	save_footer_data['color_hover'] = color_hover;
+	leftNav();
+}
+
+//左边导航更新
+function leftNav() {
+	var arr = save_footer_data['template_data'];
+	var width = 100/arr.length;
+	html = '';
+	$.each(arr, function(i, e) {
+		html += '<li data-index="'+i+'" style="width: '+width+'%;">';
+		html += '	<img draggable="false" src="'+__IMG(e.img_src)+'" data-src="'+__IMG(e.img_src)+'" data-hover-src="'+__IMG(e.img_src_hover)+'">';
+		html += '	<label data-editable="1" style="color:'+e.color+'" data-color="'+e.color+'" data-color-hover="'+e.color_hover+'">'+e.menu_name+'</label>';
+		html += '</li>';
+	})
+	$('.control-footer ul').html(html);
+	$('.control-footer ul li').hover(function() {
+		$(this).find('img').attr('src', $(this).find('img').attr('data-hover-src'));
+		$(this).find('label').css('color', $(this).find('label').attr('data-color-hover'));
+	}, function() {
+		$(this).find('img').attr('src', $(this).find('img').attr('data-src'));
+		$(this).find('label').css('color', $(this).find('label').attr('data-color'));
+	})
+}
+
+function save() {
+	var data = save_footer_data;
+	$.ajax({
+		url : 'ADMIN_MAIN/Config/wapBottomType',
+		type : 'post',
+		data : {'nav_data' : JSON.stringify(data)},
+		dataType : 'JSON',
+		success: function(res) {
+			if(res.code > 0) {
+				showTip(res.message,"success");
+			}else {
+				showTip(res.message,"error");
+			}
+		}
+	})
+}
+$('input[name="showpage"]').click(function(){
+    var str = '';
+    $('input[name="showpage"]').each(function(i, e) {
+	    var value = $(this).val();
+    	if($(e).prop('checked')) {
+    		str += value + ',';
+    	}
+    });
+    save_footer_data['showPage'] = str;
+});
+</script>
+{/block}

@@ -1,0 +1,201 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" href="WAP_CSS/goods_category.css">
+{/block}
+{block name="main"}
+{php}
+$goods_category_list = api('System.Goods.goodsCategoryList');
+$goods_category_list = $goods_category_list['data'];
+// 模板类型
+$category_template = $show_type['template'];
+// 模板样式
+$category_style = $show_type['style'];
+// 分类图显示
+$category_is_img = $show_type['is_img'];
+// Class 样式
+$more_list_class = $category_template == 3 ? 'more-list' : '';
+$none_img_class = $category_is_img == 0 ? 'none-img' : '';
+{/php}
+{notempty name='$goods_category_list'}
+<div class="goods-category-list">
+    
+    <!--------- 一级分类 --------->
+    <ul class="first-level" >
+        {foreach name="goods_category_list" item="vo" key='index'}
+        <li class="first-item">
+            <div class="first-caetgroy-name {if condition='$index eq 0'}ns-border-color{/if}" data-id="{$vo.category_id}" onclick="chooseCategory(this)">
+                <label>{$vo.category_name}</label>
+            </div>
+
+            <!--------- 二级分类 --------->
+            {if condition='$category_template gt 1'}
+            <ul class="second-level {if condition='$index neq 0'}hidden{/if} category-box-{$vo.category_id}">
+                {notempty name="$vo['child_list']"}
+                {foreach name="$vo['child_list']" item="vo1"}
+                <li class="{$more_list_class} {$none_img_class}">
+                    {if condition='$category_template eq 2'}
+                    {if condition='$category_is_img eq 1'}
+                    <div class="img-common" onclick="moreGoodsList({$vo1.category_id})">
+                        <img src="{:__IMG($vo1.category_pic)}">
+                    </div>
+                    {/if}
+                    <span class="category-name ns-border-color-gray-shade-10" onclick="moreGoodsList({$vo1.category_id})">{$vo1.category_name}</span>
+                    {/if}
+
+                    <!--------- 三级分类 --------->
+                    {if condition='$category_template eq 3'}
+                    <div class="category-title" onclick="moreGoodsList({$vo1.category_id})">
+                        <label>{$vo1.category_name}</label>
+                    </div>
+    
+                    {notempty name="$vo1['child_list']"}
+                    <ul class="third-level">
+                        {foreach name="$vo1['child_list']" item="vo2"}
+                        <li  onclick="moreGoodsList({$vo2.category_id})">
+                            {if condition='$category_is_img eq 1'}
+                            <div class="img-common">
+                                {notempty name="$vo2.category_pic"}
+                                <img src="{:__IMG($vo2.category_pic)}">
+                                {else/}
+                                <img src="WAP_IMG/goods/empty.png">
+                                {/notempty}
+                            </div>
+                            {/if}
+                            <span class="category-name ns-border-color-gray-shade-10">{$vo2.category_name}</span>
+                        </li>
+                        {/foreach}
+                    </ul>
+                    {/notempty}
+                    {/if}
+                </li>
+                {/foreach}
+                {else/}
+                <p class="no-goods"><img src="WAP_IMG/wap_nodata.png" height="100"><br/>没有找到商品分类…</p>
+                {/notempty}
+            </ul>
+            {/if}
+        </li>
+        {/foreach}
+    </ul>
+    <!-- 分类商品列表 -->
+    {if condition='$category_template eq 1'}
+    <div class='goods-list' id="goods_list"></div>
+    <input type="hidden" id="page_count">
+    <input type="hidden" id="page" value="1">
+    {/if}
+
+</div>
+{else/}
+<div class='empty-category ns-text-color-gray'>
+	<img src='WAP_IMG/goods/empty.png'/><br/>
+	<span>暂无商品分类</span>
+</div>
+{/notempty}
+{if condition="$category_template == 1"}
+<script>
+var is_load = true;
+$(function () {
+	loadGoodsList(1);
+	$('#goods_list').scroll(function () {
+		if ($('#goods_list .goods-item').length != undefined && $('#goods_list .goods-item').length > 3 && is_load) {
+			var length = $('#goods_list .goods-item').length;
+			var obj = $($('#goods_list .goods-item')[length - 1]);
+			var scroll_top = obj.offset().top;
+			var scrollHeight = $(document).height() - 95;
+			var obj_height = obj.height();
+			if (scroll_top <= scrollHeight - obj_height / 2) {
+				var page = parseInt($("#page").val()) + 1;//页数
+				var total_page_count = $("#page_count").val(); // 总页数
+				if (page > total_page_count) {
+					return false;
+				} else {
+					loadGoodsList(page);
+				}
+			}
+		}
+	})
+});
+
+/**
+ * 加载一级分类商品列表
+ * @param page
+ */
+function loadGoodsList(page) {
+	// 当前页未加载完毕，不允许加载下一页
+	if (is_load) {
+		is_load = false;
+		// 当前选中分类ID
+		var id = $('.first-level .first-caetgroy-name.ns-border-color').attr('data-id');
+		if (id == undefined || id == null || id == '') {
+			return false;
+		}
+		// 请求商品列表接口
+		api("System.Goods.goodsList", {'page_index': page, 'condition': {'ng.category_id': id}}, function (res) {
+			var data = res.data;
+			$("#page_count").val(data['page_count']);
+			$("#page").val(page);
+			var list_html = "";
+			if (page > 1) {
+				// 不是第一页进行分页加载
+				list_html = $('#goods_list').html();
+			}
+			if (data['data'].length > 0) {
+				for (var i = 0; i < data['data'].length; i++) {
+					var item = data['data'][i];
+					list_html += '<a href="' + __URL(APPMAIN + '/goods/detail?goods_id=' + item['goods_id']) + '" class="goods-item">';
+					list_html += '<div class="img-common goods-img">';
+					list_html += '<img src="' + __IMG(item.pic_cover_small) + '"/>';
+					list_html += '</div>';
+					list_html += '<div class="goods-info">';
+					list_html += '<span class="goods-name">' + item.goods_name + '</span>';
+					list_html += '<span class="price ns-text-color">￥' + item.promotion_price + '</span>';
+					list_html += '</div>';
+					list_html += '</a>';
+				}
+			} else {
+				list_html += '<p class="no-goods ns-text-color-gray"><img src="' + WAPIMG + '/wap_nodata.png" height="100"><br><span>Sorry！没有找到您想要的商品……</span></p>';
+			}
+			is_load = true;
+			$('#goods_list').html(list_html);
+		});
+	}
+}
+</script>
+{/if}
+<script>
+//选择一级分类
+function chooseCategory(obj) {
+	var template_type = "{$category_template}";
+    var id = $('.first-level .first-caetgroy-name.ns-border-color').attr('data-id');
+    var obj_id = $(obj).attr('data-id');
+    // 已选中该分类不触发选中效果
+    if (id != obj_id) {
+        if ($(obj).hasClass('first-caetgroy-name')) {
+            $('.first-caetgroy-name').not(obj).removeClass('ns-border-color');
+        } else {
+            $('.category-name').not(obj).removeClass('ns-border-color');
+        }
+        $(obj).addClass('ns-border-color');
+        // 判断模板类型
+        if (template_type == 1) {
+            // 加载商品列表
+            is_load = true;
+            $('#goods_list').html('');
+            loadGoodsList(1);
+        } else {
+            // 加载分类列表
+            $('.category-box-' + obj_id).removeClass('hidden');
+            $('.second-level').not('.category-box-' + obj_id).addClass('hidden');
+        }
+    }
+}
+
+/**
+ * 跳转商品列表页
+ * @param id
+ */
+function moreGoodsList(id) {
+    location.href = __URL(APPMAIN + '/goods/lists?category_id=' + id);
+}
+</script>
+{/block}

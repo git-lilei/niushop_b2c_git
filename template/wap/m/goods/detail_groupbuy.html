@@ -1,0 +1,55 @@
+{extend name="$goods_detail_base" /}
+{block name="goods_data"}
+<input type="hidden" id="hidden_order_type" value="1">
+<input type="hidden" id="hidden_promotion_type" value="2" />
+<input type="hidden" id="hidden_tuangou_group_id" value="{$group_id}">
+{/block}
+
+{block name="goods_promotion"}
+<!--团购-->
+{assign name="show_price" value="$goods_detail['promotion_detail']['group_buy']['data']['price_array'][0]['group_price']"}
+<div class="product-discount">
+	<div class="price-info ns-bg-color">
+		<div class="actprice"><i class="yen">NT$</i>{$goods_detail['promotion_detail']['group_buy']['data']['price_array'][0]['group_price']}</div>
+		<div class="origprice">
+			{if $show_price < $goods_detail['price']}
+			<span class="oprice"><del>{:bl_cf($goods_detail.price)}</del></span>
+			{/if}
+			<span class="actual_sale">{$goods_detail['sales']}{if condition ="empty($goods_detail['goods_unit'])"}{:lang('goods_piece')}{else/}{$goods_detail['goods_unit']}{/if}{:lang('已售')}</span>
+		</div>
+	</div>
+	
+	<div class="countdown">
+		<div class="txt" data-value="{$goods_detail['promotion_detail']['group_buy']['data']['end_time']}">{:lang('distance_ends')}</div>
+		<div class="clockrun">
+			<span class="num" id="day">00</span><span class="dot ns-text-color-gray">:</span>
+			<span class="num" id="hour">00</span><span class="dot ns-text-color-gray">:</span>
+			<span class="num" id="min">00</span><span class="dot ns-text-color-gray">.</span>
+			<span class="num" id="second">00</span>
+		</div>
+	</div>
+</div>
+{/block}
+
+{block name="goods_price"}{/block}
+{block name="goods_current_info"}
+<div class="widgets-cover">
+	<div class="cover-content">
+		<div class="sku-wrap">
+			<div class="header">
+				<div class="img-wrap">
+					<img src="{:__IMG($goods_detail['img_list'][0]['pic_cover_small'])}"  alt="选中的产品图" class="js-thumbnail">
+				</div>
+				<div class="main">
+					<div class="price-wrap">
+						<!--团购-->
+						<span class="price ns-text-color">{:bl_cf($goods_detail['promotion_detail']['group_buy']['data']['price_array'][0]['group_price'])}</span>
+					</div>
+					{if condition="$goods_detail.is_stock_visible == 1"}
+					<div class="stock">{:lang('goods_stock')}{$goods_detail.stock}{if condition ="empty($goods_detail['goods_unit'])"}{:lang('goods_piece')}{else/}{$goods_detail['goods_unit']}{/if}</div>
+					{/if}
+					<div class="sku-info">{:lang('请选择：')}<span>-</span></div>
+				</div>
+				<a class="sku-close"><img src="WAP_IMG/goods/close.png"/></a>
+			</div>
+{/block}

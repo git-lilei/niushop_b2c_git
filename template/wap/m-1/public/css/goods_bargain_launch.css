@@ -1,0 +1,40 @@
+.bargain-header{position: relative;}
+.bargain-header .index{position: absolute; left: 15px; top: -30px; background: rgba(255, 255, 255, .7); display: block; width: 50px; text-align: center; border-radius: 15px;}
+.bargain-header .bargain-content{padding: 10px; background: #fff; width: 88%; margin: 45px auto 0;position: relative; border-radius: 8px;}
+.bargain-header .bargain-content .user-headimg{position: absolute; left: 50%; transform: translateX(-50%); top: -25px; text-align: center;}
+.bargain-header .bargain-content .user-headimg img{width: 45px; max-width: 100%; max-height: 100%; vertical-align: middle; border-radius: 50%;}
+.bargain-header .bargain-content .user-name{text-align: center; margin-top: 12px;}
+.bargain-header .bargain-content .propaganda{text-align: center; font-size: 15px;line-height: 22px; overflow: hidden;}
+.bargain-header .bargain-content .goods-info{margin: 7px 0;}
+.bargain-header .bargain-content .goods-info .goods-left{display: inline-block; width: 20%; height: 80px; line-height: 80px; padding: 7px; text-align: center;}
+.bargain-header .bargain-content .goods-info .goods-left img{max-width: 100%; max-height: 100%; vertical-align: middle;}
+.bargain-header .bargain-content .goods-info .goods-right{width: 73%; float: right; padding-right: 2%; margin: 0; padding-top: 7px; padding-bottom: 7px; height: 80px; position: relative;}
+.bargain-header .bargain-content .goods-info .goods-right .goods-name{overflow: hidden; display: block; white-space: nowrap; text-overflow: ellipsis;}
+.goods-info .goods-right .goods-center{font-size: 12px;}
+.bargain-content .goods-info .goods-right .goods-price{position: absolute; bottom: 7px; font-size: 14px; font-weight: bold;}
+.bargain-content .goods-info .goods-right .partake-number{float: right; margin-right: 10px; font-size: 12px;}
+.bargain-info{margin-top: 15px;}
+.bargain-info h3{width: 100%; text-align: center; color: #fff; font-size: 16px;}
+.bargain-info h3:last-child{font-size: 14px; font-weight: normal; margin: 10px 0;}
+.bargain-info h3 span{color: #fed866; font-size: 18px;}
+.bargain-info h3 span:last-child{font-size: 16px;}
+.friend-bargain{display: block;width: 94%;margin: 10px auto 0;background: #fff700; border: none;height: 38px; line-height: 38px; border-radius: 5px; text-align: center;}
+.share-friends{display: block;width: 94%;margin: 10px auto 0;background: #fff700; border: none;height: 38px; line-height: 38px;border-radius: 5px;}
+
+/* 分享弹出框 */
+.mask-layer-bg{position: fixed;top: 0;bottom: 0;left: 0;right: 0;background: rgba(0, 0, 0, .8);z-index: 1000;}
+.mask-layer-invite-friends{z-index:1001;position: fixed;width:100%;height:100%;top:10%;left:0;}
+.mask-layer-invite-friends div{text-align: right;margin:10px 10px 30px;}
+.mask-layer-invite-friends div img{width: 50px;}
+.mask-layer-invite-friends h4{color:#fff;text-align: center;font-weight: bold;font-size:18px;}
+
+.bargain-list{width: 94%; margin: 15px auto;background: rgba(255, 255, 255, 0.19);}
+.bargain-list h3{height: 35px; line-height: 35px; color: #fff; text-align: center; font-size: 16px; font-weight: normal; border-bottom: 1px solid rgba(255, 255, 255, 0.33); margin: 0 10px;}
+.bargain-list ul{padding-bottom: 10px;}
+.bargain-list ul li{margin: 0 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.33);}
+.bargain-list ul li:last-child{border-bottom: none;}
+.bargain-list ul li .user-headimg{display: inline-block; max-width: 12%; padding: 7px; line-height: 54px;height: 54px;}
+.bargain-list ul li .user-headimg img{max-width: 100%; max-height: 100%; vertical-align: middle; border-radius: 50%;}
+.bargain-list ul li .user-info{width: 82%; float: right; position: relative; height: 54px; padding: 7px;}
+.bargain-list ul li .user-info p{padding: 6px 0; color: #fff;}
+.bargain-list ul li .user-info .bargain-price{position: absolute; right: 3px; top: 20px; color: #fed866; font-weight: bold;}

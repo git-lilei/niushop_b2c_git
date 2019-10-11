@@ -1,0 +1,203 @@
+<style>
+.floor-temp-four{
+    overflow: hidden;
+    position: relative;
+    width: 1100px;
+    background-color: #fff;
+    padding: 20px 50px;
+    box-sizing: content-box;
+}
+
+.floor-header{
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.floor-header-title{
+    font-size: 24px;
+    color: #333;
+}
+
+.floor-header-subheading{
+    font-weight: normal;
+    font-size: 14px;
+    color: #999;
+}
+
+.temp-item-list{
+    overflow: hidden;
+}
+
+.temp-item-list > li{
+    float: left;
+    width: 245px;
+    height: 370px;
+    margin: 0 15px 30px;
+    text-align: center;
+}
+
+.temp-list-item .item-pic{
+    overflow: hidden;
+    display: inline-block;
+    width: 245px;
+    height: 245px;
+    margin-bottom: 5px;
+    background-color: #f4f4f4;
+}
+
+.temp-list-item .item-pic > img{
+    width: 100%;
+    height: 100%;
+}
+
+.temp-list-item .item-info{
+    width: 100%;
+}
+
+.item-info .item-tags > span{
+    display: inline-block;
+    padding: 3px;
+    font-size: 14px;
+    color: #fff;
+    background-color: #f28f2d;
+}
+
+.back-item-tags > span{
+    width: 80px;
+    height: 25px;
+    background-color: #eee;
+}
+
+.item-info .item-name > a{
+    display: inline-block;
+    width: 100%;
+    margin-top: 5px;
+    overflow: hidden;
+    white-space: nowrap;
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    color: #333;
+}
+
+.item-info .back-item-name > a{
+    height: 20px;
+    background-color: #eee;
+}
+
+.item-info .item-price{
+    color: red;
+    padding: 3px;
+}
+
+.item-info .back-item-price > p{
+    background-color: #eee;
+    height: 20px;
+}
+
+.item-info .item-price > p{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.item-info .item-price > hr{
+    width: 150px;
+    margin: 5px auto 0;
+}
+
+.item-info .item-desc{
+    color: #999;
+    margin-top: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.back-item-desc{
+    height: 20px;
+    background-color: #eee;
+}
+</style>
+
+
+<article class="floor-temp-four">
+    <header class="floor-header">
+        <div data-block-type="text" data-block-name="left_title">
+            <h1 class="floor-header-title">{if condition="$data['text']['left_title']['value']"}{$data['text']['left_title']['value']}{else/}男装{/if}</h1>
+        </div>
+        <div  data-block-type="text" data-block-name="subheading_title">
+            <h3 class="floor-header-subheading">{if condition="$data['text']['subheading_title']['value']"}{$data['text']['subheading_title']['value']}{else/}自在潇洒穿着感{/if}</h3>
+        </div>
+    </header>
+    
+    <article>
+        <ul class="temp-item-list" data-block-type="product" data-block-name="middle">
+            {if condition="$data['product']['middle']"}
+            {foreach name="$data['product']['middle']" item="product"}
+            <li class="temp-list-item">
+                <a href="{:__URL('SHOP_MAIN/goods/detail?goods_id='.$product['goods_id'])}" target="_blank" class="item-pic">
+                    {if condition="$product['pic_cover_small'] != '' "}
+                    <img src="{:__img($product['pic_cover_small'])}">
+                    {else/}
+                    <img src="WEB_IMG/discount_product_default.png">
+                    {/if}
+                </a>
+                <ul class="item-info">
+                    <li class="item-tags">
+                        <span {if condition="$product.group_name == ''" }style="background-color:transparent;"{else/}class="ns-bg-color"{/if}>{$product.group_name}</span>
+                    </li>
+                    <li class="item-name">
+                        <a href="javascript:;">{$product.goods_name}</a>
+                    </li>
+                    <li class="item-price">
+                        <p>¥{$product.promotion_price}</p>
+                        <hr {if condition="$product.introduction == ''"} style="display: none;"{/if}>
+                    </li>
+                    <li class="item-desc">{$product.introduction}</li>
+                </ul>
+            </li>
+            {/foreach}
+            {else/}
+            {php}for($i=0;$i<8;$i++){ {/php}
+            <li class="temp-list-item">
+                <a href="JavaScript:;" class="item-pic">
+                    <img src="" alt="">
+                </a>
+                <ul class="item-info">
+                    <li class="item-tags back-item-tags ">
+                        <span></span>
+                    </li>
+                    <li class="item-name back-item-name">
+                        <a href="javascript:;"></a>
+                    </li>
+                    <li class="item-price back-item-price">
+                        <p></p>
+                        <hr>
+                    </li>
+                    <li class="item-desc back-item-desc"></li>
+                </ul>
+            </li>
+            {php} }; {/php}
+            {/if}
+        </ul>
+    </article>
+</article>
+
+
+<script type='text/javascript'>
+    $(".temp-item-list > li").each(function(){
+        $(this).mouseover(function(){
+            $(this).find(".item-pic > img").css({
+                "transform": "scale(1.1)",
+                "transition": "2s"
+            });
+        });
+
+        $(this).mouseout(function(){
+            $(this).find(".item-pic > img").css({
+                "transform": "scale(1)",
+                "transition": "2s"
+            });
+        })
+    });
+</script>

@@ -1,0 +1,107 @@
+{extend name="$base" /}
+{block name="resources"}
+<link type="text/css" rel="stylesheet" href="WEB_CSS/goods_brand.css">
+{/block}
+{block name="lunbo"}
+{php}
+	//轮播
+	$banner_list = api('System.Shop.advDetail', ['ap_keyword' => 'PC_BRAND_SWIPER', 'export_type' => 'data']);
+{/php}
+<!-- 轮播 -->
+<div class="banner-wrap">
+	{notempty name='$banner_list'}
+	<div id="banner" class="carousel slide" data-ride="carousel">
+		<ol class="carousel-indicators">
+			{foreach name="$banner_list['data']['advs']" item="vo" key="k"}
+			<li data-target="#banner" data-slide-to="{$k}" {if condition="$k==0"}class="active"{/if}></li>
+			{/foreach}
+		</ol>
+
+		<div class="carousel-inner">
+			{foreach name="$banner_list['data']['advs']" item="vo" key="k"}
+			<div class="item {if condition='$k==0'}active{/if}" style="background-color:{$vo['background']}">
+				{if $vo['adv_image'] == ''}
+				<a href="javascript:;"><img alt="轮播图" src="WEB_IMG/index/default_banner.png"></a>
+				{else/}
+				<a href="{:__URL($vo['adv_url'])}" target="_blank" style="width: {$banner_list['data']['ap_width']}px;height: {$banner_list['data']['ap_height']}px;line-height: {$banner_list['data']['ap_height']}px;"><img alt="轮播图" src="{:__IMG($vo['adv_image'])}" onerror="this.src='WEB_IMG/index/default_banner.png'"></a>
+				{/if}
+			</div>
+			{/foreach}
+		</div>
+
+		<a class="left carousel-control" href="#banner" data-slide="prev">
+			<span class="icon icon-chevron-left"></span>
+		</a>
+		<a class="right carousel-control" href="#banner" data-slide="next">
+			<span class="icon icon-chevron-right"></span>
+		</a>
+	</div>
+	{/notempty}
+</div>
+{/block}
+{block name="main"}
+{php}
+	$condition = [];
+	if(!empty($category_id)){
+		$condition['category_id_1'] = $category_id;
+	}
+	$info = api('System.Goods.goodsBrandList', ['page_index' => $page_index, 'condition' => $condition]);
+	$info = $info['data'];
+	$total_count = $info['total_count'];
+	$list = $info['data'];
+	
+	$brand_adv = api('System.Shop.advDetail', ['ap_keyword' => 'BRANDSWIPER', 'export_type' => 'data']);
+	$brand_adv = $brand_adv['data'];
+
+{/php}
+{notempty name="$brand_adv"}
+<div>
+	<a href="{:__URL($brand_adv['advs'][0]['adv_url'])}">
+		<img src="{:__IMG($brand_adv['advs'][0]['adv_image'])}" width="100%" alt="广告位"/>
+	</a>
+</div>
+{/notempty}
+
+{notempty name="$list"}
+<div class="box-main-title">
+	<div class="box-main-title-word">
+		<span class="words">品牌专区</span>
+	</div>
+</div>
+<div class="brand-container w1200 clearfix">
+	{foreach name="$list" item="item" key="k"}
+	<div class="brand-item" onclick="location.href='{:__URL('SHOP_MAIN/goods/lists?brand_id='.$item['brand_id'])}'">
+		<div class="brand-ad">
+			{notempty name="$item.brand_pic"}
+				<img src="{:__IMG($item.brand_ads)}" alt="" class="pic" onerror="this.src='WEB_IMG/goods/brand_default_adv.png'">
+			{else/}
+				<img src="WEB_IMG/goods/brand_default_adv.png" alt="" class="pic">
+			{/notempty}
+			{if $item.brand_recommend eq 1}<i class="recommend-icon"></i>{/if}
+		</div>
+		<div class="brand-info">
+			<div class="brand-pic">
+				{notempty name="$item.brand_pic"}
+					<img src="{:__IMG($item.brand_pic)}" alt="" onerror="this.src='WEB_IMG/goods/brand_default_pic.png'">
+				{else/}
+					<img src="WEB_IMG/goods/brand_default_pic.png" alt="">
+				{/notempty}
+			</div>
+			<h3 class="brand-name">{$item.brand_name}</h3>
+			<p class="brand-desc">{$item.describe}</p>
+		</div>
+	</div>
+	{/foreach}
+</div>
+<ul class="pager boc" data-ride="pager" data-elements="prev,nav,next,total_page_text,goto" data-rec-per-page="{$page_size}" data-page="{$page_index}" data-rec-total="{$total_count}" id="myPager"></ul>
+{/notempty}
+{/block}
+{block name="script"}
+<script>
+$('#myPager').pager({
+	linkCreator: function(page, pager) {
+		return __URL("SHOP_MAIN/goods/brand?page="+ page);
+	}
+});
+</script>
+{/block}

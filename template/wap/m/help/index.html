@@ -1,0 +1,44 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/help.css">
+{/block}
+{block name="seo"}
+<meta name="keywords" content="{$seo_config.seo_meta},{$web_info['title']}_帮助中心" />
+<meta name="description" content="{$seo_config.seo_desc},{$help_document_info.title}"/>
+{/block}
+{block name="main"}
+<div class="custom-tag-list clearfix">
+	<div class="mask" id="grouGoods_listmask"></div>
+	<div class="custom-tag-list-menu-block ns-border-color-gray" >
+		<div class="article-hide"></div>
+		<ul class="custom-tag-list-side-menu">
+			{foreach name="platform_help_class" id="class_vo" key="k"}
+			<li class="ns-border-color-gray">
+				<a data-groupid="{$class_vo.class_id}" onclick="showChild(this,{$class_vo.class_id})" {if condition="$class_vo.class_id==$class_id"}class="selected ns-text-color ns-border-color"{/if}>
+					<span>{$class_vo['class_name']}</span>
+				</a>
+			</li>
+			{/foreach}
+		</ul>
+	</div>
+	<div class="two-list-menu">
+		<ul id='two_menu'>
+			{foreach name="$platform_help_document" id="document_vo"}
+			<li pid="{$document_vo.class_id}" class="two-menu-item ns-border-color-gray {if condition="$document_vo.id==$id"} selected ns-text-color ns-border-color{/if}">
+				<a href="{:__URL('APP_MAIN/help/index', 'id='.$document_vo.id.'&class_id='.$document_vo.class_id)}">
+					<span>{$document_vo['title']}</span>
+				</a>
+			</li>
+	        {/foreach}
+		</ul>
+	</div>
+    <div class="custom-tag-list-goods ns-bg-color-gray">
+        <p>{$help_document_info['title']}</p>
+        <p>{$help_document_info['content']}</p>
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script src="WAP_JS/help.js"></script>
+{/block}
+{block name="footer"}{/block}

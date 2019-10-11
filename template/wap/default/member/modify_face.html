@@ -1,0 +1,102 @@
+{extend name="$base" /}
+{block name="resources"}
+<style>
+.face-box{width: 100%;position: relative;}
+.face{width: 96%;height: 80%;text-align: center;margin:0 2%;position: relative;top: 0;line-height: 35;}
+.face .facepic{max-width: 96%;max-height: 100%;vertical-align: middle;}
+.upload-face{width: 96%;height: 40px;line-height: 40px;color: #fff;text-align: center;position: absolute;left: 50%; transform: translateX(-50%); bottom: 30px;border-radius: 5px;z-index: 20;}
+.webuploader-element-invisible{opacity: 0}
+</style>
+{/block}
+{block name="main"} 
+<section class="face-box ns-black-color-black">
+	<div class="face upload-img">
+	{php}
+		$member_info = api('System.Member.memberInfo');
+        $member_img = $member_info['data']['user_info']['user_headimg'];
+	{/php}
+		{notempty name="$member_img"}
+		<img src="{:__IMG($member_img)}" class="lazy-load facepic" id="imgLogo" data-url="{$member_img}">
+		{else/}
+		<img src="{:__IMG($default_headimg)}" class="facepic" id="imgLogo" data-url="{$default_headimg}">
+		{/notempty}
+	</div>
+	<div class="upload-face ns-bg-color js-save">{:lang('save_avatar')}</div>
+</section>
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script type="text/javascript" src="__STATIC__/webuploader/webuploader.js"></script>
+<script>
+$(function(){
+	var windowHeight = $(document).height();
+	$(".face-box").height(windowHeight-45);
+
+	uploader = WebUploader.create({
+		// 文件接收服务端。
+		server: __URL(APPMAIN + '/member/uploadImage'),
+		auto : false,
+		// 选择文件的按钮。可选。
+		// 内部根据当前运行是创建，可能是input元素，也可能是flash.
+		pick: '.upload-img',
+
+		fileNumLimit: 1,
+
+		// 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
+		resize: false,
+
+		// 只允许选择图片文件。
+		accept: {
+			title: 'Images',
+			extensions: 'gif,jpg,jpeg,bmp,png',
+			mimeTypes: 'image/*'
+		},
+
+		formData: {
+			param: JSON.stringify({
+				// app_key :APP_KEY
+			})
+		},
+
+		thumb: {
+			width: 300,
+			height: 300,
+			crop: false
+		}
+
+	});
+
+	// 当有文件被添加进队列的时候
+	uploader.on('fileQueued', function (file) {
+		curr_file = file;
+		uploader.makeThumb(file, function (error, src) {
+			if (error) {
+				$(".facepic").replaceWith('<span>不能预览</span>');
+				return;
+			}
+			$(".facepic").attr('src', src);
+		});
+	});
+
+	uploader.on('uploadSuccess', function (file, res) {
+		if (curr_file) uploader.removeFile(curr_file);
+		api('System.Member.modifyFace', {'user_headimg' : res.data}, function(res) {
+			if(res.data>0){
+				$.ajax({
+					url: __URL(APPMAIN + '/member/updateMemberInfo'),
+					type: 'POST',
+					success : function(res){
+						location.href=__URL(APPMAIN+"/member/info");
+					}
+				})
+			}
+		}, false);
+	});
+
+	$(".js-save").click(function () {
+		if (uploader.getFiles().length) uploader.upload();
+		else location.href = __URL(APPMAIN + '/member/info');
+	});
+});
+</script>
+{/block}

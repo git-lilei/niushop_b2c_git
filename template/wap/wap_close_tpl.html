@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>{:lang('站点已关闭')}</title>
+	<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="format-detection" content="telephone=no">
+	<style>
+		* { padding: 0;margin: 0; }
+		.container { width:100%;margin-top: 50%;overflow: hidden; } 
+		.container img { display: inline-block;float: left;width:90%;margin:0 5%; }
+		.container .reason {font-size: 14px; display: inline-block;width: 70%;color: #666;text-align:center;margin:-130px 15% 0 15%;}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<img src="ADMIN_IMG/error.png"/>
+		<span class="reason">{$reason}</span>
+	</div>
+</body>
+</html>

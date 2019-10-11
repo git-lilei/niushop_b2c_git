@@ -1,0 +1,137 @@
+{extend name="$base" /}
+{block name="resources"}{/block}
+{block name="main"}
+<div class="space-10"></div>
+<div class="ncsc-form-goods">
+	{include file="admin/Express/expressTitle"}
+	
+<table class="mytable select">
+	<tr>
+		<td width="50%" style="text-align: left;">
+			<button style="margin:0 5px 0 0 !important;" class="btn-common-delete btn-small" onclick="batchDelete()">批量删除</button>
+		</td>
+		<td width="20%">
+			
+		</td>
+	</tr>
+</table>
+	<div class="mod-table">
+		<div class="mod-table-head">
+
+			<div class="con style0list">
+				<table class="table-class" id="personList">
+					<colgroup>
+						<col style="width: 2%;">
+						<col style="width: 42%;">
+						<col style="width: 30%;">
+						<col style="width: 16%;">
+						<col style="width: 10%;">
+					</colgroup>
+					<thead>
+						<tr align="center">
+							<th><i class="checkbox-common"><input type="checkbox" ></i></th>
+							<th align="left">审核人员昵称</th>
+							<th align="left">所属门店</th>
+							<th>创建时间</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody></tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+function LoadingInfo(page_index) {
+	$.ajax({
+		type : "post",
+		url : __URL('nspickup/ADMIN_MODULE/shop/pickupAuditorList'),
+		data : { "page_index" : page_index, "page_size" :  $("#showNumber").val() },
+		success : function(data) {
+			if (data["data"].length > 0) {
+				$("#personList tbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					html += '<tr align="center">';
+					html += '<td><i class="checkbox-common"><input name="sub" type="checkbox" value="'+ data["data"][i]["auditor_id"]+'" ></i></td>';
+					html += '<td align="left">'+ data["data"][i]["nick_name"]+'</td>';
+					html += '<td align="left">'+ data["data"][i]["name"]+'</td>';
+					html += '<td>'+ timeStampTurnTime(data["data"][i]["create_time"])+'</td>';
+					html += '<td><a href="javascript:deleteAuditor('+ data["data"][i]["auditor_id"] +')">删除</a></td>';
+					html += '</tr>';
+					$("#personList tbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="5">暂无符合条件的数据记录</td></tr>';
+				$("#personList tbody").html(html);
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+function batchDelete() {
+	var auditor_ids= [];
+	$("#personList tbody input[type='checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			auditor_ids.push($(this).val());
+		}
+	});
+	if(auditor_ids.length ==0){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#0059d6,#fff": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:"请选择需要操作的记录",
+			title:"消息提醒",
+		});
+		return false;
+	}
+	deleteAuditor(auditor_ids);
+}
+
+function deleteAuditor(auditor_id){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$.ajax({
+					type : "post",
+					url : "{:__URL('nspickup/ADMIN_MODULE/shop/deletePickupAuditor')}",
+					data : { "auditor_id" : auditor_id.toString() },
+					dataType : "json",
+					success : function(data) {
+						if(data["code"] > 0 ){
+							showTip(data["message"],'success');
+							$("#personList thead input[type = 'checkbox']").parent().removeClass("selected");
+							LoadingInfo(1);
+						}else{
+							showTip(data["message"],'error');
+							LoadingInfo(1);
+							$("#personList thead input[type = 'checkbox']").parent().removeClass("selected");
+						}
+					}
+				});
+				$(this).dialog('close');
+			},
+			"取消,#f5f5f5,#666": function() {
+				$(this).dialog('close');
+			},
+		},
+		contentText:"确定要删除该审核人员吗？",
+	});
+}
+
+//全选
+function CheckAll(event){
+	var checked = event.checked;
+	$(".table-class tbody input[type = 'checkbox']").prop("checked",checked);
+	if(checked) $(".table-class tbody input[type = 'checkbox']").parent().addClass("selected");
+	else $(".table-class tbody input[type = 'checkbox']").parent().removeClass("selected");
+}
+</script>
+{/block}

@@ -1,0 +1,207 @@
+{extend name="$base" /}
+{block name="resources"}
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+{/block}
+{block name="main"}
+<div class="space-10"></div>
+<div class="set-style">
+	<dl>
+		<dt>活动名称：</dt>
+		<dd><input type="text" id="discount_name" maxlength="10" value="{$info['discount_name']}" class="input-common"><p class="error">请输入活动名称</p></dd>
+	</dl>
+	<dl>
+		<dt>活动有效期：</dt>
+		<dd>
+			<input class="input-medium input-common harf" type="text" id="start_time" value="{$info['start_time'] | getTimeStampTurnTime}" style="width:250px;"onclick="WdatePicker({skin:'twoer',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+			<span class="mlr5">-</span> 
+			<input class="input-medium input-common harf" size="15"type="text" id="end_time" value="{$info['end_time'] | getTimeStampTurnTime}" style="width:250px;"onclick="WdatePicker({skin:'twoer',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+			<p class="error">请输入活动有效期</p>
+			<p class="error">活动结束时间不能小于当前时间</p>
+			<p class="error">活动结束时间不能小于开始时间</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>价格保留方式：</dt>
+		<dd>
+			<label class="radio inline normal decimal_reservation_number">
+				<i class="checkbox-common {if $info['decimal_reservation_number'] eq 0}selected{/if}">
+					<input type="checkbox" name="decimal-reservation-number" value="0"  {if $info['decimal_reservation_number'] eq 0}checked{/if}>
+				</i>
+				<span>抹去角和分</span>
+			</label>
+			<label class="radio inline normal decimal_reservation_number">
+				<i class="checkbox-common  {if $info['decimal_reservation_number'] eq 1}selected{/if}">
+					<input type="checkbox" name="decimal-reservation-number" value="1"  {if $info['decimal_reservation_number'] eq 1}checked{/if}>
+				</i>
+				<span>抹去分</span>
+			</label>
+			<label class="radio inline normal decimal_reservation_number">
+				<i class="checkbox-common  {if $info['decimal_reservation_number'] eq 2}selected{/if}">
+					<input type="checkbox" name="decimal-reservation-number" value="2"  {if $info['decimal_reservation_number'] eq 2}checked{/if}>
+				</i>
+				<span>保留角和分</span>
+			</label>
+		</dd>
+	</dl>
+	<!-- ******************************************* start 选择商品 start ******************************************* -->
+	<!-- 
+		is_limit_sku 是否限制只查询单规格商品 1限制 0不限制
+		is_many_select 是否可多选 1可多选 0只能单选
+		is_limit_skock 是否只查询有库存的商品 1只查询有库存商品 0不限制
+		is_limit_state 是否只查询已上架商品 1只查询上架商品 0不限制
+		is_limit_goods_type 是否限制只查询实物商品 1限制 0不限制
+	 -->
+	<input type="hidden" id="range_type" value="0">
+	<input type="hidden" id="is_show_select" value="0">
+	<input type="hidden" id="discount_id" value="{$info.discount_id}"/>
+	<input type="hidden" id="goods_id_array" value="{$info.goods_id_array}">
+	<input type="hidden" id="select-goods-limit" value='{"is_limit_sku" : 0, "is_many_select" : 1, "is_limit_skock" : 1, "is_limit_state" : 1, "is_limit_goods_type" : 0}'>
+	<input type="hidden" id="action" value="discount">
+	{include file="admin/Promotion/goodsSelectDialog"/}
+	<!-- ******************************************* end 选择商品 end ******************************************* -->
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="updateDiscount();">保存</button>
+			<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);">返回</button>
+		</dd>
+	</dl>
+</div>
+<input type="hidden" id="discount_id" value="{$info['discount_id']}">
+<script>
+//折扣
+function discount(event){
+	var discount = parseFloat($(event).val()).toFixed(2);
+	if(discount <0.01){
+		$(event).val(0.01);
+		discount = 0.01;
+	}else if(discount >9.99){
+		$(event).val(9.99);
+		discount = 9.99;
+	}
+	var goodsid = $(event).attr("goodsid");
+	$(event).val(discount);
+}
+
+//保存
+var flag = false;//防止重复提交
+function updateDiscount(){
+	var discount_id = $("#discount_id").val();
+	var discount_name = $("#discount_name").val();
+	var start_time = $("#start_time").val();
+	var end_time = $("#end_time").val();
+	var obj = $(".goods-list input[type='number'][name='discount']");
+	var goods_id_array = '';
+	var decimal_reservation_number = $("input[name='decimal-reservation-number']:checked").val();
+	decimal_reservation_number = decimal_reservation_number == undefined ? -1 : decimal_reservation_number;
+
+	obj.each(function(i){
+		var dis = obj.eq(i).val() ? obj.eq(i).val() : 10;
+		var gid = obj.eq(i).attr("goodsid");
+		goods_id_array += ','+gid+':'+ dis;
+		if(dis >=10 || dis <= 0 ){
+			showMessage('error', "折扣必须在0.01-9.99之间");
+			flag = true;
+			return false;
+		}else{
+			flag = false;
+		}
+	});
+	
+	goods_id_array = goods_id_array.substring(1);
+	if(verify(discount_name, start_time, end_time, goods_id_array)){
+		if(flag){
+			return;
+		}
+		flag = true;
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/promotion/updatediscount')}",
+			data : {
+				'discount_id' : discount_id,
+				'discount_name' : discount_name,
+				'start_time' : start_time,
+				'end_time' : end_time,
+				'goods_id_array' : goods_id_array,
+				'decimal_reservation_number' : decimal_reservation_number
+			},
+			success : function(data) {
+				if (data["code"] > 0) {
+					showMessage('success', data["message"],'{:__URL('ADMIN_MAIN/promotion/getdiscountlist')}');
+				}else{
+					showMessage('error', data["message"]);
+					flag = false;
+				}
+			}
+		});
+	}
+}
+
+function verify(discount_name, start_time, end_time, goods_id_array){
+	if(discount_name == ''){
+		$("#discount_name").parent().find('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(start_time == '' || end_time == ''){
+		$("#start_time").parent().find('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	var dataTime = nowDate();
+	var now = new Date(dataTime.replace("-", "/").replace("-", "/")); 
+	var end = new Date(end_time.replace("-", "/").replace("-", "/"));  
+	var start = new Date(start_time.replace("-", "/").replace("-", "/"));  
+	if(end < now){
+		$("#end_time").next().next('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(end < start){
+		$("#end_time").next().next().next('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(BatchSend.length == 0){
+		$(".js-select-goods").find(".error").html('请至少选择一件商品').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	return true;
+}
+
+//当前时间
+function nowDate(){
+	var myDate = new Date();
+	//获取当前年
+	var year=myDate.getFullYear();
+	//获取当前月
+	var month=myDate.getMonth()+1;
+	//获取当前日
+	var date=myDate.getDate(); 
+	var h=myDate.getHours();//获取当前小时数(0-23)
+	var m=myDate.getMinutes();//获取当前分钟数(0-59)
+	var s=myDate.getSeconds();
+	var now=year+'-'+month+"-"+date+" "+h+':'+m+":"+s;
+	return now;
+}
+
+function refresh_discount(){
+	var goods_selected_array = {$info}.goods_list;
+	var obj = $(".goods-list input[name='discount']");
+	for(var i=0;i<obj.length;i++){
+		var goods_id = obj.eq(i).attr('goodsid');
+		//console.log(jQuery.inArray(goods_id, goods_id_selected_array));
+	}
+}
+
+$(".decimal_reservation_number").click(function(){
+	$(this).siblings().find("i").removeClass("selected").find("input[type='checkbox']").prop('checked', false);
+})
+</script>
+{/block}

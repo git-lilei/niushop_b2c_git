@@ -1,0 +1,27 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" href="WAP_CSS/article_detail.css" />
+{/block}
+{block name="seo"}
+<meta name="keywords" content="{$seo_config.seo_meta},{$web_info['title']}_文章中心,{$article_info.keyword}" />
+<meta name="description" content="{$seo_config.seo_desc},{$article_info.title}"/>
+{/block}
+{block name="main"}
+<div class="main-content">
+	<h3 class="fu-name ns-text-color-black">{$article_info['title']}</h3>
+	{if $article_info['author']}
+	<p class="fu-title">{:lang('author')}：{$article_info['author']}</p>
+	{/if}
+	<p class="fu-title">{:lang('position_posted_on')}：{$article_info['public_time']|getTimeStampTurnTime}</p>
+	<div class="content">{$article_info['content']}</div>
+	<div class="location-other-article">
+		{notempty name="$prev_info"}
+		<a href="{:__URL('APP_MAIN/article/detail', 'article_id='.$prev_info.article_id)}" class="prev text-over">上一篇：{$prev_info['title']}</a>
+		{/notempty}
+		{notempty name="$next_info"}
+		<a href="{:__URL('APP_MAIN/article/detail', 'article_id='.$next_info.article_id)}" class="next text-over">下一篇：{$next_info['title']}</a>
+		{/notempty}
+	</div>
+</div>
+{/block}
+{block name="footer"}{/block}

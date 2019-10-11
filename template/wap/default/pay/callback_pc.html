@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>{:lang('pay')}-{$title}</title>
+<link type="text/css" rel="stylesheet" href="WAP_CSS/common.css">
+<link type="text/css" rel="stylesheet" href="WAP_CSS/themes/theme.css">
+<link type="text/css" rel="stylesheet" href="WAP_CSS/pay/callback_pc.css">
+<script src="WAP_PLUGIN/mzui/lib/jquery/jquery-3.2.1.min.js"></script>
+</head>
+<body>
+{if condition="$status==-1"}
+	<div class="on-wechat">
+		<img src="WAP_IMG/pay/other_view.png" class="other-view "/>
+	</div>
+{else/}
+	<div class="header container">
+		<div class="logo fl">
+			<img src="{:__IMG($web_info.logo)}" />
+		</div>
+	</div>
+	<div class="layout cart-btn-wrap">
+		<div class="js-main container border border-gray-white text-default">
+			<div style="padding:40px;">
+				{if condition="$status==1"}
+					<p class="f16 pay-result">
+						<img src="WAP_IMG/pay/pay_success.png" />{:lang('you_have_paid_successfully')}
+					</p>
+				{else/}
+					<p class="f16 pay-result">
+						<img src="WAP_IMG/pay/pay_error.png" />{:lang('payment_failed')}
+					</p>
+				{/if}
+				{notempty name="$order_info.user_name"}
+				<p class="indentation">
+					{:lang('payer')}：<span class="text-sub">{$order_info.user_name}</span>
+				</p>
+				{/notempty}
+				{notempty name="$order_info.order_no"}
+				<p class="indentation">
+					{:lang('order_number')}：<span class="text-sub">{$order_info.order_no}</span>
+				</p>
+				{/notempty}
+			</div>
+			<div class="order-container">
+				<div class="text-center">
+					<a class="btn primary cart-btn text-default" href="{:__URL('SHOP_MAIN/member/index')}">{:lang('access_member_center')}</a>
+				</div>
+			</div>
+		</div>
+	</div>
+{/if}
+<script>
+$(function() {
+	setFooterStyle();
+});
+function setFooterStyle(){
+	var main_height = $(".js-main").height()+220;
+	var window_height = $(window).height();
+	if(main_height>window_height){
+		$('.footer').css("position","relative");
+	}else{
+		$('.footer').css("position","fixed");
+	}
+}
+window.onresize = function(){
+	setFooterStyle();
+}
+</script>
+</body>
+</html>

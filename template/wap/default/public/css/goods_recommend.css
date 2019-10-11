@@ -1,0 +1,109 @@
+.space {
+	display: block;
+	width: 100%;
+	height: 10px;
+	background: rgba(0, 0, 0, .055);
+	margin-bottom: 0!important;
+}
+
+.recommend-container {
+	padding: 10px;
+}
+
+.recommend-container .head {
+	height: 30px;
+    line-height: 30px;
+    background: #fff;
+    overflow: hidden;
+    text-align: center;
+    position: relative;
+}
+
+.recommend-container .head .list-title {
+    overflow: hidden;
+    width: auto;
+    margin: 0 auto;
+    display: inline-block;
+}
+
+.recommend-container .head .title-left {
+    float: left;
+    margin-right: 5px;
+}
+
+.recommend-container .head .title-left .title-left-second {
+    margin-left: 25px;
+}
+
+.recommend-container .head .title-left-first {
+    width: 50px;
+    height: 12px;
+    border-bottom: 1px solid #999999;
+}
+
+.recommend-container .head .title-left-second {
+    width: 25px;
+    height: 5px;
+    border-bottom: 1px solid #999999;
+
+}
+
+.recommend-container .head .title-right {
+    margin-left: 5px;
+    float: left;
+}
+
+.recommend-container .head .left-nav {
+    font-size: 15px;
+    float: left;
+    letter-spacing: 2px;
+}
+
+.recommend-container ul {
+	width: 100%;
+}
+
+.recommend-container ul li.goods-item {
+    width: calc(50% - 5px);
+    float: left;
+    background: #fff;
+    margin: 10px 10px 0 0;
+}
+
+.recommend-container ul li.goods-item:nth-child(2n+2){
+	margin-right: 0;
+}
+
+.recommend-container ul li.goods-item div.imgs {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    height: auto;
+}
+
+.recommend-container ul li.goods-item div.imgs a {
+    display: block;
+    line-height: 200px;
+    padding: 50% 0;
+    text-align: center;
+}
+
+.recommend-container ul li.goods-item div.imgs a img {
+    width: 100%;
+    max-height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    vertical-align: middle;
+}
+
+.recommend-container ul li.goods-item .info p.goods-title a {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    width: 100%;
+    line-height: 20px;
+    max-height: 40px;
+    height: 40px;
+}

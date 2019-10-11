@@ -1,0 +1,139 @@
+{extend name="$base" /}
+{block name="resources"}
+<style>
+.table-class tbody td {padding: 10px 6px;}
+.specwidth{text-align:center;font-size: 12px;color: #999;}
+.text{color: #fb6b5b;}
+.table-class tbody td{vertical-align: middle;}
+.specname{text-align:left;font-size: 12px;color: #999;}
+</style>
+{/block}
+{block name="main"}
+<div class="options-btn">
+	<button class="btn-common" onclick="addAttribute()">添加商品类型</button>
+</div>
+<table class="table-class">
+	<colgroup>
+		<col style="width: 2%;">
+		<col style="width: 40%;">
+		<col style="width: 40%;">
+		<col style="width: 4%;">
+		<col style="width: 4%;">
+		<col style="width: 10%;">
+	</colgroup>
+	<thead>
+		<tr>
+			<th><i class="checkbox-common"><input type="checkbox"  ></i></th>
+			<th align="left">类型名称</th>
+			<th align="left">属性标签</th>
+			<th>启用</th>
+			<th>排序</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+function setAttributeField(id, name, e){
+	if(name == 'is_use'){
+		var value = $(e).attr("is_use");
+	}else{
+		var value = $(e).val();
+	}
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/goods/setattributefield')}",
+		data:{ 'id' : id, 'name' : name, 'value' : value },
+		success: function (data) {
+			if(data['code'] > 0){
+				if(name == 'is_use'){
+					if(value == 1) {
+						$("#isuse_"+id).html('<img src="ADMIN_IMG/checked.png" alt="" width="15"/>');
+						$("#isuse_"+id).attr("is_use", '0');
+					}else{
+						$("#isuse_"+id).html('<img src="ADMIN_IMG/un_checked.png" alt="" width="15"/>');
+						$("#isuse_"+id).attr("is_use", '1');
+					}
+				}
+				showTip(data["message"], 'success');
+			}else{
+				showTip(data["message"], 'error');
+			}
+		}
+	});
+}
+
+/* 跳转到添加品牌 */
+function addAttribute() {
+	location.href = __URL("ADMIN_MAIN/goods/addattributeservice");
+}
+
+//加载数据
+function LoadingInfo(page_index) {
+	$.ajax({
+		type : "post",
+		url : __URL("ADMIN_MAIN/goods/attributelist"),
+		data : { "page_index" : page_index, "page_size" : $("#showNumber").val() },
+		success : function(data) {
+			if (data["data"].length > 0) {
+				$(".table-class tbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					html += '<tr align="center">';
+					html += '<td><i class="checkbox-common"><input name="sub" type="checkbox" value="'+ data["data"][i]["attr_id"] +'" ></i></td>';
+					html += '<td style="text-align:left;">' + data['data'][i]['attr_name'] + '</td>';
+					html += '<td style="text-align:left;">' + data["data"][i]["value_str"] + '</td>';
+					
+					if(data["data"][i]["is_use"]){
+						html += '<td><a href="javascript:;" class="is_use" id="isuse_'+data["data"][i]["attr_id"]+'" is_use="0" onclick="setAttributeField('+data["data"][i]["attr_id"]+', \'is_use\', this)"><img src="ADMIN_IMG/checked.png" alt="" width="15"/></a></td>';
+					}else{
+						html += '<td><a href="javascript:;" class="is_use" id="isuse_'+data["data"][i]["attr_id"]+'" is_use="1" onclick="setAttributeField('+data["data"][i]["attr_id"]+', \'is_use\', this)"><img src="ADMIN_IMG/un_checked.png" alt="" width="15"/></a></td>';
+					}
+					html += '<td><input type="number"  class="input-common input-common-sort" id="sort" value="' + data["data"][i]["sort"] + '" onchange="setAttributeField('+data["data"][i]["attr_id"]+', \'sort\', this);"/></td>';
+					html += '<td><a href="'+__URL('ADMIN_MAIN/goods/updategoodsattribute?attr_id=' + data["data"][i]["attr_id"])+'">修改</a>  <a href="javascript:delAttr(' + data["data"][i]["attr_id"] + ')">删除</a></td> ';
+					html += '</tr>';
+					$(".table-class tbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="9">暂无符合条件的数据记录</td></tr>';
+				$(".table-class tbody").html(html);
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+/* 删除类型 */
+function delAttr(attr_id) {
+	$("#dialog").dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/goods/deleteattr')}",
+					data : { 'attr_id' : attr_id },
+					dataType : "json",
+					success : function(data) {
+						if (data['code'] > 0) {
+ 							showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/goods/attributelist')}");
+						}else if(data['code'] == 0){
+ 							showMessage('error', data["message"]);
+						}else if(data['code'] == -1){
+							showMessage('error', '当前规格已经使用过，不能删除！');
+						}
+					}
+				});
+			},"取消,#f5f5f5,#666" : function(){
+				$(this).dialog('close');
+			}
+		},
+		contentText:"你确定删除吗？",
+		title:"消息提醒"
+	});
+}
+</script>
+{/block}

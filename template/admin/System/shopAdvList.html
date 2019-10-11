@@ -1,0 +1,151 @@
+{extend name="$base" /}
+{block name="resources"}
+<style>
+.adv_url{max-width: 550px;overflow : hidden;text-overflow: ellipsis;white-space: nowrap;text-align: left;}
+.silde_sort{width: 40px;margin-bottom: 0 !important;}
+.button_active{background: #FB9336;outline: none;}
+.button_active:hover{background: #FB9336;opacity: 0.8;}
+.ns-main{margin-top:0px;}
+</style>
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+{/block}
+{block name="thirdmenu"}
+	<nav class="ns-third-menu">
+		<ul>
+			<li class="selected" onclick="location.href='{:__URL('ADMIN_MAIN/system/shopadvlist?terminal='.$terminal)}';">广告列表</li>
+			<li class="" onclick="location.href='{:__URL('ADMIN_MAIN/system/shopadvpositionlist?terminal='.$terminal)}';">广告位管理</li>
+		</ul>
+	</nav>
+{/block}
+{block name="main"}
+<div class="options-btn">
+	<button class="btn-common add_adv">添加广告</button>
+</div>
+<input type="hidden" id="ad_type" value="{$terminal}">
+<table class="table-class">
+	<colgroup>
+		<col style="width: 2%;">
+		<col style="width: 28%;">
+		<col style="width: 28%;">
+		<col style="width: 28%;">
+		<col style="width: 4%;">
+		<col style="width: 10%;">
+	</colgroup>
+	<thead>
+		<tr>
+			<th><i class="checkbox-common"><input type="checkbox" ></i></th>
+			<th align="left">名称</th>
+			<th align="left">所属广告位</th>
+			<th align="left">链接地址</th>
+			<th>排序</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody id="list"></tbody>
+</table>
+<input type="hidden" id="ap_id" value="{$ap_id}">
+{/block}
+{block name="script"}
+<script type="text/javascript">
+$(function(){
+	LoadingInfo(1);
+});
+
+$(".add_adv").click(function(){
+	var ad_type = $("#ad_type").val();
+	window.location.href=__URL("ADMIN_MAIN/system/addshopadv?type="+ad_type);
+});
+
+function LoadingInfo(page_index) {
+	var ap_id = $("#ap_id").val();
+	var search_text = '';
+	var type = $("#ad_type").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/system/shopadvlist')}",
+		data : {
+			"page_index" : page_index,
+			"page_size" : $("#showNumber").val(),
+			"search_text" : search_text, 
+			"type" : type
+		},
+		success : function(data) {
+			if (data['data'].length > 0) {
+				$("#list").empty();
+				for (var i = 0; i < data['data'].length; i++) {
+					var html = '';
+					html += '<tr align="center">';
+					html += '<td><i class="checkbox-common"><input type="checkbox" name="sub" value="'+ data['data'][i]['adv_id']+'"></i></td>';
+					html += '<td align="left">'+ data['data'][i]['adv_title']+'</td>';
+					html += '<td align="left">' + data['data'][i]['ap_name'] + '</td>';
+					html += '<td class="adv_url" title="' + data['data'][i]["adv_url"] + '">' + data['data'][i]["adv_url"] + '</td>';
+					html += '<td class="center"><input type="number" class="input-common input-common-sort" fieldid="'+ data['data'][i]['adv_id']+'"  value="'+ data['data'][i]["slide_sort"] + '" onchange="updateAdvSort(this)" size="1" ></td>';
+					html += '<td class="center"><a href="'+__URL('ADMIN_MAIN/system/updateshopadv?adv_id=' + data['data'][i]["adv_id"]+'&type=' + data['data'][i]["type"])+'">编辑</a> ';
+					html += '<a href="javascript:;" onclick="delShopAdv(' + data['data'][i]["adv_id"] + ')">删除</a></td> ';
+					html += '</tr>';
+					$("#list").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="6">暂无符合条件的数据记录</td></tr>';
+				$("#list").html(html);
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+//广告列表排序
+function updateAdvSort(my){
+	var over = $(my);
+	var fieldid = over.attr('fieldid');
+	var fieldvalue = over.val();
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/System/modifyAdvSort')}",
+		data:{'fieldid':fieldid,'fieldvalue':fieldvalue},
+			success: function (data) {
+				if(data['code'] > 0){
+					showTip(data['message'],'success');
+				}else{
+					showTip(data['message'],'error');
+				}
+		}
+	});
+}
+
+function delShopAdv(adv_id){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/system/deleteplatformadv')}",
+					data : { "adv_id" : adv_id },
+					success : function(data) {
+						if(data["code"] > 0 ){
+							showTip(data["message"],'success');
+							location.href = __URL('ADMIN_MAIN/system/shopadvlist?ap_id={$ap_id}');
+						}else{
+							showTip(data["message"],'error');
+						}
+					}
+				})
+			},
+			"取消,#f5f5f5,#666": function() {
+				$(this).dialog('close');
+			}
+		},
+		contentText:"你确定删除吗？",
+		title:"消息提醒"
+	});
+}
+
+$("#search_text").keypress(function(e){
+	if(e.keyCode == 13){
+		LoadingInfo(1);
+	}
+});
+</script>
+{/block}

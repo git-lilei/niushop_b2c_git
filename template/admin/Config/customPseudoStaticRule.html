@@ -1,0 +1,146 @@
+{extend name="$base" /} 
+{block name="resources"}
+<style>
+.ns-main{margin-top:0px;}
+</style>
+{/block}
+{block name="main"}
+<div class="options-btn">
+	<button class="btn-common-delete" onclick="batchDelete()">批量删除</button>
+	<button class="btn-common" onclick="location.href='{:__URL('ADMIN_MAIN/config/addRoutingRules')}';">添加路由规则</button>
+</div>
+<table class="table-class">
+	<colgroup>
+		<col style="width: 2%">
+		<col style="width: 21%">
+		<col style="width: 20%">
+		<col style="width: 20%">
+		<col style="width: 20%">
+		<col style="width: 7%">
+		<col style="width: 10%">
+	</colgroup>
+	<thead>
+		<tr align="center">
+			<th><i class="checkbox-common"><input type="checkbox"  id="chek_all"></i></th>
+			<th style="text-align: left;">伪静态路由规则</th>
+			<th style="text-align: left;">路由地址</th>
+			<th>路由模块</th>
+			<th align="left">简介</th>
+			<th>是否开启</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+$(function(){
+	LoadingInfo(1);
+});
+
+function LoadingInfo(page_index) {
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/config/customPseudoStaticRule')}",
+		data : { "page_index" : page_index, "page_size" : $("#showNumber").val() },
+		success : function(data) {
+			if(data["data"].length > 0){
+				$(".table-class tbody").empty();
+				for(var i = 0; i < data["data"].length; i++){
+					var html = "";
+					var item = data["data"][i];
+					html += '<tr align="center">';
+					if(item["is_system"] == 0){
+						html += '<td><i class="checkbox-common"><input name="sub" type="checkbox" value="'+ item["routeid"] +'"></i></td>';
+					}else{
+						html += '<td><i class="checkbox-common disabled"><input name="sub" type="checkbox" value="'+ item["routeid"] +'" disabled></i></td>';
+					}
+					html += '<td style="text-align: left;">'+ item["rule"] +'</td>';
+					html += '<td style="text-align: left;">'+ item["route"] +'</td>';
+					
+					switch(item["route_model"]){
+						case 1 :
+						html += '<td>web</td>';
+						break;
+						case 2 :
+						html += '<td>wap</td>';
+						break;
+						case 3 :
+						html += '<td>admin</td>';
+						break;
+					}
+					
+					html += '<td align="left">'+ item["remark"] +'</td>';
+					if(item["is_open"] == 0){
+						html += '<td><img src="ADMIN_IMG/un_checked.png" alt="" width="15"/></td>';
+					}else{
+						html += '<td><img src="ADMIN_IMG/checked.png" alt="" width="15"/></td>';
+					}
+					if(item["is_system"] == 0){
+						html += '<td style="text-align:center;"><a href="'+__URL(ADMINMAIN+"/config/updateRoutingRule?routeid="+item["routeid"])+'">修改</a> <a href="javascript:;" onclick="deleteUrlRoute('+item["routeid"]+');">删除</a></td>';
+					}else{
+						html += '<td style="text-align:center;"><a href="'+__URL(ADMINMAIN+"/config/updateRoutingRule?routeid="+item["routeid"])+'">修改</a></td>';
+					}
+					
+					$(".table-class tbody").append(html);
+				}
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	})
+}
+
+//删除
+function deleteUrlRoute(routeid){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/config/deleteUrlRoute')}",
+					data : { "routeid" : routeid.toString() },
+					success : function(data) {
+						if (data["code"] > 0) {
+							showTip(data["message"],'success');
+							location.href = "{:__URL('ADMIN_MAIN/config/customPseudoStaticRule')}";
+						}else{
+							showTip(data["message"],'error');
+						}
+					}
+				})
+			},
+			"取消,#f5f5f5,#666": function() {
+				$(this).dialog('close');
+			}
+		},
+	contentText:"是否删除该路由规则？",
+	});
+}
+
+//批量删除
+function batchDelete() {
+	var routeid= [];
+	$(".table-class tbody input[type='checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			routeid.push($(this).val());
+		}
+	});
+	if(routeid.length ==0){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#0059d6,#fff": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:"请选择需要操作的记录",
+			title:"消息提醒",
+		});
+		return false;
+	}
+	deleteUrlRoute(routeid);
+}
+</script>
+{/block}

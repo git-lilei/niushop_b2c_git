@@ -1,0 +1,537 @@
+{extend name="$base" /}
+{block name="resources"}
+<style>
+.input-error { color: #ff0000;margin-top: 5px!important;display: none; }
+.add-child{
+	padding-left: 15px;
+	background: url(ADMIN_IMG/add-child.png) no-repeat;
+	background-position: 0 2px;
+}
+.add-child i{
+	font-style: normal;
+	display: none;
+}
+.add-child:hover i{
+	display: inline-block;
+}
+.category_img {
+    width: 168px;
+    height: 30px;
+    text-align: center;
+    vertical-align: middle;
+}
+.category_img img {
+    max-width: 100%;
+    max-height: 100%;
+}
+</style>
+{/block}
+{block name="main"}
+<div class="options-btn">
+	<button class="btn-common btn-small" onclick="location.href='{:__URL('ADMIN_MAIN/goods/addgoodscategory')}';">添加商品分类</button>
+</div>
+{notempty name="$category_list"}
+<table class="table-class">
+	<colgroup>
+		<col style="width: 2%;">
+		<col style="width: 25%;">
+		<col style="width: 25%;">
+		<col style="width: 10%;">
+		<col style="width: 17%;">
+		<col style="width: 7%;">
+		<col style="width: 4%;">
+		<col style="width: 10%;">
+	</colgroup>
+	<thead>
+		<tr align="center">
+			<th></th>
+			<th align="left">分类名称</th>
+			<th align="left">商品分类简称</th>
+			<th>图片</th>
+			<th align="left">关联类型</th>
+			<th>是否显示</th>
+			<th>排序</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody>
+		{foreach name="category_list" item="v1"}
+		<tr class="pid_0" style="height: 30px;" data-category-id="{$v1.category_id}" data-pid="{$v1.pid}" data-level="{$v1.level}">
+			<td>
+				{if condition="$v1['child_list'] neq array()"}
+				<a href="javascript:;" onclick="tab_switch({$v1['category_id']})" class="tab_jia_{$v1['category_id']}" style="display: block;">+</a>
+				<a href="javascript:;" onclick="tab_switch({$v1['category_id']})" class="tab_jian_{$v1['category_id']}" style="display: none;">-</a>
+				{/if}
+			</td>
+			
+			<td>
+				<input class="input-common middle" type="text" fieldid="{$v1['category_id']}" fieldname="category_name" value="{$v1['category_name']}" style="width: 150px;">
+				<a href="javascript:;" onclick="addChildGoodsCategory(this, 2, {$v1['category_id']});">
+				<span class="add-child"><i>添加子分类</i></span>
+				</a>
+			</td>
+			<td><input class="input-common middle" type="text" fieldid="{$v1['category_id']}" fieldname="short_name" value="{$v1['short_name']}" style="width: 150px;"></td>
+			<td>
+			{if $v1['category_pic']}
+			<div class="category_img"><img src="{:__IMG($v1['category_pic'])}"></div>
+			{/if}
+			</td>
+			<td>{$v1['attr_name']}</td>
+			<td style="text-align: center;">{$v1['is_visible'] ? '是' : '否'}</td>
+			<td style="text-align: center;"><input type="number" class="sort input-common input-common-sort" fieldid="{$v1['category_id']}" fieldname="sort" value="{$v1['sort']}" size="1"></td>
+			<td style="text-align: center;">
+				<a href="{:__URL('ADMIN_MAIN/goods/updategoodscategory','category_id='.$v1['category_id'])}">修改</a>
+				<a href="javascript:void(0);" onclick="delCategory({$v1['category_id']})">删除</a>
+			</td>
+		</tr>
+		
+			{foreach name="v1['child_list']" item="v2"}
+			<tr class="pid_{$v1['category_id']}" style="height: 30px;display:none;" data-category-id="{$v2.category_id}" data-pid="{$v2.pid}" data-level="{$v2.level}">
+				<td>
+					{if condition="$v2['child_list'] neq array()"}
+					<a href="javascript:;" onclick="tab_switch({$v2['category_id']})" class="tab_jian_{$v2['category_id']}" style="display: block;">-</a>
+					<a href="javascript:;" onclick="tab_switch({$v2['category_id']})" class="tab_jia_{$v2['category_id']}" style="display: none;">+</a>
+					{/if}
+				</td>
+				
+				<td><span style="color:#ccc;">|——</span> <input type="text" class="input-common middle" fieldid="{$v2['category_id']}" fieldname="category_name" value="{$v2['category_name']}" style="width: 150px;">
+					<a href="javascript:;" onclick="addChildGoodsCategory(this, 3, {$v2['category_id']});">
+						<span class="add-child"><i>添加子分类</i></span>
+					</a>
+				</td>
+				<td><input type="text" class="input-common middle" fieldid="{$v2['category_id']}" fieldname="short_name" value="{$v2['short_name']}" style="width: 150px;"></td>
+				<td>
+				{if $v1['category_pic']}
+				<div class="category_img"><img src="{:__IMG($v2['category_pic'])}"></div>
+				{/if}
+				</td>
+				<td>{$v2['attr_name']}</td>
+				<td style="text-align: center;">{$v2['is_visible'] ? '是' : '否'}</td>
+				<td style="text-align: center;"><input type="number" class="sort input-common input-common-sort" fieldid="{$v2['category_id']}" fieldname="sort"  value="{$v2['sort']}" size="1"></td>
+				<td style="text-align: center;">
+					<a href="{:__URL('ADMIN_MAIN/goods/updategoodscategory','category_id='.$v2['category_id'])}">修改</a>
+					<a href="javascript:void(0);" onclick="delCategory({$v2['category_id']})">删除</a>
+				</td>
+			</tr>
+				{foreach name="v2['child_list']" item="v3"}
+				<tr class="pid_{$v2['category_id']} pid_{$v1['category_id']}" style="height: 30px;display:none;" data-category-id="{$v3.category_id}" data-pid="{$v3.pid}" data-level="{$v3.level}">
+					<td></td>
+					<td><span style="color:#ccc;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|——</span> <input class="input-common middle" type="text" fieldid="{$v3['category_id']}" fieldname="category_name" value="{$v3['category_name']}" style="width: 150px;"></td>
+					<td><input type="text" class="input-common middle" fieldid="{$v3['category_id']}" fieldname="short_name" value="{$v3['short_name']}" style="width: 150px;"></td>
+					<td>
+					{if $v1['category_pic']}
+					<div class="category_img"><img src="{:__IMG($v3['category_pic'])}"></div>
+					{/if}
+					</td>
+					<td>{$v3['attr_name']}</td>
+					<td style="text-align: center;">{$v3['is_visible'] ? '是' : '否'}</td>
+					<td style="text-align: center;"><input type="number" class="sort input-common input-common-sort" fieldid="{$v3['category_id']}" fieldname="sort"  value="{$v3['sort']}" size="1"></td>
+					<td style="text-align: center;">
+						<a href="{:__URL('ADMIN_MAIN/goods/updategoodscategory','category_id='.$v3['category_id'])}">修改</a>
+						<a href="javascript:void(0);" onclick="delCategory({$v3['category_id']})">删除</a>
+					</td>
+				</tr>
+				{/foreach}
+				
+			{/foreach}
+			
+		{/foreach}
+	</tbody>
+</table>
+{else/}
+	<div class="tip-box">当前系统还没有商品分类，<a href="{:__URL('ADMIN_MAIN/goods/addgoodscategory')}">马上添加</a></div>
+{/notempty}
+
+<div class="options-btn" id="saveNewAddedCategory" style="display: none;">
+	<button class="btn-common btn-small">保存</button>
+</div>
+
+<!--添加分类-->
+<div id="addChildGoodsCategory" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true" >
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		<h3 id="myModalLabel" class="box-title">添加分类</h3>
+	</div>
+	<div class="modal-body">
+		<div class="form-horizontal">
+			
+			<div class="control-group">
+				<label class="control-label" for="category_name"><span class="color-red">*</span>分类名称：</label>
+				<div class="controls">
+					<input type="text" id="category_name" class="input-common" placeholder="请输入分类名称" />
+					<p class="help-block input-error">商品分类不能为空，且长度不能超过30个字</p>
+				</div>
+			</div>
+
+			<div class="control-group">
+				<label class="control-label" for="short_name"><span class="color-red">*</span>分类简称：</label>
+				<div class="controls">
+					<input type="text" id="short_name" class="input-common" placeholder="请输入分类简称" />
+					<p class="help-block input-error">商品分类简称不能为空，且长度不能超过20个字</p>
+				</div>
+			</div>
+			
+			<div class="control-group">
+				<label class="control-label" for="goods_category_pid"><span class="color-red">*</span>上级分类：</label>
+				<div class="controls">
+					<select id="goods_category_pid" name="account" class="select-common">
+						<option value="0">顶级分类</option>
+						{foreach name="category_list" item="v1"}
+							<option value="{$v1['category_id']}">{$v1['category_name']}</option>
+							{foreach name="v1['child_list']" item="v2"}
+							<option value="{$v2['category_id']}">&nbsp;&nbsp;&nbsp;&nbsp;{$v2['category_name']}</option>
+							{/foreach} 
+						{/foreach}
+					</select>
+				</div>
+			</div>
+			
+			<div class="control-group">
+				<label class="control-label" for="sort">排序：</label>
+				<div class="controls">
+					<input onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" type="number" name="sort" id="sort" value="0" class="input-common"/>
+					<p class="help-block input-error" id='sortPrompt'>排序不可为空</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal-footer">
+		<button class="btn-common" id="addBtn" onClick="save()">保存</button>
+		<button class="btn" onclick="closeAddGoodsCategory()">关闭</button>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+$(".table-class tr[data-category-id] input").live("change",function(){
+	var fieldid = $(this).attr('fieldid');
+	var fieldname = $(this).attr('fieldname');
+	var fieldvalue = $(this).val();
+	if(fieldvalue == ''){
+		showTip("不能为空哦","warning");
+	}else{
+		$.ajax({
+			type:"post",
+			url:"{:__URL('ADMIN_MAIN/goods/modifygoodscategoryfield')}",
+			data:{'fieldid':fieldid,'fieldname':fieldname,'fieldvalue':fieldvalue},
+			success: function (data) {
+				if(data>0){
+					showTip("操作成功","success");
+				}else{
+					showTip("操作失败","error");
+				}
+			}
+		});
+	}
+});
+
+function tab_switch(module_id){
+	if($(".pid_"+module_id).css('display') != 'none'){
+		$(".tab_jian_"+module_id).hide();
+		$(".tab_jia_"+module_id).show();
+		$(".pid_"+module_id).hide(300);
+	}else{
+		$(".tab_jian_"+module_id).show();
+		$(".tab_jia_"+module_id).hide();
+		$(".pid_"+module_id).show(500);
+	}
+}
+
+/* 删除分类 */
+function delCategory(category_id) {
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/goods/deletegoodscategory')}",
+					data : {
+						'category_id' : category_id,
+						'goods_category_quick' : JSON.stringify(getCookieGoodsCategory(category_id))
+					},
+					dataType : "json",
+					success : function(data) {
+						if(data['code'] > 0){
+							showTip(data['message'],"success");
+							location.href = "{:__URL('ADMIN_MAIN/goods/goodscategorylist')}";
+						}else{
+							showTip(data['message'],"error");
+						}
+					}
+				});
+			},
+			"取消,#f5f5f5,#666": function() {
+				$(this).dialog('close');
+			}
+		},
+		contentText:"你确定删除吗？",
+		title:"消息提醒"
+	});
+}
+
+//查询当前用户最近一天是否发布过商品，修改过商品分类，要删除cookie中对应的值
+function getCookieGoodsCategory(category_id){
+	var goods_category_quick_new = [];// 快速选择商品分类集合
+	$.ajax({
+		url : "{:__URL('ADMIN_MAIN/goods/getquickgoods')}",
+		type : "post",
+		async : false,
+		success : function(res) {
+			var goods_category_quick = eval(res);// 将Cookie中的数据取出来
+			for (var i = 0; i < goods_category_quick.length; i++) {
+				var quick_name = goods_category_quick[i]["quick_name"];
+				var quick_id_arr = goods_category_quick[i]["quick_id"].split(",");
+				if(quick_id_arr[quick_id_arr.length-1] == category_id){
+					continue;
+				}else{
+					var json = {
+						quick_name : quick_name,
+						quick_id : goods_category_quick[i]["quick_id"],
+					};
+					goods_category_quick_new.push(json);
+				}
+			}
+		}
+	});
+	return goods_category_quick_new;
+}
+
+//添加商品分类
+function addChildGoodsCategory(obj, level, pid){
+	html = '<tr class="new-added pid_'+pid+'" data-level="'+level+'" data-pid="'+pid+'">';
+		html += '<td></td>';
+		
+		if(level == 1){
+			//分类名称
+			html += '<td style="text-align: left;">';
+			html += '<input class="input-common middle" type="text"  value="" name="categoryName"></td>';
+			//分类简称
+			html += '<td style="text-align: left;">';
+				html += '<input class="input-common middle" type="text" name="categoryShortName"  value="" >';
+			html += '</td>';
+		}else if(level == 2){
+			//分类名称
+			html += '<td style="text-align: left;">';
+			html += '<span style="color:#ccc;">|——</span> <input class="input-common middle" type="text" name="categoryName"  value=""></td>';
+			//分类简称
+			html += '<td style="text-align: left;">';
+				html += '<input class="input-common middle" type="text"  value="" name="categoryShortName">';
+			html += '</td>';
+		}else if(level == 3){
+			//分类名称
+			html += '<td style="text-align: left;">';
+			html += '<span style="color:#ccc;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|——</span><input class="input-common middle" type="text"  value="" name="categoryName">';
+			html += '</td>';
+			//分类名称
+			html += '<td style="text-align: left;">';
+				html += '<input class="input-common middle" type="text"  value="" name="categoryShortName">';
+			html += '</td>';
+		}
+		html += '<td style="text-align: center;"></td>';
+		html += '<td style="text-align: center;"></td>';
+		html += '<td style="text-align: center;">是</td>';
+		html += '<td style="text-align: center;">';
+			html += '<input type="number" class="sort input-common input-common-sort" name="categorySort" value="0" >';
+		html += '</td>';
+		html += '<td style="text-align: center;"><a href="javascript:void(0);" onclick="delNewAddedCategory(this)">删除</a></td>';
+	html += '</tr>';
+
+	$(obj).parents("tr").after(html);
+
+	$("#saveNewAddedCategory").show();
+}
+// function addChildGoodsCategory(pid){
+// 	$("#goods_category_pid option[value='"+pid+"']").prop("selected",true);
+// 	$("#addChildGoodsCategory").modal("show");
+// }
+
+//删除新增分类
+function delNewAddedCategory(event){
+	$(event).parents("tr").remove();
+}
+
+var is_sub = false;
+$("#saveNewAddedCategory button").live('click', function(event) {
+	var content = [];
+	$(".new-added").each(function(i, e) {
+		var sort = $(e).find("input[name='categorySort']").val();
+			sort = sort.length == 0 ? 0 : sort;
+		var categoryName = $(e).find("input[name='categoryName']").val();
+		var categoryShortName = $(e).find("input[name='categoryShortName']").val();
+		var level = $(e).attr("data-level");
+		var pid = $(e).attr("data-pid");
+		if(categoryName != ""){
+			var category_info_arr = {};
+				category_info_arr.sort = sort;
+				category_info_arr.categoryName = categoryName;
+				category_info_arr.categoryShortName = categoryShortName;
+				category_info_arr.level = level;
+				category_info_arr.pid = pid;
+				category_info_str = JSON.stringify(category_info_arr);
+			content.push(category_info_str);
+		}
+	});
+	content = JSON.stringify(content);
+
+	if(content.length == 2){
+		return;
+	}
+	
+	if(is_sub) return;
+	is_sub = true;
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/goods/batchaddgoodscategory')}",
+		data : { "content" : content },
+		success : function(data){
+			if(data["code"] > 0){
+				showTip(data['message'],"success");
+				location.href = "{:__URL('ADMIN_MAIN/goods/goodscategorylist')}";
+			}else{
+				showTip(data['message'],"error");
+				location.href = "{:__URL('ADMIN_MAIN/goods/goodscategorylist')}";
+			}
+		}
+	})
+});
+
+var is_click = false;
+function save(){
+	var category_name = $("#category_name").val();
+	var pid = $("#goods_category_pid").val();
+	var sort = $("#sort").val();
+	var short_name = $("#short_name").val();
+	if(verify( category_name,short_name, sort)){
+		if(is_click){
+			return false;
+		}
+		is_click = true;
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/goods/addgoodscategory')}",
+			data : {
+				'category_name' : category_name,
+				'pid' : pid,
+				'keywords' : "",
+				'sort' : sort,
+				'description' : "",
+				'is_visible' : 1,
+				"category_pic" : "",
+				"short_name" : short_name,
+				"attr_id" : "",
+				"attr_name" : ""
+			},
+			success : function(data) {
+				
+				var parent = $(".table-class tbody tr[data-category-id='" + pid + "']");
+				var level = parseInt(parent.attr("data-level")) + 1;
+				
+				if (data["code"] > 0) {
+					
+					var parent_html = '';//父级展开合起开关
+					var select_html = '';//商品分类下拉框
+					
+					var pid_class = 'pid_' + pid;
+					if(level == 2){
+						//如果当前添加的是二级分类，则要更新商品分类下拉框列表
+						select_html = '<option value="' + data.code + '">&nbsp;&nbsp;&nbsp;&nbsp;' + category_name + '</option>';
+					}else if(level == 3){
+						pid_class = "pid_" + pid + " pid_" + parent.attr("data-pid");
+					}
+					
+					var html = '<tr class="' + pid_class + '" style="height: 30px;" data-category-id="' + data.code + '" data-pid="' + pid + '" data-level="' + level + '">';
+					
+							html += '<td></td>';
+								parent_html += '<a href="javascript:;" onclick="tab_switch(' + pid + ')" class="tab_jia_' + pid + '" style="display: block;"><i class="fa fa-plus-circle"></i></a>';
+								parent_html += '<a href="javascript:;" onclick="tab_switch(' + pid + ')" class="tab_jian_' + pid + '" style="display: none;"><i class="fa fa-minus-circle"></i></a>';
+							
+							html += '<td style="text-align: center;"><input type="number" class="sort input-common input-common-sort" fieldid="' + data.code + '" fieldname="sort" value="' + sort + '" size="1"></td>';
+
+							html += '<td>';
+								if(level == 2){
+									html += '<span style="color:#ccc;">|——</span>';
+								}else if(level == 3){
+									html += '<span style="color:#ccc;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|——</span>';
+								}
+								html += '<input class="input-common" type="text" fieldid="' + data.code + '" fieldname="category_name" value="' + category_name + '" style="width: 150px;">';
+								
+								if(level == 2){
+									html += '<a href="javascript:;" onclick="addChildGoodsCategory(' + data.code + ');">添加子分类</a>';
+								}
+							html += '</td>';
+							
+							html += '<td><input class="input-common" type="text" fieldid="' + data.code + '" fieldname="short_name" value="' + short_name + ' " style="width: 150px;"></td>';
+							
+							html += '<td></td>';
+							
+							html += '<td style="text-align: center;">是</td>';
+							
+							html += '<td style="text-align: center;">';
+								html += '<a href="' + __URL(ADMINMAIN + "/goods/updategoodscategory?category_id=" + data.code) + '">修改</a>';
+									html += '<a href="javascript:void(0);" onclick="delCategory(' + data.code + ')">删除</a>';
+							html += '</td>';
+						html += '</tr>';
+				
+					if($(".pid_" + pid).length == 0){
+						$(".table-class tbody tr[data-category-id='" + pid+ "']").after(html);
+					}else{
+						var last_pid = ".pid_" + pid + ":last";
+						$(last_pid).after(html);
+					}
+					
+					parent.find("td:first").html(parent_html);
+
+					$(".tab_jian_" + pid).show();
+					$(".tab_jia_" + pid).hide();
+					$(".pid_" + pid).show(500);
+
+					$("#goods_category_pid").append(select_html);
+					$("#addChildGoodsCategory").modal("hide");
+					
+					$("#category_name").val("");
+					$("#short_name").val("");
+					$("#sort").val(0);
+					showTip(data['message'],"success");
+				}else{
+					showTip(data['message'],"error");
+				}
+				is_click = false;
+			}
+		});
+	}
+}
+
+function closeAddGoodsCategory(){
+	is_click = false;
+	$("#addChildGoodsCategory").modal("hide");
+}
+
+$(".modal-backdrop").live("click",function(){
+	closeAddGoodsCategory();
+});
+
+//模块输入信息验证
+function verify( category_name,short_name, sort){
+	if(category_name == '' || category_name.length>30){
+		$("#category_name").next().show();
+		return false;
+	}else{
+		$(".input-error").hide();
+	}
+	if(short_name == '' || short_name.length>20){
+		$("#short_name").next().show();
+		return false;
+	}else{
+		$(".input-error").hide();
+	}
+	if(sort == ''){
+		$("#short_name").next().show();
+		return false;
+	}else{
+		$(".input-error").hide();
+	}
+	return true;
+}
+</script>
+{/block}

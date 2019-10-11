@@ -1,0 +1,533 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" href="ADMIN_JS/timeInterval/dateRange.css">
+<link rel="stylesheet" href="ADMIN_JS/timeInterval/monthPicker.css">
+<style type="text/css">
+.order{
+	width: 100%;
+	height: 380px;
+    padding: 20px 0;
+}
+.order_data{
+	width: 80%;
+	height: 380px;
+	float: left;
+	left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px 0;
+}
+.member_farth{
+    width: 100%;
+    margin-top: 10px;
+    height: 450px;
+    border: 1px solid  #e6e9f0;
+    box-sizing: border-box;
+    position: relative;
+}
+.member_farth .member_son{
+	width: 100%;
+    height: 6.5%;
+    line-height: 32px;
+    font-size: 13px;
+    border-bottom: 1px solid #e6e9f0;
+    background: #f5f7fa;
+    text-indent: 10px;
+}
+
+.oder_farth{
+    width: 50%;
+    margin-top: 10px;
+    height: 450px;
+    border: 1px solid  #e6e9f0;
+    box-sizing: border-box;
+	float:left;
+	max-width: calc(50% - 5px);
+}
+.oder_farth .oder_son{
+	width: 100%;
+    height: 6.5%;
+    line-height: 32px;
+    font-size: 13px;
+    border-bottom: 1px solid #e6e9f0;
+    background: #f5f7fa;
+    text-indent: 10px;
+}
+.oder_farths{
+    width: 50%;
+    margin-top: 10px;
+    height: 450px;
+    border: 1px solid  #e6e9f0;
+    box-sizing: border-box;
+	float:right;
+    max-width: calc(50% - 5px);
+}
+.oder_farths .oder_sons{
+	width: 100%;
+    height: 6.5%;
+    line-height: 32px;
+    font-size: 13px;
+    border-bottom: 1px solid #e6e9f0;
+    background: #f5f7fa;
+    text-indent: 10px;
+}
+.time-select-container{
+    position: absolute;
+    z-index: 10;
+    top: 53px;
+    right: 50px;
+}
+.time-select-container span.wrap{
+    margin-left: 10px;
+    float: left;
+    display: inline-block;
+}
+.time-select-container .time-type a{
+    margin: 0;
+    height: 26px;
+    line-height: 26px;
+    color: #666;
+    display: inline-block;
+    cursor: pointer;
+    border: 1px solid #d9d9d9;
+    border-left: 0;
+    background: #fff;
+    padding: 0 16px;
+    float: left;
+    font-size: 12px;
+    transition: all .3s;
+}
+.time-select-container .time-type a:first-child{
+    border: 1px solid #d9d9d9;
+    border-radius: 2px 0 0 2px;
+}
+.time-select-container .time-type a:last-child{
+    border-radius: 0 2px 2px 0;
+}
+.time-select-container .time-type a.active{
+    color: #00A0DE;
+    border-color: #00A0DE;
+}
+.time-select-container .time-type a:last-child.active{
+    box-shadow: -1px 0 0 0 #00A0DE;
+}
+.time-select-container .form{
+    position: relative;
+    padding: 4px 7px;
+    width: 320px;
+    height: 18px;
+    cursor: text;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #666;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #d9d9d9;
+    border-radius: 2px;
+    transition: all .3s;
+}
+.time-select-container .form input{
+    border: none;
+    margin-bottom: 0;
+    height: 18px;
+    line-height: 18px;
+    outline: 0;
+    width: 45%;
+    text-align: center;
+    padding: 0;
+    box-shadow: none;
+    font-size: 12px;
+    color: #666;
+}
+.time-select-container .form:hover{
+    border-color: #00A0DE;
+}
+.time-select-container .form input:focus{
+    border: none!important;
+}
+.time-select-container .form .split{
+    color: #666;
+    display: inline-block;
+    width: 18px;
+}
+</style>
+{/block}
+{block name="main"}
+<div class="member_farth money">
+    <div class="member_son">交易分析</div>
+    <div id="order" class="order"></div>
+
+    <div class="time-select-container clear">
+        <span class="time-type clear wrap" style="display: none;">
+            <a href="javascript:;" class="active" data-type="day">按日</a>
+            <a href="javascript:;" data-type="month">按月</a>
+        </span>
+        <span class="form wrap" id="money_day">           
+            <input type="text" placeholder="开始时间" class="start_time">
+            <span class="split">-</span>
+            <input type="text" placeholder="结束时间" class="end_time">
+        </span>
+    </div>
+</div>
+<div class="member_farth num">
+    <div class="member_son">下单数量</div>
+    <div id="order_num_data" class="order"></div>
+    <div class="time-select-container clear">
+        <span class="time-type clear wrap" style="display: none;">
+            <a href="javascript:;" class="active" data-type="day">按日</a>
+            <a href="javascript:;" data-type="month">按月</a>
+        </span>
+        <span class="form wrap" id="num_day">           
+            <input type="text" placeholder="开始时间" class="start_time">
+            <span class="split">-</span>
+            <input type="text" placeholder="结束时间" class="end_time">
+        </span>
+    </div>
+</div>
+<div class="oder_farth">
+    <div class="oder_son">订单来源（包含所有订单）</div>
+    <div id="order_form_data" class="order_data"></div>  
+</div>
+<div class="oder_farths">
+    <div class="oder_sons">订单类型（包含所有订单）</div>
+    <div id="order_type_data" class="order_data"></div>
+</div>
+
+<script src="ADMIN_JS/echarts.js"></script>
+<script src="ADMIN_JS/timeInterval/dateRange.js" type="text/javascript"></script>
+<script src="ADMIN_JS/timeInterval/monthPicker.js" type="text/javascript"></script>
+<script type="text/javascript">
+var  member_oder= echarts.init(document.getElementById('order'));
+
+var option = {
+    color : ['#2998FF', '#4ECB74'],
+    tooltip: {
+        trigger: 'axis'
+    },
+    legend: {
+        data:['订单金额','毛利润'],
+        left : '35px'
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    toolbox: {},
+    xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: [],
+        axisTick: {show: true},
+    },
+    yAxis: {
+        type: 'value',
+        splitLine:{  
+            show:true  ,
+            lineStyle:{
+                color:'#ddd',
+                width: 1,
+                type : 'dashed'
+            }
+        },
+        axisTick: {show: false},
+        axisLine : {
+            show : false,
+            lineStyle : {
+                color : '#777'
+            }
+        }
+    },
+    series: [
+        {
+            name:'订单金额',
+            type:'line',
+            data:[],
+            smooth: true,
+        },
+        {
+            name:'毛利润',
+            type:'line',
+            data:[],
+            smooth: true,
+        }
+    ]
+};
+
+var order_form_obj= echarts.init(document.getElementById('order_form_data'));
+var order_form_option = {
+    title : {
+        text: '',
+        x:'center'
+    },
+    color : ['#8bb099', '#c23531', '#00A0DE', '#4cabce'],
+    tooltip : {
+        trigger: 'item',
+        formatter: "{a} <br/>{b} : {c} ({d}%)"
+    },
+    legend: {
+        orient: 'vertical',
+        left: 'left',
+        data: [
+        	{foreach name="$order_from_info" item="vo"}
+        		'{$vo.name}',
+        	{/foreach}
+        ]
+    },
+    series : [
+        {
+            name: '订单来源',
+            type: 'pie',
+            radius : '55%',
+            center: ['50%', '60%'],
+            data:[
+            	{foreach name="$order_from_info" item="vo"}
+                	{value:{$vo.num}, name:'{$vo.name}'},
+            	{/foreach}
+            ],
+            itemStyle: {
+                emphasis: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+            }
+        }
+    ]
+};
+order_form_obj.setOption(order_form_option);
+
+var order_type_obj= echarts.init(document.getElementById('order_type_data'));
+var order_type_option = {
+    title : {
+        text: '',
+        x:'center'
+    },
+    tooltip : {
+        trigger: 'item',
+        formatter: "{a} <br/>{b} : {c} 单({d}%)"
+    },
+    legend: {
+        orient: 'vertical',
+        left: 'left',
+        data: [
+        	{foreach name="$order_type_info" item="vo"}
+        		'{$vo.name}',
+        	{/foreach}
+        ]
+    },
+    series : [
+        {
+            name: '订单类型',
+            type: 'pie',
+            radius : '55%',
+            center: ['50%', '60%'],
+            data:[
+            	{foreach name="$order_type_info" item="vo"}
+                	{value:{$vo.num}, name:'{$vo.name}'},
+            	{/foreach}
+            ],
+            itemStyle: {
+                emphasis: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+            }
+        }
+    ]
+};
+order_type_obj.setOption(order_type_option);
+
+var order_num_obj= echarts.init(document.getElementById('order_num_data'));
+var order_num_option = {
+
+    color: ['#4cabce', '#e5323e', '#4ECB74'],
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+            type: 'shadow'
+        }
+    },
+    legend: {
+        data: ['下单数量', '支付数量', '下单-支付转化率'],
+        left : '95px'
+    },
+    toolbox: {
+        show: true,
+        orient: 'vertical',
+        left: 'right',
+        top: 'center',
+    },
+    calculable: true,
+    xAxis: [
+        {
+            type: 'category',
+            axisTick: {show: true},
+            data: []
+        }
+    ],
+    yAxis: [
+        {
+            type: 'value',
+            splitLine:{  
+                show:true,
+                lineStyle:{
+                    color:'#ddd',
+                    width: 1,
+                    type : 'dashed'
+                }
+            },
+            axisTick: {show: false},
+            axisLine : {
+                show : false,
+                lineStyle : {
+                    color : '#777'
+                }
+            }
+        },
+        {
+            type: 'value',
+            name: '转换比率',
+            min: 0,
+            max: 100,
+            interval : 20,
+            axisLabel: {
+                formatter: '{value} %'
+            },
+            splitLine:{  
+                show:false,
+            },
+            axisLine : {
+                show : false,
+                lineStyle : {
+                    color : '#777'
+                }
+            }
+        }
+    ],
+    series: [
+        {
+            name: '下单数量',
+            type: 'bar',
+            barGap: 0,
+            data: []
+        },
+        {
+            name: '支付数量',
+            type: 'bar',
+            data: []
+        },
+        {
+            name : '下单-支付转化率',
+            type: 'line',
+            data: [],
+            yAxisIndex: 1
+        }   
+    ]
+};
+order_num_obj.setOption(order_num_option);
+
+$(function(){
+	loadOrderMoneyData();
+	loadOrderNumData();
+
+    $('.money .time-type a').click(function() {
+        $(this).addClass('active').siblings('a').removeClass('active');
+        var type = $(this).attr('data-type');
+            loadOrderMoneyData();
+            $('#money_' + type).show().siblings('.form').hide();
+    });
+
+    $('.num .time-type a').click(function() {
+        $(this).addClass('active').siblings('a').removeClass('active');
+        var type = $(this).attr('data-type');
+            loadOrderNumData();
+            $('#num_' + type).show().siblings('.form').hide();
+    });
+})
+
+// 查询订单金额数据
+function loadOrderMoneyData(){
+    var type = $('.money .time-type a.active').attr('data-type');
+	$.ajax({
+		type : "post",
+		url : "{:__URL('__URL__/NsAnalysis/ADMIN_MODULE/account/transactionAnalysis')}",
+		data: {
+			tag : 'order_money',
+            type : type,
+            start_time : $('#money_' + type + ' .start_time').val(), 
+            end_time : end_time = $('#money_' + type + ' .end_time').val()
+		},
+		success : function(data) {
+			if(data.length > 0){
+                option.xAxis.data = [];
+                option.series[0].data = [];
+                option.series[1].data = [];
+				data.forEach(function(val, key){
+					option.xAxis.data.push(val.time);
+					option.series[0].data.push(val.data.pay_money);
+					option.series[1].data.push(val.data.profit)
+				})
+				member_oder.setOption(option);
+			}
+		}
+	})
+}
+
+// 查询订单数量数据
+function loadOrderNumData(){
+    var type = $('.num .time-type a.active').attr('data-type');
+	$.ajax({
+		type : "post",
+		url : "{:__URL('__URL__/NsAnalysis/ADMIN_MODULE/account/transactionAnalysis')}",
+		data: {
+			tag : 'order_num',
+            type : type,
+            start_time : $('#num_' + type + ' .start_time').val(), 
+            end_time : end_time = $('#num_' + type + ' .end_time').val()
+		},
+		success : function(data) {
+			if(data.length > 0){
+                order_num_option.xAxis[0].data = [];
+                order_num_option.series[0].data = [];
+                order_num_option.series[1].data = [];
+                order_num_option.series[2].data = [];
+
+				data.forEach(function(val, key){
+					order_num_option.xAxis[0].data.push(val.time);
+					order_num_option.series[0].data.push(val.data.order_num);
+					order_num_option.series[1].data.push(val.data.pay_num);
+                    order_num_option.series[2].data.push(val.data.conversion_rate);
+				})
+				order_num_obj.setOption(order_num_option);
+			}
+		}
+	})
+}
+
+new pickerDateRange('money_day', {
+    isTodayValid : false,
+    theme : 'ta',
+    autoSubmit : true,
+    success : function(obj) {
+        $('#money_day .start_time').val(obj.startDate);
+        $('#money_day .end_time').val(obj.endDate);
+        loadOrderMoneyData()
+    }
+});
+
+new pickerDateRange('num_day', {
+    isTodayValid : false,
+    theme : 'ta',
+    autoSubmit : true,
+    success : function(obj) {
+        $('#num_day .start_time').val(obj.startDate);
+        $('#num_day .end_time').val(obj.endDate);
+        loadOrderNumData()
+    }
+});
+
+</script>
+{/block}

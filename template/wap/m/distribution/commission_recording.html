@@ -1,0 +1,109 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/distribution_commission_recording.css">
+{/block}
+{block name="main"}
+{php}
+	$promoter_info = api('Nsfx.Distribution.promoterDetail');
+	$promoter_info = $promoter_info['data'];
+{/php}
+<section class="distribution-commission-record">
+	<nav class="ns-border-color-gray">
+		<ul>
+            <li class="cf-tab-item selected ns-text-color-hover" data-type="promoter_commission"><a href="javascript:;" >{:lang('分销商佣金')}</a></li>
+            {if $promoter_info['shop_user_info']['region_center_id'] > 0}
+            	<li class="cf-tab-item ns-text-color-hover" data-type="region_agent_commission"><a href="javascript:;" >{:lang('区域代理佣金')}</a></li>
+        	{/if}
+			{if $promoter_info['shop_user_info']['partner_id'] > 0}
+				<li class="cf-tab-item ns-text-color-hover" data-type="partner_commission"><a href="javascript:;" >{:lang('股东分红')}</a></li>
+			{/if}
+        </ul>
+	</nav>
+	<div class="tablelist-append clearfix"></div>
+</section>
+<input type="hidden" id="page_count">
+<input type="hidden" id="page" value="1">
+<input type="hidden" id="type" value="promoter_commission">
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script type="text/javascript">
+$(function(){
+	getgoodlist(1);
+	$('.distribution-commission-record nav li').click(function() {
+		$(this).addClass('selected').siblings('li').removeClass('selected');
+		$('#type').val($(this).attr('data-type'));
+		getgoodlist(1);
+	});
+
+	//滑动到底部加载
+	$(window).scroll(function(){
+		var totalheight = parseFloat($(window).height()) + parseFloat($(window).scrollTop());
+		var content_box_height = parseFloat($(".tablelist-append").height());
+		if(totalheight+80 - content_box_height >= 100 && content_box_height > 0){
+			if(is_load){
+				var page = parseInt($("#page").val()) + 1;//页数
+				var total_page_count = $("#page_count").val(); // 总页数
+				if(page > total_page_count){
+					return false;
+				}else{
+					getgoodlist(page);
+				}
+			}
+		}
+	});
+});
+
+var is_load = true;//防止重复加载
+function getgoodlist(page){
+	var params = {
+		page : page,
+		type : $('#type').val()
+	};
+	$(".data-display-mode").find("i").attr("class","fa fa-list-ul fa-lg");
+	$("#page").val(page);
+	if(is_load){
+		is_load = false;
+		api("System.Distribution.commissionDistributionList",params,function(data){
+				if(data.code != 0) toast(data.message);
+				$("#page_count").val(data['data']['page_count']);//总页数
+				if(page == 1){
+					var list_html = "";
+				}else if(page > 1){
+					var list_html = $('.tablelist-append').html();
+				}
+				if(data['data']['data'].length >0){
+					for(var i=0;i<data['data']['data'].length;i++){
+						var item=data['data']['data'][i];
+						list_html += `<div class="water-item ">
+										<div class="water-top ns-border-color-gray clearfix text12">
+											<div class="pull-left ns-text-color-black">{:lang('订单号：')}`+ item.order_no +`</div>
+											<div class="pull-right ns-text-color-black">`+ timeStampTurnTime(item.create_time) +`</div>
+											<div class="clear"></div>
+										</div>
+										<div class="water-bottom">
+											<div class="water-info clearfix">
+												<div class="water-name pull-left ns-text-color-black">`+ item.nick_name +`</div>
+												<div class="water-status pull-right ns-text-color-black">`+ item.status_name +`</div>
+											</div>
+											<div class="water-info clearfix">
+												<div class="water-name pull-left ns-text-color-black">{:lang('订单金额')}</div>
+												<div class="water-price pull-right ns-text-color">`+ item.order_money +`</div>
+											</div>
+											<div class="water-info clearfix">
+												<div class="water-name pull-left ns-text-color-black">{:lang('佣金金额')}</div>
+												<div class="water-price pull-right ns-text-color">`+ item.commission_money +`</div>
+											</div>
+										</div>
+									</div>`;
+					}
+				}else if(data['data']['data'].length == 0 && page == 1){
+					list_html+= '<p class="empty-data ns-text-color-gray"><img src="'+WAPIMG+'/wap_nodata.png" height="60"><br>{:lang('Sorry！没有找到相关的数据…')}</p>';
+				}
+				is_load = true;
+				$('.tablelist-append').html(list_html);
+		});
+	}
+}
+</script>
+{/block}

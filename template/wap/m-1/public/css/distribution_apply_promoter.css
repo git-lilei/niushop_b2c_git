@@ -1,0 +1,23 @@
+@CHARSET "UTF-8";
+.main-content .title-img img{width: 100%; height: auto;}
+.btn.primary{display: block; margin: 30px auto 20px; width: 80%;height: 35px; line-height: 35px;border-radius: 5px; font-weight: bold;}
+.apply-content{margin-bottom: 10px; background-color: #fff; overflow: hidden;}
+.apply-content .apply_title_one{border-left: 2px solid;margin: 10px 0; padding-left: 10px;}
+.apply-content .apply_title_one .title_two{font-size: 12px;margin-left: 5px;}
+.apply-content .content-wrap{padding: 10px 0;border-top: 1px solid;}
+.apply-content .content-wrap a{display: inline-block; width: 92%; height: 30px; line-height: 30px; border-bottom: 1px solid; margin: 0 4%; font-size: 12px;}
+.apply-content .content-wrap a i{font-size: 21px;float: right;margin-top: 3px;}
+.apply-content .apply-title-item{width: 97%; display: inline-block; overflow: hidden; border-bottom: 1px solid; padding: 10px 5px;}
+.apply-content .apply-title-item i{margin-right: 10px; display: inline-block; width: 26px; height: 28px; background: url(../img/distribution/member_index_ico.png) no-repeat; float: left; margin-top: 9px;}
+.apply-content .apply-title-item i.apply-add{background-position: -51px 1px;}
+.apply-content .apply-title-item i.extension{background-position: -51px -27px;}
+.apply-content .apply-title-item i.team{background-position: -51px -55px;}
+.apply-promoter label{width: 105px;text-align: center;float: left;}
+.apply-promoter input{border: 0;width: 50%;}
+.item-title{margin-bottom: 5px;}
+.w107{width: 107px;}
+.no-apply{text-align: center; margin-top: 40px;}
+.apply-content-desc{padding: 10px 15px;font-size: 12px;}
+/* 审核中 */
+.frog {text-align: center;}
+.frog img{width: 107px;display: block;margin: 40px auto 10px;}

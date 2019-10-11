@@ -1,0 +1,211 @@
+{extend name="admin/base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<script src="ADMIN_JS/material_managedialog.js"></script>
+<script type="text/javascript" charset="utf-8" src="ADMIN_JS/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="ADMIN_JS/ueditor/ueditor.all.common.js"></script>
+<style>
+.ns-main{margin-top:0px;}
+.time-unit{position: relative;top: -2px;left: -4px;}
+.selectric-items li{overflow: inherit;}
+.selectric-items .selectric-scroll::-webkit-scrollbar,.selectric-items .selectric-scroll::-webkit-scrollbar{width: 2px;height: 2px;}
+.selectric-items .selectric-scroll::-webkit-scrollbar-track,.selectric-items .selectric-scroll::-webkit-scrollbar-track{background-color: #fff;}
+.selectric-items .selectric-scroll::-webkit-scrollbar-thumb,.selectric-items .selectric-scroll::-webkit-scrollbar-thumb{background-color: #ddd;}
+.time-slot-item{padding:0 15px 0 10px;border:1px solid #ddd;margin-bottom: 10px;margin-right:10px;display: inline-block;cursor: pointer;position: relative;user-select: none;}
+.time-slot-item .del{position: absolute;right: 0;top:0;display: inline-block;width: 12px;height: 12px;background: #f5f5f5;color: #666;text-align: center;line-height: 12px;font-style: normal;}
+.time-slot-item.selected{border-color: #0059d6}
+.right_main{width:100%;float:left;}
+.main-top{height: 30px;line-height: 30px;padding: 0 10px;color: #666;margin-bottom: 15px;}
+.email_title{width:100px;line-height: 40px;float: left;padding-left: 10px;}
+.edit_bat{float: left;margin-left: 20px;line-height: 40px;}
+.save{clear:both;text-align:center;margin-top:10px;display: inline-block;width:100%;}
+input[type="submit"], input.submit, a.submit {display: inline-block;}
+.back{background: #e5e5e5;border: 0;height: 30px;width: 66px;}
+.rightlist{clear: both;content: '';display: inline-block;}
+.right-item{width: 12%;}
+.itemlist{    padding: 2px 5px;
+    margin: 5px;
+    background: #00A0DE;
+    border-radius: 2px;
+    float: left;
+    text-align: center;}
+.title-item{height: 40px;color: #666;}
+.template-message{height: 20px;line-height: 20px;border-left:2px solid #00A0DE;margin:10px 0px;padding-left:8px;}
+.active{color:#00A0DE !important;}
+a:hover li,a.active li{border-color: #00A0DE;background: #ebf3ff;}
+.tab-pane{clear: both;content: '';}
+.msg{display: inline-block;width: 100%;color: #FF8400;height: 40px;line-height: 40px;padding-left: 10px;}
+.senditem{border: 1px solid #11B9ED;margin: 9px;border-radius: 3px;width:30%;}
+.qianming{display: inline-block;line-height: 40px;margin-left: 10px;color:#666;width:100%;}
+.bl{color:#666;margin-left:10px;display: inline-block;line-height:35px;width:100%;}
+input[type="text"]{vertical-align: middle;margin-bottom:0;}
+.Switch_FlatRadius{height: 32px;line-height: 26px;}
+.example-txt {
+    border: 1px solid #e3e3e3;
+    padding: 10px;
+}
+</style>
+{/block}
+{block name="main"}
+{if strpos($info['template_hook'], 'sms') !== false }
+<div class="set-style">
+	<!-- 模块一 -->
+	<h4><span></span>短信设置</h4>
+ 	<div class="right_main">
+		<div class="main-top">您正在编辑<a href="javascript:;" class="update_nameid" id="">{$info['template_name']}</a>通知模板</div>
+		<div class="qianming"><div style="width:100px;float:left;">是否开启：</div><input id="" {if $sms_info['is_enable']} checked="checked" {/if} type="checkbox"  class="checkbox order_balance_pay"/></div>
+		<div class="qianming"><div style="width:100px;float:left;">模板ID：</div><input type="text" id="" value="{$sms_info['template_title']}" style="margin-right: 15px !important;" class="input-common template_titleid" /><span style="font-size:13px;">必须与短信接口的模板ID一致，否则无效!</span></div>
+		<div class="qianming"><div style="width:100px;float:left;">短信签名：</div><input type="text" id="" style="margin-right: 15px !important;" value="{$sms_info['sign_name']}" class="input-common signNameid" /><span style="font-size:13px;">与短信接口内短信签名保持一致!</span></div>
+		
+		<div class="bl">
+			<div style="width:75px;float:left;">可用变量：</div>
+			<div style="width:88%;float: left;font-size:13px;" id="user_variable">
+				{foreach name="$sms_info['template_item_list']" item="item_obj"}
+					{$item_obj.replace_name}({$item_obj.item_name}),
+				{/foreach}
+			</div>
+		</div>
+		
+	</div>
+	<div class="save">
+		<button class="btn-common btn-big" onclick="template_submit('sms', this);">保存</button>
+	</div>
+</div>	
+{/if}
+
+{if strpos($info['template_hook'], 'email') !== false }
+<div class="set-style">
+	<h4><span></span>邮箱设置</h4>
+ 	<div class="right_main">
+		<div class="main-top">您正在编辑<a href="javascript:;" id="update_nameid">{$info['template_name']}</a>通知模板</div>
+		<div class="qianming"><div style="width:100px;float:left;">是否开启：</div><input id="order_balance_pay" {if $email_info['is_enable']} checked="checked" {/if} type="checkbox"  class="checkbox"/></div>
+		<div class="title-item">
+			<div class="email_title">邮件标题：</div>
+			<input type="text" style="float:left;margin:5px !important;" value="{$email_info['template_title']}" class="input-common template_titleid" />
+			<a href="javascript:;"><div class="edit_bat">标题支持标签请从编辑器中复制</div></a>
+		</div>
+		
+		<div class="rightlist user_variable" id="" style="float: left;">
+			{foreach name="$email_info['template_item_list']" item="item_obj"}
+				<a onclick='item_onclick({$item_obj.id})' style="color: white;"><p class="itemlist">{$item_obj.item_name}</p></a>
+			{/foreach}
+		</div>
+		<script id="editor" type="text/plain" style="clear: both;">{$email_info['template_content']}</script>
+	</div>
+	<div class="save">
+		<button class="btn-common btn-big" onclick="template_submit('email', this);">保存</button>
+	</div>
+</div>
+{/if}
+
+{if strpos($info['template_hook'], 'wechat') !== false }
+<div class="set-style" style="">
+	<!-- 模块一 -->
+	<h4><span></span>微信模板消息</h4>
+ 	<div class="right_main">
+		<div class="main-top">您正在编辑<a href="javascript:;" id="update_nameid">{$info['template_name']}</a>通知模板</div>
+		<div class="qianming"><div style="width:100px;float:left;">是否开启：</div><input {if $wechat_info['is_enable']} checked="checked" {/if} id="wechat_template" type="checkbox"  class="checkbox order_balance_pay"/></div>
+		<div class="qianming"><div style="width:100px;float:left;">模板编号：</div><input type="text" id="" value="{$wechat_info['template_no']}" style="margin-right: 15px !important;    background-color: white;" class="input-common template_titleid" readonly="readonly"/></div>
+		<div class="qianming"><div style="width:100px;float:left;">模板消息的ID：</div><input type="text" id="template_id" value="{$wechat_info['template_id']}" style="float:left;margin:5px !important;    background-color: white;" class="input-common template_titleid" readonly="readonly"/><a href="javascript:;" onclick="resetTemplate();"><div class="edit_bat">去重置</div></a></div>
+		<div class="example-txt">
+				{$wechat_info['headtext']}<br> 姓名：何某某<br>联系方式：187xxxxxxxx<br>
+				店铺类型：普通店铺 <br>{$wechat_info['bottomtext']}						
+		</div>
+	</div>
+	<div class="save">
+		<button class="btn-common btn-big" onclick="wechat_submit(this);">保存</button>
+	</div>
+</div>	
+{/if}
+<script>
+var $template_send_item = {$email_info["template_item_json"] ? $email_info["template_item_json"] : []};
+var ue = UE.getEditor('editor',{
+	initialFrameHeight : 320,
+	initialFrameWidth : 730
+});
+
+//选择项的点击事件
+function item_onclick($item_id){
+	
+	for($i=0;$i<$template_send_item.length;$i++){
+		$id=$template_send_item[$i].id;
+		if($id==$item_id){
+			var ue = UE.getEditor('editor');
+			var $content=ue.getContent();
+			$content=$content+$template_send_item[$i].show_name;
+			ue.setContent($content, false);  //赋值给UEditor  
+			return false;
+		}
+	}
+}
+var notify_type = "{$info['notify_type']}";
+
+function template_submit(type, obj){
+	var data = [];
+	var _this = $(obj).parents('.set-style');
+	data[0] = {
+		'template_type' : "{$info['template_type']}",
+		'template_code' : "{$info['template_code']}",
+		'notify_type' : "{$info['notify_type']}",
+		'sign_name' : $(_this).find('.signNameid').val(),
+		'template_title' : $(_this).find('.template_titleid').val(),
+		'template_content' : type == 'email' ? ue.getContent() : '',
+		'is_enable' : $(_this).find('.checkbox').is(":checked") ? 1 : 0,
+	};
+	$.ajax({
+		type : "post",
+		url: "{:__URL('ADMIN_MAIN/config/updatenotifytemplate')}",
+		data: { "type": type, "template_data": JSON.stringify(data), "notify_type" : notify_type },
+		async : false, // 让它同步执行
+		success: function (data) {
+			if (data["code"] > 0) {
+				showTip(data["message"],'success');
+				window.location.href=__URL("ADMIN_MAIN/config/notifyindex");
+			}else{
+				showTip(data["message"],'error');
+			}
+		}
+	});
+}
+
+//保存微信消息状态
+function wechat_submit() {
+	var template_code = "{$info['template_code']}";
+	var is_enable = $('#wechat_template').is(":checked") ? 1 : 0;
+	
+	$.ajax({
+		type : "post",
+		url: "{:__URL('ADMIN_MAIN/config/updateWechatTemplate')}",
+		data: { "template_code": template_code, "is_enable": is_enable },
+		async : false, // 让它同步执行
+		success: function (data) {
+			if (data["code"] > 0) {
+				showTip(data["message"],'success');
+				window.location.href=__URL("ADMIN_MAIN/config/notifyindex");
+			}else{
+				showTip(data["message"],'error');
+			}
+		}
+	});
+	
+}
+
+//获取微信模板消息id
+function resetTemplate(template_no) {
+    $( "#dialog" ).dialog({
+        buttons: {
+            "确定": function() {
+                window.location.href= "{:__URL('__URL__/NsWxtemplatemsg/ADMIN_MODULE/TempMsg/config')}";
+                $(this).dialog('close');
+            },
+            "取消,#f5f5f5,#666": function() {
+                $(this).dialog('close');
+            },
+        },
+        contentText:"您确定要重置模板消息吗？<span style='color:red;'>(重置模板消息时会删除项目绑定微信公众号下已绑定的所有模板消息)</span>",
+    });
+}
+</script>
+{/block}

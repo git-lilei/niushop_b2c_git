@@ -1,0 +1,44 @@
+.floor-two{width: 1200px; margin-top: 20px;}
+.floor-two .ellipsis-1{overflow: hidden; white-space: nowrap; word-wrap: normal; -o-text-overflow: ellipsis; text-overflow: ellipsis;}
+.floor-two .floor-temp-two .edit-block{top: 0; right: 0; left: auto;}
+.floor-two .floor-temp-two{overflow: hidden; position: relative; width: 1200px; padding-top: 20px; padding-bottom: 20px;}
+.floor-two .floor-title{position: relative; width: 240px; height: 40px;}
+.floor-two .floor-title > h3{height: 40px; line-height: 40px;}
+.floor-two .floor-nav{width: 950px;}
+.floor-two .brand-big .img-skeletonsc-screen{height: 385px;}
+.floor-two .brand-samll .img-skeletonsc-screen{height: 140px;}
+.floor-two .floor-nav-list > li{float: left; height: 40px; padding: 0 10px; line-height: 40px;}
+.floor-two .floor-nav-list > li > a{font-size: 14px;}
+.floor-two .floor-nav-right{position: relative; float: right; width: 228px;}
+.floor-two .floor-nav-right .edit-block{top: 0; left: 0; width: 75px !important;}
+.floor-two .nav-more-btn{height: 40px; margin-right: 10px; line-height: 40px; font-size: 14px;}
+.floor-two .nav-more-btn > i{font-size: 18px;}
+.floor-two .template-adsense{width: 240px; height: 538px;}
+.floor-two .template-adsense > a{display: block;}
+.floor-two .template-adsense > a:nth-child(1){margin-bottom: 20px; height: 385px;}
+.floor-two .template-adsense > a:nth-child(2){height: 140px;}
+.floor-two .template-adsense > a > img{width: 100%; height: 100%;}
+.floor-two .template-goods{width: 950px; background-color: #fff;}
+.floor-two .floor-goods-list{overflow: hidden; position: relative; width: 724px; height: 538px;}
+.floor-two .floor-goods-list > li{float: left; width: 166px; height: 268px; padding: 0 37px; border-right: 1px solid; box-sizing: content-box;}
+.floor-two .goods-pic{width: 167px; height: 167px; margin-top: 15px; line-height: 167px;}
+.floor-two .goods-pic > img{width: 100%;}
+.floor-two .floor-goods-list .googs-title{width: 167px; height: 24px; line-height: 24px; margin-top: 20px; font-size: 16px; text-align: center;}
+.floor-two .goods-price{font-size: 14px; width: 167px; height: 35px; line-height: 35px; text-align: center;}
+.floor-two .floor-recommend{width: 226px;}
+.floor-two .floor-recommend-title{height: 52px; padding-left: 15px; line-height: 52px; font-size: 16px; border-bottom: 1px solid;}
+.floor-two .floor-recommend-wrap{overflow: hidden; position: relative; height: 432px;}
+.floor-two .floor-recommend-list{position: absolute;}
+.floor-two .floor-recommend-item{display: block; width: 195px !important; height: 67px !important; padding: 20px 15px; border-bottom: 1px solid; box-sizing: content-box;}
+.floor-two .floor-recommend-pic{float: left; width: 67px; height: 67px; margin-right: 10px; overflow: hidden;}
+.floor-two .floor-recommend-pic > img{width: 100%;}
+.floor-two .floor-recommend-cont{float: right; width: 118px;}
+.floor-two .recommend-goods-name{width: 118px; height: 14px; font-size: 14px; line-height: 1; margin-bottom: 7px;}
+.floor-two .recommend-goods-des{height: 22px; line-height: 22px; font-size: 12px;}
+.floor-two .recommend-goods-price{height: 22px; line-height: 22px; font-size: 12px;}
+.floor-two .recommend-more-btn{display: block; height: 53px; margin-right: 10px; line-height: 53px; text-align: right; font-size: 14px;}
+.floor-two .recommend-more-btn > i{font-size: 18px;}
+.floor-two .floor-goods-list .edit-block{top: 0;}
+
+.floor-two .back-floor-recommend-pic{background-color: #eee;}
+.floor-two .back-googs-title{background-color: #eee; height: 20px;}

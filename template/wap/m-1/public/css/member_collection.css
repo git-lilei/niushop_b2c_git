@@ -1,0 +1,17 @@
+body{background: #fff;}
+.cf-container{max-width: 640px;overflow: hidden;border-bottom: 1px solid;}
+.cf-container .cf-content{position: relative; text-align: center;white-space: nowrap; z-index: 5; -webkit-overflow-scrolling: touch; margin: 0 0.1rem;overflow: hidden;}
+.cf-container .cf-tab-item{line-height: 32px; text-align: center; width: 25%; float: left;}
+.cf-tab-item a{padding: 0 2px;display: block; border-bottom:2px solid transparent;}
+.collection-goods-empty{line-height: 60px; text-align: center;}
+.collection-goods-list{width: 100%; padding: 10px 2%;}
+.collection-goods-list .goods-info{width: 100%; overflow: hidden; border-bottom: 1px solid;}
+.collection-goods-list .goods-info:last-child{border-bottom: none;}
+.collection-goods-list .goods-info .collection-time{width: 100%; height: 30px; line-height: 25px;}
+.collection-goods-list .goods-info .goods-img{height: 100px; width: 100px; text-align: center; line-height: 100px; float: left; margin-right: 10px; margin-bottom: 5px;}
+.collection-goods-list .goods-info .goods-img .pic{max-height: 100%; max-width: 100%;vertical-align: middle;height:100%;}
+.collection-goods-list .goods-info .data-info{height: 100px; float: left; width: auto; position: relative;}
+.collection-goods-list .goods-info .data-info .goods-name{overflow: hidden; text-overflow: ellipsis; -webkit-box-orient:vertical; display: -webkit-box;}
+.collection-goods-list .goods-info .data-info .price-share{position: absolute; height: 30px; line-height: 30px; bottom: 0;}
+.collection-goods-list .goods-info .data-info .price-share .price{float: left;}
+.collection-goods-list .goods-info .data-info .price-share .cancel-collection{ float: right;}

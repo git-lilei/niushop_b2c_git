@@ -1,0 +1,119 @@
+{extend name="$base" /}
+{block name="resources"}
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+<style type="text/css">
+.total>div { text-align: left;font-size: 12px;width:100%;height: 43px;overflow:hidden;color:#666;font-weight: normal;}
+.total>div input { margin: 0 5px 0 0;} 
+.total label {float:left;text-align: left;font-size: 12px; width:12%;overflow:hidden;color:#666;font-weight: normal;}
+.total label input {margin: 0 5px 0 0;} 
+</style>
+{/block}
+{block name="main"}
+<div class="space-10"></div>
+<div class="set-style">
+	<dl>
+		<dt><span class="required">*</span>供货商名称：</dt>
+		<dd>
+			<input type="text" id="supplier_name" value="{$info['supplier_name']}" class="input-common">
+			<p class="error">请输入供货商名称</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt ><span class="required">*</span>联系人姓名：</dt>
+		<dd>
+			<input type="text" id="linkman_name" value="{$info['linkman_name']}" class="input-common">
+			<p class="error">请输入联系人姓名</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt ><span class="required">*</span>联系人电话：</dt>
+		<dd>
+			<input type="number" id="linkman_tel" value="{$info['linkman_tel']}" class="input-common">
+			<p class="error">请输入正确的联系人电话</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="required">*</span>联系人地址：</dt>
+		<dd>
+			<textarea class="textarea-common"  id="linkman_address">{$info['linkman_address']}</textarea>
+			<p class="error">请输入联系地址</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt >供货商描述：</dt>
+		<dd>
+			<textarea id="desc" class="textarea-common">{$info['desc']}</textarea>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="updateSupplier();">保存</button>
+			<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);">返回</button>
+		</dd>
+	</dl>
+</div>
+<input type="hidden" id="supplier_id" value="{$supplier_id}">
+
+<script>
+var flag = false;//防止重复提交
+//保存
+function updateSupplier(){
+	var supplier_id = $("#supplier_id").val();
+	var supplier_name = $("#supplier_name").val();
+	var linkman_name = $("#linkman_name").val();
+	var linkman_tel = $("#linkman_tel").val();
+	var linkman_address = $("#linkman_address").val();
+	var desc = $("#desc").val();
+	if (supplier_name == '') {
+		$("#supplier_name").focus().next().show().css("display","inline-block");
+		return false;
+	} else {
+		$(".error").hide();
+	}
+	if (linkman_name == '') {
+		$("#linkman_name").focus().next().show().css("display","inline-block");
+		return false;
+	} else {
+		$(".error").hide();
+	}
+	if (linkman_tel == '') {
+		$("#linkman_tel").focus().next().show().css("display","inline-block");
+		return false;
+	} else {
+		$(".error").hide();
+	}
+	if (linkman_address == '') {
+		$("#linkman_address").focus().next().show().css("display","inline-block");
+		return false;
+	} else {
+		$(".error").hide();
+	}
+	if(flag){
+		return false;
+	}
+	flag = true;
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/member/updateSupplier')}",
+		data : {
+			'supplier_id' : supplier_id,
+			'supplier_name' : supplier_name,
+			'linkman_name' : linkman_name,
+			'linkman_tel' : linkman_tel,
+			'linkman_address' : linkman_address,
+			'desc' : desc,
+		},
+		success : function(data) {
+			if (data["code"] > 0) {
+				showTip(data['message'],"success");
+				location.href = "{:__URL('ADMIN_MAIN/member/supplierlist.html')}";
+			}else{
+				showTip(data['message'],"error");
+				flag = false;
+			}
+		}
+	});
+}
+</script>
+{/block}

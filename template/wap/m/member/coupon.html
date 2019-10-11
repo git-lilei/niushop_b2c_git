@@ -1,0 +1,25 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/member_coupon.css">
+{/block}
+{block name="main"}
+<div class="cf-container ns-border-color-gray">
+	<ul>
+		<li class="selected ns-text-color ns-border-color"><a href="javascript:getMemberCounponList(1);">{:lang('unused')}</a></li>
+		<li><a href="javascript:getMemberCounponList(2);">{:lang('used')}</a></li>
+		<li><a href="javascript:getMemberCounponList(3);">{:lang('expire')}</a></li>
+	</ul>
+</div>
+<div class="com-content">
+    <div class="coupon-contianer"></div>
+</div>
+<script>
+var lang_coupon ={
+  unused : "{:lang('unused')}",
+  used : "{:lang('used')}",
+  expire : "{:lang('expire')}"
+}
+</script>
+<script src="WAP_JS/member_coupon.js"></script>
+{/block}
+{block name="footer"}{/block}

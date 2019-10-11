@@ -1,0 +1,150 @@
+{extend name="$base"}
+{block name="resources"}
+<link type="text/css" rel="stylesheet" href="WEB_CSS/login_find.css" />
+{/block}
+{block name="head"}{/block}
+{block name="main"}
+{php}
+//验证码配置
+$login_verify_code = api("System.Config.loginVerifyCode");
+$login_verify_code = $login_verify_code['data'];
+$login_verify_code = $login_verify_code['value'];
+{/php}
+<div class="header w1200 clearfix">
+	<div class="head-block">
+		<a class="self-adaption-block" href="{:__URL('SHOP_MAIN')}"><img class="self-adaption-img" alt="logi" src="{:__IMG($web_info['logo'])}"/></a>
+		<span>{:lang('retrieve_password')}</span>
+	</div>
+	<div><a href="{:__URL('SHOP_MAIN')}">{:lang('back_home_page')}</a></div>
+</div>
+
+<div class="find-process ns-border-color-gray">
+	<ul>
+		<li>
+			<div>
+				<p class="ns-bg-color">1</p>
+				<p class="ns-text-color">{:lang('enter_account_name')}</p>
+			</div>
+			<span class="line-2 ns-border-color"></span>
+		</li>
+		<li id="current2">
+			<span class="line-1 ns-border-color-gray"></span>
+			<div>
+				<p class="ns-bg-color-gray-shade-20">2</p>
+				<p class="ns-text-color-gray">{:lang('verification_identity')}</p>
+			</div>
+			<span class="line-2 ns-border-color-gray"></span>
+		</li>
+		<li id="current3">
+			<span class="line-1 ns-border-color-gray"></span>
+			<div>
+				<p class="ns-bg-color-gray-shade-20">3</p>
+				<p class="ns-text-color-gray">{:lang('reset_password')}</p>
+			</div>
+			<span class="line-2 ns-border-color-gray"></span>
+		</li>
+		<li id="current4">
+			<span class="line-1 ns-border-color-gray"></span>
+			<div>
+				<p class="ns-bg-color-gray-shade-20">4</p>
+				<p class="ns-text-color-gray">{:lang('password_find_finish')}</p>
+			</div>
+		</li>
+	</ul>
+	<ol>
+		<li class="js-input-account">
+			<div class="item">
+				<label class="ns-text-color-gray">账号</label>
+				<input class="form-control ns-border-color-gray-shade-10" id="account" type="text" placeholder="{:lang('mailbox_or_mobile')}">
+				<span class="ns-text-color" id="tip_account"></span>
+			</div>
+			{if condition = "$login_verify_code['pc'] == 1"}
+			<div class="item captcha">
+				<label class="ns-text-color-gray">{:lang('member_verification_code')}</label>
+				<input class="form-control ns-border-color-gray-shade-10" id="captcha" type="text" maxlength="4">
+				<img class="img-captcha" src="{:__URL('SHOP_MAIN/captcha')}" onclick="this.src='{:__URL('SHOP_MAIN/captcha?tag=1')}'+'&send='+Math.random()">
+				<span class="ns-text-color" id="tip_captcha"></span>
+			</div>
+			{/if}
+			<div class="item">
+				<button class="btn btn-primary" type="button">{:lang('next_step')}</button>
+			</div>
+		</li>
+		
+		<!-- 验证身份 -->
+		<li class="js-verify none">
+			<div class="item">
+				<label class="ns-text-color-gray">{:lang('authentication_method')}</label>
+				<span id="verific_mode"></span>
+			</div>
+			<div class="item">
+				<label class="ns-text-color-gray">{:lang('user_name')}</label>
+				<span id="nickname_info"></span>
+			</div>
+			<div class="item">
+				<label class="ns-text-color-gray" id="verified"></label>
+				<span id="verified_info"></span>
+			</div>
+			<div class="item">
+				<label class="ns-text-color-gray" id="code"></label>
+				<input id="sms_code" maxlength="6" class="form-control ns-border-color-gray-shade-10" type="text">
+				<a href="javascript:;" class="get-sms-code" id="get_code"></a>
+				<span id="tip_sms_code" class="ns-text-color"></span>
+			</div>
+			<div class="item">
+				<button class="btn btn-primary" type="button">{:lang('next_step')}</button>
+			</div>
+		</li>
+		
+		<!-- 重置密码 -->
+		<li class="js-reset none">
+			<div class="item">
+				<label class="ns-text-color-gray">{:lang('set_new_password')}</label>
+				<input class="form-control ns-border-color-gray-shade-10" type="password"  id="newpass">
+				<span class="ns-text-color" id="newpassinfo"></span>
+			</div>
+			<div class="item">
+				<label class="ns-text-color-gray">{:lang('confirm_new_password')}</label>
+				<input class="form-control ns-border-color-gray-shade-10" type="password" id="confirmpass">
+				<span class="ns-text-color" id="confirmpassinfo"></span>
+			</div>
+			<div class="item">
+				<button class="btn btn-primary" type="button">{:lang('next_step')}</button>
+			</div>
+		</li>
+		
+		<!-- 新密码重置完成 -->
+		<li class="js-finish verify-success none" id="finish_password">
+			<p>{:lang('reset_newpassword_finish')}</p>
+			<a href="{:__URL('SHOP_MAIN/login/index')}" class="back-index ns-bg-color">{:lang('again_login')}</a>
+		</li>
+	</ol>
+</div>
+<input type="hidden" value="{$login_verify_code['pc']}" id="login_verify_code">
+{/block}
+{block name="sidebar"}{/block}
+{block name="script"}
+<script>
+var lang_find = {
+	mailbox_is_not_registered : '{:lang("mailbox_is_not_registered")}',
+	phone_number_not_registered : '{:lang("phone_number_not_registered")}',
+	verification_code_must_not_be_null : '{:lang("verification_code_must_not_be_null")}',
+	user_name_cannot_be_empty : '{:lang("user_name_cannot_be_empty")}',
+	get_validation_code : '{:lang("get_validation_code")}',
+	post_resend : '{:lang("post_resend")}',
+	member_password_inconsistent : '{:lang("member_password_inconsistent")}',
+	mailbox_validation : '{:lang("mailbox_validation")}',
+	mobile_verification : '{:lang("mobile_verification")}',
+	verified_mobile : '{:lang("verified_mobile")}',
+	verified_mailbox : '{:lang("verified_mailbox")}',
+	member_mailbox_authentication_code : '{:lang("member_mailbox_authentication_code")}',
+	member_mobile_verification_code : '{:lang("member_mobile_verification_code")}',
+	member_get_mobile_verification_code : '{:lang("member_get_mobile_verification_code")}',
+	member_gets_mailbox_validation_codet : '{:lang("member_gets_mailbox_validation_codet")}',
+	code_cannot_empty : '{:lang("code_cannot_empty")}',
+	password_cannot_low_liu_char : '{:lang("password_cannot_low_liu_char")}',
+	phone_or_email_false : '{:lang("phone_or_email_false")}'
+};
+</script>
+<script type="text/javascript" src="WEB_JS/login_find.js"></script>
+{/block}

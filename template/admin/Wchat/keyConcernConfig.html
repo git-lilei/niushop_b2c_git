@@ -1,0 +1,47 @@
+{extend name="$base" /}
+{block name="resources"}
+<style type="text/css">
+.set-style dl dt {
+    width: 11%;
+}
+</style>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>效果预览：</dt>
+		<dd>
+			<img src="ADMIN_IMG/key_concern_preview.png" style="border: 1px solid #f0f0f0;"/>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否首页显示:</dt>
+		<dd>
+			<input type="checkbox" class="checkbox" name="is_show_follow" {if condition="$website_info['is_show_follow']"} checked="checked" {/if}/>
+		</dd>
+	</dl>
+
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="setConfigAjax();">保存</button></dd>
+	</dl>
+</div>
+<script>
+function setConfigAjax() {
+	var is_show_follow = $("[name='is_show_follow']").is(":checked") ? 1 : 0;
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/wchat/keyConcernConfig')}",
+		data : { 'is_show_follow' : is_show_follow },
+		success : function(data) {
+			if (data["code"] > 0) {
+				showTip(data['message'],'success');
+				location.href = "{:__URL('ADMIN_MAIN/wchat/keyConcernConfig')}";
+			} else {
+				showTip(data['message'],'error');
+			}
+		}
+	});
+}
+</script>
+{/block}

@@ -1,0 +1,26 @@
+.nc-main-right{float: left; width: 960px; background: #fff; overflow: hidden; margin-top: 20px; padding: 20px; font-size: 12px;margin-left:30px;}
+.refund-top{padding: 0 20px;}
+.refund-step{width: 100%; height: 130px; padding-top: 30px; padding-bottom: 20px;}
+.step-spot{position: relative; top: -17px; float: left; height: 43px; width: 14%;}
+.step-spot ul{z-index: 1; width: 200%; margin-left: -50%; position: absolute; margin-top: -38px; text-align: center;}
+.step-spot i{position: absolute; display: block; top: 0; width: 100%; height: 43px; overflow: hidden; text-align: center; line-height: 37px;}
+.fa-2x{font-size: 2em;}
+.fa{text-rendering: auto; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;}
+.step-spot li{font-size: 12px;}
+.step-spot ul li{margin-top: 80px;}
+.step{position: relative; float: left; height: 9px; width: 28%;}
+.step-line{width: 100%; height: 5px;}
+.step-line-dotted{float: left;}
+.step-line-dotted{border-bottom: 3px dotted; width: 47%;}
+.step-line-center{float: left; border-bottom: 6px solid; border-radius: 50px; width: 6px; margin-top: -1px; margin-left: 4px;}
+.step-line-dotted-right{float: right;}
+.step ul li{height: 36px; margin-bottom: 53px; font-size: 12px; font-weight: 700;}
+.step ul{position: absolute; width: 100%; margin-top: -38px; text-align: center;}
+.refund-form-bottom{margin-top: 30px;overflow: hidden;text-align: center;}
+.save-btn{display: inline-block; width: 120px; height: 30px; line-height: 30px; color: #FFF; margin-right: 30px;}
+.save-btn:hover{color: #fff!important;}
+.back-btn{display: inline-block;}
+.form-group .text{padding-top: 6px;}
+.panel-body .back-list{text-align: center; padding: 10px 0 50px 0;}
+.panel-body .refund-status-desc{text-align: center; font-size: 14px; padding-top: 50px;}
+.panel-body .refund-result{text-align: center; padding-top: 10px;}

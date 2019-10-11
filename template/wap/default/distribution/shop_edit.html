@@ -1,0 +1,121 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/distribution_shop_edit.css">
+{/block}
+{block name="main"}
+{php}
+	$info = api("System.Distribution.promoterDetail");
+	$info = $info['data'];
+{/php}
+<div class="distribution-shop-edit">
+	<div class="ns-border-color-gray">
+		<span class="ns-text-color-black">店铺名称：</span>
+		<input type="text" id="promoter_shop_name" placeholder="请输入店铺名称" value="{$info['promoter_shop_name']}">
+	</div>
+	<div>
+		<span class="ns-text-color-black">店铺背景图</span>
+		<br>
+		<div class="clear"></div>
+		<div class="js-save upload-img ns-border-color-gray-shade-20">
+			<img src="{:__IMG($info['background_img'])}" id="background_img" data-url="{$info['background_img']}">
+			{if $info['background_img'] == ''}
+			<div class="upload-text">点击上传</div>
+			{/if}
+		</div>
+	</div>
+	<button class="btn primary" onclick="save()">保存</button>
+</div>
+<input type="hidden" value="{$promoter_id}" id="promoter_id"/>
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script type="text/javascript" src="__STATIC__/webuploader/webuploader.js"></script>
+<script type="text/javascript">
+ var uploader;
+ var curr_file;
+ $(function () {
+	uploader = WebUploader.create({
+		// 文件接收服务端。
+		server: __URL(APPMAIN + '/member/uploadImage'),
+		// 选择文件的按钮。可选。
+		// 内部根据当前运行是创建，可能是input元素，也可能是flash.
+		pick: '.upload-img',
+
+		fileNumLimit: 1,
+
+		// 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
+		resize: false,
+
+		// 只允许选择图片文件。
+		accept: {
+			title: 'Images',
+			extensions: 'gif,jpg,jpeg,bmp,png',
+			mimeTypes: 'image/*'
+		},
+
+		formData: {
+			param: JSON.stringify({
+				// app_key :APP_KEY
+			})
+		},
+
+		thumb: {
+			width: 300,
+			height: 300,
+			crop: false
+		}
+
+	});
+
+	// 当有文件被添加进队列的时候
+	uploader.on('fileQueued', function (file) {
+		curr_file = file;
+		uploader.makeThumb(file, function (error, src) {
+			if (error) {
+				$("#background_img").replaceWith('<span>不能预览</span>');
+				return;
+			}
+			$("#background_img").attr('src', src);
+			$('.js-save').removeClass('upload-save');
+		});
+	});
+
+	uploader.on('uploadSuccess', function (file, res) {
+		$("#background_img").attr("data-url", res.data).attr("src", __IMG(res.data));
+		if (curr_file) uploader.removeFile(curr_file);
+		$('.js-save').addClass('upload-save');
+	});
+	uploader.on('filesQueued', function (file, res) {
+		uploader.upload();
+	});
+
+	$(".js-save").click(function () {
+		if (uploader.getFiles().length) {
+			uploader.upload();
+		}
+	});
+	
+});
+ 
+ function save() {
+	 var promoter_id = $('#promoter_id').val();
+	 var promoter_shop_name = $('#promoter_shop_name').val();
+	 var background_img = $("#background_img").attr('data-url');
+	 var params = {
+		 'promoter_id' : promoter_id,
+		 'promoter_shop_name' : promoter_shop_name,
+		 'background_img' : background_img
+	 };
+	 api('System.Distribution.updatePromoter', params, function(res){
+		 var data = res.data;
+		 if(data > 0) {
+			 toast('提交成功');
+			 setTimeout(function () {
+				 location.href = __URL(APPMAIN + '/distribution/index');
+			 }, 1000);
+		 }
+	 });
+	
+ }
+</script>
+{/block}

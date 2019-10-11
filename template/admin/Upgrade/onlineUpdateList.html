@@ -1,0 +1,273 @@
+{extend name="$base" /}
+{block name="alert_info"}
+<p class="function-prompts">建议您在更新前，备份相关的程序及数据信息，以免更新失败给您造成不必要的损失。</p>
+{/block}
+{block name="resources"}
+<style>
+.prompt_information{color: orange;padding-left: 10px;margin:12px;border-left:3px solid orange;}
+.back-color {
+	border-radius: 14px;
+    display: inherit;
+    color: #ffffff;
+    overflow:hidden;
+    padding: 3px 9px;
+}
+.color_0{background: #9E9E9E;}
+.color_1{background: darkcyan;}
+.color_2{background: goldenrod;}
+.color_3{background: darkcyan;}
+.table-class a{background: #4F85F1;border-radius:5px;color: #ffffff;padding: 5px;}
+.text-left {text-align: left; padding-left: 20px;}
+.table-class tr td{font-size: 12px;}
+.table-class tr th:FIRST-CHILD,.table-class tr td:FIRST-CHILD{padding-left: 20px;}
+</style>
+{/block}
+{block name="main"}
+<input type="hidden" id="upgrade_typeid" />
+<div class="prompt_information" id="warning_info" >
+</div>
+<table class="table-class">
+	<colgroup>
+		<col style="width: 10%;">
+		<col style="width: 20%;">
+		<col style="width: 15%;">
+		<col style="width: 15%;">
+		<col style="width: 15%;">
+		<col style="width: 15%;">
+		<col style="width: 10%">
+	</colgroup>
+	<thead>
+		<tr>
+			<th class="text-left">更新状态</th>
+			<th class="text-left">更新名称</th>
+			<th>更新包版本</th>
+			<th>系统当前版本</th>
+			<th>发布时间</th>
+			<th>更新时间</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody id="linkList"></tbody>
+</table>
+<div class="modal fade hide" id="up_patch" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>在线升级</h3>
+			</div>
+			<div class="modal-body">
+				<div class="modal-infp-style" style="height:70px;">
+					<table class="modal-tab">
+						<tr>
+							<td style="width:70%">是否备份数据库</td>
+							<td >
+								<input id="is_backup" type="checkbox" class="checkbox"/>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<input type="hidden" id="modify_username_hidden" />
+				<button class="btn-common" onclick="upPatch()" id="butSubmit">升级</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+	
+	<input type="hidden" id="p_type" value="0"/>
+	<input type="hidden" id="p_release" value="0"/>
+	<input type="hidden" id="patch_list"/>
+</div>
+<div id="back_patch" style="background:#f5f5f5;display:none;margin:auto;z-index:10;height:100%;width:100%">
+	<div style="height:200px;width:200px;background:#000;opacity: 0.65;text-align:center;margin: auto;">
+		<span>正在备份</span>
+	</div>
+</div>
+<form action="{:__URL('ADMIN_MAIN/upgrade/upgradePatch')}" method="post" id="fpForm">
+	<input type="hidden" id="patch_obj" name="upgradePatch_detail"/>
+</form>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+var niu_release = '{$niu_release}';
+var niu_version = '{$niu_version}';
+//分页数据
+function LoadingInfo(page_index) {
+	var user_name = '{$devolution_user_name}';
+	var password = '{$devolution_password}';
+	var devolution_code = '{$devolution_code}';
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/upgrade/onlineupdatelist')}",
+		data : {
+			"user_name" : user_name,
+			"password" : password,
+			"devolution_code" : devolution_code,
+			"page_index" : page_index, 
+			"page_size" : $("#showNumber").val()
+		},
+		success : function(data) {
+			
+			$json_data=JSON.stringify(data["data"]);
+			$("#patch_list").val($json_data);
+			if(undefined != data && "" != data){
+				if (data["data"].length > 0) {
+					$(".table-class tbody").empty();
+					for (var i = 0; i < data["data"].length; i++) {
+						var html = '';
+						html += '<tr align="center">';
+						if(parseInt(data['data'][i]['patch_release']) > parseInt(niu_release)){
+							html += '<td class="text-left"> <span class="back-color color_0">未更新</span></td>';
+						}else{
+							html += '<td class="text-left"> <span class="back-color color_3">已更新</span></td>';
+						}
+						html += '<td class="text-left">V' + data["data"][i]["patch_name"]+ '（'+data["data"][i]["patch_release"]+'）</td>';
+						html += '<td><span class="back-color color_1">V'+data["data"][i]["patch_no"]+' </span></td>';
+						html += '<td><span class="back-color color_2">'+niu_version+' </span></td>';
+						
+						if(data["data"][i]["release_date"] == 0){
+							html += '<td>无</td>';
+						}else{
+							html += '<td>' + timeStampTurnTime(data["data"][i]["release_date"])+ '</td>';
+						}
+						
+						if(data["data"][i]["modify_date"] == 0){
+							html += '<td>无</td>';
+						}else{
+							html += '<td>' + timeStampTurnTime(data["data"][i]["modify_date"])+ '</td>';
+						}
+						
+						if(parseInt(data['data'][i]['patch_release']) > parseInt(niu_release)){
+							
+							if(data['data'][i]['is_new_update'] == 1){
+								html += '<td><a href="javascript:;" onclick="update('+data["data"][i]["patch_id"]+')">在线升级</a><a href="'+data["data"][i]["patch_download_url"]+'" target="view_frame">手动下载更新</a></td> ';	
+							}else{
+								html += '<td style="color:#999999;">请自下而上依次更新</td> ';
+							}
+							
+						}else{
+							html += '<td></td> ';
+						}
+						html += '</tr>';
+						$(".table-class tbody").append(html);
+					}
+				} else {
+					var html = '<tr align="center"><td colspan="7">暂无更新</td></tr>';
+					$(".table-class tbody").html(html);
+				}
+				initPageData(data["page_count"],data['data'].length,data['total_count']);
+				$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+			}
+		}
+	});
+}
+
+//升级判断
+function update($patch_id){
+	$patch_list=$("#patch_list").val();
+	$patch_list=eval($patch_list);
+	for(var i=0; i<$patch_list.length; i++){
+		if($patch_list[i]["patch_id"]==$patch_id){
+			$upgrade_info=JSON.stringify($patch_list[i]);
+			$("#patch_obj").val($upgrade_info);
+		}
+	}
+	$("#fpForm").submit();
+}
+
+//一键升级
+function batchDelete() {
+	$("#upgrade_typeid").val(0);
+	$("#up_patch").modal("show");
+}
+
+//升级
+function upPatch(){
+	var is_backup = 0;
+	var patch_release = $("#p_release").val();
+	var user_name = '{$devolution_user_name}';
+	var password = '{$devolution_password}';
+	var upgrade_type=$("#upgrade_typeid").val();
+	if($("#is_backup").prop("checked")){
+		is_backup = 1;
+	}
+	//备份数据库
+	if(is_backup == 1){
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/upgrade/database_backup')}",
+			dataType : "json",
+			beforeSend: function () {
+				this.layerIndex = layer.load(1, { shade: [0.5, '#fff'] });
+				layer.msg('<div style="color:#fff;height:150px;width:200px;margin-top:50px;"><img src="__STATIC__/images/patch.gif" style="margin-bottom:15px;"/><br/>正在备份数据库</div>',{time:10000}); 
+			},
+			success : function(data) {
+				layer.closeAll();
+				if(data['code']==0){
+					//升级补丁
+					$.ajax({
+						type : "post",
+						url : "{:__URL('ADMIN_MAIN/upgrade/upversionpatch')}",
+						data : {
+							"patch_release" : patch_release,
+							"user_name" : user_name,
+							"password" : password,
+							"upgrade_type":upgrade_type
+						},
+						dataType : "json",
+						beforeSend: function () {
+							this.layerIndex = layer.load(1, { shade: [0.5, '#fff'] });
+							layer.msg('<div style="color:#fff;height:150px;width:200px;margin-top:50px;"><img src="__STATIC__/images/patch.gif" style="margin-bottom:15px;"/><br/>正在升级</div>',{time:10000});  
+						},
+						success : function(data) {
+							layer.closeAll();
+							if(data['code']==0){
+								showMessage('success', data["message"]);
+								$("#up_patch").modal("hide");
+								window.location.reload();
+							}else{
+								showMessage('error', data["message"]);
+							}
+						}
+					});
+				}else{
+					showMessage('error', data["message"]);
+				}
+			}
+		});
+	}else{
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/upgrade/upversionpatch')}",
+			data : {
+				"patch_release" : patch_release,
+				"user_name" : user_name,
+				"password" : password,
+				"upgrade_type":upgrade_type
+			},
+			dataType : "json",
+			beforeSend: function () {
+				 this.layerIndex = layer.load(1, { shade: [0.5, '#fff'] });
+				 layer.msg('<div style="color:#fff;height:150px;width:200px;margin-top:50px;"><img src="__STATIC__/images/patch.gif" style="margin-bottom:15px;"/><br/>正在升级</div>',{time:10000});
+			},
+			success : function(data) {
+				layer.closeAll();
+				if(data['code']==0){
+					showMessage('success', data["message"]);
+					$("#up_patch").modal("hide");
+					window.location.reload();
+				}else{
+					showMessage('error', data["message"]);
+				}
+			}
+		});
+	}
+}
+function searchData(){
+	LoadingInfo(1);
+}
+</script>
+{/block}

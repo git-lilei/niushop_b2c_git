@@ -1,0 +1,172 @@
+{extend name="$base" /}
+{block name="resources"}{/block}
+{block name="main"}
+<!-- 邮箱设置 -->
+<div class="set-style">
+	
+	<dl>
+		<dt>商家接收消息手机号</dt>
+		<dd>
+			<input id="mobile" type="text" value="{$info['mobile']}" class="input-common" />
+			<p class="hint">
+				<span>请输入通知人手机号，多个手机号之间用英文逗号“,”隔开</span>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>商家接收消息邮箱号</dt>
+		<dd>
+			<input id="email" type="text" value="{$info['email']}" class="input-common" />
+			<p class="hint">
+				<span>请输入通知人邮箱，多个邮箱之间用英文逗号“,”隔开</span>
+			</p>
+			
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>商家接收模板消息用户</dt>
+		<dd>
+			<input id="nick_name" type="text" value="{$info['nick_name']}" class="input-common" readonly="readonly"/>
+			<input type="hidden" value="{$info['uid']}" id="uid">
+			<button class="btn-common" onclick="selectUser()" style="vertical-align:1.5px;">选择用户</button>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="setConfigAjax();" >保存</button>
+			<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);" >返回</button>
+		</dd>
+	</dl>
+</div>
+<!-- 添加会员 -->
+<div class="modal fade hide" id="memberBox" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>选择模板消息绑定用户</h3>
+			</div>
+			<div class="modal-body">
+				<div class="modal-infp-style">
+					<table class="mytable">
+						<tbody>
+						<tr>
+							<td>
+								<input id="user_info" class="input-common" type="text" placeholder="输入手机号/邮箱/会员昵称">
+								<input type="button" onclick="memberList();" value="搜索" class="btn-common">
+							</td>
+						</tr>
+						</tbody>
+					</table>
+					<table class="table-class" id="member_list">
+						<colgroup>
+							<col style="width: 2%;">
+							<col style="width: 29%;">
+							<col style="width: 29%;">
+							<col style="width: 30%;">
+							<col style="width: 10%;">
+						</colgroup>
+						<thead>
+						<th></th>
+						<th align="left">会员昵称</th>
+						<th>会员邮箱</th>
+						<th>会员手机</th>
+						<th>状态</th>
+						</thead>
+						<tbody></tbody>
+					</table>
+				</div>
+			</div>
+
+			<div class="modal-footer">
+				<button class="btn-common btn-big" onclick="selectMember()">保存</button>
+				<button class="btn-common-cancle btn-big" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+
+
+function setConfigAjax(){
+	var mobile = $("#mobile").val();
+	var email = $("#email").val();
+	var uid = $("#uid").val();
+	$.ajax({
+		type:"post",
+		url : "{:__URL('ADMIN_MAIN/config/shopNotifyConfig')}",
+		data:{
+			'mobile':mobile,
+			'email':email,
+			'uid':uid,
+		},
+		success:function (data) {
+			if (data["code"] > 0) {
+				showTip(data["message"],'success');
+				location.href=__URL("ADMIN_MAIN/config/notifyindex");
+			}else{
+				showTip(data["message"],'error');
+			}
+		}
+	});
+}
+function selectUser(){
+    $("#memberBox").modal("show");
+}
+
+function selectMember(){
+    if($("#member_list tbody tr input[name='sub']:checked").length > 1){
+        showTip("只能选择一位会员","warning");
+        return false;
+	}
+    var uid = $("#member_list tbody tr input[name='sub']:checked").val();
+	var nick_name = $("#member_list tbody tr input[name='sub']:checked").attr("nick_name");
+    if(uid  == undefined || uid  == "") {
+        showTip("请选择要添加的会员","warning");
+        return false;
+    }
+
+	$("#nick_name").val(nick_name);
+    $("#uid").val(uid);
+    $("#memberBox").modal("hide");
+}
+
+//查询会员列表
+function memberList(){
+    var search_text = $("#user_info").val();
+
+    $.ajax({
+        type : "post",
+        url :"{:__URL('ADMIN_MAIN/member/getMemberList')}",
+        data : {"search_text" : search_text},
+        success : function(data) {
+            var html = '';
+            if (data["data"].length > 0) {
+                for (var i = 0; i < data["data"].length; i++) {
+                    html += '<tr align="center">';
+
+                    html += '<td><i class="checkbox-common"><input name="sub" type="checkbox" nick_name = "'+ data["data"][i]["nick_name"]+'" value="'+ data["data"][i]["uid"]+'" ></i></td>';
+
+                    html += '<td align="left">'+ data["data"][i]["nick_name"]+'</td>';
+
+                    html +=  data["data"][i]["user_email"] == null || "" == data["data"][i]["user_email"] ? '<td><span>--</span></td>' : '<td>'+ data["data"][i]["user_email"]+'</td>';
+
+                    html +=  data["data"][i]["user_tel"] == null || "" == data["data"][i]["user_tel"] ? '<td><span>--</span></td>' : '<td>'+ data["data"][i]["user_tel"]+'</td>';
+
+                    html += data["data"][i]["user_status"] == 0 ? '<td style="color:red;">锁定</td>' : '<td style="color:green;">正常</td>';
+
+                    html += '</tr>';
+                }
+            } else {
+                html += '<tr align="center"><td colspan="5">暂无符合条件的数据记录</td></tr>';
+            }
+            $("#member_list tbody").html(html);
+        }
+    });
+}
+</script>
+{/block}

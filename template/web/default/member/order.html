@@ -1,0 +1,246 @@
+{extend name="$member_base" /}
+{block name="right_main"}
+<link rel="stylesheet" href="WEB_CSS/member_order.css">
+{php}
+$params = input();
+
+$params['page'] = input('page', 1);
+unset($params['action']);
+
+$order_type = input('order_type', 'all');
+$status = input('status', 'all');
+
+$order_status = api('System.Order.orderStatus', ['order_type' => $order_type]);
+$order_status = $order_status['data'];
+
+$order_type_data = api('System.Order.orderType');
+$order_type_data = $order_type_data['data'];
+
+$list = api('System.Order.order', $params);
+$list = $list['data'];
+
+$total_count = $list['total_count'];
+
+{/php}
+<div class="member-main">
+	<div class="main-top">
+		<div class="title">我的订单</div>
+	</div>
+
+	<div class="order-top clearfix">
+		<div class="pull-left order-status">
+			<ul class="navs clearfix">
+				<li><a href="{:__URL('SHOP_MAIN/member/order')}" data-status="all" {eq name="$status" value="all"}class="ns-text-color ns-border-color"{/eq}>全部订单</a></li>
+				{foreach name="$order_status" item="vo"}
+					<li><a href="javascript:;" data-status="{$vo['status_id']}" {eq name="$status" value="$vo['status_id']"}class="ns-text-color ns-border-color"{/eq}>{$vo.status_name}</a></li>
+				{/foreach}
+			</ul>
+		</div>
+		<div class="pull-right order-search clearfix">
+			<input type="text" class="form-control search-input pull-left ns-border-color-gray-shade-10" placeholder="订单编号" value="{$params['order_no']}">
+			<button type="button" class="btn btn-default pull-left search-btn ns-border-color-gray-shade-10">
+				<i class="icon icon-search"></i>
+			</button>
+			<button type="button" class="btn btn-default search-more-btn pull-left ns-border-color-gray-shade-10">
+				高级<i class="icon icon-angle-down"></i>
+			</button>
+		</div>
+	</div>
+
+	<!-- 高级搜索 -->
+	<div class="senior-search pull-left hide ns-border-color-gray">
+		<dl class="clearfix"> 
+			<dt class="pull-left">订单类型：</dt>
+			<dd class="pull-left">
+				<ul class="clearfix order-type-list">
+					<li data-type="all" {eq name="$order_type" value="all"}class="ns-text-color ns-border-color"{/eq}>全部类型</li>
+					{foreach name="$order_type_data" item="vo"}
+					<li data-type="{$vo.id}" {eq name="$order_type" value="$vo['id']"}class="ns-text-color ns-border-color"{/eq}>{$vo.name}</li>
+					{/foreach}
+				</ul>
+			</dd>
+		</dl>
+		<button type="button" class="btn btn-default close-btn">关闭</button>
+	</div>
+
+	<table class="table table-bordered order-table">
+		<thead>
+	    	<tr>
+	      		<th class="flex-col ns-bg-color-gray-fadeout-60" width="460px"><div class="order-detail order-table-top align-center">订单详情</div></th>
+		      	<th class="flex-col ns-bg-color-gray-fadeout-60" width="115px"><div class="order-table-top align-center">收货人</div></th>
+		      	<th class="flex-col ns-bg-color-gray-fadeout-60" width="115px"><div class="order-table-top align-center">金额</div></th>
+		      	<th class="flex-col ns-bg-color-gray-fadeout-60" width="115px"><div class="order-table-top align-center">订单状态</div></th>
+	      		<th class="flex-col ns-bg-color-gray-fadeout-60" width="115px"><div class="order-table-top align-center">操作</div></th>
+   		 	</tr>
+		</thead>
+	
+		{if !empty($list['data'])}
+			{foreach name="$list['data']" item="vo"}
+			<tbody>
+			    <tr class="sep-row">
+			        <td colspan="5" style="border:none"></td>
+			    </tr>
+			    <tr class="tr-th order-list-top">
+			        <td colspan="5" class="ns-bg-color-gray-fadeout-60 ">
+			            <span class="time ns-text-color-gray">{$vo.create_time|date="Y-m-d H:i:s",###}</span>
+			            <span class="number ns-text-color-gray">订单号：<a target="_blank" href="{:__URL('SHOP_MAIN/member/orderdetail?order_id='.$vo['order_id'])}" class="ns-text-color-black">{$vo.order_no}</a></span>
+			            <div class="tr-operate ns-text-color-gray">
+			                <span>{$vo.shop_name}</span>
+			                <span class="order-type">{$vo.order_type_name}</span>
+			            </div>
+			        </td>
+			    </tr>
+			    {foreach name="vo['order_item_list']" item="item"  key="k"}
+			    <tr class="order-list-bottom">
+			        <td>
+			            <div class="goods-item">
+			                <div class="p-img ns-border-color-gray">
+			                    <a href="{:__URL('SHOP_MAIN/goods/detail?goods_id='.$item['goods_id'])}" target="_blank">
+				                    <img src="{:__IMG($item['picture']['pic_cover_micro'])}" width="60" height="60">
+			                    </a>
+			                </div>
+			                <div class="p-msg">
+			                    <div class="p-name">
+			                        <a href="{:__URL('SHOP_MAIN/goods/detail?goods_id='.$item['goods_id'])}" target="_blank" title="{$item.goods_name}">
+				                        {if $item.gift_flag > 0}<mark class="ns-bg-color gift-mark">赠品</mark>{/if}
+				                        <span>{$item.goods_name}</span>
+			                        </a>
+			                    </div>
+			                    <div class="sku-name ns-text-color-gray">{$item.sku_name}</div>
+			                </div>
+			            </div>
+			            <div class="goods-number ns-text-color-gray">x{$item.num}</div>
+			            <div class="goods-item-action">
+			            	{if $item.gift_flag eq 0}
+			                	{if condition="$vo.payment_type eq 4"}
+									{if condition="$vo.order_money>0 && $vo.is_refund eq 1 && $item.refund_status eq 0 && $vo.order_status eq 2"}
+										<a href="{:__URL('SHOP_MAIN/member/refunddetail?order_goods_id='.$item['order_goods_id'])}">申请维权</a><br>
+									{elseif condition="$vo.order_money>0 && $item.refund_status neq 0"}
+										<a href="{:__URL('SHOP_MAIN/member/refunddetail?order_goods_id='.$item['order_goods_id'])}">查看退款</a><br>
+										{notin name="$item.refund_status" value="5,-1,-2"}
+											{notin name="$vo.order_status" value="4,5"}
+											<a href="javascript:cancelRefund({$vo.order_id}, {$item.order_goods_id});">取消退款</a><br>
+											{/notin}
+										{/notin}
+									{/if}
+								{else /}
+									{if condition="$vo.order_money>0 && $vo.is_refund eq 1 && $item.refund_status eq 0"}
+										<a href="{:__URL('SHOP_MAIN/member/refunddetail?order_goods_id='.$item['order_goods_id'])}">申请维权</a><br>
+									{elseif condition="$vo.order_money>0 && $item.refund_status neq 0"}
+										<a href="{:__URL('SHOP_MAIN/member/refunddetail?order_goods_id='.$item['order_goods_id'])}">查看退款</a><br>
+										{notin name="$item.refund_status" value="5,-1,-2"}
+											{notin name="$vo.order_status" value="4,5"}
+											<a href="javascript:cancelRefund({$vo.order_id}, {$item.order_goods_id});">取消退款</a><br>
+											{/notin}
+										{/notin}
+									{/if}
+								{/if}
+
+								{if condition="$vo.order_money>0 && $vo.order_status eq 4  && $order_item['customer_info'] == ''"}
+									<a href="{:__URL('SHOP_MAIN/member/afterSale?order_goods_id='.$item['order_goods_id'])}">申请售后</a><br>
+								{elseif condition="$vo.order_money>0 && $vo.order_status eq 4  && $order_item['customer_info'] != ''"}
+									<a href="{:__URL('SHOP_MAIN/member/afterSale?order_goods_id='.$item['order_goods_id'])}">查看售后</a><br>
+								{/if}
+			                {/if}
+		            	</div>
+			        </td>
+			        {if condition="$k eq 0"}
+				        <td rowspan="{$vo['order_item_list']|count}" class="align-center">
+				            <div class="consignee">
+				                {if $vo.is_virtual eq 0}
+			                        <span>{$vo.receiver_name}</span>
+			                        <p>{$vo.receiver_address}</p>
+			                        <p>{$vo.receiver_mobile}</p>
+					            {else/}
+					                <span>{$vo.receiver_mobile}</span>
+				                {/if}
+				            </div>
+				        </td>
+				        <td rowspan="{$vo['order_item_list']|count}" class="align-center">
+				            <div class="amount ns-text-color-gray">
+				                <div>
+				                    <span>总额 ¥{$vo.order_money}</span>
+				                    <br>
+				                    <b class="ns-text-color-black">应付</b>
+				                    <br>
+				                    <b class="ns-text-color-black">{$vo.pay_money}</b>
+				                    <br>
+				                </div>
+				                <div class="order-pay-type-style ns-border-color-gray">
+				                    <span class="ftx-13 ns-text-color-gray">{$vo.pay_type_name}</span>
+				                </div>
+				            </div>
+				        </td>
+				        <td rowspan="{$vo['order_item_list']|count}" class="align-center">
+				            <div class="status">
+				                <span class="order-status ns-text-color-gray">{$vo.status_name}</span>
+				                <br>
+				                <a class="order-action-btn" href="{:__URL('SHOP_MAIN/member/orderdetail?order_id='.$vo['order_id'])}" target="_blank">订单详情</a>
+			            	</div>
+				        </td>
+				        <td rowspan="{$vo['order_item_list']|count}" class="align-center">
+				            <div class="operate">
+				            	{notempty name="$vo['member_operation']"}
+				            		{foreach name="$vo['member_operation']" item="operation"}
+				                	<a href="javascript:;" class="order-action-btn" onclick="operation('{$operation.no}', {$vo['order_id']}, this)" target="_blank">{$operation.name}</a><br>
+				            		{/foreach}
+				            	{/notempty}
+				            	{if condition="$vo.order_status eq 3 OR $vo.order_status eq 4"}
+									{if condition="$vo.is_evaluate eq 0"}
+										<a href="{:__URL('SHOP_MAIN/member/evaluateedit','order_id='.$vo['order_id'])}" class="order-action-btn" target="_blank">{:lang('member_i_want_evaluate')}</a>
+									{elseif condition="$vo.is_evaluate eq 1"}
+										<a href="{:__URL('SHOP_MAIN/member/evaluateedit','order_id='.$vo['order_id'].'&again=1')}" class="order-action-btn" target="_blank">{:lang('goods_additional_evaluation')}</a>
+									{/if}
+								{/if}
+				            </div>
+				        </td>
+			        {/if}
+			    </tr>
+			    {/foreach}
+			</tbody>
+			{/foreach}
+			
+		{else/}
+			<tbody>
+				<tr>
+					<td colspan="7" class="align-center">
+						<img src="WEB_IMG/member/no_order.png" class="align-center-img"/>
+						<span>{:lang('member_no_order_yet')}</span>
+						<span>{:lang('member_go_and_see')}</span>
+						<a href="{:__URL('SHOP_MAIN/goods/lists')}" class="ns-text-color">{:lang('member_look_around')}</a>
+					</td>
+				</tr>
+			</tbody>
+		{/if}
+		
+	</table>
+	{if condition="$total_count>0"}
+	<ul class="pager" data-ride="pager" data-elements="prev,nav,next,total_page_text,goto" data-rec-per-page="{$page_size}" data-page="{$params['page']}" data-rec-total="{$total_count}" id="myPager"></ul>
+	{/if}
+</div>
+
+<!-- 提货码弹出层 -->
+<div class="pickup-code-layer" onclick="this.style='display:none'">
+	<div class="layer-wrap">
+		<img>
+		<p class="info">到门店提货时将此二维码展示给门店审核人员</p>
+	</div>
+</div>
+
+{/block}
+{block name="script"}
+<script>
+{notempty name="$params"}var Params = '{$params|json_encode}';{else/} var Params = '';{/notempty}
+var oldParams = {};
+if(Params != '') oldParams = JSON.parse(Params);
+</script>
+<script src="WEB_JS/member_order.js"></script>
+<script src="WEB_JS/member_order_action.js"></script>
+<script>
+$('#myPager').pager({
+	linkCreator: function(page, pager) {
+		return urlBindParams(paramsUnique({page : page}, oldParams));
+	}
+});
+</script>
+{/block}

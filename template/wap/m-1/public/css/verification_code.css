@@ -1,0 +1,14 @@
+.com-content{color: #fff !important;}
+.cf-container{max-width: 640px; height: 2.26rem; width: 100%; background-color: #fff; overflow: hidden; border-bottom: 1px solid; margin-bottom: 8px;}
+.cf-container .cf-content{position: relative; top: 0; z-index: 5; height: 3.35rem; margin-left: 0.1rem; margin-right: 0.1rem; text-align: center; white-space: nowrap; overflow: hidden; -webkit-overflow-scrolling: touch;}
+.cf-container .cf-tab-item{float: left; width: 33%; line-height: 2.1rem; border-bottom: 2px solid #fff;}
+.cf-tab-item a{padding: 0 3px; display: inline-block; width: 100%;}
+.com-content li{position: relative; width: 100%; margin-top: 10px; padding: 5px; background-color: #fff;}
+.not-use > img{width: 100%;}
+.com-content li a{display: block;}
+.coupon-price{position: absolute; top: 4vw; left: 5vw; width: 65vw; height: 12vw; padding-left: 15vw; font-size: 4vw;word-break: break-all; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; word-break: break-all;}
+.coupon-price i{overflow: hidden; position: absolute; left: 0; width: 12vw; height: 12vw; background-color: #fff; border-radius: 50%;}
+.coupon-lose{position: absolute; top: 67%; left: 10%; font-size: 3.5vw;}
+.coupon-price-right{position: absolute; top: 7vw; right: 5vw; width: 20vw; text-align: center; font-size: 4vw;}
+.coupon-price-right p:last-child{margin-top: 2vw; font-size: 6vw;}
+.com-content .empty>span{display: block; text-align: center; font-size: 14px;margin-top: 30px; }

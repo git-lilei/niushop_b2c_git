@@ -1,0 +1,7 @@
+body{background-color: #fff;}
+.notice-list{padding-left: 10px; padding-right: 10px;}
+.notice-item{padding-top: 5px; padding-bottom: 5px; border-bottom: 1px solid;}
+.box-title{-webkit-tap-highlight-color: rgba(0, 0, 0, 0); font-size: 14px;}
+.box-time{font-size:12px;}
+.no-notice-info{text-align:center;margin-top:100px;}
+.no-notice-info img{width: 50px;margin-bottom: 10px;}

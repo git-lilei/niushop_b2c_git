@@ -1,0 +1,7 @@
+.cells{position: relative; line-height: 1.41176471; margin-bottom: 20px; background-color: #fff;}
+.cell-primary{-webkit-box-flex: 1; -webkit-flex: 1; -ms-flex: 1; flex: 1;}
+.cell-primary p{overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+.cells-title{margin: 0.77em 0 0.3em; padding: 0 15px;}
+.cell{padding: 10px 15px; position: relative; display: -webkit-box; display: -webkit-flex; display: -ms-flexbox; display: flex; -webkit-box-align: center; -webkit-align-items: center; -ms-flex-align: center; align-items: center;}
+.cell-ft{text-align: right;}
+.fa-angle-right{margin-left: 6px;margin-top: -2px;}

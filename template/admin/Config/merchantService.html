@@ -1,0 +1,308 @@
+{extend name="$base" /}
+{block name="resources"}
+<style>
+/* .service-guarantee{text-align: center;width:700px;margin:20px;} */
+.service-guarantee input{width:90%;}
+.service-guarantee input.error{border:1px solid #f72424 !important;}
+.table-class{border:1px solid #e5e5e5;}
+.upload-btn-common > em {
+	line-height: 30px;
+}
+.js-goods-spec-value-img img{
+	position: absolute;
+    top: -11px;
+    left: 44px;
+}
+.table-class tr td{
+	cursor: pointer;
+}
+.black-bg{
+	    position: absolute;
+    right: 0;
+    top: -1px;
+    left: 85px;
+    bottom: 0;
+/*     background-color: rgba(0,0,0,0.6); */
+    width: 30px;
+    height: 30px;
+    z-index: 999999;
+    border-radius: 50%;
+}
+.off-box{
+	position: absolute;
+    width: 30px;
+    height: 30px;
+    /* right: 12%; */
+    /* top: 11%; */
+    line-height: 27px;
+    /* background-color: #FFF; */
+    cursor: pointer;
+    text-align: center;
+    z-index: 999999;
+	background:url('__STATIC__/blue/img/goods_sku_del.png') no-repeat;
+	background-size: 100%;
+}
+.shop_service_item{position: relative;cursor: pointer;width: 200px;height: 30px;}
+.shop_service_item:hover .black-bg{display: block;} 
+.shop_service_item input[type="file"]:hover{color: #ffffff;}
+.modal-infp-style table tr td {
+    border: 1px solid #e6e6e6;
+    padding: 8px;
+}
+.modal-infp-style {
+    width: 90%;
+    margin: 10px auto;
+}
+.modal-infp-style table {
+    width: 100%;
+}
+.modal-tab tr td:first-child {
+    text-align: right;
+}
+
+</style>
+{/block}
+{block name="alert_info"}
+<p style="margin: 0;">添加成功后，商家服务将会在商品详情中展示</p>
+{/block}
+{block name="main"}
+<div class="service-guarantee">
+	<table class="mytable">
+		<tr>
+			<th style="text-align: left;width: 20%;">
+				<button class="btn-common" onclick="add_service()" >添加</button>
+			</th>
+		</tr>
+	</table>
+	<table class="table-class">
+		<colgroup>
+			<col width="20%">
+			<col width="25%">
+			<col width="35%">
+			<col width="20%">
+		</colgroup>
+		<tr>
+			<th>图标</th>
+			<th>标题</th>
+			<th>描述</th>
+			<th>操作</th>
+		</tr>
+		{if $list != []}
+			{foreach name="$list" item="vo" key="key"}
+			<tr data-flag="{$vo.id}">
+				<td align="center">
+					<div class="shop_service_item" >
+						{if $vo.pic neq ''}
+						<img src="{:__IMG($vo.pic)}" id="" style="cursor: pointer;width:28px;height:28px;" class="black_data">
+						{/if}
+					</div>
+				</td>
+				<td align="center">{$vo.title}</td>
+				<td align="center">{$vo.describe}</td>
+				<td align="center">
+					<a onclick="modify_service({$key})" title="修改">修改</a>
+					<a onclick="delete_service({$key})" title="删除">删除</a>
+				</td>
+			</tr>
+			{/foreach}
+		{else /}
+			<tr align="center"><td colspan="4">暂无符合条件的数据记录</td></tr>
+		{/if}
+	</table>
+</div>
+
+<!-- 编辑 -->
+<div class="modal fade hide" id="service_edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>添加/编辑</h3>
+			</div>
+			<div class="modal-body">
+				<div class="modal-infp-style">
+					<table class="modal-tab">
+						<tr>
+							<td><span class="required">*</span>标题</td>
+							<td colspan='3'><input type="text" id="service_title" class="input-common"></td>
+						</tr>
+						<tr>
+							<td style="width:22%;"><span class="required"></span>描述</td>
+							<td colspan='3'>
+								<input type="text" id="service_describe" class="input-common" />
+							</td>
+						</tr>
+						<tr>
+							<td style="width:22%;"><span class="required"></span>图标</td>
+							<td colspan='3'>
+								<div class="upload-btn-common">
+									<div>
+										<input class="input-file" name="file_upload" id="uploadImg" type="file" onchange="imgUpload(this, 'pic');" title="上传">
+										<input type="hidden" id="pic" value="" />
+									</div>
+									<input type="text" id="text_pic" class="input-common" readonly="readonly" value="" />
+									<em>上传</em>
+									<img id="preview_pic" src="__STATIC__/blue/img/upload-common-select.png" data-src="" data-html="true" data-container="body" data-placement="top" data-trigger="manual"/>
+					
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			
+			<div class="modal-footer">
+				<button class="btn-common btn-big" onclick="save()">保存</button>
+				<button class="btn-common-cancle btn-big" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+	
+</div>
+
+<input type="hidden" id="hidden_id">
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script>
+var json_list = {$list|json_encode} ? {$list|json_encode} : [];
+function modify_service(key) {
+	var service_info = json_list[key];
+	$('#service_title').val(service_info['title']);
+	$('#service_describe').val(service_info['describe']);
+	$('#pic, #text_pic').val(service_info['pic']);
+	$('#preview_pic').attr('data-src', service_info['pic']);
+	$('#hidden_id').val(key);
+	$('#service_edit').modal("show");
+}
+function add_service() {
+	if(json_list.length >= 5) {
+		showTip('商家服务最大只能添加5个！', "error");
+		return false;
+	}
+	$('#hidden_id').val(-1);
+	$('#service_title').val('');
+	$('#service_describe').val('');
+	$('#pic, #text_pic').val('');
+	$('#preview_pic').attr('data-src', '');
+	
+	$('#service_edit').modal("show");
+}
+
+//图片上传
+function imgUpload(event, id) {
+	var fileid = $(event).attr("id");
+	var data = { 'file_path' : "config" };
+	uploadFile({
+		url: __URL(ADMINMAIN + '/config/uploadimage'),
+		fileId: fileid,
+		data : data,
+		callBack: function (res) {
+			if(res.code){
+				$("#" + id).val(res.data.path);
+				$("#text_" + id).val(res.data.path);
+				$("#preview_"+ id).attr("data-src",__IMG(res.data.path));
+				showTip(res.message,"success");
+			}else{
+				showTip(res.message,"error");
+			}
+		}
+	});
+}
+ 
+var is_ok = true;
+function save() {
+	var title = $('#service_title').val();
+	var describe = $('#service_describe').val();
+	var key = $('#hidden_id').val();
+	var text_pic = $('#text_pic').val();
+	
+	if(title.length>10){
+		showTip("标题不能超出10个字","warning");
+		$('#service_title').addClass("error");
+		is_ok = false;
+	}else{
+		$('#service_title').removeClass("error");
+		is_ok = true;
+	}
+	if(title.length == ''){
+		showTip("标题不能为空","warning");
+		$('#service_title').addClass("error");
+		is_ok = false;
+	}else{
+		$('#service_title').removeClass("error");
+		is_ok = true;
+	}
+	
+	if(describe.length>60){
+		showTip("描述不能超出60个字","warning");
+		$('#service_describe').addClass("error");
+		is_ok = false;
+	}else{
+		$('#service_describe').removeClass("error");
+		is_ok = true;
+	}
+		
+	if(key == -1 ) {
+		//添加
+		var obj = {
+			"id" : json_list.length + 1,
+			"title" : title,
+			"describe" : describe,
+			"pic" : text_pic
+		};
+		json_list.push(obj);
+	}else {
+		//修改
+		json_list[key] = {
+			"id" : json_list.length + 1,
+			"title" : title,
+			"describe" : describe,
+			"pic" : text_pic	
+		}
+	}
+	
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/config/merchantService')}",
+		data : { 'value' : JSON.stringify(json_list) },
+		success : function(data) {
+			if (data["code"] > 0) {
+				showTip(data.message,"success");
+				window.location.reload();
+			} else {
+				showTip(data.message,"error");
+			}
+		}
+	});
+}
+
+function delete_service(key){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				json_list.splice(key,1);
+				$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/config/merchantService')}",
+					data : { 'value' : JSON.stringify(json_list) },
+					success : function(data) {
+						if (data["code"] > 0) {
+							showTip(data.message,"success");
+							window.location.reload();
+						} else {
+							showTip(data.message,"error");
+						}
+					}
+				});
+				$(this).dialog('close');
+			},
+			"取消,#f5f5f5,#666": function() {
+				$(this).dialog('close');
+			},
+		},
+		contentText:"确定要删除吗？",
+	});
+}
+</script>
+{/block}

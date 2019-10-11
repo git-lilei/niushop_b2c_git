@@ -1,0 +1,161 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/wap_bottom_type.css">
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+
+{/block}
+{block name="main"}
+<style>
+
+</style>
+<div class="ns-main">
+	<article class="custom-template">
+		<header data-custom-flag="CustomTemplateName">
+			<img src="__STATIC__/wapCustomTemplate/images/titlebar.png">
+		</header>
+		<div class="temp-img" data-temp-1="ADMIN_IMG/goods/wapcate1.png" data-temp-2-1="ADMIN_IMG/goods/wapcate3.png" data-temp-2-0="ADMIN_IMG/goods/wapcate2.png" data-temp-3-0="ADMIN_IMG/goods/wapcate4.png" data-temp-3-1="ADMIN_IMG/goods/wappicture.png">
+		</div>
+	</article>
+	<article class="pt-left" style=" ">
+		<div class="cont categoty" style="">
+			
+			<div class="control-footer-list">
+					<div class="control-edit text-color">
+						<label>模版选择：</label>
+						<label for="waptype1" class="radio inline normal">
+							<i class="radio-common">
+								<input type="radio" value="1" name="waptype" id="waptype1" />
+							</i>
+							<span>一级分类</span>
+						</label>
+						<label for="waptype2" class="radio inline normal">
+							<i class="radio-common">
+								<input type="radio" value="2" name="waptype" id="waptype2" />
+							</i>
+							<span>二级分类</span>
+						</label>
+						<label for="waptype3" class="radio inline normal">
+							<i class="radio-common">
+								<input type="radio" value="3" name="waptype" id="waptype3"/>
+							</i>
+							<span>三级分类</span>
+						</label>
+					</div>
+				
+				</div>
+				
+				<div class="control-edit text-color">
+					<label>样式选择：</label>
+					<div class="wapstyle">
+						<div for="wapstyle1" class="wapstyleselect selectwap">
+							<span>经典样式</span>
+						</div>
+					</div>
+			   </div>
+				
+				<div class="control-edit text-color is-img">
+					<label>分类图：</label>
+					<div class="wappicture">
+						<div for="" class="wapstyleselect select-wap is-img selectwap" data-val="0" id="picture0">
+							<span>无图模式</span>
+						</div>
+						<div for="" class="wapstyleselect select-wap" id="picture1" data-val="1">
+							<span>有图模式</span>
+						</div>
+					</div>
+			</div>
+			
+			</div>
+			
+			<div style="text-align:center;padding:10px;">
+				<button class="btn-common btn-big js-save" onclick="save()">保存</button>
+				<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);">返回</button>
+			</div>
+					
+	</article>
+	
+</div>
+
+ 
+<script>
+var data = {
+	'template' : 1,
+	'style' : 1,
+	'is_img' : 0,
+};
+var new_data = {$info ? $info : '""'};
+init();
+function init() {
+	$('.is-img.selectwap').removeClass('selected');
+	if(new_data != '') {
+		$('#waptype'+new_data['template']).parent().addClass("selected");
+		$('#waptype'+new_data['template']).attr("checked", true);
+		$('.is-img.selectwap').removeClass('selectwap');
+		$('#picture'+new_data['is_img']).addClass("selectwap");
+		category_img(new_data['template'], new_data['is_img']);
+		if(new_data['template'] == 1) $('.is-img').hide();
+	}else {
+		$('#waptype'+data['template']).parent().addClass("selected");
+		$('#waptype'+data['template']).find('input').attr("checked", true);
+		$('.is-img.selectwap').removeClass('selectwap');
+		$('#picture'+new_data['is_img']).addClass("selectwap");
+		category_img(data['template'], data['is_img']);
+	}
+}
+$(".radio-common").click(function(){
+	var radio = $(this).children("input");
+	var temp_val = $('input[name="waptype"]:checked').val();
+	var img_val = $('.wapstyleselect.select-wap.selectwap').attr('data-val');
+	if(temp_val == 1) {
+		$('.is-img').hide();
+	}else {
+		$('.is-img').show();
+	}
+	data['template'] = temp_val;
+	data['is_img'] = img_val;
+	category_img(temp_val, img_val);
+});
+
+
+
+$('.select-wap').click(function(){
+	var temp_val = $('input[name="waptype"]:checked').val();
+	var img_val = $(this).attr('data-val');
+	data['template'] = temp_val;
+	data['is_img'] = img_val;
+	category_img(temp_val, img_val);
+	
+	$(this).addClass('selectwap');
+	$(this).siblings().removeClass('selectwap');
+})
+
+function category_img(temp_id, img_val) {
+	if(temp_id != 1) {
+		var img = $('.temp-img').attr('data-temp-'+temp_id+'-'+img_val);
+	}else {
+		var img = $('.temp-img').attr('data-temp-'+temp_id);
+	}
+	$('.temp-img').css("background-image","url("+img+")");
+}
+
+function save() {
+	$.ajax({
+		url : 'ADMIN_MAIN/Config/editWapClassifiedDisplayMode',
+		type : 'post',
+		data : {'data' : JSON.stringify(data)},
+		dataType : 'JSON',
+		success: function(res) {
+			if(res.code > 0) {
+				showTip(res.message,"success");
+			}else {
+				showTip(res.message,"error");
+			}
+		}
+	})
+}
+
+</script>
+
+
+{/block}

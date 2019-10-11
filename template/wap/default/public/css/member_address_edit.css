@@ -1,0 +1,6 @@
+.btn-save{display: block; height: 35px; line-height: 35px; text-align: center; color: #fff; width: 85%; border: 0; margin: 20px auto 20px;border-radius: 5px;}
+.div-item{padding: 8px 10px;background: #fff;border-bottom: 1px solid;}
+.div-item span{width: 20%;text-align: center;display: inline-block;vertical-align: middle;}
+.div-item input,.div-item select{display: inline-block; width: 70%; border: none; line-height: 30px; height: 30px; margin: 0; background: #fff; border: 0; vertical-align: middle; font-size: inherit;}
+input::-webkit-input-placeholder{font-size: inherit;}
+select{appearance: none;-moz-appearance: none;-webkit-appearance: none;outline: none;-moz-outline: none;-webkit-outline: none;}

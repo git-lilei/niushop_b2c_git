@@ -1,0 +1,27 @@
+.container{padding:20px 0 0;margin-left:0;}
+.container>ul>li{border:1px solid;padding: 10px;border-bottom:0;overflow: hidden;}
+.container>ul>li:last-child{border-bottom:1px solid;padding:30px 25px 30px 16px;}
+.container li .goods-info{display: inline-block;margin-bottom: 10px;clear: both;}
+.container li .goods-info .goods-preview{height:150px;line-height: 150px;float:left;text-align: center;border:1px solid;overflow: hidden;}
+.container li .goods-info .goods-preview img{height:100%;}
+.container li .goods-info .detail-info{min-height: 148px;float:left;width:750px;padding:4px 18px 0 20px;}
+.container li .goods-info .detail-info h1,.container .goods-info li .detail-info .attribute strong{font-weight: normal;}
+.container li .goods-info .detail-info .attribute{padding:0 0 5px;}
+.container li .goods-info .detail-info .attribute span{width:45px;display: inline-block;}
+.container li .goods-info .detail-info .choose{padding: 5px 0;}
+.container li .goods-info .detail-info .choose dl{display: block;overflow: hidden;}
+.container li .goods-info .detail-info .choose dl dt{padding-left:0;text-align: left; margin-right: 0; width: 66px;line-height: 40px;overflow: hidden; text-overflow: ellipsis; white-space: nowrap;float:left;font-weight: normal;}
+.container li .goods-info .detail-info .choose dl dd{width: initial; margin-top: 1px;float: left;}
+.container li .goods-info .detail-info .choose dl dd li{float: left; position: relative; margin: 0 8px 4px 0; line-height: 28px; vertical-align: middle;border: 2px solid}
+.container li .goods-info .detail-info .choose dl dd li a{float: left;min-width: 16px; padding: 3px 9px 2px; text-align: center; display: inline-block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+.container li .goods-info .detail-info .choose dl li a span{height: inherit;vertical-align: middle;}
+.container li .goods-info .detail-info .choose dl li a img, .choose dl li a b{margin-right: 5px;width: 30px;height: 30px;display: inline-block;vertical-align: middle;}
+.container ul .buy-wrap{float: right;}
+.container ul .buy-wrap .price-wrap{float: left;margin-right: 22px;overflow: hidden;clear: both;}
+.container ul .buy-wrap .price-wrap p>span:first-child{display: inline-block;text-align: right;width: 60px;}
+.container ul .buy-wrap .btn-settlement{width: 120px;border-radius: 0;text-align: center;color: #fff !important;line-height: 42px;float: right;}
+.container ul .buy-wrap .btn-settlement:hover{color:#fff !important;}
+.container ul .buy-wrap .btn-settlement-disabled{display: block;width: 120px;height: 42px;border-radius: 0;text-align: center;color: #fff;line-height: 42px;float: right;cursor: not-allowed}
+.container ul .buy-wrap .btn-settlement-disabled:hover{color: #fff !important;}
+.container ul .package-wrap{line-height: 40px;margin-right: 30px;float:right;}
+.container ul .package-wrap input{width: 50px;height: 28px;border: 1px solid;padding: 0 5px;}

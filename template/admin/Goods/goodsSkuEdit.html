@@ -1,0 +1,167 @@
+<style type="text/css">
+#goods_sku_edit{width: 1000px;left: 38.5%;}
+#goods_sku_edit .input-common.middle{
+	    width: 100px !important;
+}
+</style>
+<div class="modal fade " id="goods_sku_edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>修改价格库存</h3>
+			</div>
+			<div class="modal-body">
+				<table class="table table-config-bordered">
+					<thead>
+						<tr >
+							<th>规格名</th>
+							<th>销售价<span style="color: #ff5050; font-size: 12px;">*</span></th>
+							<th>市场价</th>
+							<th>成本价</th>
+							<th>当前库存</th>
+							<th>增加/删减<span style="color: #ff5050; font-size: 12px;">*</span></th>
+							<th>实际库存</th>
+						</tr>
+					</thead>
+					<tbody id = "goods_sku_data">
+						
+					</tbody>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button class="btn-common btn-big" onclick="save_goods_sku();">保存</button>
+				<button class="btn-common-cancle btn-big" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+/**
+ * 商品规格对话框显示
+ */
+var sel_goods_id = 0;
+function goodsSkuDialogShow(goods_id, goods_type){
+	sel_goods_id = goods_id;
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/goods/getGoodsSkuList')}",
+		data : {goods_id},
+		success : function(data){
+			var h = '';
+			for(var i = 0; i < data.length; i++){
+				var sku_name = data[i]['sku_name'];
+				if(data[i]['sku_name'] == ''){
+					sku_name = '--';
+				}
+				h += `<tr sku_id = "${data[i]['sku_id']}">
+						<td>${sku_name}</td>
+						<td><input type="number" class="input-common middle" name="sku_price" value="${data[i]['price']}"/></td>
+						<td><input type="number" class="input-common middle" name="market_price" value="${data[i]['market_price']}"/></td>
+						<td><input type="number" class="input-common middle" name="cost_price" value="${data[i]['cost_price']}"/></td>
+						<td name = "stock">${data[i]['stock']}</td>`;
+				if(goods_type == 4){
+                    h += `<td><input type="number" class="input-common middle" name="stock_num" placeholder="0" disabled="disabled"/></td>`;
+				}else{
+                    h += `<td><input type="number" class="input-common middle" name="stock_num" placeholder="0" onkeyup = "stockOperation(this)"/></td>`;
+				}
+				h += `<td><input type="number" class="input-common middle" name="actual_stock" value="${data[i]['stock']}" disabled="disabled"/></td>
+					</tr>`;	
+			}
+			$('#goods_sku_data').html(h);
+		}
+		
+	})
+	$("#goods_sku_edit").modal("show");
+}
+
+/**
+ * 库存计算操作
+ */
+function stockOperation(even){
+	obj = $(even);
+	var stock = obj.parent().prev().text();
+	var o_v = obj.val();
+	stock = Number(stock) + Number(o_v);
+	obj.parents('tr').find('[name="actual_stock"]').val(stock);
+
+}
+
+/**
+ * 保存sku信息
+ */
+function save_goods_sku(){
+	
+	var arr = new Array();
+	$('#goods_sku_edit tr').each(function(){
+		obj = new Object();
+		obj.sku_id = $(this).attr('sku_id');
+		obj.price = $(this).find('[name = "sku_price"]').val();
+		obj.market_price = $(this).find('[name = "market_price"]').val();
+		obj.cost_price = $(this).find('[name = "cost_price"]').val();
+		obj.stock = $(this).find('[name = "actual_stock"]').val();
+		arr.push(obj);
+	})
+	
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/goods/editGoodsSku')}",
+		data : {"sku_data":JSON.stringify(arr), "goods_id":sel_goods_id},
+		success : function(data){
+			if(data['code'] > 0){
+				
+				LoadingInfo(getCurrentIndex(sel_goods_id,'#productTbody','tr[class="tr-title"]'));
+				$("#goods_sku_edit").modal("hide");
+				showTip(data['message'],"success");
+			}else{
+				showTip(data['message'],"error");
+			}
+		}
+	})
+}
+
+function goodsSkuDetailsList(clisk_obj, goods_id, goods_img){
+	
+	current_obj = $(clisk_obj);
+	obj = $(clisk_obj).parents('tr').next('.single-goods-sku');
+	current_obj.html('-');
+	
+	if(obj.html() != ''){
+		obj.html('');
+		current_obj.text('+');
+		return;
+	}
+	
+	openGoodsSKu = function(sku_id, goods_id){
+		window.open(`${__URL('SHOP_MAIN/goods/detail?sku_id=')}${sku_id}&goods_id=${goods_id}`);
+	}
+	
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/goods/goodsSkuDetailsList')}",
+		data : {"goods_id":goods_id},
+		success : function(data){
+		
+			var h = '<td align="center" colspan="10">';
+			for(var i = 0; i<data.length; i++){
+				
+				sku_img = data[i]['pic_cover'] == '' ? goods_img : data[i]['pic_cover']; 
+				sku_id = data[i]['sku_id'];
+				h += `<div class="single-item" >
+							<div class="hold-img" onclick = "openGoodsSKu(${sku_id}, ${goods_id})">
+								<img src="${__IMG(sku_img)}" alt="" />
+							</div>
+							<p class="spec-title"><a href="javascript:openGoodsSKu(${sku_id}, ${goods_id});" target="_blank" title ="${data[i]['sku_name']}">${data[i]['sku_name']}</a></p>
+							<div class = "row-term">
+								<p><span class="row-title">价格：</span><span class="price-value">￥${data[i]['price']}</span></p>
+								<p><span class="row-title">库存：</span><span class="stock-value">${data[i]['stock']}</span></p>
+							</div>
+						</div>`;
+			}
+			h += '</td>';
+			obj.html(h);
+		}
+	})
+}
+</script>

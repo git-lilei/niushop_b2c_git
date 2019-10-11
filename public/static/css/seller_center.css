@@ -1,0 +1,2955 @@
+@charset "utf-8";
+body {
+    color: #666;
+    background-color: #F9F9F9;
+}
+
+h2 {
+    font: 24px/40px "microsoft yahei";
+    color: #27A9E3;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "microsoft yahei";
+    font-weight: normal;
+}
+
+h1 {
+    font-size: 32px;
+}
+
+h2 {
+    font-size: 25px;
+}
+
+h3 {
+    font-size: 22px;
+}
+
+h5 {
+    font-size: 15px;
+}
+
+h6 {
+    font-size: 13px;
+}
+
+h1.smaller {
+    font-size: 31px;
+}
+
+h2.smaller {
+    font-size: 24px;
+}
+
+h3.smaller {
+    font-size: 21px;
+}
+
+h4.smaller {
+    font-size: 17px;
+}
+
+h5.smaller {
+    font-size: 14px;
+}
+
+h6.smaller {
+    font-size: 12px;
+}
+
+h1.bigger {
+    font-size: 33px;
+}
+
+h2.bigger {
+    font-size: 26px;
+}
+
+h3.bigger {
+    font-size: 23px;
+}
+
+h4.bigger {
+    font-size: 19px;
+}
+
+h5.bigger {
+    font-size: 16px;
+}
+
+h6.bigger {
+    font-size: 14px;
+}
+
+h1.block, h2.block, h3.block, h4.block, h5.block, h6.block {
+    margin-bottom: 16px;
+}
+
+i {
+    font-size: 1.2em;
+}
+
+a:focus, a:active {
+    text-decoration: none;
+}
+
+a {
+    color: #126AE4;
+    text-decoration: none;
+    -webkit-transition-property: color;
+    -webkit-transition-duration: 0.3s;
+    -webkit-transition-timing-function: ease;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: #00A0DE;
+}
+
+.hidden {
+    display: none;
+}
+
+.center {
+    text-align: center;
+}
+
+.dark {
+    color: #333333 !important;
+}
+
+.white {
+    color: #FFFFFF !important;
+}
+
+.red {
+    color: #DD5A43 !important;
+}
+
+.blue {
+    color: #27A9E3 !important;
+}
+
+.light-blue {
+    color: #93CBF9 !important;
+}
+
+.green {
+    color: #69AA46 !important;
+}
+
+.light-green {
+    color: #B6E07F !important;
+}
+
+.orange {
+    color: #FF892A !important;
+}
+
+.purple {
+    color: #A069C3 !important;
+}
+
+.pink {
+    color: #C6699F !important;
+}
+
+.pink2 {
+    color: #D6487E !important;
+}
+
+.brown {
+    color: #A52A2A !important;
+}
+
+.grey {
+    color: #777777 !important;
+}
+
+.wrapper {
+    width: 1228px; /*1400px;*/
+    margin: auto;
+}
+
+.fl {
+    float: left;
+}
+
+.fr {
+    float: right;
+}
+
+.header {
+    border-bottom: 1px solid #CCCCCC;
+    line-height: 28px;
+    padding-bottom: 4px;
+    margin-top: 18px;
+    margin-bottom: 16px;
+}
+
+.header > [class*="icon-"] {
+    margin-right: 2px;
+}
+
+/* 表单项属性
+------------------------------------------- */
+input[type="text"], input[type="password"], input.text, input.password {
+    font: 12px/20px Arial;
+    color: #777;
+    background-color: #FFF;
+    vertical-align: top;
+    display: inline-block;
+    height: 20px;
+    padding: 5px;
+    border: 1px solid #CCC;
+    outline: 0 none;
+}
+
+input[type="text"]:focus, input[type="password"]:focus, input.text:focus,
+input.password:focus, textarea:focus {
+    color: #333;
+    border-color: #75B9F0;
+    box-shadow: 0 0 0 2px rgba(82, 168, 236, 0.15);
+    outline: 0 none;
+}
+
+input[type="text"].error, input[type="password"].error, textarea.error {
+    border-color: #ED6C4F;
+    box-shadow: 0 0 0 2px rgba(232, 71, 35, 0.15);
+    outline: 0 none;
+}
+
+textarea, .textarea {
+    font: 12px/20px Arial;
+    color: #777;
+    background-color: #FFF;
+    vertical-align: top;
+    display: inline-block;
+    height: 60px;
+    padding: 4px;
+    border: solid 1px #CCC;
+    outline: 0 none;
+}
+
+select {
+    color: #777;
+    background-color: #FFF;
+    height: 30px;
+    vertical-align: middle;
+    *display: inline;
+    padding: 4px;
+    border: solid 1px #CCC;
+    *zoom: 1;
+    margin: 0;
+}
+
+select option {
+    line-height: 20px;
+    display: block;
+    height: 20px;
+    padding: 4px;
+}
+
+input[type="file"] {
+    line-height: 20px;
+    background-color: #FBFBFB;
+    height: 20px;
+    border: solid 1px #D8D8D8;
+    cursor: default;
+}
+
+.add-on {
+    line-height: 28px;
+    background-color: #E6E6E6;
+    vertical-align: top;
+    display: inline-block;
+    text-align: center;
+    width: 28px;
+    height: 28px;
+    border: solid #CCC;
+    border-width: 1px 1px 1px 0
+}
+
+.add-on {
+    *display: inline /*IE6,7*/;
+    zoom: 1;
+}
+
+.add-on i {
+    font-size: 14px;
+    color: #666;
+    text-shadow: 1px 1px 0 #FFFFFF;
+    *margin-top: 8px /*IE7*/;
+}
+
+/*表单验证错误提示文字*/
+label.error {
+    font-size: 12px;
+    color: #E84723;
+    margin-left: 8px;
+}
+
+label.error i {
+    margin-right: 4px;
+}
+
+.hint {
+    font-size: 12px;
+    line-height: 16px;
+    color: #BBB;
+    margin-top: 10px;
+}
+
+.tabmenu {
+    background-color: #FFF;
+    width: 100%;
+    height: 37px;
+    display: block;
+    position: relative;
+    z-index: 90;
+    margin-left: 20px;
+}
+
+.tabmenu .tab {
+    margin: 0;
+}
+
+.tabmenu .tab li:FIRST-CHILD {
+    border-left: 1px solid #E3E3E3;
+}
+
+.tabmenu .tab li {
+    border-top: 1px solid #E3E3E3;
+    border-right: 1px solid #E3E3E3;
+}
+
+.tabmenu .tab .active {
+    border-top: 1px solid #126AE4 !important;
+    border-right: 1px solid #126AE4 !important;
+    border-left: 1px solid #126AE4 !important;
+}
+
+.tabmenu .tab .daohang_no:hover {
+    border-top: 1px solid #00A0DE !important;
+    border-right: 1px solid #00A0DE;
+}
+
+.tabmenu .tab li {
+    float: left;
+}
+
+.tabmenu .tab a, .tabmenu .tab .active a {
+    font: 14px/36px "microsoft yahei";
+    display: inline-block;
+    padding: 0 30px;
+    text-align: center;
+}
+
+.tabmenu .tab .active a {
+    color: #FFF;
+    background-color: #126AE4;
+}
+
+.tabmenu .tab a {
+    color: #126AE4;
+    background-color: #ffffff;
+}
+
+.tabmenu .tab .active a:hover, .tabmenu .tab a:hover {
+    text-decoration: none;
+    color: #ffffff;
+    background-color: #00A0DE;
+}
+
+.tabmenu .tab .normal a {
+    font: lighter 14px/33px "microsoft yahei";
+    color: #FFF;
+    background-color: #333;
+    display: inline-block;
+    height: 33px;
+    padding: 0 10px;
+}
+
+.tabmenu .tab .normal a:hover {
+    text-decoration: none;
+    color: #FFF;
+    background-color: #333;
+}
+
+.tabmenu a.ncsc-btn {
+    position: absolute;
+    z-index: 1;
+    top: -2px;
+    right: 0px;
+}
+
+.sticky .tabmenu {
+    width: 960px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    position: fixed;
+    top: 0;
+}
+
+.sticky .tabmenu a.ncsc-btn {
+    top: 8px;
+}
+
+/* 内容部分通用搜索样式 */
+.search-form {
+    color: #999;
+    width: 100%;
+    border-bottom: solid 1px #E6E6E6;
+}
+
+.search-form th {
+    font-size: 12px;
+    line-height: 22px;
+    text-align: right;
+    width: 50px;
+    padding: 8px 8px 8px 0;
+}
+
+.search-form td {
+    text-align: left;
+    padding: 8px 0;
+}
+
+.search-form input.text {
+    vertical-align: middle;
+    width: 148px;
+}
+
+.search-form .add-on {
+    vertical-align: top;
+}
+
+.search-form .submit-border {
+    vertical-align: middle;
+    display: inline-block;
+    *display: inline /*IE6,7*/;
+    margin: 0 2px;
+    border-color: #DCDCDC #DCDCDC #B3B3B3 #DCDCDC;
+    zoom: 1;
+}
+
+.search-form .submit-border:hover {
+    border-color: #CFCFCF #CFCFCF #B3B3B3 #CFCFCF;
+}
+
+.search-form input[type="submit"], .search-form input.submit,
+.search-form a.submit {
+    font: 12px/28px "microsoft yahei";
+    color: #333;
+    background-color: #F5F5F5;
+    width: 64px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    cursor: pointer;
+}
+
+.search-form input[type="submit"]:hover {
+    background-color: #E6E6E6;
+    color: #333;
+}
+
+.bd-line td {
+    border-bottom: solid 1px #DDD;
+}
+
+.order tbody tr td.sep-row {
+    height: 12px;
+    padding: 0;
+    border: 0;
+}
+
+.order tbody tr:hover td.sep-row {
+    background-color: #FFF;
+    border: 0;
+}
+
+.order tbody tr th {
+    border: solid 1px #DDD;
+}
+
+.order tbody tr th h3 {
+    font-size: 12px;
+    line-height: 20px;
+    font-weight: bold;
+    color: #555;
+    vertical-align: middle;
+    display: inline-block;
+    margin: 0 10px;
+}
+
+.order tbody tr th time {
+    font-size: 11px;
+    line-height: 20px;
+    color: #999;
+    vertical-align: middle;
+    display: inline-block;
+    margin-right: 20px;
+    -webkit-text-size-adjust: none;
+}
+
+.order tbody tr th time i {
+    font-size: 12px;
+    margin-right: 4px;
+}
+
+.order tbody tr td {
+    border-bottom: 1px solid #E6E6E6;
+    vertical-align: top;
+}
+
+.order tbody tr td.bdl {
+    border-left: 1px solid #E6E6E6;
+}
+
+.order tbody tr td.bdr {
+    border-right: 1px solid #E6E6E6;
+}
+
+.order .norecord {
+    border-bottom: 0 !important;
+}
+
+/* 按钮样式 */
+.nscs-table-handle {
+    font-size: 0;
+    *word-spacing: -1px /*IE6、7*/;
+}
+
+.nscs-table-handle span {
+    vertical-align: middle;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-align: center;
+    display: inline-block;
+    padding: 0 4px;
+    border-left: solid 1px #E6E6E6;
+}
+
+.nscs-table-handle span {
+    *display: inline /*IE6,7*/;
+}
+
+.nscs-table-handle span:first-child {
+    border-left: none 0;
+}
+
+.nscs-table-handle span a {
+    color: #777;
+    background-color: #FFF;
+    display: block;
+    padding: 3px 7px;
+    margin: 1px;
+}
+
+.nscs-table-handle span a i {
+    font-size: 14px;
+    line-height: 16px;
+    height: 16px;
+    display: block;
+    clear: both;
+    margin: 0;
+    padding: 0;
+}
+
+.nscs-table-handle span a p {
+    font: 12px/16px arial;
+    height: 16px;
+    display: block;
+    clear: both;
+    margin: 0;
+    padding: 0;
+}
+
+.nscs-table-handle span a:hover {
+    text-decoration: none;
+    color: #FFF;
+    margin: 0;
+    border-style: solid;
+    border-width: 1px;
+}
+
+a.ncsc-btn {
+    font: normal 12px/20px "microsoft yahei";
+    text-decoration: none;
+    color: #777;
+    background-color: #F5F5F5;
+    text-align: center;
+    vertical-align: middle;
+    display: inline-block;
+    height: 20px;
+    padding: 4px 10px;
+    border: solid 1px;
+    border-color: #DCDCDC #DCDCDC #B3B3B3 #DCDCDC;
+    cursor: pointer;
+}
+
+a:hover.ncsc-btn {
+    text-decoration: none;
+    color: #333;
+    background-color: #E6E6E6;
+    border-color: #CFCFCF #CFCFCF #B3B3B3 #CFCFCF;
+}
+
+a.ncsc-btn-mini i, a.ncsc-btn i {
+    font-size: 14px;
+    margin-right: 4px;
+}
+
+a.ncsc-btn-blue, a.ncsc-btn-acidblue, a.ncsc-btn-green, a.ncsc-btn-orange,
+a.ncsc-btn-red, a.ncsc-btn-black, a:hover.ncsc-btn-blue, a:hover.ncsc-btn-acidblue,
+a:hover.ncsc-btn-green, a:hover.ncsc-btn-orange, a:hover.ncsc-btn-red,
+a:hover.ncsc-btn-black, .nscs-table-handle a.btn-orange-current {
+    color: #FFF;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.10);
+}
+a.ncsc-btn-blue, .nscs-table-handle a:hover.btn-blue {
+    background-color: #006DCC;
+    border-color: #0062B7 #0062B7 #005299 #0062B7;
+}
+
+a.ncsc-btn-acidblue, .nscs-table-handle a:hover.btn-acidblue {
+    background-color: #49AFCD;
+    border-color: #429DB8 #429DB8 #37839A #429DB8;
+}
+
+a.ncsc-btn-green, .nscs-table-handle a:hover.btn-green {
+    background-color: #5BB75B;
+    border-color: #52A452 #52A452 #448944 #52A452;
+}
+
+a.ncsc-btn-orange, .nscs-table-handle a:hover.btn-orange,
+.nscs-table-handle a.btn-orange-current {
+    background-color: #FAA732;
+    margin: 0;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #E1962D #E1962D #BB7D25 #E1962D !important;
+}
+
+a.ncsc-btn-red, .nscs-table-handle a:hover.btn-red {
+    background-color: #DA4F49;
+    border-color: #C44742 #C44742 #A33B37 #C44742;
+}
+
+a.ncsc-btn-black, .nscs-table-handle a:hover.btn-black {
+    background-color: #363636;
+    border-color: #313131 #313131 #282828 #313131;
+}
+
+a:hover.ncsc-btn-blue {
+    background-color: #0044CC;
+    border-color: #003DB7 #003DB7 #003399 #003DB7;
+}
+
+a:hover.ncsc-btn-acidblue {
+    background-color: #2F96B4;
+    border-color: #2A87A2 #2A87A2 #237087 #2A87A2;
+}
+
+a:hover.ncsc-btn-green {
+    background-color: #51A351;
+    border-color: #499249 #499249 #3D7A3D #499249;
+}
+
+a:hover.ncsc-btn-orange {
+    background-color: #F89406;
+    border-color: #DF8505 #DF8505 #BA6F04 #DF8505;
+}
+
+a:hover.ncsc-btn-red {
+    background-color: #BD362F;
+    border-color: #AA312A #AA312A #8E2823 #AA312A;
+}
+
+a:hover.ncsc-btn-black {
+    background-color: #222222;
+    border-color: #1F1F1F #1F1F1F #191919 #1F1F1F;
+}
+
+
+.ncsc-upload-btn {
+    vertical-align: top;
+    display: inline-block;
+    *display: inline /*IE7*/;
+    width: 80px;
+    height: 30px;
+    margin: 5px 5px 0 0;
+    *zoom: 1;
+}
+
+.ncsc-upload-btn a {
+    display: block;
+    position: relative;
+    z-index: 1;
+}
+
+.ncsc-upload-btn span {
+    width: 80px;
+    height: 30px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 2;
+    cursor: pointer;
+}
+
+.ncsc-upload-btn .input-file {
+    width: 80px;
+    height: 30px;
+    padding: 0;
+    margin: 0;
+    border: none 0;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    cursor: pointer;
+}
+
+.ncsc-upload-btn p {
+    font-size: 12px;
+    line-height: 20px;
+    background-color: #F5F5F5;
+    text-align: center;
+    color: #666;
+    width: 78px;
+    height: 20px;
+    padding: 4px 0;
+    border: solid 1px;
+    border-color: #DCDCDC #DCDCDC #B3B3B3 #DCDCDC;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1;
+}
+
+.ncsc-upload-btn p i {
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
+.ncsc-upload-btn a:hover p {
+    background-color: #E6E6E6;
+    color: #333;
+    border-color: #CFCFCF #CFCFCF #B3B3B3 #CFCFCF;
+}
+
+.submit-border {
+    display: inline-block;
+    *display: inline /*IE6,7*/;
+    border: solid 1px;
+    border-color: #52A452 #52A452 #448944 #52A452;
+    zoom: 1;
+}
+
+input[type="submit"], input.submit, a.submit {
+    font-size: 12px;
+    font-weight: bold;
+    color: #FFF;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.1);
+    background-color: #5BB75B;
+    display: block;
+    height: 30px;
+    padding: 0 20px 2px 20px;
+    border: 0;
+    cursor: pointer;
+}
+
+.submit-border:hover {
+    borderd-color: #499249 #499249 #3D7A3D #499249;
+}
+
+input[type="submit"]:hover, input.submit:hover, a.submit:hover {
+    text-decoration: none;
+    color: #FFF;
+    background-color: #51A351;
+}
+
+.order .buyer {
+    color: #555;
+    position: relative;
+    display: block;
+}
+
+/*商品列表页-SKU值显示部分*/
+td.trigger i {
+    color: #C8C8C8;
+    cursor: pointer;
+}
+
+td.trigger i:hover {
+    color: #27A9E3;
+}
+
+.ncsc-goods-sku.ps-container {
+    background-color: #FCFCFC;
+    text-align: left;
+    width: 950px;
+    padding-bottom: 3px;
+    border: solid 1px #E6E6E6;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+    box-shadow: 2px 2px 0 rgba(204, 204, 204, 0.1);
+}
+
+.tc {
+    text-align: center;
+}
+
+.sort_title {
+    font-size: 12px;
+    line-height: 30px;
+    text-align: left;
+    height: 30px;
+    margin: 10px auto 0;
+    padding-left: 10px;
+}
+
+.sort_title .text {
+    font: 12px/20px Arial;
+    color: #777;
+    background-color: #FFF;
+    vertical-align: top;
+    text-align: left;
+    display: inline-block;
+    width: 701px;
+    height: 18px;
+    padding: 4px;
+    border: solid 1px #CCC;
+    outline: 0 none;
+    letter-spacing: normal;
+    word-spacing: normal;
+    *display: inline /*IE6,7*/;
+    cursor: pointer;
+    zoom: 1;
+}
+
+.sort_title .text:hover {
+    color: #333;
+    border-color: #75B9F0;
+    box-shadow: 0 0 0 2px rgba(82, 168, 236, 0.15);
+    outline: 0 none;
+}
+
+.sort_title i {
+    color: #CCC;
+    position: absolute;
+    z-index: 1;
+    top: 18px;
+    left: 883px;
+}
+
+.sort_title:hover i {
+    color: #333;
+}
+
+.select_list {
+    background-color: #FFF;
+    display: none;
+    width: 709px;
+    height: 200px;
+    border: solid 1px #75B9F0;
+    position: absolute;
+    z-index: 2;
+    top: 28px;
+    left: 121.5px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.select_list ul {
+    margin: 0;
+    padding: 0;
+}
+
+.select_list ul li {
+    display: block;
+    clear: both;
+    border-bottom: dashed 1px #E6E6E6;
+    position: relative;
+    z-index: 1;
+}
+
+.select_list ul li span {
+    line-height: 30px;
+    display: block;
+    height: 30px;
+    padding: 0 10px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.select_list ul li:hover {
+    color: #06C;
+    background-color: #f4fafe;
+}
+
+.select_list ul li a {
+    width: 16px;
+    height: 16px;
+    color: #27A9E3;
+    position: absolute;
+    z-index: 2;
+    top: 5px;
+    right: 10px;
+}
+
+.select_list ul li a:hover {
+    text-decoration: none;
+    color: #DA542E;
+}
+
+.sort_list {
+    background: #FFF;
+    vertical-align: top;
+    letter-spacing: normal;
+    word-spacing: normal;
+    display: inline-block;
+    margin-right: 15px;
+    border: solid 1px #E6E6E6;
+}
+
+.sort_list {
+    *display: inline /*IE6,7*/;
+}
+
+.sort_list_last {
+    margin-right: 0;
+}
+
+.category_list {
+    height: 264px;
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+.category_list ul {
+    margin: 0 15px 0 0;
+}
+
+.category_list ul li {
+    clear: both;
+}
+
+.category_list ul li a {
+    font-size: 12px;
+    line-height: 20px;
+    color: #666;
+    display: block;
+    height: 20px;
+    padding: 4px 8px;
+    margin: 1px;
+    overflow: hidden;
+}
+
+.category_list ul li a i {
+    font-size: 12px;
+    display: none;
+}
+
+.category_list ul li a.classDivClick {
+    color: #3A87AD;
+    background-color: #D9EDF7;
+    display: block;
+    margin: 0;
+    border: solid 1px #BCE8F1;
+}
+
+.category_list ul li a.classDivClick i {
+    font-size: 14px;
+    display: block;
+    margin-left: 6px;
+    float: right;
+}
+
+.category_list ul li a:hover {
+    text-decoration: none;
+}
+
+.category_list ul .hight_light {
+    color: #f50;
+}
+
+.bottom .submit-border {
+    margin: 10px auto;
+}
+
+.bottom .submit {
+    font: 14px/36px "microsoft yahei";
+    text-align: center;
+    min-width: 100px;
+    *min-width: auto;
+    height: 36px;
+}
+
+.bottom a.submit {
+    width: 100px;
+    margin: 0 auto;
+}
+
+.bottom .submit[disabled="disabled"] {
+    color: #999;
+    text-shadow: none;
+    background-color: #F5F5F5;
+    border: solid 1px;
+    border-color: #DCDCDC #DCDCDC #B3B3B3 #DCDCDC;
+    cursor: default;
+}
+
+/*商品添加步骤二售卖区域样式 by hou*/
+.spec-bg {
+    background-color: #FCFCFC;
+}
+
+.spec {
+    font-size: 0;
+    *word-spacing: -1px /*IE6、7*/;
+}
+
+.spec li {
+    font-size: 12px;
+    vertical-align: top;
+    letter-spacing: normal;
+    word-spacing: normal;
+    display: inline-block;
+    *display: inline /*IE6,7*/;
+    width: 25%;
+    margin-bottom: 6px;
+    zoom: 1;
+}
+
+.spec li span {
+    line-height: 30px;
+    vertical-align: middle;
+    margin-right: 6px;
+}
+
+.spec li span .text {
+    vertical-align: middle;
+    width: 130px;
+}
+
+.spec_table {
+    background-color: #FFF;
+    width: 98%;
+    margin: 10px auto;
+    border: solid 1px #BCE8F1;
+    box-shadow: 3px 3px 0 rgba(153, 153, 153, 0.15);
+}
+
+.spec_table thead th {
+    font-weight: 600;
+    line-height: 24px;
+    color: #3A87AD;
+    background: #D9EDF7;
+    height: 24px;
+    padding: 5px 10px;
+}
+
+.spec_table tbody td {
+    height: 30px;
+    padding: 5px 10px;
+    border-top: solid 1px #BCE8F1;
+}
+
+.spec_table .text.price, .spec_table .text.stock {
+    width: 40px;
+}
+
+.spec_table .text.sku {
+    width: 80px;
+}
+
+/* 发布商品-上传主图 */
+.ncsc-goods-default-pic {
+    overflow: hidden;
+}
+
+.ncsc-goods-default-pic .goodspic-uplaod {
+    float: left;
+}
+
+.ncsc-goods-default-pic .goodspic-uplaod .upload-thumb {
+    line-height: 0;
+    background-color: #FFF;
+    text-align: center;
+    vertical-align: middle;
+    display: table-cell;
+    *display: block;
+    width: 160px;
+    height: 160px;
+    border: solid 1px #F5F5F5;
+    overflow: hidden;
+}
+
+.ncsc-goods-default-pic .goodspic-uplaod .upload-thumb img {
+    max-width: 160px;
+    max-height: 160px;
+}
+
+.ncsc-goods-default-pic .goodspic-uplaod .handle {
+    height: 30px;
+    margin: 10px 0;
+}
+
+.ncsc-goods-default-pic .faq {
+    width: 300px;
+    float: right;
+}
+
+.sticky #uploadHelp {
+    width: 178px;
+    position: fixed;
+    z-index: 10;
+    top: 75px;
+}
+
+form .red {
+    color: red;
+    border: 0px;
+}
+
+form label.error {
+    color: red;
+    margin-left: 5px;
+}
+
+form input.error {
+    border: red 1px dotted;
+}
+
+.select_add {
+    float: left;
+    width: 8%;
+}
+
+/* E 提示的样式*/
+.sort_info {
+    color: #f50;
+    position: relative;
+    font-size: 12px;
+    font-family: "宋体"
+}
+
+.sort_info .title {
+    color: #404040;
+    float: left;
+    width: 60px;
+    line-height: 18px;
+    display: block;
+}
+
+.sort_info .info {
+    float: left;
+    width: 860px;
+    line-height: 18px;
+    display: block;
+}
+
+.add_link {
+    margin: 0 3px 0 10px;
+}
+
+.add_done {
+    color: #093
+}
+
+#demo, #des_demo {
+    line-height: 0;
+    text-align: center;
+    width: 100%
+}
+
+#demo .ajaxload, #des_demo .ajaxload {
+    width: 16px;
+    height: 16px;
+    margin: 80px auto;
+}
+
+/* 发货 */
+.deliver td.goods-info dl {
+    width: 340px;
+    line-height: 20px;
+    padding: 0;
+}
+
+.deliver td.goods-info dl dt {
+    display: inline-block;
+    text-align: left;
+    width: 100%;
+    vertical-align: top !important;
+}
+
+.deliver td.goods-info dl dd {
+    display: inline-block;
+    width: 100%;
+    text-align: left;
+}
+
+.deliver td.order-info dl {
+    font-size: 0;
+    *word-spacing: -1px /*IE6、7*/;
+    width: 96%;
+    margin: 0 auto 10px auto;
+}
+
+.deliver td.order-info dl dt {
+    font-size: 12px;
+    vertical-align: top;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-align: right;
+    display: inline-block;
+    *display: inline /*IE7*/;
+    *zoom: 1;
+    width: 15%;
+}
+
+.deliver td.order-info dl dd {
+    font-size: 12px;
+    vertical-align: top;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-align: left;
+    display: inline-block;
+    *display: inline /*IE7*/;
+    *zoom: 1;
+    width: 85%;
+}
+
+.step-title {
+    margin: 12px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+}
+
+.step-title em {
+    font-weight: 600;
+    color: #F60;
+    margin-right: 12px;
+}
+
+/* 订单物流跟踪 */
+.express-info {
+    width: 99%;
+    border: solid 1px #D8D8D8;
+    padding: 0 !important;
+    margin: 10px auto;
+    overflow: hidden;
+}
+
+.express-info dt {
+    color: #333 !important;
+    float: none !important;
+    background: #F7F7F7;
+    padding: 6px !important;
+    width: auto !important;
+    height: 20px;
+    text-align: left;
+}
+
+.express-info dd {
+    color: #333 !important;
+    border-top: solid 1px #D8D8D8;
+    padding: 6px !important;
+    width: auto !important;
+    height: 20px;
+    float: none !important;
+}
+
+.express-detail {
+    width: 750px;
+    float: right;
+    display: block;
+    position: relative;
+    z-index: 1;
+    border-left: solid 1px #BADCFE;
+}
+
+.express-detail .sidebar {
+    background: none repeat scroll 0 0 #F0F7FF;
+    width: 190px !important;
+    padding: 6px 0 !important;
+    border: solid 1px #BADCFE;
+    position: absolute;
+    z-index: 1;
+    top: 48px;
+    left: -192px;
+}
+
+.express-detail .sidebar p {
+    padding: 0 8px 0 12px;
+}
+
+.express-log {
+    border: solid 1px #E7E7E7;
+    background: #FAFAFA;
+    margin: 10px 0;
+    padding: 10px;
+}
+
+.express-log li {
+    line-height: 24px;
+    padding: 2px 10px;
+}
+
+.express-log li:hover {
+    background: #555;
+    color: #FFF;
+}
+
+.express-log li.loading {
+    background: url(../images/loading.gif) no-repeat scroll left center;
+    padding-left: 24px;
+}
+
+.express-oredr h4 {
+    border-bottom: solid 1px #D8D8D8 !important;
+    padding: 0 !important;
+    line-height: 28px;
+}
+
+.express-oredr ul {
+    width: 98%;
+    padding-bottom: 20px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.express-oredr li {
+    float: left;
+    display: block;
+    width: 110px;
+    padding: 20px 0 0 0;
+}
+
+.express-oredr li .goods-pic-small {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto;
+}
+
+.express-oredr li .goods-price {
+    font-weight: 500 !important;
+    width: 80px !important;
+    margin: 0 auto;
+}
+
+.express-oredr li .goods-name {
+    width: 80px !important;
+    margin: 0 auto;
+    line-height: 24px;
+    text-overflow: ellipsis;
+    height: 24px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+/* 商品发布表单样式*/
+.ncsc-form-goods {
+    border: solid #E6E6E6;
+    border-width: 1px 1px 0 1px;
+}
+
+.ncsc-form-goods h3 {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 22px;
+    color: #000;
+    clear: both;
+    background-color: #F5F5F5;
+    padding: 5px 0 5px 12px;
+    border-bottom: solid 1px #E7E7E7;
+}
+
+.ncsc-form-goods dl {
+    font-size: 0;
+    *word-spacing: -1px /*IE6、7*/;
+    line-height: 20px;
+    clear: both;
+    padding: 0;
+    margin: 0;
+    border-bottom: solid 1px #E6E6E6;
+    overflow: hidden;
+}
+
+.ncsc-form-goods dl:hover .hint {
+    color: #666;
+}
+
+.ncsc-form-goods dl.bottom {
+    border-bottom-width: 0px;
+}
+
+.ncsc-form-goods dl dt {
+    font-size: 12px;
+    line-height: 30px;
+    color: #333;
+    vertical-align: top;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-align: right;
+    display: inline-block;
+    width: 13%;
+    padding: 8px 1% 8px 0;
+    margin: 0;
+}
+
+.ncsc-form-goods dl dt {
+    *display: inline /*IE6,7*/;
+}
+
+.ncsc-form-goods dl dt i.required {
+    font: 12px/16px Tahoma;
+    color: #F30;
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
+.ncsc-form-goods dl dd {
+    font-size: 12px;
+    line-height: 30px;
+    vertical-align: top;
+    letter-spacing: normal;
+    word-spacing: normal;
+    display: inline-block;
+    width: 80%;
+    padding: 8px 0 8px 1%;
+    border-left: solid 1px #E6E6E6;
+}
+
+.ncsc-form-goods dl dd {
+    *display: inline /*IE6,7*/;
+}
+
+.ncsc-form-goods dl dd p {
+    clear: both;
+}
+
+/* 特殊商品样式 */
+.ncsc-form-goods dl.special-01 {
+    background-color: #F8EDDC;
+}
+
+.ncsc-form-goods dl.special-02 {
+    background-color: #E2F1F1;
+}
+
+.ncsc-form-goods dl.special-03 {
+    background-color: #F6E7E2;
+}
+
+.ncsc-form-goods dl.special-01 dd {
+    background-color: #F7F2E9;
+}
+
+.ncsc-form-goods dl.special-02 dd {
+    background-color: #ECF4F4;
+}
+
+.ncsc-form-goods dl.special-03 dd {
+    background-color: #F7F1EF;
+}
+
+.ncsc-form-goods .special-01 .vital, .ncsc-form-goods .special-02 .vital,
+.ncsc-form-goods .special-03 .vital {
+    color: #F60 !important;
+}
+
+.ncsc-form-goods textarea {
+    width: 198px;
+    height: 64px;
+}
+
+/*空间相册对应样式*/
+.upload-con {
+    background-color: #FFF;
+    width: 174px;
+    padding: 9px;
+    border: solid 1px #37839A;
+    position: absolute;
+    z-index: 99;
+    top: 86px;
+    right: 0px;
+}
+
+.sticky .upload-con {
+    top: 37px;
+}
+
+.upload-con-div {
+    line-height: 30px;
+    display: block;
+    height: 30px;
+    padding-bottom: 9px;
+    margin-bottom: 9px;
+    border-bottom: dotted 1px #DDD;
+}
+
+.upload-con-div .ncsc-upload-btn {
+    vertical-align: middle;
+    display: inline-block;
+    *display: inline /*IE7*/;
+    margin-left: 3px;
+    *zoom: 1;
+}
+
+.upload-pmgressbar div {
+    background-color: #F7F7F7;
+    margin-top: 5px;
+    padding: 5px;
+}
+
+.upload-pmgressbar div p {
+    font: 10px/12px Arial;
+    height: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.upload-pmgressbar div p.loading {
+    background: url(../images/upload_loading.gif) no-repeat 0 0;
+    height: 8px;
+    border-radius: 4px;
+}
+
+.upload_file {
+    padding: 8px 0 6px;
+}
+
+.upload-txt {
+    line-height: 18px;
+    font-weight: normal;
+    margin-top: 8px;
+}
+
+.upload-txt span {
+    color: #999;
+}
+
+.ncsc-album-intro {
+    min-height: 52px;
+    padding: 10px 0 10px 60px;
+    border-bottom: 1px solid #E6E6E6;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.ncsc-album-intro .album-covers {
+    line-height: 0;
+    background-color: #FFF;
+    text-align: center;
+    vertical-align: middle;
+    display: table-cell;
+    *display: block;
+    width: 48px;
+    height: 48px;
+    border: solid 1px #E6E6E6;
+    overflow: hidden;
+    position: absolute;
+    z-index: 1;
+    top: 12px;
+    left: 0;
+}
+
+.ncsc-album-intro .album-covers img {
+    max-width: 48px;
+    max-height: 48px;
+}
+
+.ncsc-album-intro .album-covers i {
+    font-size: 24px;
+    line-height: 48px;
+    color: #DDD;
+}
+
+.ncsc-album-intro .album-name {
+    font: bold 14px/20px "microsoft yahei";
+    color: #27A9E3;
+    width: 75%;
+    height: 20px;
+    margin-bottom: 2px;
+}
+
+.ncsc-album-intro .album-info {
+    font: normal 12px/16px "microsoft yahei";
+    color: #999;
+    width: 75%;
+    height: 32px;
+    overflow: hidden;
+}
+
+/*相册图片列表*/
+.ncsc-album, .ncsc-picture-list {
+    text-align: left;
+    margin: 10px 0;
+    overflow: hidden;
+}
+
+.ncsc-album ul, .ncsc-picture-list ul {
+    font-size: 0;
+    *word-spacing: -1px /*IE6、7*/;
+    clear: both;
+    width: 100%;
+    margin: 0;
+}
+
+.ncsc-album li, .ncsc-picture-list li {
+    vertical-align: top;
+    letter-spacing: normal;
+    word-spacing: normal;
+    display: inline-block;
+    width: 19.87%;
+    height: 260px;
+    border-style: solid;
+    border-color: #E6E6E6;
+    border-width: 0; /*1px 1px 1px 1px;*/
+    position: relative;
+    z-index: 1;
+}
+
+.ncsc-album li, .ncsc-picture-list li {
+    *display: inline /*IE6,7*/;
+}
+
+.ncsc-album li.hover, .ncsc-picture-list li.hover {
+    z-index: 2;
+}
+
+.ncsc-album li dl, .ncsc-picture-list li dl {
+    font-size: 12px;
+    width: initial;
+    height: 232px;
+    padding: 14px;
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 0;
+}
+
+.ncsc-album li.hover dl, .ncsc-picture-list li.hover dl {
+    background-color: #E6E6E6;
+    border: solid 1px #CCC;
+    top: -1px;
+    left: -1px;
+}
+
+.ncsc-album li dl dt, .ncsc-picture-list li dl dt {
+    width: initial;
+    height: 185px;
+}
+
+.ncsc-album li dl dt .covers, .ncsc-picture-list li dl dt .picture {
+    width: 160px;
+    height: 160px;
+    border: solid 1px #FAFAFA;
+}
+
+.ncsc-album li dl dt .covers a, .ncsc-picture-list li dl dt .picture a {
+    line-height: 0;
+    background-color: #FFF;
+    text-align: center;
+    vertical-align: middle;
+    display: table-cell;
+    *display: block;
+    width: 160px;
+    height: 160px;
+    overflow: hidden;
+}
+
+.ncsc-album li dl dt .covers a img, .ncsc-picture-list li dl dt .picture a img {
+    max-width: 160px;
+    max-height: 160px;
+}
+
+.ncsc-album li dl dt .covers a i {
+    font-size: 64px;
+    text-decoration: none;
+    color: #AAA;
+}
+
+.ncsc-album li dl dt .covers a:hover i {
+    color: #27A9E3;
+}
+
+.ncsc-album li dl dt h3 {
+    font-size: 14px;
+    font-weight: lighter;
+    line-height: 20px;
+    color: #555;
+    white-space: nowrap;
+    width: 150px;
+    height: 20px;
+    margin: 5px auto;
+    overflow: hidden;
+}
+
+.ncsc-album li dl dt h3 a {
+    color: #27A9E3;
+}
+
+.ncsc-picture-list li dl dt .editInput1 {
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 20px;
+    color: #555;
+    background-color: transparent;
+    width: 140px;
+    height: 20px;
+    border: 0;
+    position: absolute;
+    z-index: 1;
+    top: 180px;
+    left: 15px;
+}
+
+.ncsc-picture-list li dl dt .editInput2 {
+    font-size: 12px;
+    line-height: 18px;
+    color: #333;
+    width: 152px;
+    height: 18px;
+    padding: 1px 3px;
+    border: 1px solid #75B9F0;
+    box-shadow: 0 0 0 2px rgba(82, 168, 236, 0.15);
+    outline: 0 none;
+    position: absolute;
+    z-index: 2;
+    top: 180px;
+    left: 15px;
+}
+
+.ncsc-picture-list li dl dt .checkbox {
+    position: absolute;
+    z-index: 2;
+    top: 15px;
+    left: 15px;
+}
+
+.ncsc-picture-list li dl dt span {
+    font-size: 12px;
+    line-height: 16px;
+    vertical-align: middle;
+    text-align: center;
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    z-index: 2;
+    top: 182px;
+    right: 17px;
+}
+
+.ncsc-album li dl dd.date, .ncsc-picture-list li dl dd.date {
+    font-size: 12px;
+    line-height: 22px;
+    color: #999;
+    width: 160px;
+    height: 60px;
+    position: absolute;
+    z-index: 3;
+    top: 204px;
+    left: 8px;
+    padding: 0 0 0 8px;
+}
+
+.ncsc-album li dl dd.date {
+    height: 22px;
+    left: 12px;
+}
+
+.ncsc-picture-list li.hover dl dd.date {
+    display: none;
+}
+
+.ncsc-album li dl dd.buttons, .ncsc-picture-list li dl dd.buttons {
+    font-size: 0;
+    *word-spacing: -1px /*IE6、7*/;
+    display: none;
+    width: 170px;
+    height: 50px;
+    padding: 0px;
+    position: absolute;
+    top: 205px;
+    left: 12px;
+    z-index: 3;
+}
+
+.ncsc-album li dl dd.buttons {
+    height: 30px;
+    top: 228px;
+}
+
+.ncsc-album li.hover dl dd.buttons, .ncsc-picture-list li.hover dl dd.buttons {
+    display: block;
+}
+
+.ncsc-picture-list li dl dd.buttons .upload-btn {
+    width: 85px;
+    height: 25px;
+    display: inline-block;
+    *display: inline /*IE6,7*/;
+    zoom: 1;
+}
+
+.ncsc-picture-list li dl dd.buttons .upload-btn span {
+    width: 80px;
+    height: 20px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 2;
+    cursor: pointer;
+}
+
+.ncsc-picture-list li dl dd.buttons .upload-btn .input-file {
+    width: 80px;
+    height: 20px;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    cursor: pointer;
+}
+
+.ncsc-picture-list li dl dd.buttons .upload-btn .upload-button {
+    font-size: 12px;
+    line-height: 20px;
+    width: 68px;
+    height: 16px;
+    padding: 2px 6px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1;
+}
+
+.ncsc-album li dl dd.buttons a, .ncsc-picture-list li dl dd.buttons a {
+    font-size: 12px;
+    line-height: 16px;
+    color: #999;
+    background-color: #FFF;
+    vertical-align: top;
+    letter-spacing: normal;
+    word-spacing: normal;
+    display: inline-block;
+    width: 68px;
+    height: 16px;
+    padding: 2px 6px;
+    margin: 0 5px 5px 0;
+    border-radius: 2px;
+}
+
+.ncsc-album li dl dd.buttons a i, .ncsc-picture-list li dl dd.buttons a i {
+    margin-right: 4px;
+}
+
+.ncsc-album li dl dd a:hover, .ncsc-picture-list li dl dd a:hover {
+    text-decoration: none;
+    color: #27A9E3;
+    box-shadow: 0 0 4px rgba(153, 153, 153, 0.75);
+}
+
+.ad-gallery {
+    background-color: #FFF;
+}
+
+.ad-gallery, .ad-gallery * {
+    padding: 0;
+    margin: 0;
+}
+
+.ad-gallery .ad-nav {
+    width: 96%;
+    padding: 15px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.ad-gallery .ad-forward, .ad-gallery .ad-back {
+    height: 100%;
+    position: absolute;
+    top: 3px;
+    z-index: 10;
+}
+
+/* IE 6 doesn't like height: 100% */
+* html .ad-gallery .ad-forward, * html .ad-gallery .ad-back {
+    height: 90px;
+}
+
+.ad-gallery .ad-back {
+    background: url(../../admin/images/ad_scroll.png) 0% 0% no-repeat;
+    display: block;
+    width: 17px;
+    left: -20px;
+    cursor: pointer;
+}
+
+.ad-gallery .ad-forward {
+    background: url(../../admin/images/ad_scroll.png) 100% 0% no-repeat;
+    display: block;
+    width: 17px;
+    right: -20px;
+    cursor: pointer
+}
+
+.ad-gallery .ad-nav .ad-thumbs {
+    width: 100%;
+    overflow: hidden;
+}
+
+.ad-gallery .ad-thumbs .ad-thumb-list {
+    list-style: none;
+    width: 9000px;
+    height: 96px;
+    float: left;
+}
+
+.ad-gallery .ad-thumbs li {
+    display: inline;
+    width: 96px;
+    height: 96px;
+    float: left;
+    padding: 0 9px 0 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+.ad-gallery .ad-thumbs li a {
+    line-height: 0;
+    background-color: #FFF;
+    text-align: center;
+    vertical-align: middle;
+    display: table-cell;
+    *display: block;
+    width: 90px;
+    height: 90px;
+    margin: 1px;
+    border: 1px solid #F5F5F5;
+    overflow: hidden;
+}
+
+.ad-gallery .ad-thumbs li a.ad-active {
+    border: 2px solid #0099FF;
+    margin: 0px;
+}
+
+.ad-gallery .ad-thumbs li a img, .ad-gallery .ad-thumbs li a.ad-active img {
+    max-width: 90px;
+    max-height: 90px;
+}
+
+.ad-image-date {
+    width: 240px;
+    float: right;
+}
+
+.ad-image-date dt {
+    line-height: 20px;
+    font-weight: 600;
+    color: #555;
+    width: 100%;
+    float: left;
+    border-bottom: solid 1px #E7E7E7;
+    font-size: 13px;
+    padding: 5px 0;
+}
+
+.ad-image-date dd {
+    color: #999;
+    float: left;
+    width: 100%;
+    padding: 5px 0 25px 0;
+}
+
+.ad-image-date dd p {
+    line-height: 20px;
+    display: block;
+    width: 100%;
+    clear: both;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.ad-image-date dd p b {
+    font-weight: normal;
+    text-align: right;
+    color: #555;
+    width: 75px;
+    float: left;
+}
+
+.ad-image-date dd p span {
+    background-image: none;
+    padding-left: 10px;
+    float: left;
+}
+
+.ad-image-date dd p span a {
+    line-height: 20px;
+    text-decoration: underline;
+    color: #999;
+    background: url(../images/member/album_bg.gif) no-repeat;
+    width: 34px;
+    height: 20px;
+    padding-left: 26px;
+    margin-right: 5px;
+    display: block;
+    float: left;
+}
+
+.ad-image-date dd p span a:hover {
+    color: #FFF;
+    text-decoration: none;
+}
+
+.ad-image-date dd p span a.copy {
+    background-position: -148px -400px;
+}
+
+.ad-image-date dd p span a:hover.copy {
+    background-position: 0px -400px;
+}
+
+.ad-image-date dd p span a.view {
+    background-position: -148px -420px;
+}
+
+.ad-image-date dd p span a:hover.view {
+    background-position: -60px -400px;
+}
+
+.ad-gallery .ad-image-wrapper {
+    width: 680px;
+    height: 680px;
+    float: left;
+    border: solid 3px #E7E7E7;
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.ad-gallery .ad-image-wrapper .ad-loader {
+    border: 1px solid #CCC;
+    position: absolute;
+    z-index: 10;
+    top: 48%;
+    left: 48%;
+}
+
+.ad-gallery .ad-image-wrapper .ad-next {
+    display: block;
+    width: 25%;
+    height: 100%;
+    position: absolute;
+    z-index: 100;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+}
+
+.ad-gallery .ad-image-wrapper .ad-prev {
+    display: block;
+    width: 25%;
+    height: 100%;
+    position: absolute;
+    z-index: 100;
+    top: 0;
+    left: 0;
+    cursor: pointer;
+}
+
+.ad-gallery .ad-image-wrapper .ad-prev, .ad-gallery .ad-image-wrapper .ad-next { /* Or else IE will hide it */
+    background: url(../images/member/non-existing.jpg) \9
+}
+
+.ad-gallery .ad-image-wrapper .ad-prev .ad-prev-image, .ad-gallery .ad-image-wrapper .ad-next .ad-next-image {
+    background: url(../images/member/ad_prev.png);
+    display: none;
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    top: 47%;
+    left: 0;
+    z-index: 101;
+}
+
+.ad-gallery .ad-image-wrapper .ad-next .ad-next-image {
+    background: url(../images/member/ad_next.png);
+    width: 30px;
+    height: 30px;
+    right: 0;
+    left: auto;
+}
+
+.ad-gallery .ad-image-wrapper .ad-image {
+    position: absolute;
+    z-index: 9;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+}
+
+.ad-gallery .ad-image-wrapper .ad-image a img {
+    border: 0;
+}
+
+.ad-gallery .ad-image-wrapper .ad-image .ad-image-description {
+    color: #000;
+    background: url(../images/member/opa75.png);
+    text-align: left;
+    width: 100%;
+    padding: 7px;
+    position: absolute;
+    z-index: 2;
+    bottom: 0px;
+    left: 0px;
+}
+
+* html .ad-gallery .ad-image-wrapper .ad-image .ad-image-description {
+    background: none;
+}
+
+.ad-gallery .ad-image-wrapper .ad-image .ad-image-description .ad-description-title {
+    display: block;
+}
+
+.ad-gallery .ad-controls {
+    line-height: 16px;
+    width: 540px;
+    height: 16px;
+    padding: 4px;
+    margin-top: 10px;
+    margin-left: 22px;
+}
+
+.ad-gallery .ad-info {
+    width: 100px;
+    float: left;
+}
+
+.ad-gallery .ad-slideshow-controls {
+    width: 130px;
+    float: right;
+}
+
+.ad-gallery .ad-slideshow-controls .ad-slideshow-start {
+    font-size: 12px;
+    line-height: 16px;
+    background: url(../images/member/album_bg.gif) no-repeat 0px -424px;
+    display: block;
+    height: 16px;
+    float: left;
+    padding-right: 5px;
+    padding-left: 16px;
+    cursor: pointer;
+}
+
+.ad-gallery .ad-slideshow-controls .ad-slideshow-stop {
+    font-size: 12px;
+    line-height: 16px;
+    background: url(../images/member/album_bg.gif) no-repeat 0px -440px;
+    display: block;
+    height: 16px;
+    float: left;
+    padding-right: 5px;
+    padding-left: 16px;
+    cursor: pointer;
+}
+
+.ad-gallery .ad-slideshow-controls .ad-slideshow-countdown {
+    font-size: 0.9em;
+    color: #BBB;
+}
+
+.ad-gallery .ad-slideshow-running .ad-slideshow-start {
+    color: #36C;
+    background-position: 0px -456px;
+    cursor: default;
+}
+
+/* Can't do display none, since Opera won't load the images then */
+.ad-preloads {
+    position: absolute;
+    top: -9000px;
+    left: -9000px;
+}
+
+.ad-showmode {
+    clear: both;
+    position: relative;
+}
+
+.ad-showmode p {
+    position: absolute;
+    top: -20px;
+    left: 375px;
+    *left: 370px;
+}
+
+/* 水印管理 */
+.ncsc-watermark-pos {
+    font-size: 0;
+    *word-spacing: -1px /*IE6、7*/;
+    background-color: #FFF;
+    width: 183px;
+    height: 183px;
+    padding: 0;
+    margin: 0;
+    border: solid #E6E6E6;
+    border-width: 1px 1px 0 0;
+    box-shadow: 3px 3px 0 rgba(153, 153, 153, 0.25);
+    position: relative;
+    z-index: 1;
+}
+
+.ncsc-watermark-pos li {
+    vertical-align: top;
+    letter-spacing: normal;
+    word-spacing: normal;
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    border: solid #E6E6E6;
+    border-width: 0 0 1px 1px;
+}
+
+.ncsc-watermark-pos li {
+    *display: inline /*IE6,7*/;
+}
+
+.ncsc-watermark-pos label {
+    font-size: 14px;
+    line-height: 60px;
+    color: #CCC;
+    text-align: center;
+    vertical-align: middle;
+    display: block;
+    width: 60px;
+    height: 60px;
+    cursor: pointer;
+}
+
+.ncsc-watermark-pos li label.checked {
+    font-weight: 600;
+    color: #27A9E3;
+    background-color: #E6E6E6;
+    width: 60px;
+    height: 60px;
+}
+
+.ncsc-watermark-pos .over {
+    color: #999;
+    background: #FAFAFA;
+}
+
+/* 评价评分样式 */
+.raty {
+    font-size: 0;
+    line-height: 0;
+    *word-spacing: -1px /*IE6、7*/;
+    vertical-align: middle;
+    display: inline-block;
+}
+
+.raty img {
+    letter-spacing: normal;
+    word-spacing: normal;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    margin: 2px 0;
+}
+
+/*店铺客服中心设置*/
+.ncs-message-title span {
+    color: #777;
+    display: inline-block;
+}
+
+.ncs-message-list {
+    padding: 4px 0;
+}
+
+.ncs-message-list span {
+    display: inline-block;
+}
+
+.ncs-message .name {
+    width: 90px;
+}
+
+.ncs-message .tool {
+    width: 90px;
+}
+
+.ncs-message .number {
+    width: 200px;
+}
+
+.complain_info {
+    padding: 10px;
+    word-wrap: break-word;
+    word-break: normal;
+}
+
+/*聊天记录查询*/
+.ncsc-chat-layout {
+    overflow: hidden;
+}
+
+.ncsc-chat-layout .left {
+    width: 200px;
+    float: left;
+    border-right: solid 1px #E7E7E7;
+}
+
+.ncsc-chat-layout .right {
+    width: 750px;
+    float: right;
+}
+
+.ps-container .ps-scrollbar-y {
+    z-index: 2;
+}
+
+.slides, .flex-control-nav, .flex-direction-nav {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.slides:after {
+    line-height: 0;
+    content: ".";
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+
+html[xmlns] .slides {
+    display: block;
+}
+
+* html .slides {
+    height: 1%;
+}
+
+.no-js .slides > li:first-child {
+    display: block;
+}
+
+.flexslider .slides {
+    zoom: 1;
+}
+
+.flexslider .slides > li {
+    position: relative;
+}
+
+.flex-container {
+    position: relative;
+    zoom: 1;
+}
+
+.templet {
+    padding: 15px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.templet .nonce {
+    background: #fff url(../images/loading.gif) no-repeat scroll center center;
+    width: 200px;
+    height: 200px;
+    float: left;
+    padding: 5px;
+    margin-right: 10px;
+    border: 1px solid #E7E7E7;
+    border-radius: 5px;
+    box-shadow: 1px 1px 1px rgba(153, 153, 153, 0.2);
+    overflow: hidden;
+}
+
+table.type {
+    width: 700px;
+    border: solid 1px #E6E6E6;
+}
+
+table.type thead th {
+    color: #555;
+    background-color: #F7F7F7;
+    text-align: center;
+    padding: 4px;
+    border-color: #E6E6E6;
+}
+
+table.type tbody td {
+    color: #777;
+    text-align: center;
+    padding: 4px;
+    border-color: #E6E6E6;
+}
+
+table.type tbody td input {
+    width: 60px;
+    padding: 0;
+}
+
+/* 活动-选择参与活动商品*/
+.activity_box h3 {
+    color: #333;
+    padding: 6px 0 10px 12px;
+    border-bottom: 1px solid #AED2FF;
+}
+
+.activity_box .list li {
+    padding: 0 10px;
+    float: left;
+    position: relative;
+}
+
+.activity_box .list li input {
+    display: block;
+    position: absolute;
+    z-index: 99;
+    top: 2px;
+    left: 12px;
+}
+
+.activity_box .list li .goods-pic-small {
+    width: 60px;
+    height: 60px;
+    padding: 10px;
+    border: solid #E7E7E7 1px;
+    float: left;
+}
+
+.activity_box .list li p img {
+    z-index: 1;
+}
+
+.activity_box .list li h4 {
+    font-size: 12px;
+    font-weight: normal;
+    line-height: 18px;
+    display: inline;
+    width: 82px;
+    height: 36px;
+    float: left;
+    clear: both;
+    padding: 0;
+    margin: 4px 0 16px 0;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.order-info thead th {
+    font-weight: normal;
+    background: #E7E7E7;
+    text-align: center;
+    border-bottom: solid 2px #000;
+    border-top: solid 2px #000;
+    padding: 2px 0;
+}
+
+.order-info tbody tr th {
+    background: #F7F7F7;
+    padding: 8px 0;
+    text-align: center;
+    font-weight: 600;
+    border-bottom: solid 2px #000;
+    border-top: solid 2px #000;
+}
+
+.order-info tbody tr td {
+    padding: 8px 0;
+    text-align: center;
+}
+
+.order-info tfoot tr th {
+    border-bottom: solid 2px #000;
+    padding: 6px 0;
+    text-align: left;
+    font-weight: normal;
+}
+
+.order-info tfoot tr th span {
+    line-height: 20px;
+    white-space: nowrap;
+    display: inline-block;
+    width: 24%;
+    height: 20px;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.orderprint th {
+    font-variant: normal;
+    text-align: left
+}
+
+.w200 {
+    width: 200px !important;
+}
+
+.tl {
+    text-align: left !important;
+}
+
+.w70 {
+    width: 70px !important;
+}
+
+.w40 {
+    width: 40px !important;
+}
+
+.dialog-areas, .dialog-batch {
+    background-color: #FFF;
+    width: 690px;
+    margin-left: -320px;
+    border: 1px solid #CCC;
+    position: fixed;
+    z-index: 9999;
+    top: 25%;
+    left: 50%;
+}
+
+.dialog-batch {
+    top: 40%;
+}
+
+.ks-contentbox {
+    display: block;
+}
+
+.ks-contentbox .title {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: bold;
+    color: #555;
+    background-color: #FFF;
+    height: 20px;
+    padding: 10px;
+    border-bottom: solid 1px #E6E6E6;
+    position: relative;
+    z-index: 1;
+}
+
+.dialog-areas ul {
+    display: block;
+    padding: 10px;
+}
+
+.dialog-areas li {
+    display: block;
+    width: 100%;
+    clear: none;
+}
+
+.dialog-areas li.even {
+    background-color: #F7F7F7;
+}
+
+.ks-contentbox .bottom {
+    padding: 10px;
+}
+
+.ks-contentbox .batch {
+    line-height: 30px;
+    background-color: #FFF;
+    text-align: center;
+    height: 30px;
+    padding: 20px 0;
+    border-bottom: solid 1px #E6E6E6;
+}
+
+.checkbox {
+    padding: 0;
+    vertical-align: middle;
+}
+
+.hidden {
+    display: none;
+}
+
+/*返回顶部*/
+* {
+    padding: 0px;
+    margin: 0px;
+}
+
+/*解决IE6下不兼容 position:fixed 的问题*/
+#tbox .btn {
+    background-color: #FFF;
+    text-align: center;
+    height: 44px;
+    padding: 6px 0 2px 0;
+    margin-bottom: 5px;
+}
+
+#tbox .btn i {
+    background: url(../images/seller/ncsc_bg_img.png) no-repeat;
+    display: block;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+#tbox .btn i em {
+    font: 10px/12px Arial;
+    color: #FFF;
+    background-color: #27A9E3;
+    height: 12px;
+    padding: 0 2px;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 1;
+    top: -6px;
+    right: -6px;
+}
+
+#tbox .btn i.im {
+    background-position: -260px -420px;
+}
+
+#tbox .btn i.top {
+    background-position: -260px -450px;
+}
+
+#tbox .btn i.msg {
+    background-position: -260px -480px;
+}
+
+#tbox .btn a {
+    font: 11px/20px "microsoft yahei";
+    color: #27A9E3;
+    text-decoration: none;
+    display: block;
+}
+
+#tbox .btn:hover {
+    background-color: #27A9E3;
+    box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+#tbox .btn:hover i em {
+    color: #27A9E3;
+    background-color: #FFF;
+}
+
+#tbox .btn:hover i.im {
+    background-position: -290px -420px;
+}
+
+#tbox .btn:hover i.top {
+    background-position: -290px -450px;
+}
+
+#tbox .btn:hover i.msg {
+    background-position: -290px -480px;
+}
+
+#tbox .btn:hover a, #tbox .btn a:hover {
+    color: #FFF;
+}
+
+#footer {
+    font-size: 12px !important;
+    line-height: 20px;
+    color: #999;
+    background: #F3F1F1;
+    text-align: center;
+    display: block;
+    width: 100%;
+    clear: both;
+    margin: 0;
+    padding-bottom: 10px;
+    /* border-top: 1px solid #CCC; */
+    overflow: hidden;
+}
+
+#footer p {
+    color: #666;
+    word-spacing: 5px;
+    padding: 10px 0;
+}
+
+#footer a {
+    color: #666;
+    text-decoration: none;
+}
+
+#footer a:hover {
+    text-decoration: underline;
+}
+
+#footer .vol {
+    font-family: Verdana, Geneva, sans-serif;
+    font-weight: 600;
+    font-style: oblique;
+    font-size: 12px;
+}
+
+#footer .vol .b {
+    color: #00F;
+}
+
+#footer .vol .o {
+    color: #F60;
+}
+
+#footer .vol em {
+    font-family: Georgia, Arial;
+    font-weight: 600;
+    font-style: italic;
+    color: #000;
+    margin-left: 2px;
+}
+
+.pic-cut-120 {
+    width: 652px;
+    margin: 30px auto;
+}
+
+.pic-cut-120 .thumb-layer p {
+    width: 120px;
+    height: 120px;
+    overflow: hidden;
+}
+
+.pic-cut-120 .thumb-title {
+    width: 124px;
+}
+
+.pic-cut-120 .cut-help {
+    width: 120px;
+    top: 160px;
+}
+
+.pic-cut .cut-btn {
+    top: 340px;
+    left: 530px;
+}
+
+/*积分设置板块CSS*/
+.table-div table tr td {
+    border: 1px solid #e6e6e6;
+    padding: 10px;
+}
+
+.back-f5f5f5 {
+    background-color: #F5F5F5;
+}
+
+.table-div table {
+    width: 100%;
+}
+
+.table-1td {
+    width: 22%;
+    text-align: right;
+}
+
+.input-integral {
+    width: 500px;
+    height: 150px;
+}
+
+.input-mini {
+    margin-top: 10px;
+    width: 80px;
+}
+
+#href {
+    color: #000;
+}
+
+.set-style {
+    width: 100%;
+}
+
+.set-style dl {
+    width: 100%;
+    font-size: 0;
+    clear: both;
+    padding: 0;
+    margin: 0;
+    border-bottom: dotted 1px #E6E6E6;
+    overflow: hidden;
+}
+
+.set-style dl dt {
+    font-size: 12px;
+    line-height: 32px;
+    vertical-align: top;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-align: right;
+    display: inline-block;
+    width: 19%;
+    padding: 10px 1% 10px 0;
+    margin: 0;
+    font-weight: normal;
+}
+
+.set-style dl dd {
+    font-size: 12px;
+    line-height: 32px;
+    vertical-align: top;
+    letter-spacing: normal;
+    word-spacing: normal;
+    display: inline-block;
+    width: 78%;
+    padding: 10px 0 10px 0;
+}
+
+.set-style dl dd input[type="text"], .set-style dl dd input[type="password"].set-style dl dd input[type="number"] {
+    font: 12px/20px Arial;
+    color: #777;
+    background-color: #FFF;
+    vertical-align: top;
+    display: inline-block;
+    height: 24px;
+    line-height: 24px;
+    padding: 4px;
+    border: 1px solid #CCC;
+    outline: 0 none;
+    width: 400px;
+    margin: 0;
+}
+
+.set-style dl dd textarea {
+    font: 12px/20px Arial;
+    color: #777;
+    background-color: #FFF;
+    vertical-align: top;
+    display: inline-block;
+    height: 60px;
+    padding: 4px;
+    border: solid 1px #CCC;
+    outline: 0 none;
+    width: 400px;
+    margin: 0;
+}
+
+.controls {
+    height: 100%;
+    line-height: 100%;
+}
+
+.hint {
+    font-size: 12px;
+    line-height: 16px;
+    color: #BBB;
+    margin-top: 10px;
+}
+
+.set-style dl dd p img {
+    border: medium none;
+    vertical-align: middle;
+}
+
+.class-logo {
+    background-color: #FFF;
+    position: relative;
+    z-index: 1;
+}
+
+.class-logo p {
+    width: 200px;
+    height: 60px;
+    line-height: 0;
+    background-color: #FFF;
+    text-align: center;
+    vertical-align: middle;
+    display: table-cell;
+    *display: block;
+    overflow: hidden;
+    margin: 0 0 10px;
+    border: dashed 1px #E6E6E6;
+}
+
+.class-logo p img {
+    max-width: 200px;
+    max-height: 60px;
+    border: medium none;
+    vertical-align: middle;
+}
+
+.edit_button {
+    font-family: "microsoft yahei";
+    border-radius: 4px;
+    padding: 8px 30px;
+    background-color: #51A351;
+    color: #FFF;
+    margin: 20px auto;
+    border: none;
+    display: block;
+}
+
+.normal {
+    font-weight: normal;
+}
+
+.error {
+    font-size: 12px;
+    line-height: 16px;
+    color: red;
+    display: none;
+}
+
+.set-style dl dd p {
+    margin-bottom: 0;
+}
+
+.uese-border {
+    text-align: center;
+    height: 65px;
+    line-height: 65px;
+}
+
+.uese-border img:FIRST-CHILD {
+    width: 50px;
+    border-radius: 50%;
+    margin-bottom: 7px;
+}
+
+.uese-border img:LAST-CHILD {
+    width: 20px;
+    height: 35px;
+    vertical-align: middle;
+}
+
+.uer-name {
+    font-size: 17px;
+    margin-left: 9px;
+    color: #FFF;
+}
+
+.radio {
+    font-weight: normal;
+}
+
+.list-li {
+    height: 35px;
+    line-height: 35px;
+}

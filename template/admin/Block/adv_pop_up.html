@@ -1,0 +1,129 @@
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<style>
+.single-btn-upload{display: none;}
+.layui-form {
+    padding: 10px;
+    background: #fff;
+}
+</style>
+<div class="layui-form adv-pop-up">
+    <div class="layui-form-item">
+        <label class="layui-form-label">链接地址</label>
+        <div class="layui-input-block">
+            <select name="adv_link" lay-filter="adv_link">
+                <option value="">请选择</option>
+                {foreach name="$diy_view_link" item="link"}
+                <option value="{$link['nav_url']}">{$link['nav_title']}</option>
+                {/foreach}
+                <option value="0" data-diy="diy">自定义链接</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+     	<label class="layui-form-label img-upload-lable">广告图片</label>
+        <div class="layui-input-inline img-upload">
+            <div class="class-logo"><p>
+            {notempty name="$data && $data['img_src']"}
+            <img data-id="" id="upload_img_upload_id" src="{:__IMG($data['img_src'])}">
+            {else /}
+            <img data-id="" id="upload_img_upload_id" src="">
+            {/notempty}
+            </p></div>
+			<div class="upload-btn">
+				<span>
+					<input class="input-file" name="file_upload" data-id="" id="upload_id" type="file" onchange="imgUpload(this);">
+					<input type="hidden" name="img_src" data-id="" id="upload_hidden_upload_id" value="{$data['img_src'] ? $data['img_src'] : ''}"/>
+				</span>
+				<p><i class="fa fa-cloud-upload"></i>上传图片</p>
+			</div>
+			<p class="hint"><span style="color:orange;">建议使用宽<span class="img-width">{$data_width}</span>像素-高<span class="img-height">{$data_height}</span>像素内的GIF或PNG透明图片；点击下方"提交"按钮后生效。</span></p>
+			<p class="error">请上传图片</p>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="adv_save">确定</button>
+        </div>
+    </div>
+    
+    {notempty name="$data && $data['link']"}
+    <input id="hidden_adv_link" type="hidden" value="{$data['link']}">
+    {/notempty}
+    
+</div>
+<script>
+    var adv_data = {
+        link : null,
+        img_src : ""
+    };
+  //图片上传
+    function imgUpload(event) {
+    	var fileid = $(event).attr("id");
+    	var data = { 'file_path' : "config" };
+    	uploadFile({
+    		url: 'ADMIN_MAIN/config/uploadimage',
+    		fileId: fileid,
+    		data : data,
+    		callBack: function (res) {
+    			if(res.code){
+    				$("#upload_hidden_"+fileid).val(res.data.path);
+    				$("#upload_img_"+fileid).attr("src",__IMG(res.data.path));
+    				layer(res.message);
+    			}else{
+    				layer(res.message);
+    			}
+    		}
+    	});
+    }
+    layui.use(['form','layer'], function() {
+        var form = layui.form;
+        var layer = layui.layer;
+
+        //设置选中链接地址
+        if ($("#hidden_adv_link").length>0 && $("#hidden_adv_link").val() != "") {
+            if ($(".adv-pop-up select[name='adv_link'] option[value='" + $("#hidden_adv_link").val() + "']").text() != "") {
+                $(".adv-pop-up select[name='adv_link'] option[value='" + $("#hidden_adv_link").val() + "']").attr("selected", "selected");
+            } else {
+                $(".adv-pop-up select[name='adv_link'] option[data-diy]").attr("selected", "selected");
+            }
+        }
+
+        form.render();
+
+        form.on('select(adv_link)', function(data){
+
+            if($(data.elem).find("option[data-diy]:selected").text()){
+
+                layer.prompt(function(value, index, elem){
+                    if(/^(http|https)\S+$/.test(value)){
+                        $(".adv-pop-up select[name='adv_link'] option[data-diy]").attr("value",value);
+                        form.render("select");
+                        layer.close(index);
+                    }else{
+                        layer.msg("链接地址格式错误");
+                    }
+                });
+            }
+        });
+
+        //监听提交
+        form.on('submit(adv_save)', function(data){
+            adv_data.link = data.field.adv_link;
+            adv_data.img_src = data.field.img_src;
+            window.parent.block.setData(adv_data);
+            window.parent.layer.close(window.parent.block.layer_open_index);
+        });
+
+    });
+
+    /**
+     * 单图回调事件
+     */
+    function singleImageUploadSuccess(res,name){
+        $(".image_url").attr("src",nc.img(res.data.path));
+        $("input[name='img_src']").val(res.data.path);
+    }
+</script>

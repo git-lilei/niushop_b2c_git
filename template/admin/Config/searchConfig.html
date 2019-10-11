@@ -1,0 +1,82 @@
+{extend name="$base" /}
+{block name="alert_info"}
+	{if condition="$type == 'hot'"}
+	<p class="function-prompts">热门搜索在前台搜索框下面显示，前台点击直接作为关键字进行搜索，多个关键字之间用“,”隔开。</p>
+	{else/}
+	<p class="function-prompts">默认搜索，将显示在前台搜索框，前台点击时直接作为关键词进行搜索</p>
+	{/if}
+{/block}
+{block name="resources"}
+<style>
+.set-style{
+	min-height:400px;
+}
+</style>
+{/block}
+{block name="main"}
+{if condition="$type == 'hot'"}
+<!-- 热门搜索 -->
+<div class="set-style">
+	<dl>
+		<dt>热门搜索：</dt>
+		<dd>
+			<textarea rows="2" id="keywords" class="textarea-common" maxlength="50">{$hot_keywords}</textarea>
+			<p class="hint">热门搜索，将显示在前台搜索框下面，前台点击时直接作为关键词进行搜索，多个关键词间请用半角逗号 "," 隔开</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="setConfigAjax();">保存</button></dd>
+	</dl>
+</div>
+<script>
+function setConfigAjax(){
+	var keywords = $("#keywords").val();
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/config/hotsearchconfig')}",
+		data:{ 'keywords':keywords },
+		success:function (data) {
+			if (data["code"] > 0) {
+				showTip(data["message"],'success');
+			}else{
+				showTip(data["message"],'error');
+			}
+		}
+	});
+}
+</script>
+{else/}
+<div class="set-style">
+	<dl>
+		<dt>默认搜索：</dt>
+		<dd>
+			<input id="default_keywords" type="text" value="{$default_keywords}" class="input-common" />
+			<p class="hint">默认搜索，将显示在前台搜索框，前台点击时直接作为关键词进行搜索</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="setConfigAjax();">保存</button></dd>
+	</dl>
+</div>
+
+<script>
+function setConfigAjax(){
+	var default_keywords = $("#default_keywords").val();
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/config/defaultsearchconfig')}",
+		data:{ 'default_keywords':default_keywords },
+		success:function (data) {
+			if (data["code"] > 0) {
+				showTip(data["message"],'success');
+			}else{
+				showTip(data["message"],'error');
+			}
+		}
+	});
+}
+</script>
+{/if}
+{/block}

@@ -1,0 +1,79 @@
+{extend name="$base"/}
+{block name="resources"}
+<link rel="stylesheet" href="WAP_CSS/login_register_ext.css" />
+{/block}
+{block name="head"}{/block}
+{block name="main"}
+{php}
+	$register_visit = api("System.Login.registerConfig");
+	$register_visit = $register_visit['data'];
+	
+	$reg_config = $register_visit["reg_config"];
+	$code_config = $register_visit["code_config"];
+{/php}
+{if condition="$reg_config['is_register'] != 1 "}
+<script>location.href = __URL(APPMAIN + "/login/index");</script>
+{/if}
+<div class="content">
+	<div class="tit-info"> 
+		<div class="h3">完善基本的账号信息</div>
+		<p>完善了基本信息后，您可以直接把第三方登录的用户信息与您的注册账号进行绑定</p>
+	</div>
+	<div class="reg-box">
+		<div class="reg-cont ns-border-color-gray">
+			<label class="login-txt" for="username">
+				<span>用户名</span>
+				<input type="text" name="username" id="username" placeholder="请输入用户名">
+			</label>
+		</div>
+		<div class="reg-cont ns-border-color-gray">
+			<label for="password">
+				<span>{:lang('password')}</span>
+				<input type="password" name="password" id="password" placeholder="{:lang('please_input_password')}" >
+			</label>
+		</div>
+		<div class="reg-cont ns-border-color-gray">
+			<label for="cfpassword">
+				<span>{:lang('member_confirm_password')}</span>
+				<input type="password" name="cfpassword" id="cfpassword" placeholder="{:lang('confirm_password')}">
+			</label>
+		</div>
+		{if condition="$code_config['pc'] eq 1"}
+		<div class="reg-cont ns-border-color-gray" >
+			<label>
+				<span>{:lang('member_verification_code')}</span>
+				<input type="text" name="captcha" id="captcha" class="captcha" placeholder="{:lang('please_enter_verification_code')}" maxlength="4">
+		        <img class="verifyimg" src=" {:__URL('SHOP_MAIN/captcha')}" onclick="this.src='{:__URL('SHOP_MAIN/captcha')}'"  alt="captcha"/>
+	        </label>
+		</div>
+	    {/if}
+		<button type="button" class="ns-bg-color" onclick="perfectInfo()">完善信息</button>
+		<button type="button" class="ns-border-color ns-text-color" onclick="location.href='{:__URL('APP_MAIN/login/bind')}';">已有账号</button>
+
+		<input type="hidden" id="code_config" value="{$code_config['pc']}">
+	</div>
+</div>
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script>
+var lang_regsiter_ext = {
+	password_cannot_empty : "{:lang('password_cannot_empty')}",
+	password_must_contain_symbols : "{:lang('password_must_contain_symbols')}",
+	password_must_have_uppercase_letters : "{:lang('password_must_have_uppercase_letters')}",
+	password_must_have_lowercase_letters : "{:lang('password_must_have_lowercase_letters')}",
+	user_name_canno_be_mailbox : "{:lang('user_name_canno_be_mailbox')}",
+	password_must_contain_numbers : "{:lang('password_must_contain_numbers')}",
+	password_cannot_includ_chinese_characters : "{:lang('password_cannot_includ_chinese_characters')}",
+	minimum_password_length : "{:lang('minimum_password_length')}",
+	such_characters : "{:lang('such_characters')}",
+	username_cannot_includ : "{:lang('username_cannot_includ')}",
+	user_name_canno_be_phone : "{:lang('user_name_canno_be_phone')}",
+	user_name_cannot_contain_chinese_characters : "{:lang('user_name_cannot_contain_chinese_characters')}",
+	confirm_password_can_not_be_empty : "{:lang('confirm_password_can_not_be_empty')}",
+	verification_code_cannot_be_null : "{:lang('verification_code_cannot_be_null')}",
+	two_password_input_is_inconsistent : "{:lang('two_password_input_is_inconsistent')}"
+};
+</script>
+<script src="WAP_JS/login_register_ext.js"></script>
+{/block}

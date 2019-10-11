@@ -1,0 +1,62 @@
+@CHARSET "UTF-8";
+.member-headimg{width: 50px; height: 50px; border-radius: 50%; overflow: hidden; text-align: center; line-height: 47px; float: left; border: 1px solid;}
+.member-headimg img{max-width: 100%; max-height: 100%; display: inline-block; height: auto; width: auto;}
+.clear{clear: both;}
+.member-head{padding: 18px 0 0;}
+.member-info{float: left; height: 50px;}
+.member-info .member-name{height: 25px; line-height: 25px; font-size: 18px; margin-left: 10px; color: #fff;}
+.member-info .member-level{margin: 5px 0 0 10px;border: 1px solid; height: 20px; line-height: 20px; padding: 0 5px; font-size: 12px; border-radius: 4px; display: inline-block;}
+.member-qrcode{float: left; width: 20px; margin-left: 15px; margin-top: 13px;}
+.member-head-top{margin: 20px 20px; position: relative;}
+.member-edit{position: absolute; right: 0; padding: 3px 10px;}
+.member-edit img{width: 20px; height: 20px;}
+.member-level-entrance{position: absolute; right: 0;top: 53px;z-index: 5}
+.member-level-entrance img {height: 35px;}
+.member-account{height: 45px; background: rgba(255, 255, 255, .1); padding: 10px 30px; color: #fff;}
+.member-account-item{width: 33.33%; float: left; text-align: center;margin-top: 10px;}
+.member-account-text{font-size: 12px; line-height: 22px;}
+.member-account-num{font-size: 20px;}
+.member-order{background: #fff; margin-top: 10px;}
+.member-order-head{padding: 15px 20px; border-bottom: 1px solid;}
+.member-order-head a{display: block; overflow: hidden;}
+.order-head-left{float: left;font-weight: bolder;}
+.order-head-right{float: right;font-size: 12px;}
+.order-head-right i{font-size:18px;margin-top: -3px; margin-left: 10px;vertical-align: middle;}
+.member-order-list{padding: 20px 10px;}
+.member-order-item{box-sizing: border-box; width: 20%; float: left;text-align: center; position: relative;}
+.order-text{font-size: 12px;}
+.order-num{position: absolute; color: #fff; width: 16px; height: 16px; line-height: 16px; border-radius: 50%; right: 10px; font-size: 12px;}
+.order-icon{box-sizing: border-box; width: 100%; height: 30px; text-align: center; margin-bottom: 3px;}
+.order-icon img{width: 30px;}
+.member-promotion{margin-top: 10px; background: #fff; padding: 10px; margin-left: -2%;}
+.promotion-item{float: left; width: 48%; margin-left: 2%;}
+.member-promotion .member-order-item{width: 33%;}
+.member-promotion .order-icon{font-size: 19px;}
+.member-order-center .order-icon{font-size: 19px;}
+.member-order-center .member-order-item{width: 50%;}
+.member-nav-list{background: #fff; margin-top: 10px;}
+.member-nav-item{padding: 15px 10px; border-bottom: 1px solid;}
+.member-nav-left{float: left;}
+.member-nav-left img{width: 20px; margin-right: 3px;}
+.member-nav-left span{display: inline-block; line-height: 20px; height: 20px; vertical-align: middle;}
+.member-nav-right{float: right;}
+.member-nav-right i{font-size:18px;margin-top: -3px; margin-right: 10px;vertical-align: middle;}
+
+.member-function{background: #fff;margin-top: 10px;padding:10px 0 20px 0;}
+.member-function li{width:25%;float:left;padding: 8px 0;}
+.member-function li div{width:25px;margin:0 auto 8px auto;}
+.member-function li p{text-align:center;line-height: 1;}
+.promotion-img{padding-top:15px;padding-bottom:10px;background:#fff;margin-top:10px;display: -webkit-flex;flex-wrap: nowrap;justify-content: center;}
+.promotion-img .border{border-right:1px solid #eee;}
+.promotion-img div{float:left;}
+.promotion-img .tips{width:50%;margin-left:3%;position: relative;height: 70px;}
+.promotion-img .tips a{display:inline-block;width:100%;height:100%;}
+.promotion-img p{font-size: 16px;font-weight: bold;}
+.promotion-img span{font-size:11px;}
+.promotion-img .p-image{margin-top:10px;width:59px;position: absolute;right: 7px;top: 3px;}
+.promotion-img .saml-img{width: 70px;top: 7px;right: 4px;}
+.promotion-img .tips-left .left-text{color:#ffc500;}
+.promotion-img .tips-left .right-text{color:#ff4170;}
+.promotion-img .tips-left span{color:#999;}
+.member-float{background:#fff;width:95%;height:68px;border-radius:7px; position: absolute; left: 50%; top: 88%;   transform: translate(-50%, -50%);}
+.memberhead .top-lef{margin-top:25px;}

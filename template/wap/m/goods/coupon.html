@@ -1,0 +1,95 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/goods_coupon.css">
+{/block}
+{block name="main"}
+<section class="coupon-sec">
+	<div class="coupon-sec-body"></div>
+	<input type="hidden" id="page_count">
+	<input type="hidden" id="page" value="1">
+	<input type="hidden" id="promotion_length">
+</section>
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script>
+$(function(){
+	getcouponlist(1);
+	
+	//滑动到底部加载
+	$(window).scroll(function(){
+		var totalheight = parseFloat($(window).height()) + parseFloat($(window).scrollTop());
+		var content_box_height = parseFloat($(".coupon-sec-body").height());
+		if(totalheight - content_box_height >= 20){
+			if(is_load){
+				var page = parseInt($("#page").val()) + 1;//页数
+				var total_page_count = $("#page_count").val(); // 总页数
+				if(page > total_page_count){
+					return false;
+				}else{
+					getcouponlist(page);
+				}
+			}
+		}
+	})
+});
+
+var is_load = true;
+function getcouponlist(page){
+	$("#page").val(page);
+	if(is_load){
+		is_load = false;
+		api("System.Goods.couponList",{ 'page_index'  : page },function (res) {
+			var data = res.data;
+			$("#page_count").val(data['page_count']);
+			if(page == 1){
+				var list_html = "";
+			}else if(page > 1){
+				var list_html = $('.coupon-sec-body').html();
+			}
+			if(data['data'].length > 0){
+				for(var i=0;i<data['data'].length;i++){
+					var item = data['data'][i];
+					list_html += ' <a href="javascript:;" class="coupon-default coupon-default-v2">';
+					list_html += ' <div class="coupon-default-inner">';
+					list_html += '<div>';
+					list_html += '<img src="'+WAPIMG+'/coupons.png" class="coupon-default-image" />';
+					if(item['range_type'] == 1){
+						list_html += '<p class="coupon-default-name coupon-default-name-two"><span>' + item['coupon_name'] +'(&nbsp;{:lang('全场商品可使用')}&nbsp;)</span></p>';
+					}else{
+						list_html += '<p class="coupon-default-name coupon-default-name-two"><span>' + item['coupon_name'] +'(&nbsp;{:lang('仅限购买部分商品')}&nbsp;)</span></p>';
+					}
+					list_html += '<span class="coupon-default-price ns-text-color"><em><span>&yen;</span>' + item['money'] +'</em><br><span>{:lang('满')}' + item['at_least'] +'{:lang('可用')}</span></span>';
+					list_html += '<div class="q-circle"><i class="i1 ns-bg-color-gray"></i><i class="i2ns-bg-color-gray"></i></div>';
+					list_html += '<div class="coupon-default-status ns-border-color-gray coupon-default-status-add">';
+					list_html += '<div class="receive-box">';
+					if(item['surplus_percentage'] == 0){
+						list_html += '<div><span class="no-receive ns-bg-color-gray">{:lang('已领光')}</span></div>';
+					}else{
+						list_html += '<div class="rest ns-border-color"></div>';
+						list_html += '<div class="remain">{:lang('剩余')}<br>' + item['surplus_percentage'] +'%</div>';
+						list_html += '<input type="hidden" value="' + item['surplus_percentage'] +'" id="surplus_percentage'+i+'">';
+						list_html += '<i onclick="jumpGetCoupon('+item["coupon_type_id"]+')" class="ns-bg-color">{:lang('点击领取')}</i>';
+						list_html += '<input type="hidden" value="'+item["coupon_type_id"]+'" id="coupon_type_id">';
+					}
+					list_html += '</div>';
+					list_html += '</div>';
+					list_html += '</div>';
+					list_html += '</div>';
+					list_html += '</a>';
+				}
+			}else{
+				list_html+= '<p class="no-coupon ns-text-color-gray"><img src="'+WAPIMG+'/wap_nodata.png" height="100"><br>{:lang('Sorry！没有找到您想要的优惠券……')}</p>';
+			}
+			is_load = true;
+			$('.coupon-sec-body').html(list_html);
+		});
+	}
+}
+
+//领取优惠券
+function jumpGetCoupon(coupon_type_id){
+	location.href=__URL(APPMAIN+'/goods/couponreceive?coupon_type_id='+coupon_type_id);
+}
+</script>
+{/block}

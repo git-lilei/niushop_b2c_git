@@ -1,0 +1,145 @@
+{extend name="$member_base" /}
+{block name="right_main"}
+<link rel="stylesheet" href="WEB_CSS/member_balance.css">
+{php}
+// 会员账户信息
+$member_account = api("System.Member.memberAccount");
+$member_account = $member_account['data'];
+$balance_arr = explode(".",$member_account['balance']);
+$balance_arr[1] = empty($balance_arr[1]) ? '00' : $balance_arr[1];
+
+// 余额明细
+$balance_list = api("System.Member.accountRecordsList",['page_index'=>$page_index, 'account_type' => 2]);
+$balance_list = $balance_list['data'];
+$total_count = $balance_list['total_count'];
+
+// 获取交易流水号
+$out_trade_no = api("System.Pay.outTradeNo");
+
+// 提现设置
+$withdraw_config = api("System.Config.balanceWithdraw");
+$withdraw_config = $withdraw_config['data'];
+
+// 会员信息
+$member_detail = api("System.Member.memberInfo");
+$member_detail = $member_detail['data'];
+{/php}
+<div class="member-main">
+	<!-- 账户余额 -->
+	<div class="balance-info clearfix">
+		<div class="pull-left">
+			<div class="title ns-text-color-black">我的可用余额</div>
+	        <div class="price ns-text-color-black">
+		        <span><em>{$balance_arr[0]}</em>.{$balance_arr[1]}</span>
+	            <a class="recharge ns-text-color" href="javascript:recharge()">充值</a>
+				{eq name="$withdraw_config['is_use']" value="1"}
+	            <a class="recharge ns-text-color" href="{:__URL('SHOP_MAIN/member/balanceWithdrawal')}">提现</a>
+	            {/eq}
+	        </div>
+        </div>
+		<div class="pull-right">
+			<ul class="list">
+		 		<li><i class="icon"></i> 全部余额：<em class="money">{$member_account['balance']}</em></li>
+		 		<li><i class="icon balance-lock-icon"></i> 锁定余额：<em class="money">0.00</em></li>
+		 		<li><i class="icon status-icon"></i> 账户状态：<em class="status">{$member_detail.user_info.user_status_name}</em></li>
+			</ul>
+		</div>
+	</div>
+	<!-- 余额明细 -->
+	<div class="balance-detailed">
+		<table class="table table-borderless">
+			<colgroup>
+                <col width="20%">
+                <col width="15%">
+                <col width="55%">
+            </colgroup>
+			<thead>
+				<tr>
+		      		<th class="align-center">时间</th>
+		      		<th class="align-right">金额</th>
+		      		<th class="align-center">操作</th>
+			    </tr>
+		  	</thead>
+			<tbody>
+				{notempty name="$balance_list['data']"}
+					{foreach $balance_list['data'] as $balance}
+					<tr>
+						<td class="align-center">{$balance.create_time | getTimeStampTurnTime}</td>
+						<td class="align-right">{$balance.number}</td>
+						<td class="align-center">{$balance.text}</td>
+					</tr>
+					{/foreach}
+				{else/}
+					<tr>
+						<td colspan="3" class="align-center">您还没有与余额相关的数据！</td>
+					</tr>
+				{/notempty}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<!-- 充值弹框 -->
+<div class="modal fade bs-example-modal-md" tabindex="-1" role="dialog" id="myModal">
+	<div class="modal-dialog" role="document">
+    	<div class="modal-content">
+      		<div class="modal-header">
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        		<h4 class="modal-title">充值</h4>
+      		</div>
+			<div class="modal-body">
+				<div class="form-horizontal">
+					<div class="form-group">
+			    		<label class="col-sm-3">充值金额：</label>
+					 	<div class="col-md-6 col-sm-6">
+			      			<input type="number" class="form-control" name="recharge_money" placeholder="">
+			    		</div>
+			  		</div>
+		  		</div>
+			</div>
+  			<div class="modal-footer">
+        		<button type="button" class="btn btn-primary save">充值</button>
+      		</div>
+		</div>
+  	</div>
+</div>
+
+<ul class="pager" data-ride="pager" data-elements="prev,nav,next,total_page_text,goto" data-rec-per-page="{$page_size}" data-page="{$page_index}" data-rec-total="{$total_count}" id="myPager"></ul>
+{/block}
+{block name="script"}
+<script>
+$('#myPager').pager({
+	linkCreator: function(page, pager) {
+		return __URL("SHOP_MAIN/member/balance?page="+page);
+	}
+});
+
+function recharge(){
+	$('#myModal').modal();
+}
+
+$('#myModal').on('hidden.zui.modal', function (e) {
+	$('#myModal [name]').val('');
+});
+
+// 充值
+var is_sub = false;
+$("#myModal .save").click(function() {
+	var recharge_money = parseFloat(parseFloat($('#myModal [name="recharge_money"]').val()).toFixed(2));
+
+	if(isNaN(recharge_money) || recharge_money == '' || recharge_money <= 0) { show('请输入正确的充值金额'); return;}
+	if(recharge_money>10000) { show('充值金额不能超出一万'); return;}
+
+	if(is_sub) return;
+	is_sub = true;
+	api("System.Member.createRechargeOrder",{ "recharge_money": recharge_money, "out_trade_no": "{$out_trade_no.data}" }, function (res) {
+		if(res.data > 0){
+			window.location.href = __URL("APP_MAIN/pay/getpayvalue?out_trade_no=" + {$out_trade_no.data});
+		}else{
+			is_sub = false;
+			show("{:lang('member_recharge_failed')}");
+		}
+	}, false);
+})
+</script>
+{/block}

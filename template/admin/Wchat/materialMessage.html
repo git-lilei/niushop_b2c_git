@@ -1,0 +1,121 @@
+{extend name="$base" /}
+{block name="resources"} 
+<style>
+ul.mater{border:1px solid #e7e7eb;border-radius:5px;margin:0;}
+ul.mater li{padding:5px;border-bottom:1px solid #e7e7eb;}
+ul.mater li:first-child{padding:5px;}
+ul.mater li:last-child{border-bottom:0 solid #e7e7eb;}
+.type_name{display: inline-block;background: #00A0DE;width: 50px;text-align: center;color: #fff;padding: 3px 8px;margin-right: 10px;border-radius: 3px;}
+.table-class tr td{vertical-align:middle;}
+.table-class tr td:first-child{text-align:left;}
+.mytable th {padding-left: 0px;}
+.ns-main{margin-top:0px;}
+</style>
+{/block}
+{block name="main"}
+<table class="mytable">
+<tr>
+	<th width="20%" style="text-align: left;">
+		{if condition="!empty($type)"}
+		<button class="btn-common btn-small" style="margin:0 5px 0 0 !important;" onclick="location.href='{:__URL('ADMIN_MAIN/wchat/addmedia?type='.$type)}';">添加{$type_name}消息</button>
+		{/if}
+	</th>
+	<th width="10%">
+		<input type="text" id = 'search_text' placeholder="请输入消息名称" class="input-common"/>
+		<button  onclick="LoadingInfo(1)" value="搜索" class="btn-common">搜索</button>
+	</th>
+</tr>
+</table>
+<table class="table-class">
+	<colgroup>
+		<col style="width: 74%;">
+		<col style="width: 16%;">
+		<col style="width: 10%;">
+	</colgroup>
+	<thead>
+		<tr align="center">
+			<th style="text-align:left;">标题</th>
+			<th>创建时间</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+<input type="hidden" id="type" value="{$type}">
+{/block}
+{block name="script"}
+<script type="text/javascript">
+function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	var type = $("#type").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/wchat/materialmessage')}",
+		data : { "page_index" : page_index, "page_size" :$("#showNumber").val(),"search_text" : search_text, "type" : type },
+		success : function(data) {
+			if (data["data"].length > 0) {
+				$(".table-class tbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					if(data['data'][i]['type'] == 1){
+						var type_name = '文本 ';
+					}else if(data['data'][i]['type'] == 2){
+						var type_name = '单图文 ';
+					}else if(data['data'][i]['type'] == 3){
+						var type_name = '多图文 ';
+					}
+					html += '<tr align="center">';
+					html += '<td style="text-align:left;"><ul class="mater">';
+					html += '';
+					for(var l=0; l<data['data'][i]['item_list'].length; l++){
+						html += '<li><span class="type_name">'+ type_name +' </span><a href="#">' + data['data'][i]['item_list'][l]['title'] + '</a></li>';
+					}
+					html += '';
+					html += '</ul></td>';
+					html += '<td>' + timeStampTurnTime(data["data"][i]["create_time"]) + '</td>';
+					html += '<td><a href="'+__URL('ADMIN_MAIN/wchat/updatemedia?media_id=' + data["data"][i]["media_id"])+'">修改</a>&nbsp;&nbsp; ';
+					html += '<a href="javascript:void(0);" onclick="deleteWeixinMedia(' + data["data"][i]["media_id"] + ')">删除</a></td>';
+					html += '</tr>';
+					$(".table-class tbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="4">暂无符合条件的数据记录</td></tr>';
+				$(".table-class tbody").html(html);
+			}
+
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+
+function deleteWeixinMedia(media_id){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+					$.ajax({
+						type : "post",
+						url : "{:__URL('ADMIN_MAIN/wchat/deleteweixinmedia')}",
+						data : {"media_id" : media_id},
+						success : function(res){
+							if(res>0){
+								showTip("操作成功",'success');
+								location.href = "{:__URL('ADMIN_MAIN/wchat/materialmessage?type='.$type)}";
+							}else{
+								showTip("操作成功",'error');
+							}
+						}
+				})
+			},
+			"取消,#f5f5f5,#666": function() {
+				$(this).dialog('close');
+				return 0;
+			}
+		},
+		contentText:"确定要删除吗",
+	});
+}
+</script>
+{/block}

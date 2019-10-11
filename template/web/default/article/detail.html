@@ -1,0 +1,55 @@
+{extend name="$base" /}
+{block name="resources"}
+<link type="text/css" rel="stylesheet" href="WEB_CSS/article.css">
+{/block}
+{block name="seo"}
+<meta name="keywords" content="{$seo_config.seo_meta},{$web_info['title']}_文章中心,{$info.keyword}" />
+<meta name="description" content="{$seo_config.seo_desc},{$info.title}"/>
+{/block}
+{block name="main"}
+<div class="help">
+	<ol class="breadcrumb">
+	  <li><a href="{:__URL('SHOP_MAIN')}">{:lang('home_page')}</a></li>
+	  <li class="active">{:lang('article_center')}</li>
+	</ol>
+	<div class="category">
+		<h3 class="ns-bg-color">{:lang('article_center')}</h3>
+		<ul>
+			{foreach name="$class_list" id="class_parent"}
+			{if condition="$class_parent['pid'] eq '0'"}
+			<li data-class-id="{$class_parent['class_id']}">
+				<div class="ns-bg-color-gray {if condition="$class_parent['class_id'] eq $class_id"}ns-text-color{/if}">
+					<a href="javascript:;" title="{$class_parent.name}" data-class-id="{$class_parent['class_id']}">{$class_parent.name}</a>
+					<i class="icon-sort-down"></i>
+				</div>
+				<ul class="dis-no">
+				{foreach name="$class_list" id="child"}
+					{if condition="$child['pid'] eq $class_parent['class_id']"}
+					<li data-class-id="{$child['class_id']}">
+						<a href="{:__URL('SHOP_MAIN/article/lists','class_id='.$child['class_id'])}" title="{$child.name}" {if condition="$child['class_id'] eq $class_id"}class="ns-text-color"{/if}>{$child.name}</a>
+					</li>
+					{/if}
+				{/foreach}
+				</ul>
+			</li>
+			{/if}
+			{/foreach}
+		</ul>
+	</div>
+	<div class="detail clearfix">
+		<h3 class="ns-border-color-gray">{$info['title']}</h3>
+		<time>发布时间：{$info.create_time|date="Y-m-d H:i:s",###} &nbsp;&nbsp;&nbsp;&nbsp;{notempty name="$info.author"}作者：{$info.author}{/notempty}</time>
+		<div class="content">{$info['content']}</div>
+		{notempty name="prev_info"}
+		<a href="{:__URL('SHOP_MAIN/article/detail', 'article_id='.$prev_info.article_id)}" class="pull-left text-over">上一篇：{$prev_info.title}</a>
+		{/notempty}
+		{notempty name="next_info"}
+		<a href="{:__URL('SHOP_MAIN/article/detail', 'article_id='.$next_info.article_id)}" class="pull-right text-over">下一篇：{$next_info.title}</a>
+		{/notempty}
+	</div>
+</div>
+<input type="hidden" value="{$class_id}" id="hidden_class_id" />
+{/block}
+{block name="script"}
+<script type="text/javascript" src="WEB_JS/article.js"></script>
+{/block}

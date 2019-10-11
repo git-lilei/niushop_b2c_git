@@ -1,0 +1,63 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/goods_topic.css">
+<link rel="stylesheet" href="WAP_PLUGIN/swiper/css/swiper.min.css"/>
+<script src="WAP_PLUGIN//swiper/js/swiper.min.js"></script>
+{/block}
+{block name="main"}
+<!-- 轮播图 -->
+{php}
+   $plat_adv_list = api("System.Shop.advDetail",['ap_keyword' => 'WAP_TOPIC_SWIPER', 'export_type' => 'data']);
+{/php}
+{notempty name="$plat_adv_list['data']"}
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
+        {foreach name="$plat_adv_list['data']['advs']" item="vo"}
+            <div class="swiper-slide">
+                <a href="{:__URL('APP_MAIN' . $vo['adv_url'])}" style="height:{$plat_adv_list['data']['ap_height']}px;line-height:{$plat_adv_list['data']['ap_height']}px;">
+                    <img src="{:__IMG($vo.adv_image)}" alt="{:lang('carousel_figure')}" class="w100">
+                </a>
+            </div>
+        {/foreach}
+        </div>
+    </div>
+{/notempty}
+{php}
+	$promotionTopic = api('System.Goods.promotionTopic');
+	$topic_adv = $promotionTopic['data']['topic_adv'];
+	$info      = $promotionTopic['data'];
+{/php}
+<div class="topic-list-grid">
+	<div class="blank-div"></div>
+	<div id="topic_list">
+		<div class="tablelist-append selected ns-text-color-hover">
+			<ul>
+				{foreach name="info['data']" item="v"}
+				<li>
+					<a href="{:__URL('APP_MAIN/goods/topicdetail','topic_id='.$v['topic_id'])}"><img src="{:__IMG($v['picture_img'])}" class="topic-img"><span class="topic-name">{$v['topic_name']}</span>
+						<div class="topic-detail ns-black-color-black">
+							{if condition="$v['desc'] != ''"}
+							<span class="topic-desc block">{$v['desc']}</span>
+							{/if}
+							{if condition="$v['introduce'] != ''"}
+								<span class="topic-introduce block">{$v['introduce']}</span>
+							{/if}
+						</div>
+					</a>
+				</li>
+				{/foreach}
+			</ul>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script>
+$(function(){
+	var swiper = new Swiper('.swiper-container', {
+		pagination: '.swiper-pagination',
+	});
+});
+</script>
+{/block}

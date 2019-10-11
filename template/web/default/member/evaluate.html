@@ -1,0 +1,108 @@
+{extend name="$member_base" /}
+{block name="right_main"}
+<link type="text/css" rel="stylesheet" href="WEB_CSS/member_evaluate.css"/>
+{php}
+$params = input();
+$order_no = $params['order_no'] ? $params['order_no'] : '';
+
+$data_list = api("System.Order.evaluate",['page_index'=>$page_index, 'order_no' => $order_no]);
+$data_list = $data_list['data'];
+$goods_evaluationList = $data_list['data'];
+$total_count = $data_list['total_count'];
+{/php}
+<div class="main-right member-evaluate">
+	<div class="main-title">
+		<span>{:lang('commodity_evaluation_drying_list')}</span>
+	</div>
+	<div class="nav-evaluate">
+		<div>
+			<span class="ns-text-color ns-border-color">{:lang('member_pending_evaluation')}</span>
+			<i class="ns-bg-color">{$data_list['total_count']}</i>
+		</div>
+		<div class="search">
+			<input type="text" value="{$order_no}" placeholder="订单编号" class="search-input ns-border-color-gray-shade-10 form-control"/>
+			<button class="btn ns-bg-color-gray ns-border-color-gray-shade-10"></button>
+		</div>
+	</div>
+	<div class="order-box">
+		<div class="order ns-bg-color-gray-fadeout-50">
+			<div class="order-list ns-border-color-gray">
+				<span>订单详细</span>
+			</div>
+			<div><span>评价</span></div>
+		</div>
+		{if condition="empty($goods_evaluationList)"}
+			<div class="no-order ns-text-color-gray">{:lang('member_no_single_sun')}</div>
+		{else}
+		{volist name="goods_evaluationList" id="item"}
+		<div class="order-item-list">
+			<div class="order-number ns-bg-color-gray-fadeout-50">
+				<span>{:lang('member_evaluation_time')}：{$item.addtime | getTimeStampTurnTime}</span>
+				<span class="number">
+					订单号：{$item.order_no}
+				</span>
+				<a class="order-detail" href="{:__URL('SHOP_MAIN/member/orderdetail','order_id='.$item.order_id)}">订单详情</a>
+			</div>
+			<div class="order-detailed">
+				<div>
+					<div class="order-item">
+						<a href="{:__URL('SHOP_MAIN/goods/detail','goods_id='.$item['goods_id'])}" target="_blank">
+							<img class="" src="{:__IMG($item.goods_image)}" title="" width="60" height="60">
+						</a>
+						<a href="{:__URL('SHOP_MAIN/goods/detail','goods_id='.$item['goods_id'])}" class="order-text" target="_blank">{$item.goods_name}</a>
+					</div>
+				</div>
+				<div class="goods-evaluate">
+					<div class="order-core">
+						<span>{:lang('member_score')}：</span>
+						{for start="0" end="5"}
+							{if condition="$item.scores gt $i"}
+							<i class="fa fa-star fa-1x"></i>
+							{else}
+							<i class="fa fa-star-o fa-1x"></i>
+							{/if}
+						{/for}
+					</div>
+					<div>{:lang('goods_commodity_evaluation')}：{$item.content}</div>
+					{notempty name="$item['evaluationImg']"}
+						<div class="evaluate-pic">
+							{volist name="$item['evaluationImg']" id="vo"}
+								<img src="{:__IMG($vo)}"/>
+							{/volist}
+						</div>
+					{/notempty}
+					{if condition="$item.explain_first neq ''"}
+						<div>[{:lang('goods_shopkeeper_replies')}]：{$item.explain_first}</div>
+					{/if}
+					{if condition="$item.again_content neq ''"}
+					<div>{:lang('goods_additional_evaluation')}：{$item.again_content}</div>
+					{/if}
+					{notempty name="$item['againEvaluationImg']"}
+						<div class="evaluate-pic">
+							{volist name="$item['againEvaluationImg']" id="vo"}
+								<img src="{:__IMG($vo)}"/>
+							{/volist}
+						</div>
+					{/notempty}
+					{if condition="$item.again_explain neq ''"}
+					<div>[{:lang('goods_shopkeeper_replies')}]：{$item.again_explain}</div>
+					{/if}
+				</div>
+			</div>
+		</div>
+		{/volist}
+		{/if}
+	</div>
+	<ul class="pager" data-ride="pager" data-elements="prev,nav,next,total_page_text,goto" data-rec-per-page="{$page_size}" data-page="{$page_index}" data-rec-total="{$total_count}" id="myPager"></ul>
+</div>
+{/block}
+{block name="script"}
+<script src="WEB_JS/member_evalute.js"></script>
+<script>
+$('#myPager').pager({
+	linkCreator: function(page, pager) {
+		return __URL("SHOP_MAIN/member/evaluate?page="+page);
+	}
+});
+</script>
+{/block}

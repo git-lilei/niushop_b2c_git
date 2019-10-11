@@ -1,0 +1,117 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" href="WAP_CSS/login.css">
+{/block}
+{block name="head"}{/block}
+{block name="main"}
+{php}
+	$wap_login_info = api("System.Login.loginConfig");
+	$wap_login_info = $wap_login_info['data'];
+	$wap_login_info['login_count'] = 0;
+	if($wap_login_info['login_config']['qq_login_config']['is_use'] == 1) {
+		$wap_login_info['login_count'] += 1;
+	}
+{/php}
+<div class="content">
+	<div class="log-wp">
+	<div class="title ns-text-color-black js-login-type">{if condition="$wap_login_info['login_config']['mobile_config']['is_use'] eq 1"}{:lang('mobile_quick_login')}{else/}{:lang('account_login')}{/if}</div>
+		<div class="log-box">
+			<div id="nk_text1" {if condition="$wap_login_info['login_config']['mobile_config']['is_use'] eq 1"}style="display:none;"{/if}>
+				<div class="log-cont">
+					<label class="log-txt" for="username">
+						<span class="username">{:lang("account_number")}</span>
+						<input type="text" name="username" id="username" placeholder="{:lang("enter_your_account_number")}">
+					</label>
+				</div>
+				<div class="log-cont">
+					<label for="password"><span class="password">{:lang("password")}</span>
+					<input type="password" name="password" id="password" placeholder="{:lang("please_input_password")}">
+					</label>
+				</div>
+				{if condition="$wap_login_info['code_config']['value']['pc'] eq 1"}
+				<div class="log-cont">
+					<label class="login-captcha">
+						<span class="captcha-code">{:lang('验证码')}</span>
+						<input type="text" id="login_captcha" name="captcha" placeholder="{:lang('请输入验证码')}" maxlength="4">
+						<div class="verify">
+							<img class="verifyimg" src="{:__URL('SHOP_MAIN/captcha')}" onclick="this.src='{:__URL('SHOP_MAIN/captcha')}'" alt="captcha">
+						</div>
+					</label>
+				</div>
+				{/if}
+				<button type="button" class="lang-btn primary" onclick="check()">{:lang("login")}</button>
+				<a href="{:__URL('APP_MAIN/login/register')}">
+					<button class="lang-btn ns-border-color ns-text-color register-immediately">{:lang("register_immediately")}</button>
+				</a>
+			</div>
+			<div id="nk_text2" {if condition="$wap_login_info['login_config']['mobile_config']['is_use'] eq 1"}style="display:block;"{/if}>
+				<div class="nk-cont">
+					<label> {:lang("cell_phone_number")}&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="mobile" name="mobile" placeholder="{:lang("please_enter_your_cell_phone_number")}"></label>
+				</div>
+				{if condition="$wap_login_info['code_config']['value']['pc'] eq 1"}
+				<div class="nk-cont">
+					<label> {:lang("member_verification_code")}&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="captcha" name="captcha" placeholder="{:lang("please_enter_verification_code")}">
+					    <div class="verify"><img class="verifyimg" src=" {:__URL('SHOP_MAIN/captcha')}" onclick="this.src='{:__URL('SHOP_MAIN/captcha')}'"  alt="captcha" /></div>
+					</label>
+				</div>
+				{/if}
+				<div class="nk-cont">
+					<label>{:lang("dynamic_code")}&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="sms_captcha" name="sms_captcha" placeholder="{:lang("please_enter_the_dynamic_code")}">
+						<input type="button" id="sendOutCode" class="ns-text-color ns-border-color" onclick="sendOutCode()" value="{:lang("get_dynamic_code")}">
+					</label>
+				</div>
+				<input type="hidden" id="mobile_is_has" value="1">
+				<button class="lang-btn primary" onclick="check_mobile()">{:lang("login")}</button>
+				<a class="lang-btn register-immediately ns-border-color ns-text-color " class="lang-btn"  href="{:__URL('APP_MAIN/login/register')}">{:lang("register_immediately")}</a>
+			</div>
+			<div class="msg cl">
+			    <a href="javascript:;" class="ns-text-color-gray" id="msgback">{:lang('忘记密码？')}</a>
+			    <a href="javascript:;" class="ns-text-color-gray" onclick="loginType(this, 1)" id="account_login">{:lang('账号登录')}</a>
+			    {if condition="$wap_login_info['login_config']['mobile_config']['is_use'] eq 1"}
+			    <a href="javascript:;" class="ns-text-color-gray" onclick="loginType(this, 2)" id="mobile_login">{:lang('手机动态码登录')}</a>
+			    {/if}
+			    <div class="clear"></div>
+			</div>
+			
+			{if condition="$wap_login_info['login_config']['qq_login_config']['is_use'] eq 1"}
+				<img src="WAP_IMG/login/assistant_member.png" class="assistant-member"/>
+				<div class="login-wei">
+					<a href="{:__URL('APP_MAIN/login/oauthlogin?type=QQLOGIN')}">
+						<img src="WAP_IMG/login/qq.png"/>
+					</a>
+				</div>
+			{/if}
+		
+		</div>
+	</div>
+
+	
+	<!-- 找回密码弹窗 -->
+	<div id="mask-layer-login" class="forget-password"></div>
+	<div class="findback" id="layui-layer" type="page" times="100002" contype="string">
+		<a href="{:__URL('APP_MAIN/Login/find','type=1')}"><img src="WAP_IMG/login/phone.png"/><p>{:lang('手机找回')}</p></a>
+		<a href="{:__URL('APP_MAIN/Login/find','type=2')}"><img src="WAP_IMG/login/email.png"/><p>{:lang('邮箱找回')}</p></a>
+	</div>
+</div>
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script>
+var login_pre_url = "{$login_pre_url}";
+var lang_login = {
+	account_cannot_be_empty : "{:lang('account_cannot_be_empty')}",
+	password_cannot_empty : "{:lang('password_cannot_empty')}",
+	verification_code_cannot_be_null : "{:lang('verification_code_cannot_be_null')}",
+	member_enter_correct_phone_format : "{:lang('member_enter_correct_phone_format')}",
+	please_enter_verification_code : "{:lang('please_enter_verification_code')}",
+	current_phone_number_not_registered_yet : "{:lang('current_phone_number_not_registered_yet')}",
+	send_successfully : "{:lang('send_successfully')}",
+	dynamic_error_code : "{:lang('dynamic_error_code')}",
+	get_dynamic_code : "{:lang('get_dynamic_code')}",
+	post_resend : "{:lang('post_resend')}",
+	phone_number_cannot_empty : "{:lang('phone_number_cannot_empty')}",
+	dynamic_code_cannot_be_empty : "{:lang('dynamic_code_cannot_be_empty')}"
+};
+</script>
+<script src="WAP_JS/login.js"></script>
+{/block}

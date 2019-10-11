@@ -1,0 +1,82 @@
+{extend name="$base" /}
+{block name="resources"}
+<style>
+.table-class tbody td a{margin-right:8px;margin-left:0;}
+.ns-main{margin-top: 0;}
+</style>
+{/block}
+{block name="thirdmenu"}
+<nav class="ns-third-menu">
+	<ul>
+		<li class="selected">全部</li>
+		<li data-is-winning="1">中奖的</li>
+		<li data-is-winning="0">未中奖</li>
+	</ul>
+</nav>
+{/block}
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<th width="10%">
+			<input type="text" id = 'search_text' placeholder="请输入会员昵称" class="input-common" />
+			<button class="btn-common"  onclick="searchData()">搜索</button>
+		</th>
+	</tr>
+</table>
+<table class="table-class">
+	<thead>
+		<tr>
+			<th align="left">获奖信息</th>
+			<th>消耗积分</th>
+			<th align="left">参与时间</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+<input type="hidden" value="{$game_id}" id="hidden_game_id"/>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+var is_winning = "";
+$(function(){
+	$(".ns-third-menu ul li").click(function(){
+		$(this).addClass("selected").siblings().removeClass("selected");
+		is_winning = $(this).attr("data-is-winning");
+		searchData();
+	});
+});
+
+function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/promotion/promotionGamesAccessRecords')}",
+		data : { "page_index" : page_index, "page_size" : $("#showNumber").val(), "search_text" : search_text, "is_winning" : is_winning, "game_id" : $("#hidden_game_id").val() },
+		success : function(data) {
+			if (data["data"].length > 0) {
+				$(".table-class tbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					var curr = data['data'][i];
+					html += '<tr>';
+						html += '<td align="left">' + curr.remark + '</td>';
+						html += '<td align="center">' + curr.consumption_integral + '</td>';
+						html += '<td>' + timeStampTurnTime(curr.add_time) + '</td>';
+					html += '</tr>';
+					$(".table-class tbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="9">暂无符合条件的数据记录</td></tr>';
+				$(".table-class tbody").html(html);
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+function searchData(){
+	LoadingInfo(1);
+}
+</script>
+{/block}

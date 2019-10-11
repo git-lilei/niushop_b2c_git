@@ -1,0 +1,163 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/wap_template.css">
+<style>
+.borderclass{font-size: 12px;line-height: 32px;vertical-align: top;letter-spacing: normal;word-spacing: normal;display: inline-block;width: 78%;padding-left: 7px;}
+.set-style dl dd input[type="text"]{font: 12px/20px Arial;color: #777;background-color: #FFF;vertical-align: top;display: inline-block;height:24px;line-height:24px;padding: 4px;border: 1px solid #CCC;outline: 0 none;width: 400px;margin:0;}
+.set-style dl dd textarea{font: 12px/20px Arial;color: #777;background-color: #FFF;vertical-align: top;display: inline-block;height: 60px;padding: 4px;border: solid 1px #CCC;outline: 0 none;width: 400px;margin:0;}
+.set-style dl dd p img{border: medium none;vertical-align: middle;}
+.btn-submit{text-align:center;}
+.classified-display-mode label{display: inline-block;margin:0 10px;}
+.ns-main{margin-top:0;}
+</style>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<!-- <dl>
+		<dt><span style="color:red;margin-right:10px;"></span>用户通知：</dt>
+		<dd class="borderclass">
+			<textarea rows="2" id="notice_message" class="textarea w400 input-common" maxlength="50">{$info.notice_message}</textarea>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否启用用户通知：</dt>
+		<dd class="borderclass">
+			<p>
+				<input id="is_enable" type="checkbox" class="checkbox" {if condition="$info.is_enable==1"} checked="checked"{/if}/>
+			</p>
+		</dd>
+	</dl> -->
+<!-- 	<dl> -->
+<!-- 		<dt>分类显示方式：</dt> -->
+<!-- 		<dd class="borderclass classified-display-mode"> -->
+<!-- 				<label class="radio inline normal"> -->
+<!-- 					<i class="radio-common {if condition="$classified_display_mode==1"}selected{/if}"><input type="radio" name="input-classified-display-mode" value="1"{if condition="$classified_display_mode==1"} checked="checked"{/if}/></i> -->
+<!-- 					<span>缩略图模式</span> -->
+<!-- 				</label> -->
+<!-- 				<label class="radio inline normal"> -->
+<!-- 					<i class="radio-common {if condition="$classified_display_mode==2"}selected{/if}"><input type="radio" name="input-classified-display-mode" value="2"{if condition="$classified_display_mode==2"} checked="checked"{/if}/></i> -->
+<!-- 					<span>列表模式</span> -->
+<!-- 				</label> -->
+<!-- 		</dd> -->
+<!-- 	</dl> -->
+	<dl class="hide">
+		<dt>首页商品分类显示：</dt>
+		<dd class="borderclass">
+			<p>
+				<input id="is_category" type="checkbox" class="checkbox" {if condition="$lists['value']['is_category'] eq 1"}checked="checked"{/if} onchange="chagecategoryblock();"/>
+			</p>
+		</dd>
+	</dl>
+	
+	<dl class="wap-template-box">
+		<dd>
+			<div class="wap-template-list">
+				{foreach name="$template_list" item="template" key="k"}
+				<div class="wap-template-item" data-folder="{$template['folder']}">
+					<div class="wap-template-img"><img alt="" src="__TEMP__/wap/{$template['folder']}/{$template['preview']}"></div>
+					<div class="wap-template-text">
+						<div class="wap-template-name">{$template['theme']}</div>
+						<div class="wap-template-state">
+							<div class="wap-template-introduce">{$template['introduce']}</div>
+							{if condition="$template['folder']==$use_template"}
+							<div class="btn-common-temimg">正在使用</div>
+							{else /}
+							<div class="btn-common-tem">立即使用</div>
+							{/if}
+							<div class="clear"></div>
+						</div>
+					</div>
+				</div>
+				{/foreach}
+			</div>
+		</dd>
+	</dl>
+	
+</div>
+<div id="bottom_div"></div>
+{/block}
+{block name="script"}
+<script>
+$(function() {
+	var width = $(".btn-submit").width();
+	$(window).scroll(function() {
+		var left = $(".ns-main").offset().left;
+		if($(window).height()+$(window).scrollTop()<$("#bottom_div").offset().top){
+			$(".btn-submit").css({
+				'position': 'fixed',
+				'bottom': 0,
+				'left': left,
+				'z-index':10000,
+				'width':width-30,
+				"background-color":"rgba(204,204,204,0.7)",
+				"margin":0,
+				"padding":"0 15px"
+			});
+		}else{
+			$(".btn-submit").removeAttr("style");
+		}
+	});
+});
+
+function chagecategoryblock(){
+	var is_category = 0;
+	if($("#is_category").prop("checked")){
+		is_category = 1;
+	}
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/config/iscategory')}",
+		data : { 'is_category' : is_category },
+		success : function(data) {
+			if (data['code'] > 0) {
+			} else {
+				showTip("提交失败",'error');
+			}
+		}
+	});
+}
+
+/**
+ * 模版切换
+ */
+$(".wap-template-item").click(function(){
+	$.ajax({
+		type : "post",
+		url :  "{:__URL('ADMIN_MAIN/Config/updateTemplateUse')}",
+		data : { 'type' : "wap", 'folder' : $(this).attr("data-folder") },
+		success : function(res){
+			if(res.code>0){
+				showTip("操作成功","success");
+				window.location.reload();
+			}else{
+				showTip("操作失败","error");
+			}
+		}
+	});
+});
+
+function setConfigAjax(){
+	var notice_message = $("#notice_message").val();
+	var is_enable = 0;
+	if($("#is_enable").prop("checked")){
+		is_enable = 1;
+	}
+	var is_category = 0;
+	if($("#is_category").prop("checked")){
+		is_category = 1;
+	}
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/config/updateWapBasicInformation')}",
+		data:{ 'notice_message' : notice_message, 'is_enable' : is_enable},
+		success:function (data) {
+			if (data["code"] > 0) {
+				showTip(data["message"],"success");
+			}else{
+				showTip(data["message"],"error");
+			}
+		}
+	});
+}
+</script>
+{/block}

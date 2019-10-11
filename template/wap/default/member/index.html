@@ -1,0 +1,299 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/member_index.css">
+{/block}
+{block name="head" }{/block}
+{block name="main" }
+{php}
+	$member_detail 	   = api('System.Member.memberInfo');
+	$member_info  	   = $member_detail['data'];
+	
+	// 会员账户信息
+	$member_account = api("System.Member.memberAccount");
+	$member_account = $member_account['data'];
+
+	// 会员等级信息
+	$member_level = api("System.Member.memberLevel", ['level_id' => $member_info['member_level']]);
+	$member_level = $member_level['data'];
+
+    $promoter_info = [];
+    if(addon_is_exit('Nsfx')){
+		$promoter_info = api('Nsfx.Distribution.promoterDetail');
+		$promoter_info = $promoter_info['data'];
+	}
+
+	if(addon_is_exit('NsMemberSign')){
+		$isSign = api("NsMemberSign.MemberSign.isSignIn");
+		$isSign = $isSign['data'];
+	}
+
+	$coupon_count = api("System.Member.couponNum");
+	$coupon_count = $coupon_count['data'];
+
+	$wapEntrance = api("System.Config.wapEntrance");
+	$wapEntrance = $wapEntrance['data'];
+{/php}
+<div class="panel memberhead">
+	<div class="member-head ns-bg-color" style="position: relative;">
+		<div class="member-edit">
+			<img src="WAP_IMG/member/member-icon-edit.png" onclick="location.href='{:__URL('APP_MAIN/member/info')}'">
+		</div>
+		<div class="member-level-entrance">
+			<img src="WAP_IMG/member/member_level.png" onclick="location.href='{:__URL('APP_MAIN/member/level')}'">			
+		</div>
+		<div class="member-head-top">
+			<div class="member-headimg ns-border-color-gray">
+				{if condition="$member_info['user_info']['user_headimg'] eq ''"}
+				<img src="{:__IMG($default_headimg)}" />
+				{else/}
+				<img src="{:__IMG($member_info['user_info']['user_headimg'])}"/>
+			{/if}
+			</div>
+			<div class="member-info">
+				<div class="member-name">{$member_info["user_info"]['nick_name']}</div>
+				{if $member_level['level_name']}
+				<div class="member-level" onclick="location.href='{:__URL('APP_MAIN/member/level')}'">{$member_level['level_name']}</div>
+				{/if}
+			</div>
+			<a href="{:__URL('APP_MAIN/login/qrcode')}">
+				<div class="member-qrcode"><img src="WAP_IMG/member/member-icon-qrcode.png"></div>
+			</a>
+			<div class="clear"></div>
+		</div>
+		<div class="member-account">
+		</div>
+		<div class="member-float">
+			<a href="{:__URL('APP_MAIN/member/balance')}">
+				<div class="member-account-item">
+					<div class="member-account-num ">{$member_account['balance']}</div>
+					<div class="member-account-text">余额</div>
+				</div>
+			</a>
+			<a href="{:__URL('APP_MAIN/member/point')}">
+				<div class="member-account-item">
+					<div class="member-account-num ">{$member_account['point']}</div>
+					<div class="member-account-text">积分</div>
+				</div>
+			</a>
+			<a href="{:__URL('APP_MAIN/member/coupon')}">
+				<div class="member-account-item">
+					<div class="member-account-num ">{$coupon_count}</div>
+					<div class="member-account-text">优惠券</div>
+				</div>
+			</a>
+		</div>
+	</div>
+
+	<div class="member-order top-lef">
+	 	<div class="member-order-head ns-border-color-gray-fadeout-50">
+	 		<a href="{:__URL('APP_MAIN/order/lists')}">
+	 		<div class="ns-text-color-black order-head-left">全部订单</div>
+	 		<div class="order-head-right ns-text-color-gray">查看全部订单<i class="fa fa-angle-right ns-text-color-gray"></i></div>
+	 		</a>
+	 		<div class="clear"></div>
+	 	</div>
+	 	<div class="member-order-list">
+	 		{php}
+				$order_status_num = api("System.Order.orderCount",['order_status' => 0]);
+				$wait_pay = $order_status_num['data'];
+	 		{/php}
+	 		<a href="{:__URL('APP_MAIN/order/lists?status=0')}">
+			 	<div class="member-order-item ns-border-color-gray-fadeout-50">
+			 		{if $wait_pay > 99}
+			 			<div class="order-num ns-bg-color">99+</div>
+					{elseif $wait_pay > 0}
+				 		<div class="order-num ns-bg-color">{$wait_pay}</div>
+					{/if}
+			 		<div class="order-icon"><img src="WAP_IMG/member/order-icon-0.png"></div>
+			 		<div class="order-text">{:lang('member_pending_payment')}</div>
+		 		</div>
+	 		</a>
+	 		
+	 		{php}
+				$order_status_num = api("System.Order.orderCount",['order_status' => 1]);
+				$wait_delivery = $order_status_num['data'];
+	 		{/php}
+	 		<a href="{:__URL('APP_MAIN/order/lists?status=1')}">
+			 	<div class="member-order-item ns-border-color-gray-fadeout-50">
+			 		{if $wait_delivery > 99}
+				 		<div class="order-num ns-bg-color">99+</div>
+			        {elseif $wait_delivery > 0}
+				 		<div class="order-num ns-bg-color">{$wait_delivery}</div>
+			        {/if}
+			 		<div class="order-icon"><img src="WAP_IMG/member/order-icon-1.png"></div>
+			 		<div class="order-text">{:lang('member_shipment_pending')}</div>
+		 		</div>
+	 		</a>
+	 		
+	 		{php}
+				$order_status_num = api("System.Order.orderCount",['order_status' => 2]);
+				$wait_recieved = $order_status_num['data'];
+	 		{/php}
+	 		<a href="{:__URL('APP_MAIN/order/lists?status=2')}">
+			 	<div class="member-order-item ns-border-color-gray-fadeout-50">
+			 		{if $wait_recieved > 99}
+			 		<div class="order-num ns-bg-color">99+</div>
+			        {elseif $wait_recieved > 0}
+			 		<div class="order-num ns-bg-color">{$wait_recieved}</div>
+			        {/if}
+			 		<div class="order-icon"><img src="WAP_IMG/member/order-icon-2.png"></div>
+			 		<div class="order-text">{:lang('member_goods_received')}</div>
+		 		</div>
+	 		</a>
+	 		<a href="{:__URL('APP_MAIN/order/lists?status=3')}">
+			 	<div class="member-order-item ns-border-color-gray-fadeout-50">
+			 		<div class="order-icon"><img src="WAP_IMG/member/order-icon-3.png"></div>
+			 		<div class="order-text">{:lang('member_received_goods')}</div>
+		 		</div>
+	 		</a>
+	 		
+	 		{php}
+				$order_status_num = api("System.Order.orderCount",['order_status' => -1]);
+				$refunding = $order_status_num['data'];
+	 		{/php}
+	 		<a href="{:__URL('APP_MAIN/order/lists?status=-1')}">
+			 	<div class="member-order-item ns-border-color-gray-fadeout-50">
+			 		{if $refunding > 99}
+			 		<div class="order-num ns-bg-color">99+</div>
+			        {elseif $refunding > 0}
+			 		<div class="order-num ns-bg-color">{$refunding}</div>
+			        {/if}
+			 		<div class="order-icon"><img src="WAP_IMG/member/order-icon-4.png"></div>
+			 		<div class="order-text">{:lang('refund_after_sale')}</div>
+		 		</div>
+	 		</a>
+	 		<div class="clear"></div>
+	 	</div>
+	</div>
+	 
+	 {if addon_is_exit('Nsfx') == 1 && !empty($promoter_info)}
+	 <div class="promotion-img clearfix">
+	 	 <div class="tips border">
+	 	 	<a href="{:__URL('APP_MAIN/DistributionShop/usershopgoods')}">
+		 	 	<div class="tips-left">
+		 	 		<p class="left-text">推广商品赢奖励</p>
+		 	 		<span class="">奖品多多</span>
+		 	 	</div>
+		 	 	<div class="p-image saml-img">
+		 	 		<img src="WAP_IMG/member/p_left.png"/>
+		 	 	</div> 
+	 	 	</a>	 		 	 
+	 	 </div>	 	
+	 	 <div class="tips">
+	 	 	<a href="{:__URL('APP_MAIN/DistributionShop/userShopQrcode?source_uid='.$uid)}">
+		 	 	<div class="tips-left">
+		 	 		<p class="right-text">邀请好友共推广</p>
+		 	 		<span>齐心协力拉助力</span>
+		 	 	</div>
+		 	 	<div class="p-image">
+		 	 		<img src="WAP_IMG/member/p_right.png"/>
+		 	 	</div>
+	 	 	</a>
+	 	 </div>	 
+	 </div>
+	 {/if}
+	 
+	 {if addon_is_exit('Nsfx') == 1 }
+	  <div class="member-order">
+	  	{php}
+	  	$user_account = api("System.Distribution.myCommission");
+		$user_account = $user_account['data'];
+		$shopConfig = api("System.Distribution.shopConfig");
+		$shopConfig = $shopConfig['data'];
+	  	{/php}
+	  	{if condition = "$shopConfig.is_distribution_enable == 1"}
+	 	<div class="member-order-head ns-border-color-gray-fadeout-50">
+	 		{if empty($promoter_info)}
+	 		<a href="{:__URL('APP_MAIN/distribution/applyPromoter')}">
+	 		<div class="ns-text-color-black order-head-left">分销中心</div>
+	 		<div class="order-head-right">立即申请<i class="fa fa-angle-right ns-text-color-gray"></i></div>
+	 		</a>
+	 		{else /}
+	 		<a href="{:__URL('APP_MAIN/distribution/index')}">
+	 		<div class="ns-text-color-black order-head-left">分销中心</div>
+	 		<div class="order-head-right"><i class="fa fa-angle-right ns-text-color-gray"></i></div>
+	 		</a>
+	 		{/if}
+	 		<div class="clear"></div>
+	 	</div>	 	
+	 	{/if}
+	 	{if !empty($promoter_info)}
+	 	<div class="member-order-list member-promotion">
+	 		<a href="{:__URL('APP_MAIN/distribution/commissionShop?status=0')}">
+			 	<div class="member-order-item ns-border-color-gray-fadeout-50">
+			 		<div class="order-icon ns-text-color-black">￥{$user_account.commission}</div>
+			 		<div class="order-text">累计佣金</div>
+		 		</div>
+	 		</a>
+	 		<a href="{:__URL('APP_MAIN/distribution/commissionShop?status=0')}">
+			 	<div class="member-order-item ns-border-color-gray-fadeout-50">
+			 		<div class="order-icon ns-text-color-black">￥{$user_account.commission_locked}</div>
+			 		<div class="order-text">待审核</div>
+		 		</div>
+	 		</a>
+	 		<a href="{:__URL('APP_MAIN/distribution/commissionShop?status=0')}">
+			 	<div class="member-order-item ns-border-color-gray-fadeout-50">
+			 		<div class="order-icon ns-text-color-black">￥{$user_account.commission_withdraw}</div>
+			 		<div class="order-text">已提现</div>
+		 		</div>
+	 		</a>
+	 		<div class="clear"></div>
+	 	</div>
+	 	{/if}
+	 </div>
+	 {/if}
+	 
+	<ul class="member-function clearfix" style="background:#fff;margin-top:10px">
+		{notempty name="$wapEntrance"}
+			{foreach name="$wapEntrance" item="vo"}
+				{if $vo.url == '/verification/index'}
+					{php}
+				 		$verification = api("System.Order.checkVerification");
+						$verification = $verification['data'];
+				 	{/php}
+				 	{if $verification}
+				 		<li>
+							<a href="{:__URL('APP_MAIN' . $vo.url)}">
+								<div><img src="{:__IMG($vo.icon)}"/></div>
+								<p class="ns-text-color-black">{$vo.title}</p>
+							</a>
+						</li>
+				 	{/if}
+				{else/}
+					<li>
+						{if is_url($vo.url)}
+							<a href="{$vo.url}">
+						{else/}
+							<a href="{:__URL('APP_MAIN' . $vo.url)}">
+						{/if}
+							<div><img src="{:__IMG($vo.icon)}"/></div>
+							<p class="ns-text-color-black">{$vo.title}</p>
+						</a>
+					</li>
+				{/if}
+			{/foreach}
+		{/notempty}
+	</ul>	 
+</div>
+<div class="ns-copyright">
+    {php}
+        $copyright = api('System.Config.copyRight');
+        $copyright = $copyright['data'];
+    {/php}
+    {if $copyright['is_load'] > 0}
+        {notempty name="$copyright['bottom_info']['copyright_logo']"}
+            <img src="{:__IMG($copyright['bottom_info']['copyright_logo'])}">
+        {else/}
+            <img src="WAP_IMG/logo_copy.png">
+        {/notempty}
+        {notempty name="$copyright['bottom_info']['copyright_companyname']"}
+            <a href="{$copyright['bottom_info']['copyright_link']}" class="ns-text-color-gray">{$copyright['bottom_info']['copyright_companyname']}</a>
+        {else/}
+            <a href="http://www.niushop.com.cn" class="ns-text-color-gray">山西牛酷信息科技有限公司&nbsp;提供技术支持</a>
+        {/notempty}
+    {else/}
+        <img src="WAP_IMG/logo_copy.png">
+        <a href="http://www.niushop.com.cn" class="ns-text-color-gray">山西牛酷信息科技有限公司&nbsp;提供技术支持</a>
+    {/if}
+</div>
+{/block}

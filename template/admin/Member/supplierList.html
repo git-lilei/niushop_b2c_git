@@ -1,0 +1,123 @@
+{extend name="$base" /}
+{block name="resources"}{/block}
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<th width="20%" style="text-align: left;">
+			<button class="btn-common-delete btn-small" onclick="batchDelete()" style="margin:0 5px 0 0 !important;">批量删除</button>
+			<button class="btn-common btn-small" onclick="location.href='{:__URL('ADMIN_MAIN/Member/addsupplier')}';" style="margin:0 5px 0 0 !important;">添加供货商</button>
+		</th>
+		<th width="20%">
+			<input type="text" id = 'search_text' placeholder="输入供货商名称" class="input-common"/>
+			<input type="button" onclick="LoadingInfo(1)" value="搜索" class="btn-common"/>
+		</th>
+	</tr>
+</table>
+<table class="table-class">
+	<colgroup>
+		<col  width="2%">
+		<col  width="17%">
+		<col  width="17%">
+		<col  width="17%">
+		<col  width="17%">
+		<col  width="20%">
+		<col  width="10%">
+	</colgroup>
+	<thead>
+		<tr align="center">
+			<th><i class="checkbox-common"><input type="checkbox" ></i></th>
+			<th align="left">供货商名称</th>
+			<th align="left">联系人</th>
+			<th align="left">联系电话</th>
+			<th align="left">联系地址</th>
+			<th align="left">供货商描述</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/Member/supplierList')}",
+		data : {
+			"page_index" : page_index, "page_size" :  $("#showNumber").val(), 'search_text' : search_text
+		},
+		success : function(data) {
+			if (data["data"].length > 0) {
+				$(".table-class tbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					html += '<tr>';
+					html += '<td style="text-align:center;"><i class="checkbox-common"><input name="sub" type="checkbox" value="'+ data["data"][i]["supplier_id"]+'"></i></td>';
+					html += '<td align="left">'+ data["data"][i]["supplier_name"]+'</td>';
+					html += '<td align="left">'+ data["data"][i]["linkman_name"]+'</td>';
+					html += '<td>'+ data["data"][i]["linkman_tel"]+'</td>';
+					html += '<td align="left">'+ data["data"][i]["linkman_address"]+'</td>';
+					html += '<td align="left">' + data['data'][i]['desc'] + '</td>';
+					html += '<td align="center"> <a href="'+__URL('ADMIN_MAIN/Member/updatesupplier?supplier_id='+ data['data'][i]['supplier_id'])+'">修改</a>';
+					html += '&nbsp;&nbsp;&nbsp;<a href="javascript:deleteSupplier('+data['data'][i]['supplier_id']+');">删除</a></td>';
+					html += '</tr>';
+					$(".table-class tbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="7">暂无符合条件的数据记录</td></tr>';
+				$(".table-class tbody").html(html);
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+function deleteSupplier(supplier_id){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$.ajax({
+					type : "post",
+					url : "{:__URL('ADMIN_MAIN/member/deleteSupplier')}",
+					data : {
+						'supplier_id' : supplier_id.toString()
+					},
+					success : function(data) {
+						if (data['code'] > 0) {
+							showTip(data['message'],"success");
+							location.href = "{:__URL('ADMIN_MAIN/member/supplierlist')}";
+						} else if(data['code'] == -1){
+							showTip('当前供货商存在供货商品，不能被删除！',"error");
+						}else{
+							showTip(data['message'],"error");
+						}
+					}
+				});
+				$(this).dialog('close');
+			},
+			"取消,#f5f5f5,#666": function() {
+				$(this).dialog('close');
+			},
+		},
+		contentText:"确定要删除该供货商吗？",
+	});
+}
+
+//批量删除
+function batchDelete() {
+	var uid= [];
+	$(".table-class input[type='checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			uid.push($(this).val());
+		}
+	});
+	if(uid.length ==0){
+		showTip("请选择需要操作的记录","warning");
+		return false;
+	}
+	deleteSupplier(uid);
+}
+</script>
+{/block}

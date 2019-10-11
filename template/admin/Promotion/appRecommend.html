@@ -1,0 +1,28 @@
+{extend name="admin/base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/promotion_block.css">
+{/block}
+{block name="main"}
+<div class="set-style">
+	<h4 class="first"><span></span>应用推荐</h4>
+	<div class="flex-wrap">
+		{notempty name="app_recommend"}
+			{foreach name="app_recommend" item="item"}
+			<a class="block-diy" title="{$item['title']}" href = '{:__URL('__URL__/'.$item["name"].'/ADMIN_MODULE/'.$item["index"])}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="__ROOT__/{$item['ico']}" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">{$item['title']}</p>
+					<p class="diy-desc">{$item['description']}</p>
+				</div>
+			</div>
+			</a>
+			{/foreach}
+		{else/}
+		<p class="empty">当前未安装插件</p>
+		{/notempty}
+	</div>
+</div>
+{/block}

@@ -1,0 +1,14 @@
+.member-main{background: #fff; overflow: hidden; margin-top: 20px; padding: 20px;font-size:12px;}
+.withdrawal-record{margin-bottom: 0; width: 100%;}
+table tr th.table-tr-th{border-left: 1px solid;}
+table tr th{border-bottom: 1px solid; border-top: 1px solid; height: 35px; text-align: center; font-style: normal; font-weight: normal;}
+table tbody tr td{overflow: hidden; padding: 8px 5px; border:solid 1px; border-top: none;}
+table tbody td div.goods-desc{clear: both; padding-left: 5px; padding-top: 5px; padding-bottom: 5px; text-align: center; min-height: 60px; border: 0; position: relative; z-index: 1;}
+table tbody td .line-h{line-height: 50px;}
+table tbody td .padd-line{padding-left: 0; line-height: 50px;}
+table td .goods-desc .info-lang1{border: 1px solid; padding: 3px 8px; line-height: 35px;}
+table td .goods-desc .info-lang2{border: 1px solid; padding: 3px 8px; line-height: 45px;}
+table tbody .goods-desc .pic{border: 1px solid; margin-right: 10px; float: left; height: 50px; width: 50px; position: absolute; left: 5px; top: 5px;}
+table tbody .goods-desc .pic img{height: 50px; width: 50px;}
+table tbody .goods-desc .goods-name{padding-left: 60px; height: 80px; overflow: hidden; text-align: left;width:200px;display: -webkit-box; word-break: break-all; -webkit-box-orient: vertical; -webkit-line-clamp: 4;}
+.align-center-img{display: block;margin: auto auto 10px;max-width: 100%;vertical-align: middle;width: 70px;}

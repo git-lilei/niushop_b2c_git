@@ -1,0 +1,35 @@
+@CHARSET "UTF-8";
+.ns-main{position: relative; width: initial; height: 475px;}
+.user-head-bg{position: relative;}
+.user-head-bg::after{display: table; content: ""; clear: both;}
+.logo-box{float: left; width: 350px; height: 90px; line-height: 90px; margin: 10px 0;}
+.logo-box > a{display: inline-block; width: 160px; height: 90px; overflow: hidden; line-height: 90px;}
+.logo-box a > img{border: none;}
+.logo-box span{font-size: 23px; vertical-align: text-bottom;}
+.reg{position: absolute; right: 0; bottom: 0; margin: 10px 0;}
+.login-form{position: absolute; top: 0; width: 350px; height: 400px; margin-top: 20px; background-color: #fff; margin-left: 850px;}
+.default-banner{position: absolute; top: 60px; width: 350px; height: 400px; margin-top: 10px; margin-left: 400px;}
+.carousel{width: 100%;}
+.carousel, .carousel-inner, .carousel-inner .item > img{height: 475px; margin-left: 50%; transform: translateX(-50%);}
+.form-head {height: 50px; padding: 10px 20px; border-bottom: 1px solid #f4f4f4; font-size: 20px; font-weight: bold;display: flex;}
+.form-head .tit{ flex: 1;text-align: center;font-size: 18px;line-height: 30px;cursor: pointer;}
+.form-head .tit:nth-child(2){border-left: 1px solid #f4f4f4}
+.type-box{margin: 20px 20px;}
+.type-box .has-icon-left > .verification-code{padding-left: 8px;}
+.form-control{height: 38px;box-shadow: unset;}
+.input-control{margin-bottom: 20px;}
+.input-control-icon-left{margin-top: 5px;}
+.input-control-label-left, .input-control-label-right{width: 100px; margin-top: 3px;}
+.send-code {position: relative;}
+.send-code .btn {position: absolute;width: 130px;top: 1px;right: 1px;margin-top: 0;border-width: 0 0 0 1px;padding-top: 4px;height: 36px;
+    letter-spacing: 0;font-size: 14px;}
+.btn{width: 304px; margin-top: 15px; color: #fff; font-size: 18px; letter-spacing: 10px;}
+.forget-password{float: right; text-align: left;}
+.coagent{position: absolute; bottom: 0; left: 0; width: 100%; padding: 0 20px; border-top: 1px solid; line-height: 50px;}
+.coagent li{float: right;}
+.coagent .extra-r{float: left;}
+.coagent .extra-r b{display: inline-block; width: 16px; height: 18px; overflow: hidden; background: url("../img/login/arrow.png") -104px -74px no-repeat; vertical-align: sub; margin-left: 8px;}
+.coagent li a{display: inline-block; position: relative; padding-left: 24px;}
+.coagent li a b{width: 19px; height: 18px; display: block; background: url(../img/login/login_tool.png) no-repeat; margin: 0 auto; position: absolute; float: left; left: 0; top: 16px;}
+.coagent li a b.weixin-icon{background-position: -20px 0;}
+.coagent li .line{padding: 0 10px;}

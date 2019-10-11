@@ -1,0 +1,147 @@
+{extend name="$base" /}
+{block name="resources"}
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<script src="ADMIN_JS/material_managedialog.js"></script>
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<style>
+label {float:left;text-align: left;font-size: 12px;padding:0 10px;overflow:hidden;color:#666;font-weight: normal;line-height: 32px;margin-bottom:0}
+label input[type="radio"]{margin: 0 5px 0 0;} 
+</style>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt><span class="color-red">*</span>名称：</dt>
+		<dd>
+			<input id="link_title" type="text" value="{$link_info.link_title}" class="input-common" />
+			<p class="error">请输入名称</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>图片：</dt>
+		<dd>
+			<div class="upload-btn-common">
+				<div>
+					<input class="input-file" name="file_upload" id="uploadLinkPic" type="file" onchange="imgUpload(this);" title="上传">
+					<input type="hidden" id="link_pic" value="{$link_info.link_pic}">
+				</div>
+				
+				<input type="text" id="text_link_pic" class="input-common" readonly="readonly" value="{$link_info.link_pic}">
+				<em>上传</em>
+				<img id="preview_link_pic" src="__STATIC__/blue/img/upload-common-select.png" data-src="{:__IMG($link_info.link_pic)}" data-html="true" data-container="body" data-placement="top" data-trigger="manual" data-original-title="" title="">
+			</div>
+			<p class="hint">
+				建议使用宽<i class="important-note">100</i>像素-<i class="important-note">高100</i>像素内的<i class="important-note">GIF</i>或<i class="important-note">PNG</i>透明图片</span>
+			</p>
+			<p class="error">请上传图片</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否新窗口打开：</dt>
+		<dd>
+			<p>
+				<input id="is_blank" type="checkbox" {if condition='$link_info.is_blank eq 1'}checked{/if} class="checkbox"/>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否显示：</dt>
+		<dd>
+			<p>
+				<input id="is_show" type="checkbox" {if condition='$link_info.is_show eq 1'}checked{/if} class="checkbox"/>
+			</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>链接地址：</dt>
+		<dd>
+			<p>
+				<input id="link_url" type="text" value="{$link_info.link_url}" class="input-common long" />
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>排序：</dt>
+		<dd>
+			<p>
+				<input id="link_sort" type="number" value="{$link_info.link_sort}" class="input-common harf" />
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="setConfigAjax();">保存</button>
+			<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);" >返回</button>
+		</dd>
+	</dl>
+</div>
+<input type="hidden" value="{$link_info.link_id}" id="link_id"/>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script>
+//图片上传
+function imgUpload(event) {
+	var fileid = $(event).attr("id");
+	var id = $(event).next().attr("id");
+	var data = { 'file_path' : "config" };
+	uploadFile({
+		url: __URL(ADMINMAIN + '/config/uploadimage'),
+		fileId: fileid,
+		data : data,
+		callBack: function (res) {
+			if(res.code){
+				$("#" + id).val(res.data.path);
+				$("#text_" + id).val(res.data.path);
+				$("#preview_"+ id).attr("data-src",__IMG(res.data.path));
+				showTip(res.message,"success");
+			}else{
+				showTip(res.message,"error");
+			}
+		}
+	});
+}
+function setConfigAjax() {
+	var link_id = $("#link_id").val();
+	var link_title = $("#link_title").val();
+	var link_url = $("#link_url").val();
+	var link_pic = $("#link_pic").val();
+	var link_sort = $("#link_sort").val();
+	var is_blank = $("#is_blank").prop('checked') ? 1 : 0 ;
+	var is_show = $("#is_show").prop('checked') ? 1 : 0 ;
+	if(link_title.length == 0){
+		$("#link_title").next(".error").show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(link_url.indexOf("http")==-1){
+		showTip("链接地址必须以http或https开头",'error');
+		return false;
+	}
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/config/updatelink')}",
+		data : {
+			'link_id' : link_id,
+			'link_title' : link_title,
+			'link_url' : link_url,
+			'link_pic' : link_pic,
+			'link_sort' : link_sort,
+			'is_blank' : is_blank,
+			'is_show' : is_show
+		},
+		success : function(data) {
+			if (data["code"] > 0) {
+				showTip(data["message"],'success');
+				window.location.href = "{:__URL('ADMIN_MAIN/config/linklist')}";
+			} else {
+				showTip(data["message"],'error');
+			}
+		}
+	});
+}
+</script>
+{/block}

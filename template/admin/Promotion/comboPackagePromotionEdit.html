@@ -1,0 +1,198 @@
+{extend name="$base" /}
+{block name="resources"}
+<style>
+.label-inline-block{display: inline-block;margin:0 15px 0 0;vertical-align: middle;}
+.set-style dl dd.goods-list{margin:0;line-height: 30px;width: 100%;}
+.combo-package-mask-layer{position: fixed;width:100%;background: rgba(0,0,0,0.7);height:100%;left:0;z-index:3000;top:0;display: none;}
+.goods-list-mask-layer{position: fixed;width: 800px;top: 20%;z-index: 3000;left: 50%;background: #ffffff;padding:10px;border-radius: 5px;margin-left:-410px;display: none;}
+.goods-list-mask-layer table{width:100%;}
+.table-class tr th{padding:5px;}
+.table-class tr td{text-align: center;}
+.ns-main>#turn-ul{display:none !important;}
+.ini{color: #777;margin-left: 10px;font-size: 12px;}
+i.fa-times:hover{cursor: pointer;}
+</style>
+{/block}
+{block name="alert_info"}
+<p>只有实物商品才能参与组合套餐活动！</p>
+<p>商品原价与节省价仅作为参考，不参与实际计算！</p>
+<p>商品价格取得是商品sku价格中的最低价格！参与套餐售卖的的商品sku价格不要相差太大。</p>
+<p style="color: red;margin:0;">注：在组合商品发布之后，切勿修改商品价格。</p>
+{/block}
+{block name="main"}
+<div class="space-10"></div>
+<div class="set-style">
+	<dl>
+		<dt>组合套餐名称：</dt>
+		<dd><input type="text" id="combo_package_name" class="input-common" maxlength="90" value="{$info.combo_package_name}">
+			<p class="error">请输入组合套餐名称</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>组合套餐价格：</dt>
+		<dd><input type="number" id="combo_package_price" class="input-common harf" value="{$info.combo_package_price}"><em class="unit">元</em>
+			<p class="error">请输入组合套餐价格</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>原价：</dt>
+		<dd><span id="original_price">{if condition="$info['original_price'] > 0"}{$info.original_price}{else /}0.00{/if}</span>元</dd>
+	</dl>
+	<dl>
+		<dt>节省价：</dt>
+		<dd><span id="save_the_price">{if condition="$info['save_the_price'] > 0"}{$info.save_the_price}{else /}0.00{/if}</span>元</dd>
+	</dl>
+	<dl>
+		<dt>是否上架：</dt>
+		<dd>
+			<p>
+				<input id="is_shelves" type="checkbox"  class="checkbox"  {if condition="$info['is_shelves'] eq 1"}checked{/if}/>
+			</p>
+			<!-- {if condition="$id > 0"}
+			<i class="radio-common {if condition="$info['is_shelves'] eq 1"}selected{/if}">
+				<input type="radio" name="status" class="input-common" {if condition="$info['is_shelves'] eq 1"}checked="checked"{/if} id="shelves_up" value="1"/>
+			</i>
+			<label class="label-inline-block" for="shelves_up" >上架</label>
+			<i class="radio-common">
+				<input type="radio" name="status" class="input-common" id="shelver_down" value="0"  {if condition="$info['is_shelves'] eq 0"}checked="checked"{/if}/>
+			</i>
+			<label class="label-inline-block" for="shelver_down">下架</label>
+			{else/}
+			<i class="radio-common selected">
+				<input type="radio" name="status" class="input-common" checked="checked" id="shelves_up" value="1"/>
+			</i>
+			<label class="label-inline-block" for="shelves_up" >上架</label>
+			<i class="radio-common">
+				<input type="radio" name="status" class="input-common" id="shelver_down" value="0" />
+			</i>
+			<label class="label-inline-block" for="shelver_down">下架</label>
+			{/if} -->
+		</dd>
+	</dl>
+	<!-- 所有决定商品弹框内容的条件和存放商品id的隐藏域 -->
+	<span id="goods-condition">
+		<input type="hidden" name="type" value="2"/>
+		<input type="hidden" name="stock" value="1"/>
+		<input type="hidden" name="goods_type" value="1"/>
+		<input type="hidden" name="is_have_sku" value="1"/>
+		<input type="hidden" name="state" value="1"/>
+		<input type="hidden" id="goods_id_array" value="{$info.goods_id_array}">
+		<input type="hidden" id="range_type" value="0">
+		<input type="hidden" id="is_show_select" value="0">
+		<input type="hidden" id="action" value="package">
+	</span>
+	{include file="admin/Promotion/goodsSelectDialog" /}
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="save();">保存</button>
+			<button class="btn-common btn-big" onclick="click_reset();">重置</button>
+		</dd>
+	</dl>
+</div>
+
+<script>
+//价格
+$("#combo_package_price").change(function(){
+	var price = parseFloat(parseFloat($(this).val()).toFixed(2));
+	var original_price = parseFloat(parseFloat($("#original_price").text()).toFixed(2)); //原价
+	if(price < 0){ 
+		price = 0; 
+	}else if(price > original_price){
+		price = original_price;
+	}
+	$(this).val(price);
+	calculate_original_price();
+});
+
+//重置
+function click_reset(){
+	BatchSend = Array();
+	$("#goods_id_array").val("");
+	$(".goods-list .table-class tbody").html("");
+	calculate_original_price();
+}
+
+var is_click = false;
+function save(){
+	var combo_package_name = $("#combo_package_name").val();
+	var combo_package_price = $("#combo_package_price").val();
+	var goods_id_array = $("#goods_id_array").val();
+	var is_shelves = $("#is_shelves").prop('checked') ? 1 : 0 ;
+	var original_price = $("#original_price").text();
+	var save_the_price = $("#save_the_price").text();
+	
+	if(vertify(combo_package_name, combo_package_price)){
+		if(is_click){return false;}
+		is_click = true;
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/promotion/addOrEditComboPackage')}",
+			data : {
+				"goods_id_array" : goods_id_array,
+				"combo_package_name" : combo_package_name,
+				"combo_package_price" : combo_package_price,
+				"is_shelves" : is_shelves,
+				"id" : "{$id}",
+				"original_price" : original_price,
+				"save_the_price" : save_the_price
+			},
+			success : function(data) {
+				if (data["code"] > 0) {
+					is_click = false;
+					showMessage("success","保存成功","{:__URL('ADMIN_MAIN/promotion/comboPackagePromotionList')}")
+				}else{
+					showMessage("error", data["message"]);
+				}
+			}
+		})
+	}
+}
+//验证
+function vertify(combo_package_name, combo_package_price){
+	
+	if(combo_package_name.length == 0){
+		$("#combo_package_name").focus().next(".error").show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	
+	if(combo_package_price.length == 0){
+		$("#combo_package_price").focus().next(".error").show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	
+	if(BatchSend.length < 2){
+		$(".js-select-goods").find(".error").html('组合套餐商品不能少于两种').show();
+		return false;
+	}else if(BatchSend.length > 6){
+		$(".js-select-goods").find(".error").html('组合套餐商品不能多于六种').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	
+	return true;
+}
+
+function calculate_original_price(){
+	var original_price = 0;
+	$(".goods-list .table-class tbody tr td.goods_price").each(function(i,e){
+		var price = parseFloat($(e).text());
+		original_price += price;
+	})
+	var combo_package_price = parseFloat($("#combo_package_price").val());
+	$("#original_price").text(original_price.toFixed(2)); //原价
+	if(combo_package_price > 0){
+		if(combo_package_price > original_price){
+			combo_package_price = original_price;
+			$("#combo_package_price").val(combo_package_price);
+		}
+		$("#save_the_price").text((original_price - combo_package_price).toFixed(2)); //节省价
+	}
+}
+</script>
+{/block}

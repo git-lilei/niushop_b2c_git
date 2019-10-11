@@ -1,0 +1,122 @@
+{extend name="$member_base" /}
+{block name="right_main"}
+<link type="text/css" rel="stylesheet" href="WEB_CSS/member_refund.css" />
+{php}
+$list = api("System.Order.refund",['page_index'=>$page_index]);
+$list = $list['data'];
+$total_count = $list['total_count'];
+{/php}
+<div class="member-main">
+	<div class="main-top">
+		<h3 class="title">{:lang('list_of_refund_return_repair_order')}</h3>
+	</div>
+	<table class="withdrawal-record">
+		<colgroup>
+            <col width="25%">
+            <col width="20%">
+            <col width="10%">
+            <col width="10%">
+            <col width="15%">
+            <col width="10%">
+            <col width="10%">
+        </colgroup>
+		<thead>
+			<tr>
+				<th width="25%" class="table-tr-th ns-border-color-gray ns-bg-color-gray-fadeout-50">{:lang('baby')}</th>
+				<th width="20%" class="ns-border-color-gray ns-bg-color-gray-fadeout-50">{:lang('member_attribute')}</th>
+				<th width="10%" class="ns-border-color-gray ns-bg-color-gray-fadeout-50">{:lang('member_unit_price')}</th>
+				<th width="10%" class="ns-border-color-gray ns-bg-color-gray-fadeout-50">{:lang('goods_number')}</th>
+				<th width="15%" class="ns-border-color-gray ns-bg-color-gray-fadeout-50">{:lang('member_customer_service')}</th>
+				<th width="10%" class="ns-border-color-gray ns-bg-color-gray-fadeout-50">{:lang('member_refund_amount')}</th>
+				<th width="10%" class="ns-border-color-gray ns-bg-color-gray-fadeout-50">{:lang('member_refund_status')}</th>
+			</tr>
+		</thead>
+		<tbody>
+		{if !empty($list['data'])}
+		{volist name="$list['data']" id="order"}
+			<tr>
+				<td colspan="7" class="ns-border-color-gray">
+					<span> {:lang('member_order_number')}：<span>{$order.order_no}</span></span>
+					<span>&nbsp;&nbsp;{:lang('member_closing_time')}：<span>{$order.create_time | getTimeStampTurnTime}</span></span>
+					<span>&nbsp;&nbsp;{$order.shop_name}</span>
+				</td>
+			</tr>
+			{volist name="order['order_item_list']" id="order_item" key="k"}
+			<tr>
+				<td align="center" class="ns-border-color-gray">
+					<div class="goods-desc">
+						<a class="pic ns-border-color-gray" href="{:__URL('SHOP_MAIN/goods/detail','goods_id='.$order_item['goods_id'])}" title="{:lang('member_see')}{$order_item.goods_name}{:lang('member_commodity_details')}" target="_blank">
+							<img src="{:__IMG($order_item['picture']['pic_cover_micro'] )}" width="50" height="50">
+						</a>
+						<div class="goods-name">
+							<a href="{:__URL('SHOP_MAIN/goods/detail','goods_id='.$order_item['goods_id'])}" title="{:lang('member_see')}{$order_item.goods_name}{:lang('member_commodity_details')}" target="_blank">{$order_item.goods_name}</a>
+						</div>
+					</div>
+				</td>
+				<td align="center" class="ns-border-color-gray">
+					<div class="goods-desc line-h">{$order_item.sku_name}</div>
+				</td>
+				<td align="center" class="ns-border-color-gray">
+					<div class="goods-desc padd-line">￥{$order_item.price}</div>
+				</td>
+				<td align="center" class="ns-border-color-gray">
+					<div class="goods-desc padd-line">{$order_item.num}</div>
+				</td>
+				<td align="center" valign="middle" class="ns-border-color-gray">
+					<div class="goods-desc">
+						{if condition="$order.is_refund eq 1 AND $order_item.refund_status eq 0"}
+						<div>
+							<a href="{:__URL('SHOP_MAIN/member/refunddetail','order_goods_id='.$order_item['order_goods_id'])}" class="ns-text-color">{:lang("list_of_refund_return")}</a>
+						</div>
+						{elseif condition="$order.is_refund eq 1"}
+						<div>
+							<a href="{:__URL('SHOP_MAIN/member/refunddetail','order_goods_id='.$order_item['order_goods_id'])}" class="info-lang1 ns-border-color ns-text-color">{:lang('member_view_refund')}</a>
+						</div>
+						<div>
+							<a href="javascript:;" onclick="if(confirm('确定取消当前退款?'))cancelDetail({$order.order_id},{$order_item.order_goods_id})" class="info-lang2 ns-border-color ns-text-color">{:lang('member_cancellation_refund')}</a>
+						</div>
+						{/if}
+					</div>
+				</td>
+				<td align="center" class="ns-border-color-gray">
+					<p>
+						<strong>￥{$order_item.refund_require_money}</strong>
+					</p>
+				</td>
+				{if condition="$k eq 1"}
+				<td rowspan="{$order.order_item_list|count}" align="center" class="ns-border-color-gray">
+					<div>{$order.status_name}</div>
+					<a href="{:__URL('SHOP_MAIN/member/orderdetail','order_id='.$order['order_id'])}">{:lang("member_order_details")}</a>
+				</td>
+				{/if}
+			</tr>
+			{/volist}
+		{/volist}
+		{else/}
+			<tr>
+				<td colspan="7" class="align-center ns-border-color-gray">
+					<img src="WEB_IMG/member/no_order.png" class="align-center-img"/>
+					<span>{:lang('member_no_order_yet')}</span>
+					<span>{:lang('member_go_and_see')}</span>
+					<span><a href="{:__URL('SHOP_MAIN/goods/lists')}" class="ns-text-color">{:lang('member_look_around')}</a></span>
+				</td>
+			</tr>
+		{/if}
+		
+		</tbody>
+	</table>
+	{if condition="$total_count > 0"}
+		<ul class="pager" data-ride="pager" data-elements="prev,nav,next,total_page_text,goto" data-rec-per-page="{$page_size}" data-page="{$page_index}" data-rec-total="{$total_count}" id="myPager"></ul>
+	{/if}
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript" src="WEB_JS/member_refund.js"></script>
+<script type="text/javascript">
+$('#myPager').pager({
+	linkCreator: function(page, pager) {
+		return __URL("SHOP_MAIN/member/refund?page="+page);
+	}
+});
+</script>
+{/block}

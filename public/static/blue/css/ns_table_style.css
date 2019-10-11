@@ -1,0 +1,45 @@
+@CHARSET "UTF-8";
+/* 新样式-table */
+.table-class {
+	width: 100%;
+	background-color: #FFF;
+	max-width: 100%;
+	max-width: -webkit-calc(100% -   1px); /*对应Chrome和Safari浏览器*/
+	max-width: -moz-calc(100% -   1px); /*对应FireFox浏览器*/
+	max-width: calc(100% -   1px);
+}
+
+.table-class tr th {
+	padding: 6px 6px;
+	border-top: 1px solid #e6e9f0;
+	border-bottom: 1px solid #e6e9f0;
+	background: #f5f7fa;
+	font-weight: normal;
+	font-size: 14px;
+}
+
+.table-class tr th:first-child,.table-class tr td:first-child {
+	border-left: 1px solid #E1E6F0;
+}
+
+.table-class tr th:last-child,.table-class tr td:last-child {
+	border-right: 1px solid #E1E6F0;
+}
+
+.table-class tr td {
+	border-bottom: 1px solid #e5e5e5;
+	padding: 8px 6px;
+	font-size: 14px;
+}
+
+.table-class tbody td a {
+	margin-left: 8px;
+	 
+}
+
+/*公共排序样式*/
+.input-common-sort {
+	text-align: center !important;
+	width: 30px !important;
+	height: 20px !important;
+}

@@ -1,0 +1,56 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/member_balance.css">
+{/block}
+{block name="main"}
+<div class="member-balance">
+	<div class="account-box ns-border-color">
+	{php}
+		$member_account = api("System.Member.memberAccount");
+		$member_account = $member_account['data'];
+        $sum =  $member_account['balance'];
+
+        // 提现设置
+		$withdraw_config = api("System.Config.balanceWithdraw");
+		$withdraw_config = $withdraw_config['data'];
+	{/php}
+		<p class="balance">{$sum}</p>
+		<p class="style">{:lang('member_balance')}</p>
+		<a href="{:__URL('APP_MAIN/member/recharge')}" class="account-title ns-border-color ns-bg-color">{:lang('recharge')}</a>
+		{eq name="$withdraw_config['is_use']" value="1"}
+		<div class="account-option">
+			<ul>
+				<li class="account-option-left ns-border-color"><a href="{:__URL('APP_MAIN/member/withdrawal')}">{:lang('member_cash_register')}</a></li>
+				<li class="account-option-right ns-border-color"><a href="{:__URL('APP_MAIN/member/applywithdrawal')}">{:lang('member_balance_withdrawal')}</a></li>
+			</ul>
+		</div>
+		{/eq}
+	</div>
+	{php}
+		$balances = api("System.Member.accountRecordsList", ['page_index'=>1, 'page_size' => 0, 'account_type' => 2]);
+		$balances = $balances['data'];
+	{/php}
+	{if condition="count($balances.data) neq 0 "}
+	<table>
+		{volist name="balances.data" id="vo"}
+		<tr class="ns-border-color-gray">
+			<td>
+				<span class="pull-left text16">{$vo['type_name']}</span>
+				<span class="pull-right ns-text-color">{$vo['number']}</span>
+			</td>
+			<td class="ns-text-color-gray">
+				<span class="pull-left">{$vo['text']}</span>
+				<span class="pull-right">{$vo['create_time'] | getTimeStampTurnTime}</span>
+			</td>
+		</tr>
+		{/volist}
+	</table>
+	{else/}
+	<div class="empty">
+		<i></i>
+		<span class="ns-text-color-gray">{:lang('you_don_not_have_a_balance_record_yet')}！</span>
+	</div>
+	{/if}
+</div>
+{/block}
+{block name="footer"}{/block}

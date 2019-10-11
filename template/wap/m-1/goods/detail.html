@@ -1,0 +1,717 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" href="WAP_PLUGIN/swiper/css/swiper.min.css"/>
+<script src="WAP_PLUGIN/swiper/js/swiper.min.js"></script>
+<link href="__STATIC__/video/css/video-js.min.css" rel="stylesheet" type="text/css">
+<script src="__STATIC__/video/js/video.min.js"></script>
+<!--图片放大滑动插件-->
+<script type="text/javascript" src="WAP_PLUGIN/touchslider.js"></script>
+<link rel="stylesheet" href="WAP_CSS/goods_detail.css"/>
+{/block}
+{block name="seo"}
+<meta name="keywords" content="{$seo_config.seo_meta},{$web_info['title']},{$data['goods_detail']['goods_name']}_{$data['goods_detail']['sku_name']}" />
+<meta name="description" content="{$seo_config.seo_desc},{$data['goods_detail']['introduction']}"/>
+{/block}
+{block name="head"}{/block}
+{block name="goods_data"}
+<input type="hidden" id="hidden_order_type" value="1">
+{if condition="$goods_detail['point_exchange_type'] == 1 || ($goods_detail['point_exchange_type'] == 2 && $from == 'point')|| $goods_detail['point_exchange_type'] == 3"}
+<input type="hidden" id="hidden_promotion_type" value="4" />
+{else/}
+<input type="hidden" id="hidden_promotion_type" value="0" />
+{/if}
+{/block}
+{block name="goods_head"}
+<article class="product">
+	<div class="product-top-bar">
+		<div class="top-bar-flex">
+			
+			<div class="left-btn">
+				<a href="{:__URL('APP_MAIN/index/index')}" class="back-link">
+					<svg t="1533609583435" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1035" xmlns:xlink="http://www.w3.org/1999/xlink">
+						<path d="M369.728 512l384.768-384.704a48.64 48.64 0 0 0 0.896-68.8 48.64 48.64 0 0 0-68.736 0.96L269.44 476.736a48.704 48.704 0 0 0-11.136 17.344c-1.024 2.304-1.024 4.736-1.472 7.04-0.896 3.648-2.048 7.168-2.048 10.88 0 3.712 1.152 7.232 1.984 10.88 0.512 2.368 0.512 4.8 1.472 7.04a48.704 48.704 0 0 0 11.136 17.344l417.216 417.28a48.576 48.576 0 0 0 68.736 0.96 48.576 48.576 0 0 0-0.896-68.736L369.728 512z" p-id="1036"></path>
+					</svg>
+					<span>{:lang('返回')}</span>
+				</a>
+			</div>
+			
+			<ul class="header-nav">
+				<li data-flag="goods" class="ns-text-color ns-border-color">{:lang('商品')}</li>
+				<li data-flag="evaluation" class="ns-text-color-gray">{:lang('评价')}</li>
+				<li data-flag="details" class="ns-text-color-gray">{:lang('详情')}</li>
+			</ul>
+			
+			<div class="right-btn">
+				{if condition="$is_weixin eq 1"}
+				<a href="javascript:document.getElementById('share_img').style.display='block';" style="display: none">
+					<i class="fa fa-share" aria-hidden="true"></i>
+				</a>
+				{else/}
+				{/if}
+				<a href="javascript:;" class="js-collection" data-whether-collection="{$whether_collection}">
+					{if condition="$whether_collection > 0"}
+					<i class="fa fa-heart" aria-hidden="true"></i>
+					{else/}
+					<i class="fa fa-heart-o" aria-hidden="true"></i>
+					{/if}
+					<span>{:lang('收藏')}</span>
+				</a>
+			
+			</div>
+		
+		</div>
+	</div>
+	
+	<div class="go-top ns-border-color-gray">
+		<img src="WAP_IMG/goods/go_top_for_detail.png" />
+		<span>{:lang('顶部')}</span>
+	</div>
+	{/block}
+	
+	{block name="goods_media"}
+	{notempty name="$goods_detail['goods_video_address']"}
+	<div class="goods-alter">
+		<span class="goods-alter-image ns-bg-color">{:lang('图片')}</span>
+		<span class="goods-alter-video">{:lang('视频')}</span>
+	</div>
+	{/notempty}
+	
+	<div class="product-media swiper-container">
+		<div class="swiper-wrapper">
+			{foreach name="$goods_detail['img_list']" item = 'img_list' key='key' }
+			<div class="swiper-slide">
+				<a href="javascript:;"><img alt="{:lang('goods_picture')}" src="{:__IMG($img_list['pic_cover_mid'])}"/></a>
+			</div>
+			{/foreach}
+		</div>
+		
+		<div class="swiper-pagination"></div>
+	</div>
+	
+	{notempty name="$goods_detail['goods_video_address']"}
+	<div class="video-wrap">
+		<video id="video" class="video-js vjs-default-skin" controls preload="none" poster="{:__IMG($goods_detail['img_list'][0]['pic_cover_big'])}" data-setup="{}">
+			<source src="{:__IMG($goods_detail.goods_video_address)}" type='video/mp4' />
+		</video>
+	</div>
+	{/notempty}
+	
+	{/block}
+	
+	{block name="goods_promotion"}{/block}
+	
+	{block name="goods_title"}
+	<div class="product-name-wrap">
+		<div class="product-name-block have-share ns-text-color-black">
+			{volist name="$goods_detail['goods_group_list']" id="vo"}
+			<i class="product-label ns-bg-color">{$vo.group_name}</i>
+			{/volist}
+			<span id="product-name">{$goods_detail.goods_name}</span>
+			<div class="product-share">
+				<img src="WAP_IMG/goods/share_icon.png"/>
+				<span>{:lang('share')}</span>
+			</div>
+		</div>
+	</div>
+	
+	{notempty name="$goods_detail.introduction"}
+	<p class="product-introduction ns-text-color">{$goods_detail.introduction}</p>
+	{/notempty}
+	{/block}
+	
+	{block name="goods_price"}
+	<!--普通商品显示-->
+	<div class="product-price">
+		<div class="real-price ns-text-color">
+			{if condition="($goods_detail.point_exchange_type == 2 && $from == 'point') || $goods_detail.point_exchange_type == 3"}
+			{assign name="show_price" value="0"}
+			<!--积分-->
+			<span class="price">{$goods_detail.point_exchange}{:lang('goods_integral')}</span>
+			{else/}
+			
+			<i class="price-symbol">NT$</i>
+			<span class="price">
+				{if condition="$goods_detail.promotion_price < $goods_detail.member_price"}
+					{$goods_detail.promotion_price}
+					{assign name="show_price" value="$goods_detail.promotion_price"}
+				{else/}
+					{$goods_detail.member_price}
+					{assign name="show_price" value="$goods_detail.member_price"}
+				{/if}
+				{if condition="$goods_detail.point_exchange_type==1 && $goods_detail.point_exchange>0"}
+					+{$goods_detail.point_exchange}{:lang('goods_integral')}
+				{/if}</span>
+				<!--积分加现金-->
+				{if condition ='!empty($goods_detail.goods_unit)'}
+				<span class="ns-text-color">/{$goods_detail.goods_unit}</span>
+				{/if}
+			{/if}
+		
+		</div>
+		
+		{notempty name="$goods_detail['promotion_detail']"}
+			{if $goods_detail['promotion_detail']['combo_package'] && count($goods_detail['promotion_detail']) eq 1}
+				{if $goods_detail.market_price > $show_price}
+				<div class="original-price">
+					<label>{:lang('市场价:')}</label>
+					<span>{:bl_cf($goods_detail.market_price)}</span>
+				</div>
+				{/if}
+			{/if}
+		{else/}
+			{if $goods_detail.market_price > $show_price}
+			<div class="original-price">
+				<label>{:lang('市场价:')}</label>
+				<span>{:bl_cf($goods_detail.market_price)}</span>
+			</div>
+			{/if}
+		{/notempty}
+	
+	</div>
+	
+	<div class="blank-line ns-bg-color-gray"></div>
+	
+	{/block}
+	
+	{block name="goods_promotion_detail"}
+	{notempty name="$goods_detail['goods_coupon_list']"}
+	<div class="product-coupon">
+		<i class="flag ns-bg-color">{:lang('优惠券')}</i>
+		<span class="coupon-tip">{:lang('领取优惠劵')}</span>
+		<span class="get-coupon ns-text-color-gray ns-border-color-gray">{:lang('领取')}</span>
+	</div>
+	<div class="product-coupon-popup-layer">
+		<h3 class="tax-title ns-text-color-black">{:lang('优惠券')}</h3>
+		<div class="coupon-body">
+			{foreach name="$goods_detail['goods_coupon_list']" item="vo"}
+			<div class="item" data-max-fetch="{$vo.max_fetch}" data-coupon-id="{$vo.coupon_type_id}">
+				<div class="main">
+					<div class="price">
+						<i>NT$</i>
+						<span>{$vo.money}</span>
+					</div>
+					{if $vo.at_least > 0}
+					<div class="sub">{:lang('满')}{$vo.at_least}{:lang('使用')}</div>
+					{else/}
+					<div class="sub">{:lang('无门槛优惠券')}</div>
+					{/if}
+					{if $vo.term_of_validity_type == 0}
+					<div class="sub">{:lang('有效期')} {$vo.start_time|date="Y.m.d",###}-{$vo.end_time|date="Y.m.d",###}</div>
+					{else/}
+					<div class="sub">{:lang('领取之日起')}{$vo.fixed_term}{:lang('天内有效')}</div>
+					{/if}
+				</div>
+				<div class="tax-split"></div>
+				<div class="tax-operator">{:lang('立即领取')}</div>
+			</div>
+			{/foreach}
+		</div>
+		<div class="confirm ns-bg-color">{:lang('确定')}</div>
+	</div>
+	<div class="line ns-border-color-gray"></div>
+	{/notempty}
+	
+	{if condition = "$goods_detail['mansong_name'] neq ''"}
+	<div class="product-mansong">
+		<i class="ns-bg-color">{:lang('member_full')}{:lang('member_reduce')}</i>
+		<span class="sales">{$goods_detail['mansong_name']}</span>
+	</div>
+	<div class="blank-line ns-bg-color-gray"></div>
+	{/if}
+	
+	<!-- 阶梯优惠 -->
+	{notempty name="$goods_detail.goods_ladder_preferential_list"}
+	<div class="product-ladder-preferential">
+		<i class="ns-bg-color">{:lang('ladder_preferential')}</i>
+		<span>{:lang('满')}<b class="ns-text-color">{$goods_detail.goods_ladder_preferential_list[0]['quantity']}</b>{if condition ='empty($goods_detail.goods_unit)'}{:lang('goods_piece')}{else/}{$goods_detail.goods_unit}{/if}{:lang(',每')}{if condition ='empty($goods_detail.goods_unit)'}{:lang('件')}{else/}{$goods_detail.goods_unit}{/if}{:lang('降')}NT$<b class="ns-text-color">{$goods_detail.goods_ladder_preferential_list[0]['price']}</b></span>
+		<div class="icon ns-text-color-gray">
+			<svg t="1516605784224" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1221" xmlns:xlink="http://www.w3.org/1999/xlink" width="13" height="13">
+				<path d="M393.390114 512.023536l347.948667-336.348468c20.50808-19.85828 20.50808-51.997258 0-71.792093-20.507056-19.826558-53.778834-19.826558-74.28589 0L281.990954 476.135164c-20.476357 19.826558-20.476357 51.981908 0 71.746044l385.061936 372.236839c10.285251 9.91379 23.728424 14.869662 37.173644 14.869662 13.446243 0 26.889417-4.956895 37.112246-14.901385 20.50808-19.826558 20.50808-51.919487 0-71.746044L393.390114 512.023536" p-id="1222"></path>
+			</svg>
+		</div>
+	</div>
+	
+	<div class="product-ladder-preferential-popup-layer">
+		<h3 class="tax-title ns-text-color-black">{:lang('ladder_preferential')}</h3>
+		<ul>
+			{foreach name="$goods_detail.goods_ladder_preferential_list" item="vo"}
+			<li>
+				<span class="mark_title">{:lang("ladder_preferential")}</span>
+				<span>{:lang('满')}<b class="ns-text-color">{$vo.quantity}</b>{if condition ='empty($goods_detail.goods_unit)'}{:lang('goods_piece')}{else/}{$goods_detail.goods_unit}{/if}{:lang(',每')}{if condition ='empty($goods_detail.goods_unit)'}{:lang('goods_piece')}{else/}{$goods_detail.goods_unit}{/if}{:lang('降')}NT$<b class="ns-text-color">{$vo.price}</b></span>
+			</li>
+			{/foreach}
+		</ul>
+		<div class="confirm ns-bg-color js-confirm">{:lang('确定')}</div>
+	</div>
+	
+	<div class="blank-line ns-bg-color-gray"></div>
+	{/notempty}
+	
+	<!-- 实物商品参加包邮活动 -->
+	{if condition="$goods_detail.is_virtual == 0 && $goods_detail['baoyou_name'] neq ''"}
+	<div class="product-baoyou">
+		<i class="ns-bg-color">{:lang('goods_free_shipping')}</i>
+		<span>{$goods_detail['baoyou_name']}</span>
+	</div>
+	<div class="line ns-border-color-gray"></div>
+	{/if}
+	
+	<!--赠送积分-->
+	{if condition = "$goods_detail['give_point'] neq 0"}
+	<div class="product-give-point">
+		<i class="ns-bg-color">{:lang('goods_gift_points')}</i>
+		<span class="ns-text-color-gray">{$goods_detail['give_point']}{:lang('minutes')}</span>
+	</div>
+	<div class="line ns-border-color-gray"></div>
+	{/if}
+	
+	{if condition="($goods_detail.point_exchange_type == 2 && $from == 'point') || $goods_detail.point_exchange_type == 0"}
+	{if condition ="$goods_detail['integral_balance'] > 0"}
+	<!-- 积分抵现 -->
+	<div class="product-point-for-now ns-text-color-gray">
+		<span>{:lang('购买本商品积分可抵')}{$goods_detail['integral_balance']}元</span>
+	</div>
+	<div class="line ns-border-color-gray"></div>
+	{/if}
+	{/if}
+	
+	{/block}
+	
+	{block name="goods_sales_evaluation"}
+	<div class="product-sales-freight-area ns-text-color-gray">
+		<span class="postage js-shipping-fee-name">{:lang('快递:')}&nbsp;{if condition="$goods_detail['shipping_fee'] == 0"}{:lang('免邮')}{else/}{:bl_cf($goods_detail['shipping_fee'])}{/if}</span>
+		<span class="sales">{:lang('销量:&nbsp;')}{$goods_detail['sales']}{if condition ='$goods_detail.goods_unit'}{:lang('goods_piece')}{else/}{$goods_detail.goods_unit}{/if}</span>
+		<span class="delivery">{:lang('点击量：')}{$goods_detail.clicks}</span>
+	</div>
+	{/block}
+	
+	{block name="goods_service"}
+	<div class="blank-line ns-bg-color-gray"></div>
+	<div class="product-service">
+		<span>{:lang('服务')}</span>
+		<span>{$title}{:lang('发货并提供售后服务')}</span>
+	</div>
+	<div class="line ns-border-color-gray"></div>
+	
+	<!-- 商家服务 -->
+	{if count($merchant_service_list) > 0}
+	<div class="product-merchants-service">
+		<div class="service-list">
+			<ul>
+				{foreach name="$merchant_service_list" item="vo" key="k"}
+				{if $k < 4}
+				<li>{$vo.title}</li>
+				{/if}
+				{/foreach}
+			</ul>
+		</div>
+		<div class="icon ns-text-color-gray">
+			<svg t="1516605784224" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1221" xmlns:xlink="http://www.w3.org/1999/xlink" width="13" height="13">
+				<path d="M393.390114 512.023536l347.948667-336.348468c20.50808-19.85828 20.50808-51.997258 0-71.792093-20.507056-19.826558-53.778834-19.826558-74.28589 0L281.990954 476.135164c-20.476357 19.826558-20.476357 51.981908 0 71.746044l385.061936 372.236839c10.285251 9.91379 23.728424 14.869662 37.173644 14.869662 13.446243 0 26.889417-4.956895 37.112246-14.901385 20.50808-19.826558 20.50808-51.919487 0-71.746044L393.390114 512.023536" p-id="1222"></path>
+			</svg>
+		</div>
+	</div>
+	
+	<div class="product-merchants-service-popup-layer">
+		<h3 class="tax-title ns-text-color-black">{:lang('merchant_service')}</h3>
+		<dl>
+			{notempty name="$merchant_service_list"}
+			{foreach name="$merchant_service_list" item="vo"}
+			<dt>
+				<div><img src="{:__IMG($vo.pic)}"></div>
+				<span>{$vo.title}</span>
+			</dt>
+			<dd class="ns-text-color-gray">{$vo.describe}</dd>
+			{/foreach}
+			{/notempty}
+		</dl>
+		<div class="confirm ns-bg-color js-confirm">{:lang('确定')}</div>
+	</div>
+	
+	<div class="blank-line ns-bg-color-gray"></div>
+	{/if}
+	{/block}
+	
+	{block name="goods_attribute"}
+	<!-- 商品属性 -->
+	{if condition = "$goods_detail['goods_attribute_list']"}
+	<div class="product-attribute">
+		<div class="l ns-text-color-gray">{:lang('属性')}</div>
+		<div class="r">{$goods_detail["goods_attribute_list"][0]['attr_value']}&nbsp;{$goods_detail["goods_attribute_list"][0]['attr_value_name']}...</div>
+		<div class="icon ns-text-color-gray">
+			<svg t="1516605784224" class="icon-viewall" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1221" xmlns:xlink="http://www.w3.org/1999/xlink" width="13" height="13">
+				<path d="M393.390114 512.023536l347.948667-336.348468c20.50808-19.85828 20.50808-51.997258 0-71.792093-20.507056-19.826558-53.778834-19.826558-74.28589 0L281.990954 476.135164c-20.476357 19.826558-20.476357 51.981908 0 71.746044l385.061936 372.236839c10.285251 9.91379 23.728424 14.869662 37.173644 14.869662 13.446243 0 26.889417-4.956895 37.112246-14.901385 20.50808-19.826558 20.50808-51.919487 0-71.746044L393.390114 512.023536" p-id="1222"></path>
+			</svg>
+		</div>
+	</div>
+	<div class="product-attribute-popup-layer">
+		<div class="product-attribute-body">
+			<h2>{:lang('基础信息')}</h2>
+			<table>
+				<tbody>
+				{foreach $goods_detail["goods_attribute_list"] as $vo}
+				{notempty name="$vo['attr_value_name']"}
+				<tr>
+					<th class="ns-text-color-gray">{$vo.attr_value}</th>
+					<td>{$vo.attr_value_name}</td>
+				</tr>
+				{/notempty}
+				{/foreach}
+				</tbody>
+			</table>
+		</div>
+		<div class="confirm ns-bg-color js-confirm">{:lang('确定')}</div>
+	</div>
+	<div class="blank-line ns-bg-color-gray"></div>
+	{/if}
+	{/block}
+	
+	{block name="goods_combo"}
+	<!-- 商品组合套餐，普通商品才能使用 -->
+	{notempty name="$goods_detail['promotion_detail']['combo_package']"}
+	<div class="product-combo" onclick="location.href='{:__URL('APP_MAIN/goods/combo','goods_id='.$goods_detail['promotion_detail']['combo_package']['data'][0]['main_goods']['goods_id'])}'">
+		<span>{:lang("combo_package")}</span>
+		<div class="icon ns-text-color-gray">
+			<svg t="1516605784224" class="icon-viewall" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1221" xmlns:xlink="http://www.w3.org/1999/xlink" width="13" height="13">
+				<path d="M393.390114 512.023536l347.948667-336.348468c20.50808-19.85828 20.50808-51.997258 0-71.792093-20.507056-19.826558-53.778834-19.826558-74.28589 0L281.990954 476.135164c-20.476357 19.826558-20.476357 51.981908 0 71.746044l385.061936 372.236839c10.285251 9.91379 23.728424 14.869662 37.173644 14.869662 13.446243 0 26.889417-4.956895 37.112246-14.901385 20.50808-19.826558 20.50808-51.919487 0-71.746044L393.390114 512.023536" p-id="1222"></path>
+			</svg>
+		</div>
+	</div>
+	<div class="combo-goods-wrap ns-text-color-gray">
+		<div class="goods ns-border-color-gray">
+			<a href="{:__URL('APP_MAIN/goods/detail','goods_id='.$goods_detail['promotion_detail']['combo_package']['data'][0]['main_goods']['goods_id'])}">
+				<img src="{:__IMG($goods_detail['promotion_detail']['combo_package']['data'][0]['main_goods']['pic_cover_mid'])}">
+				<p>{:bl_cf($goods_detail['promotion_detail']['combo_package']['data'][0]['main_goods']['price'])}</p>
+			</a>
+		</div>
+		<i class="fa fa-plus" aria-hidden="true"></i>
+		{foreach name="$goods_detail['promotion_detail']['combo_package']['data'][0]['goods_array']" item="vo" key = "k"}
+		{if condition="$k < 2"}
+		<div class="goods">
+			<a href="{:__URL('APP_MAIN/goods/detail','goods_id='.$vo['goods_id'])}">
+				<img src="{:__IMG($vo['pic_cover_mid'])}">
+				<p>{:bl_cf($vo['price'])}</p>
+			</a>
+		</div>
+		{/if}
+		{/foreach}
+	</div>
+	<div class="blank-line ns-bg-color-gray"></div>
+	{/notempty}
+	{/block}
+	
+	{block name="goods_description"}
+	<!-- 商品评价 -->
+	<div class="product-evaluation-main">
+		<div class="product-evaluation-title">
+			<span>{:lang('商品评价')} (<em class="js-evaluate-count">0</em>)</span>
+			<div class="view-more ns-text-color">
+				<span>{:lang('查看全部')}</span>
+				<svg t="1516605784224" class="icon-viewall" style="" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1221" xmlns:xlink="http://www.w3.org/1999/xlink" width="13" height="13">
+					<path d="M393.390114 512.023536l347.948667-336.348468c20.50808-19.85828 20.50808-51.997258 0-71.792093-20.507056-19.826558-53.778834-19.826558-74.28589 0L281.990954 476.135164c-20.476357 19.826558-20.476357 51.981908 0 71.746044l385.061936 372.236839c10.285251 9.91379 23.728424 14.869662 37.173644 14.869662 13.446243 0 26.889417-4.956895 37.112246-14.901385 20.50808-19.826558 20.50808-51.919487 0-71.746044L393.390114 512.023536" p-id="1222"></path>
+				</svg>
+			</div>
+		</div>
+		
+		<ul class="product-evaluation-ul js-product-evaluation">
+			<li>{:lang('全部评价')}(<em class="js-evaluate-count">0</em>)</li>
+			<li>{:lang('晒图')}(<em class="js-evaluate-imgs-count">0</em>)</li>
+			<li>{:lang('goods_praise')}(<em class="js-evaluate-praise-count">0</em>)</li>
+			<li>{:lang('goods_comments')}(<em class="js-evaluate-center-count">0</em>)</li>
+			<li>{:lang('goods_bad')}(<em class="js-evaluate-bad-count">0</em>)</li>
+		</ul>
+		
+		<div class="product-comments js-first-evaluate">
+			<div class="user">
+				<img src="{:__IMG($default_headimg)}">
+				<span class="ns-text-color-gray"></span>
+			</div>
+			<div class="product-content"></div>
+			<div class="date ns-text-color-gray"></div>
+		</div>
+		
+		<div class="mui-cover">
+			<header>
+				<h1>{:lang('评价')}</h1>
+				<a class="back"></a>
+			</header>
+			<div class="body">
+				<div class="review-content">
+					<ul class="filter">
+						<li class="comment-filter-none ns-bg-color" data-type="0">{:lang('全部评价')}(<b class="js-evaluate-count">0</b>)</li>
+						<li class="comment-filter-img ns-bg-color-gray-fadeout-60" data-type="4">{:lang('晒图')}(<b class="js-evaluate-imgs-count">0</b>)</li>
+						<li class="tag-product ns-bg-color-gray-fadeout-60" data-type="1" >{:lang('goods_praise')}(<b class="js-evaluate-praise-count">0</b>)</li>
+						<li class="tag-product ns-bg-color-gray-fadeout-60" data-type="2">{:lang('goods_comments')}(<b class="js-evaluate-center-count">0</b>)</li>
+						<li class="comment-filter-append ns-bg-color-gray-fadeout-60" data-type="3">{:lang('goods_bad')}(<b class="js-evaluate-bad-count">0</b>)</li>
+					</ul>
+					<div class="mescroll" id="evaluation_list_mescroll">
+						<ul class="evaluation-list"></ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="blank-line ns-bg-color-gray"></div>
+	
+	<div class="product-details">{$goods_detail.description}</div>
+
+	{/block}
+	
+	{block name="goods_bottom_left"}
+	<div class="product-bottom-bar">
+		<div style="height:50px;"></div>
+		<div class="bottom-btn ns-border-color-gray">
+		
+		{/block}
+			{block name="goods_action"}
+			{if condition="$goods_detail['state'] == 1"}
+			<div class="left-operation">
+				<a href="{:__URL('APP_MAIN')}">
+					<img src="WAP_IMG/goods/go_home.png"/>
+					<span>{:lang("home_page")}</span>
+				</a>
+				<a href="{$custom_service['value']['service_addr']}" onclick="location.href='http://m.me/657612568086867'">
+					<img src="WAP_IMG/goods/kefux.png"/>
+					<span>{:lang('united_states_customer_service')}</span>
+				</a>
+				<a href="{:__URL('APP_MAIN/goods/cart')}">
+					<img src="WAP_IMG/goods/goods_cart.png"/>
+					<span class="ns-text-color-black">{:lang('goods_cart')}</span>
+					{if condition="$cart_count>0"}
+					<i class="have-cart-count ns-bg-color label badge circle">{$cart_count}</i>
+					{/if}
+				</a>
+			</div>
+			
+			<div class="right-operation">
+				
+				{if condition="$goods_detail.is_virtual == 0 && ($goods_detail.point_exchange_type == 0 || ($goods_detail.point_exchange_type == 2 && $from != 'point')) && (empty($goods_detail['promotion_detail']) && empty($goods_detail['promotion_detail']['group_buy']))"}
+				<!--只有普通商品可以加入购物车-->
+				<a href="javascript:;" class="add-to-cart" data-tag="add_cart">{:lang('goods_add_cart')}</a>
+				{/if}
+				
+				<a href="javascript:;" class="buy-now" data-tag="buy_now">{if condition="$goods_detail['point_exchange_type'] == 1 || ($goods_detail['point_exchange_type'] == 2 && $from == 'point')|| $goods_detail['point_exchange_type'] == 3"}{:lang('goods_exchange')}{else/}{:lang('goods_buy_now')}{/if}</a>
+			
+			</div>
+			
+			{else/}
+			<div class="product-sold-out ns-bg-color-gray-shade-50">{:lang('goods_laid_off')}</div>
+			{/if}
+			
+		</div>
+		{/block}
+		
+		{block name="goods_current_info"}
+		<div class="widgets-cover">
+			<div class="cover-content">
+				<div class="sku-wrap">
+					<div class="header">
+						<div class="img-wrap">
+							<img src="{:__IMG($goods_detail['img_list'][0]['pic_cover_small'])}"  alt="{:lang('选中的产品图')}" class="js-thumbnail">
+						</div>
+						<div class="main">
+							<div class="price-wrap">
+								
+								{if condition="($goods_detail.point_exchange_type == 2 && $from == 'point') || $goods_detail.point_exchange_type == 3 "}
+								
+								<!--积分-->
+								<span class="price ns-text-color">{$goods_detail.point_exchange}{:lang('goods_integral')}</span>
+								
+								{else/}
+								
+								<span class="price ns-text-color">NT${if condition="$goods_detail.promotion_price < $goods_detail.member_price"}{$goods_detail.promotion_price}{else/}{$goods_detail.member_price}{/if}{if condition="$goods_detail.point_exchange_type==1 && $goods_detail.point_exchange>0"}+{$goods_detail.point_exchange}{:lang('goods_integral')}{/if}</span>
+								<!--积分加现金-->
+								
+								{/if}
+							
+							</div>
+							{if condition="$goods_detail.is_stock_visible == 1"}
+							<div class="stock">{:lang('goods_stock')}{$goods_detail.stock}{if condition ="empty($goods_detail['goods_unit'])"}{:lang('goods_piece')}{else/}{$goods_detail['goods_unit']}{/if}</div>
+							{/if}
+							<div class="sku-info">{:lang('请选择：')}<span>-</span></div>
+						</div>
+						<a class="sku-close"><img src="WAP_IMG/goods/close.png"/></a>
+					</div>
+					{/block}
+					
+					{block name="goods_sku"}
+					<div class="body">
+						<div class="body-item">
+							{foreach name="$goods_detail['spec_list']" item="spec" key="k"}
+							<ul class="sku-list-wrap">
+								<li>
+									<h2>{$spec.spec_name}</h2>
+									<div class="items">
+										{foreach name="$spec['value']" item="spec_value" key="child_k"}
+										
+										{switch name="$spec_value.spec_show_type"}
+										{case value="1"}
+										<a href="javascript:;" class="ns-bg-color-gray-fadeout-60 ns-border-color-gray {if condition="$spec_value['selected']"}selected{/if} {if condition="$spec_value['disabled']"} disabled{/if}" data-spec-value-name="{$spec_value.spec_value_name}" data-id="{$spec_value.spec_id}:{$spec_value.spec_value_id}">
+											<span>{$spec_value.spec_value_name}</span>
+										</a>
+										{/case}
+										{case value="2"}
+										<a href="javascript:;" class="ns-bg-color-gray-fadeout-60 ns-border-color-gray {if condition="$spec_value['selected']"}selected{/if} {if condition="$spec_value['disabled']"} disabled{/if}" data-spec-value-name="{$spec_value.spec_value_name}" data-id="{$spec_value.spec_id}:{$spec_value.spec_value_id}">
+											{notempty name="$spec_value.spec_value_data"}
+											<img src="{:__IMG($spec_value.spec_value_data)}" data-show-big-pic="{:__IMG($spec_value.spec_value_data_big_src)}" data-picture-id="{$spec_value.picture_id}">
+											{/notempty}
+											<span>{$spec_value.spec_value_name}</span>
+										</a>
+										{/case}
+										{case value="3"}
+										<!-- 颜色 -->
+										<a href="javascript:;" class="ns-bg-color-gray-fadeout-60 ns-border-color-gray {if condition="$spec_value['selected']"}selected{/if} {if condition="$spec_value['disabled']"} disabled{/if}" data-spec-value-name="{$spec_value.spec_value_name}" data-id="{$spec_value.spec_id}:{$spec_value.spec_value_id}">
+											{notempty name="$spec_value.spec_value_data"}<b style="background: {$spec_value.spec_value_data};"></b>{/notempty}
+											<span>{$spec_value.spec_value_name}</span>
+										</a>
+										{/case}
+										{/switch}
+										
+										{/foreach}
+									</div>
+								</li>
+							</ul>
+							{/foreach}
+							<div class="number-wrap">
+								<div class="number-line">
+									<label>{:lang('member_quantity_purchased')}</label>
+									{if condition="$goods_detail['max_buy'] > 0"}
+									<span class="limit-txt">({:lang('每人限购')}{$goods_detail['max_buy']}{if condition ="empty($goods_detail['goods_unit'])"}{:lang('goods_piece')}{else/}{$goods_detail['goods_unit']}{/if})</span>
+									{/if}
+									<div class="number">
+										<button class="decrease ns-border-color-gray-fadeout-50 ns-bg-color-gray-fadeout-60 {if condition="$goods_detail['stock']==0"}disabled{/if}" data-operator="-">-</button>
+										<input class="ns-border-color-gray-fadeout-50 ns-bg-color-gray-fadeout-60 {if condition="$goods_detail['stock']==0"}disabled ns-text-color-gray{/if}" type="number" id="buy_number" {if condition="$goods_detail['stock']==0"}readonly="readonly"{/if}
+										value="{if condition="$goods_detail['stock']>0"}{if condition="$goods_detail['min_buy']>0"}{$goods_detail['min_buy']}{else/}1{/if}{else/}0{/if}"
+										data-min-buy="{if condition='$goods_detail.min_buy !=0'}{$goods_detail.min_buy}{else/}1{/if}"
+										data-max-buy="{if condition='$goods_detail.max_buy==0 || $goods_detail.max_buy>$goods_detail.stock' }{$goods_detail.stock}{else/}{$goods_detail.max_buy}{/if}"">
+										<button class="increase ns-border-color-gray-fadeout-50 ns-bg-color-gray-fadeout-60 {if condition="$goods_detail['stock']==0"}disabled{/if}" data-operator="+">+</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="footer ns-bg-color js-submit bl-bg-color-green {if condition="$goods_detail['stock'] ==0"}disabled{/if}">{:lang('确定')}</div>
+			</div>
+			{/block}
+			
+			{block name="goods_promotion_bottom"}{/block}
+		{block name="goods_share"}
+			</div>
+	
+	</div>
+	
+	<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true" style="display: none">
+		<div class="pswp__bg"></div>
+		<!-- Slides wrapper with overflow:hidden. -->
+		<div class="pswp__scroll-wrap">
+			<div class="pswp__container">
+				<div class="pswp__item"></div>
+				<div class="pswp__item"></div>
+				<div class="pswp__item"></div>
+			</div>
+			<!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+			<div class="pswp__ui pswp__ui--hidden">
+				<div class="pswp__top-bar">
+					<!--  Controls are self-explanatory. Order can be changed. -->
+					<div class="pswp__counter"></div>
+					<!--关闭窗口-->
+					<button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+					<!--分享-->
+					<!-- <button class="pswp__button pswp__button--share" title="Share"></button> -->
+					<!--全屏-->
+					<button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+					<!--放大缩小-->
+					<button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+					<!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+					<!-- element will get class pswp__preloader--active when preloader is running -->
+					<div class="pswp__preloader">
+						<div class="pswp__preloader__icn">
+							<div class="pswp__preloader__cut">
+								<div class="pswp__preloader__donut"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+					<div class="pswp__share-tooltip"></div>
+				</div>
+				<button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+				<button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button>
+				<div class="pswp__caption">
+					<div class="pswp__caption__center"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</article>
+<div class="wechat-share">
+	<p><img class="arrow" src="WAP_IMG/goods/goods_share.png"></p>
+	<p style="margin-top:30px; margin-right:50px;">{:lang('点击右上角')}</p>
+	<p style="margin-right:50px;">{:lang('将此商品分享给好友')}</p>
+</div>
+
+<!-- 分享弹框 -->
+<div class="share-popup">
+	<div class="share-wrap">
+		{if $is_weixin}
+		<div class="block wechat ns-border-color-gray">
+			<img src="WAP_IMG/goods/wechat.png">
+			<p>{:lang('分享给好友')}</p>
+		</div>
+		{/if}
+		<div class="block poster">
+			<img src="WAP_IMG/goods/poster.png">
+			<p>{:lang('生成海报')}</p>
+		</div>
+	</div>
+</div>
+
+<!-- 海报弹框 -->
+<div class="poster-popup">
+	<div class="poster-wrap">
+		<button type="button" class="btn loading loading-light gray" style="border: none;">{:lang('加载中')}</button>
+	</div>
+	{if $is_weixin || $is_ios}
+		<p class="save-tip ns-text-color-gray">{:lang('长按保存图片')}</p>
+	{else/}
+		<a href="javascript:;" class="save-btn ns-bg-color">{:lang('保存图片')}</a>
+	{/if}
+</div>
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+{foreach name="$goods_detail['sku_list']" item="sku"}
+<input name="product_sku" type="hidden" value="{$sku.attr_value_items}" data-picture="{$sku.picture}" {if condition="$sku.picture>0"}data-default-img="{:__IMG($sku.sku_img_main['pic_cover_small'])}"{/if} data-sku-id="{$sku['sku_id']}" data-stock="{$sku.stock}"
+{if condition="$uid"}{if condition="$sku.promote_price < $sku.member_price" }data-price="{$sku.promote_price}" {else/}data-price="{$sku.member_price}"{/if}{else/}data-price="{$sku.promote_price}"{/if} data-sku-name="{$sku.sku_name}" data-original-price="{$sku.price}">
+{/foreach}
+
+<input type="hidden" id="hidden_stock" value="{$goods_detail['stock']}"/>
+<input type="hidden" id="current_time" value="{$goods_detail.current_time}"/>
+<input type="hidden" id="hidden_is_virtual" value="{$goods_detail.is_virtual}" />
+<input type="hidden" id="hidden_default_picture_id" value="{$goods_detail['picture']}" />
+<input type="hidden" id="hidden_default_img" value="{:__IMG($goods_detail['img_list'][0]['pic_cover_small'])}" />
+<input type="hidden" id="hidden_picture_id" value="{if condition="$goods_detail['sku_picture']>0"}{$goods_detail['sku_picture']}{else/}{$goods_detail['picture']}{/if}" />
+<input type="hidden" id="hidden_point_exchange" value="{$goods_detail.point_exchange}" />
+<input type="hidden" id="hidden_point_exchange_type" value="{$goods_detail.point_exchange_type}" />
+<input type="hidden" id="hidden_min_buy" value="{$goods_detail['min_buy']}">
+<input type="hidden" id="hidden_max_buy" value="{$goods_detail['max_buy']}">
+<input type="hidden" id="goods_ladder_preferential" value='{$goods_ladder_preferential}'>
+<script>
+var goods_id = "{$goods_id}";
+var sku_id = "{$goods_detail.sku_id}";
+var goods_name = "{$goods_detail.goods_name}";
+var sku_name = "{$goods_detail.sku_name}";
+var price = "{$goods_detail.price}";
+var top_permissions = 0;
+var lang_goods_detail = {
+	anonymous : '{:lang("anonymous")}',
+	goods_shopkeeper_replies : '{:lang("goods_shopkeeper_replies")}',
+	goods_stock : '{:lang("goods_stock")}',
+	goods_piece : '{if condition ="empty($goods_detail['goods_unit'])"}{:lang('goods_piece')}{else/}{$goods_detail['goods_unit']}{/if}',
+	goods_integral : "{:lang('goods_integral')}"
+};
+</script>
+<script src="WAP_JS/goods_detail.js"></script>
+{/block}

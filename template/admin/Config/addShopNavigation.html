@@ -1,0 +1,257 @@
+{extend name="$base" /}
+{block name="resources"}
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<script src="ADMIN_JS/material_managedialog.js"></script>
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+{/block}
+{block name="main"}
+<div class="span1"></div>
+<div class="set-style">
+	<dl>
+		<dt><span style="color:red;margin-right:10px;">*</span>导航名称：</dt>
+		<dd><input id="nav_title" type="text" class="input-common" name="title"/></dd>
+	</dl>
+	<dl>
+		<dt>排序号：</dt>
+		<dd><input id="sort" type="number" value="0" class="input-common harf" min="0"/></dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;margin-right:10px;">*</span>链接地址：</dt>
+		<dd >
+			<label for="url_type1" class="radio inline normal">
+				<i class="radio-common selected"><input type="radio" value="0" name="url_type" id="url_type1" checked="checked"/></i>
+				<span>商城模块</span>
+			</label>
+			<label for="url_type2" class="radio inline normal">
+				<i class="radio-common"><input type="radio" value="1" name="url_type" id="url_type2" /></i>
+				<span>自定义链接</span>
+			</label>
+		</dd>
+	</dl>
+	{if $nav_type eq 3}
+	<dl class="hide" id="applet_url_type">
+		<dt>链接类型：</dt>
+		<dd >
+			<label for="applet_url_type1" class="radio inline normal">
+				<i class="radio-common selected"><input type="radio" value="1" name="applet_url_type" id="applet_url_type1" checked="checked"/></i>
+				<span>普通页面</span>
+			</label>
+			<label for="applet_url_type2" class="radio inline normal">
+				<i class="radio-common"><input type="radio" value="2" name="applet_url_type" id="applet_url_type2" /></i>
+				<span>tab页面</span>
+			</label>
+			<label for="applet_url_type3" class="radio inline normal">
+				<i class="radio-common"><input type="radio" value="3" name="applet_url_type" id="applet_url_type3" /></i>
+				<span>web页面</span>
+			</label>
+		</dd>
+	</dl>
+	{/if}
+	<dl>
+		<dt></dt>
+		<dd>
+			<!-- 默认展示pc端模块 -->
+			<select class="select-common" id="shopNavModel">
+				<option value="">请选择</option>
+				{notempty name="shopNavTemplate"}
+				{foreach name="shopNavTemplate" item="vo"}
+					<option value="{$vo.template_url}">{$vo.template_name}</option>
+				{/foreach}
+				{/notempty}
+			</select>
+			<span style="display: none;" id="nav_url">
+				<input type="text" class="input-common" name="nav_url" />
+				{if $nav_type eq 3}
+				<span class="url-type-hint-1" style="line-height: 28px;color: #999;">如：/pages/goods/goodsdetail/goodsdetail?goods_id=1</span>
+				<span class="url-type-hint-2 hide" style="line-height: 28px;color: #999;">如：/pages/index/index   注：默认tab 页面有 首页、分类、购物车、会员中心</span>
+				<span class="url-type-hint-3 hide" style="line-height: 28px;color: #999;">如：https://www.niushop.com.cn/   注：指向网页的链接。可打开关联的公众号的文章，其它网页需登录小程序管理后台配置业务域名。</span>
+				{else/}
+				<span style="line-height: 28px;color: #999;">如：http://www.niushop.com.cn/</span>
+				{/if}
+			</span>
+		</dd>
+	</dl>
+	{if $nav_type neq 3}
+	<dl>
+		<dt>是否新窗口打开：</dt>
+		<dd>
+			<p>
+				<input id="is_blank" type="checkbox"  class="checkbox"  />
+			</p>
+		</dd>
+	</dl>
+	{/if}
+	<dl>
+		<dt>是否显示：</dt>
+		<dd>
+			<p>
+				<input id="is_show" type="checkbox"  class="checkbox"  checked/>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>导航图标：</dt>
+		<dd>
+			<div class="upload-btn-common">
+				<div>
+					<input class="input-file" name="file_upload" id="uploadImg" type="file" onchange="imgUpload(this);">
+					<input type="hidden" id="logo" value="" />
+				</div>
+				<input type="text" id="text_logo" class="input-common" readonly="readonly" value="" />
+				<em>上传</em>
+				
+				<img id="preview_logo" src="__STATIC__/blue/img/upload-common-select.png" data-src="" data-html="true" data-container="body" data-placement="top" data-trigger="manual"/>
+
+			</div>
+
+			<p class="hint">
+				<span>建议使用<i class="important-note">宽86</i>像素-<i class="important-note">高86</i>像素内的<i class="important-note">JPG</i>或<i class="important-note">PNG</i>正方形图片</span>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="save()">保存</button>
+			<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);" >返回</button>
+		</dd>
+	</dl>
+</div>
+<input type="hidden" value="{$nav_type}" id="nav_type">
+{/block}
+{block name="script"}
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function(){
+	$("input[type='radio'][name='navigationtype']").click(function(){
+		var type = $(this).val();
+		var url_type = $("[name='url_type']:checked").val();
+		if(url_type == 0){
+			switchUseType(type);
+		}
+	})
+
+	$("input[type='radio'][name='applet_url_type']").click(function(){
+		var type = $(this).val();
+		if(type == 1){
+			$('.url-type-hint-1').show();
+			$('.url-type-hint-2, .url-type-hint-3').hide();
+		} else if (type == 2) {
+		    $('.url-type-hint-2').show();
+			$('.url-type-hint-1, .url-type-hint-3').hide();
+		} else {
+		    $('.url-type-hint-3').show();
+			$('.url-type-hint-1, .url-type-hint-2').hide();
+		}
+	})
+});
+
+function save(){
+	var nav_title=$("#nav_title").val();
+	var sort=$("#sort").val();
+	var type=$("#nav_type").val();
+	var applet_nav = '';
+
+	if(nav_title == ''){
+		showTip("导航名称不能为空","warning");
+		$("#nav_title").focus();
+		return false;
+	}
+	if(sort=='')$("#sort").val(0);
+	var url_type = $("input[name=url_type]:checked").val();
+	if(url_type == 0){
+		var nav_url=$("#shopNavModel").val();
+		var template_name = $("#shopNavModel option:selected").text();
+	}else if(url_type == 1){
+		var nav_url=$("input[name=nav_url]").val();
+		var template_name = '';
+		// 小程序链接类型选择
+		if (type == 3) {
+		    applet_nav =  $("input[name=applet_url_type]:checked").val();
+		}
+	}
+	if(nav_url == ''){
+		showTip("链接地址不能为空","warning");
+		return false;
+	}
+	var is_blank = $("#is_blank").prop('checked') ? 1 : 0 ;
+	var is_show = $("#is_show").prop('checked') ? 1 : 0 ;
+	var nav_icon = $("#logo").val();
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/config/addshopnavigation')}",
+		data: {
+			'nav_title': nav_title,
+			'sort': sort,
+			'nav_url': nav_url,
+			'type': type,
+			'nav_type': url_type,
+			'is_blank': is_blank,
+			'template_name': template_name,
+			'nav_icon': nav_icon,
+			'is_show': is_show,
+			'applet_nav': applet_nav
+		},
+		success:function(data){
+			if (data["code"] > 0) {
+				showTip(data["message"],'success');
+				location.href=__URL("ADMIN_MAIN/config/shopnavigationlist?nav_type={$nav_type}");
+			}else{
+				showTip(data["message"],'error');
+			}
+		}
+	});
+}
+
+$("#url_type1").click(function(){
+	$(".selectric-select-common").show();
+	$("#nav_url").hide();
+	if ($('#nav_type').val() == 3) $("#applet_url_type").hide();
+});
+
+$("#url_type2").click(function(){
+	$(".selectric-select-common").hide();
+	$("#nav_url").show();
+	if ($('#nav_type').val() == 3) $("#applet_url_type").show();
+});
+
+function imgUpload(event) {
+	var fileid = $(event).attr("id");
+	var id = $(event).next().attr("id");
+	var data = { 'file_path' : "config" };
+	uploadFile({
+		url: __URL(ADMINMAIN + '/config/uploadimage'),
+		fileId: fileid,
+		data : data,
+		callBack: function (res) {
+			if(res.code){
+				$("#"+id).val(res.data.path);
+				$("#text_" + id).val(res.data.path);
+				$("#preview_" + id).attr("data-src",__IMG(res.data.path));
+				showTip(res.message,"success");
+			}else{
+				showTip(res.message,"error");
+			}
+		}
+	});
+}
+
+// 切换
+function switchUseType(use_type){
+	var shopNavTemplateJson = '{$shopNavTemplateJson}';
+	var shopNavTemplateArr = JSON.parse(shopNavTemplateJson);
+	var html = '<option value="">请选择</option>';
+	for (var i = 0; i < shopNavTemplateArr.length; i++) {
+		var item = shopNavTemplateArr[i];
+		if(item['use_type'] == use_type){
+			html += '<option value="'+item['template_url']+'">'+item['template_name']+'</option>';
+		}
+	}
+	$("#shopNavModel").html(html).selectric({
+		maxHeight: 500
+	});
+}
+</script>
+{/block}

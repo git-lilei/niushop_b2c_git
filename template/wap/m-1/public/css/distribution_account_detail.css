@@ -1,0 +1,8 @@
+@charset "utf-8";
+tr{overflow: hidden; border-bottom: 1px solid; float: left; width: 100%; background: #fff;}
+tr td{padding: 10px;float: left;}
+tr td:last-child{width: 100%;}
+tr td:last-child p{line-height: 22px;width: 100%;}
+tr td:last-child p:last-child{float: left;}
+.empty{margin-top: 150px;text-align: center;}
+.empty img{width: 70px;margin-bottom: 10px;}

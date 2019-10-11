@@ -1,0 +1,17 @@
+body{background: #fff;}
+.wrap{width: 100%; position: relative;}
+.signin-top{width: 100%;height: 250px; text-align: center; padding-top: 20px;}
+.signin-top>div{width: 100px; height: 100px; margin: 0 auto; border-radius: 50px; font-size: 16px;font-weight: 600; line-height: 90px; letter-spacing: 1px;border: 6px solid #fff;color: #fff;}
+.signin-content{width: 92%; margin: -100px auto 0; background: #fff; border-radius: 5px; padding: 15px 0;text-align: center; box-shadow: 0 0 10px rgba(0, 0, 0, .3);}
+.signin-content .date{height: 30px; line-height: 30px;font-size: 16px;}
+.signin-content .reward{height: 20px;margin: 10px 0;}
+.signin-content .week{width: 92%; margin: 15px auto 0;overflow: hidden; height: 30px; line-height: 30px; display: flex;}
+.signin-content .week li{width: 14.25%;}
+.signin-content .day{width: 92%; margin: 0 auto; display: flex; flex-wrap: wrap;}
+.signin-content .day li{width: 14.25%;height: 50px; line-height: 50px;}
+.signin-rule{position: absolute; top: 20px; right: -4px; width: 75px; height: 28px; line-height: 28px; color: #fff; text-align: center; border-top-left-radius: 50px; border-bottom-left-radius: 50px; display: none;}
+.signin-content .day li .signed{height: 20px; line-height: 35px;}
+.signin-content .day li .signed i{font-size: 18px;}
+.signin-content .day li p{font-size: 12px;line-height: 30px;}
+.signin-content .day li div img{width: 100%;}
+.curr-day .curr-tips{width: 20px; height: 20px;border-radius: 50px; line-height: 20px; margin: 15px auto 0;color: #fff;}

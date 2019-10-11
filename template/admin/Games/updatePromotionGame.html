@@ -1,0 +1,343 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/ptomotion_game_new.css">
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+{/block}
+{block name="right_tab"}{/block}
+{block name="main"}
+<div class="promotion-game-main">
+	<nav class="option-nav">
+		<ul>
+			<li class="selected" data-option="create-promotion"><a href="javascript:;">创建活动</a></li>
+			<li data-option="winning-setting"><a href="javascript:;">中奖设置</a></li>
+			<li data-option="award-setting"><a href="javascript:;">奖励设置</a></li>
+			<li data-option="create-promotion"><a href="javascript:;">完成</a></li>
+		</ul>
+	</nav>
+
+	<div class="game-container">
+		<!-- 活动缩略图 -->
+		<div class="game-thumbnail">
+			<img src="ADMIN_IMG/{$game_type_info.type_image}">
+		</div>
+		<div class="game-info">
+			<!-- 创建活动 start -->
+			<div id="create-promotion" class="create-promotion info-content-height" >
+				<h4 class="option-title">创建活动</h4>
+				<dl>	
+					<dt><span class="require">*</span>活动名称：</dt>
+					<dd>
+						<input class="input-common" id="game_name" data-switch="game_name" class="input-common" value="{$game_info.name}"  placeholder="填写活动名称">
+						<p class="err-msg">活动名称不可为空</p>
+					</dd>
+				</dl>
+				<!-- 开始时间 -->
+				<dl>
+					<dt><span class="require">*</span>开始时间：</dt>
+					<dd>
+						<input class="input-common" type="datetime" id="start_time" data-switch="start_time" value="{:getTimeStampTurnTime($game_info.start_time)}" onclick="WdatePicker({skin:'twoer',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+						<p class="err-msg"></p>
+					</dd>
+				</dl>
+				<!-- 结束时间 -->
+				<dl>
+					<dt><span class="require">*</span>结束时间：</dt>
+					<dd>
+						<input class="input-common" type="datetime" id="end_time" data-switch="end_time"  value="{:getTimeStampTurnTime($game_info.end_time)}" onclick="WdatePicker({skin:'twoer',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+						<p class="err-msg"></p>
+					</dd>
+				</dl>
+				<dl>
+					<dt>活动图片：</dt>
+					<dd>
+						<div class="upload-btn-common">
+							<div>
+								<input class="input-file" name="file_upload" id="uploadImg" type="file" onchange="imgUpload(this);" title="上传">
+								<input type="hidden" id="logo" value="{$game_info.activity_images}" />
+							</div>
+							<input type="text" id="text_logo" class="input-common" readonly="readonly" value="{if condition="$game_info.activity_images"}{$game_info.activity_images}{/if}" />
+							<em>上传</em>
+							
+							<img id="preview_logo" src="__STATIC__/blue/img/upload-common-select.png" {if condition="$game_info.activity_images"}data-src="{:__IMG($game_info.activity_images)}"{/if} data-html="true" data-container="body" data-placement="top" data-trigger="manual"/>
+						</div>
+						<p class="ini">上传活动图片后，才会在首页显示</p>
+					</dd>
+				</dl>
+				<dl>
+					<dt>活动说明：</dt>
+					<dd>
+						<textarea class="textarea-common" rows="3" id="remark">{$game_info.remark}</textarea>
+					</dd>
+				</dl>
+				<h4 class="option-title">参与条件</h4>
+				<dl>
+					<dt>参与的用户：</dt>
+					<dd>
+						<select name="member_level" id="member_level" data-switch="member_level" class="select-common">
+							<option value="0">全部会员</option>
+							{volist name = "level_list" id = "vo"}
+								{if condition = "$vo.level_id eq $game_info.member_level"}
+								<option value="{$vo.level_id}" selected="selected">{$vo.level_name}</option>
+								{else/}
+								<option value="{$vo.level_id}">{$vo.level_name}</option>
+								{/if}
+							{/volist}
+						</select>
+						<p class="ini">默认所有用户都能参与活动。</p>
+					</dd>
+				</dl>
+				<dl>
+					<dt><span class="require">*</span>消耗积分：</dt>
+					<dd>
+						<input type="number" id="points" data-switch="points" class="input-common harf" value="{$game_info.points}"><em class="unit">分</em>
+						<p class="ini">用户每次参与需要消耗积分</p>
+						<p class="err-msg"></p>
+					</dd>
+				</dl>
+				<dl>
+					<dt>限制类型：</dt>
+					<dd>
+						<label class="radio inline normal">
+							<i class="radio-common {if $game_info.join_type eq 0}selected{/if}">
+								<input type="radio" name="join_type" value="0" {if $game_info.join_type eq 0}checked{/if}>
+							</i>
+							<span>活动全过程</span>
+						</label>
+						<label class="radio inline normal">
+							<i class="radio-common {if $game_info.join_type eq 1}selected{/if}">
+								<input type="radio" name="join_type" value="1" {if $game_info.join_type eq 1}checked{/if}>
+							</i>
+							<span>每天</span>
+						</label>
+					</dd>
+				</dl>
+				<dl>
+					<dt>参与次数：</dt>
+					<dd>
+						<input type="number" id="join_frequency" class="input-common harf"  value="{$game_info.join_frequency}"><em class="unit">次</em>
+						<p class="ini">0为不限制次数</p>
+					</dd>
+				</dl>
+			</div>
+			<!-- 创建活动 end -->
+			<!-- 中奖设置 start -->
+			<div id="winning-setting" class="winning-setting info-content-height" style="display: none;">
+				<h4 class="option-title">中奖设置</h4>
+				<dl>
+					<dt><span class="require">*</span>中奖率：</dt>
+					<dd>
+						<input type="number" id="winning_rate" class="input-common harf" placeholder="0-100" value="{$game_info.winning_rate}" /><em class="unit">%</em>
+						<p class="ini">会员中奖的概率 在0到100之间进行取值</p>
+						<p class="err-msg"></p>
+					</dd>
+				</dl>
+				<dl>
+					<dt>未中奖说明：</dt>
+					<dd>
+						<textarea class="textarea-common" id="no_winning_des" placeholder="哎呀！真可惜没有中奖" rows="3">{$game_info.no_winning_des}</textarea>
+					</dd>
+				</dl>
+				<dl>
+					<dt>中奖名单：</dt>
+					<dd>
+						<label class="radio inline normal">
+							<i class="radio-common {if $game_info.winning_list_display eq 1}selected{/if}">
+								<input type="radio" name="winning_list_display" value="1" {if $game_info.winning_list_display eq 1}checked{/if}>
+							</i>
+							<span>显示</span>
+						</label>
+						<label class="radio inline normal">
+							<i class="radio-common {if $game_info.winning_list_display eq 0}selected{/if}">
+								<input type="radio" name="winning_list_display" value="0" {if $game_info.winning_list_display eq 0}checked{/if}>
+							</i>
+							<span>不显示</span>
+						</label>
+					</dd>
+				</dl>
+				<dl>
+					<dt>限制类型：</dt>
+					<dd>
+						<label class="radio inline normal">
+							<i class="radio-common {if $game_info.winning_type eq 0}selected{/if}">
+								<input type="radio" name="winning_type" value="0" {if $game_info.winning_type eq 0}checked{/if}>
+							</i>
+							<span>活动全过程</span>
+						</label>
+						<label class="radio inline normal">
+							<i class="radio-common {if $game_info.winning_type eq 1}selected{/if}">
+								<input type="radio" name="winning_type" value="1" {if $game_info.winning_type eq 1}checked{/if}>
+							</i>
+							<span>每天</span>
+						</label>
+					</dd>
+				</dl>
+				<dl>
+					<dt>中奖次数：</dt>
+					<dd>
+						<input type="number" name="" class="input-common harf" id="winning_max"  value="{$game_info.winning_max}"><em class="unit">次</em>
+						<p class="ini">0为不限制次数</p>
+					</dd>
+				</dl>
+			</div>
+			<!-- 中奖设置 end -->
+			<!-- 奖励设置 start -->
+			<div id="award-setting" class="award-setting info-content-height" style="display: none;">
+				<h4 class="option-title">奖励设置</h4>
+				<p class="info-tip">等级设置的奖品数量越多，则该等级中奖率越高。例如：设置一等奖 10个，二等奖20个，则中二等奖概率高于一等奖</p>
+				<div class="award-container">
+					<table class="table-class">
+						<colgroup>
+							<col style="width:30%;">
+							<col style="width:15%;">
+							<col style="width:15%;">
+							<col style="width:20%;">
+							<col style="width:20%;">
+						</colgroup>
+						<tr>
+							<th>奖励等级</th>
+							<th>奖品类型</th>
+							<th>奖励说明</th>
+							<th>奖品数量(个)</th>
+							<th>操作</th>
+						</tr>
+						<tbody id="games_rule">
+							{foreach name = "$game_info.rule" item = "vo" key="k"}
+								<tr data-sort="{$k}">
+									<td name="rule_name">{$vo.rule_name}</td>
+									<td name="rule_type_name">
+										{if condition = "$vo.type eq 1"}
+											积分
+										{elseif condition = "$vo.type eq 2" }
+											送优惠
+										{elseif condition = "$vo.type eq 3" }
+											红包
+										{elseif condition = "$vo.type eq 4" }
+											赠品
+										{/if}
+										<input type="hidden" name="rule_type" value="{$vo.type}">
+									</td>
+									<td name="rule_text">{$vo.type_value}
+									<input type="hidden" name="rule_value" value="{if condition = "$vo.type eq 1"}{$vo.points}
+										{elseif condition = "$vo.type eq 2" }{$vo.coupon_type_id}
+										{elseif condition = "$vo.type eq 3" }{$vo.hongbao}
+										{elseif condition = "$vo.type eq 4" }{$vo.gift_id}{/if}"/></td>
+									
+									<td name="rule_num">{$vo.rule_num}</td>
+									<td>
+										<a href="javascript:;" onclick="setRule(this)">编辑</a>&nbsp;&nbsp;&nbsp;
+										<a href="javascript:;" onclick="delRule(this)">删除</a>
+									</td>
+								</tr>
+							{/foreach}
+						</tbody>
+					</table>
+					<div style="margin-top: 10px;" class="add_rule">
+						<dl>
+							<dt>奖励等级：</dt>
+							<dd>
+								<input type="text" id="rule_name" class="input-common"  placeholder="请填写奖励等级">
+								<p class="err-msg"></p>
+							</dd>
+						</dl>
+						<dl>
+							<dt>奖品类型：</dt>
+							<dd>
+								<label class="radio inline normal">
+									<i class="radio-common selected">
+										<input type="radio" checked="checked" id = "rule_type_1" name = "rule_type" value="1"/>
+									</i>
+									<span>积分</span>
+								</label>
+								<label class="radio inline normal">
+									<i class="radio-common">
+										<input type="radio" id = "rule_type_2"  name = "rule_type" value="2"/>
+									</i>
+									<span>优惠券</span>
+								</label>
+								<label class="radio inline normal">
+									<i class="radio-common">
+										<input type="radio" id = "rule_type_3"  name = "rule_type" value="3"/>
+									</i>
+									<span>红包</span>
+								</label>
+								<label class="radio inline normal">
+									<i class="radio-common">
+										<input type="radio" id = "rule_type_4"  name = "rule_type" value="4"/>
+									</i>
+									<span>赠品</span>
+								</label>
+							</dd>
+						</dl>
+						<dl class="rule_type1">
+							<dt>赠送积分：</dt>
+							<dd>
+								<input type="number" id="rule_points" class="input-common harf" placeholder="请填写积分数"><em class="unit">分</em>
+								<p class="err-msg"></p>
+							</dd>
+						</dl>
+						<dl style="display: none;" class="rule_type2">
+							<dt>优惠劵：</dt>
+							<dd>
+								<select name="coupon_type_id" id="coupon_type_id" class="select-common">
+									<option value="0">请选择优惠劵</option>
+									{volist name = "coupon_type_list" id = "vo"}
+										<option value="{$vo.coupon_type_id}">{$vo.coupon_name}</option>
+									{/volist}
+								</select>
+								<p class="err-msg"></p>
+							</dd>
+						</dl>
+						<dl style="display: none;" class="rule_type3">
+							<dt>奖励红包：</dt>
+							<dd>
+								<input type="number" id="rule_hongbao" data-switch="rule_hongbao" class="input-common harf" placeholder="请填写红包数"><em class="unit">元</em>
+								<p class="err-msg"></p>
+							</dd>
+						</dl>
+						<dl style="display: none;" class="rule_type4">
+							<dt>奖励赠品：</dt>
+							<dd>
+								<select name="gift_id" id="gift_id" class="select-common">
+									<option value="0">请选择赠品</option>
+									{volist name = "gift_list" id = "vo"}
+										<option value="{$vo.gift_id}">{$vo.gift_name}</option>
+									{/volist}
+								</select>
+								<p class="err-msg"></p>
+							</dd>
+						</dl>
+						<dl>
+							<dt>奖品数量：</dt>
+							<dd>
+								<input type="number" id="rule_num" class="input-common harf"><em class="unit">个</em>
+								<p class="err-msg"></p>
+							</dd>
+						</dl>
+						<dl>
+							<dt></dt>
+							<dd><button class="btn-common rule_a" data-type="add" style="line-height: 20px;">添加奖励</button></dd>
+						</dl>
+					</div>
+				</div>
+			</div>
+			<!-- 奖励设置 end -->
+
+			<!-- 底部按钮区域 start -->
+			<div style="clear: both;"></div>
+			<div class="bottom_button">
+				<dl>
+					<dt></dt>
+					<dd style="line-height: 30px;">
+						<button class="btn-common upper" style="display: none;">上一步</button>
+						<button class="btn-common next">下一步</button>
+						<button class="btn-common complete" style="display: none;">完成</button>
+					</dd>
+				</dl>
+			</div>
+			<!-- 底部按钮区域 start -->
+		</div>
+	</div>
+</div>
+{include file="admin/Games/controlPromotionGameJs"}
+{/block}
+{block name="script"}{/block}

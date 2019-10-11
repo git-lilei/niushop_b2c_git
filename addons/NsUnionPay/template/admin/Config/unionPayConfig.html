@@ -1,0 +1,98 @@
+{extend name="$base" /}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>商户号：</dt>
+		<dd><input id="merchant_number" type="text" value="{$config['value']['merchant_number']}" class="input-common long" /></dd>
+	</dl>
+	<dl>
+		<dt>签名证书秘钥：</dt>
+		<dd><input id="sign_cert_pwd" type="text" value="{$config['value']['sign_cert_pwd']}" class="input-common long" /></dd>
+	</dl>
+	<dl>
+		<dt>证书路径：</dt>
+		<dd><input id="certs_path" type="text" value="{$config['value']['certs_path']}" class="input-common long" /></dd>
+	</dl>
+	<dl>
+		<dt>日志路径：</dt>
+		<dd><input id="log_path" type="text" value="{$config['value']['log_path']}" class="input-common long" /></dd>
+	</dl>
+		<dl>
+		<dt>手续费：</dt>
+		<dd>
+			<input id="service_charge" type="number" value="{$config['value']['service_charge']}" class="input-common harf" 
+			/><em class="unit">元</em>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否启用支付：</dt>
+		<dd>
+			<p>
+				<input id="is_use" type="checkbox" class="checkbox" {if condition="$config.is_use==1"} checked="checked"{/if}/>
+			</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>是否启用退款：</dt>
+		<dd>
+			<p><input id="refund_is_use" type="checkbox" class="checkbox"
+			{if condition="$original_road_refund_setting_info.is_use"}checked="checked"{/if}
+			/></p>
+			<p class="hint">开启银联卡支付才可以进行后续操作</p>
+		</dd>
+	</dl>
+	
+	
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="setConfigAjax()">保存</button>
+			<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);" >返回</button>
+		</dd>
+	</dl>
+</div>
+<script>
+function setConfigAjax(){
+	
+	var merchant_number = $("#merchant_number").val();
+	var sign_cert_pwd = $("#sign_cert_pwd").val();
+	var certs_path = $("#certs_path").val();
+	var log_path = $("#log_path").val();
+	var service_charge = $("#service_charge").val();
+	var is_use = 0;
+	if($("#is_use").is(":checked")){
+		is_use = 1;
+	}
+	
+	var originalRoadRefund = new Object();
+	originalRoadRefund.is_use = $("#refund_is_use").is(":checked") ? 1 : 0;
+	
+	var originalRoadTransfer = new Object();
+	originalRoadTransfer.is_use = $("#transfer_is_use").is(":checked") ? 1 : 0;
+	$.ajax({
+		type:"post",
+		url:"{:__URL('__URL__/NsUnionPay/ADMIN_MODULE/config/payUnionConfig')}",
+		data:{
+			'merchant_number':merchant_number,
+			'sign_cert_pwd':sign_cert_pwd,
+			'certs_path':certs_path,
+			'log_path':log_path,
+			'service_charge':service_charge,
+			'is_use' : is_use,
+			'type' : 'unionpay',
+			'value' : JSON.stringify(originalRoadRefund),
+			'transferValue' : JSON.stringify(originalRoadTransfer)
+		},
+		success:function (data) {
+			if (data["code"] > 0) {
+				showTip(data["message"],"success");
+				location.href=__URL("ADMIN_MAIN/config/paymentconfig");
+			}else{
+				showTip(data["message"],"error");
+			}
+		}
+	});
+}
+</script>
+{/block}

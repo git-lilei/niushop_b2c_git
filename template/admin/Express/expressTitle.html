@@ -1,0 +1,31 @@
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/product.css">
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+
+<style>
+.title-nav{background: #f5f7fa;overflow: hidden;padding-left: 5px;}
+.title-nav.fixed{position: fixed;top: 50px;z-index: 1000;width: 100%;}
+.title-nav li{float: left;width: 100px;text-align: center;padding: 5px 2px 0 2px;position: relative;cursor: pointer;transition: all 0.3s;}
+.title-nav li a{display: block;color: #5e6166;height: 35px;line-height: 35px;padding: 0 8px;font-size: 13px;}
+.title-nav li.selected a,.title-nav li:hover a{background: #fff;color: #00A0DE;}
+</style>
+<nav class="title-nav">
+	<ul>
+		{foreach name="express_child" item="v" key="k" }
+			{if condition="$v['child_name'] != ''"}
+				{if isset($v['module'])}
+					{if condition="$v['active'] == 1"}
+					<li class="selected"><a href="{:__URL('__URL__/'.$v['module'].'/ADMIN_MODULE/'.$v['url'])}" child_id="{$v['child_id']}">{$v['child_name']}</a></li>
+					{else}
+						<li><a href="{:__URL('__URL__/'.$v['module'].'/ADMIN_MODULE/'.$v['url'])}" child_id="{$v['child_id']}">{$v['child_name']}</a></li>
+					{/if}
+				{else/}
+					{if condition="$v['active'] == 1"}
+					<li class="selected"><a href="{:__URL('ADMIN_MAIN/'.$v['url'])}" child_id="{$v['child_id']}">{$v['child_name']}</a></li>
+					{else}
+						<li><a href="{:__URL('ADMIN_MAIN/'.$v['url'])}" child_id="{$v['child_id']}">{$v['child_name']}</a></li>
+					{/if}
+				{/if}
+			{/if}
+		{/foreach}
+	</ul>
+</nav>

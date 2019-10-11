@@ -1,0 +1,130 @@
+<style>
+.select-url-container{display: none;padding: 10px;}
+.clear:after,.clear:before{content: '';clear: both;display: block;}	
+.url-tab-list li{float: left;}
+.url-tab-list li a{padding: 8px 20px;color:#5e6166;margin: 0px 15px;display: block;}
+.url-tab-list li a.active{border-bottom: 2px solid #00A0DE}
+.url-tab-content{width: 100%;margin-top: 5px;height: 394px;overflow:hidden;padding: 0 15px;box-sizing: border-box;}
+.url-tab-content::-webkit-scrollbar {width: 2px;height: 2px;}
+.url-tab-content::-webkit-scrollbar-track {background-color: #F1F1F1;}
+.url-tab-content::-webkit-scrollbar-thumb {background-color: #00A0DE;}
+.url-tab-content .tab-pane{}
+/* 商城模块 */
+.shop-module ul li{background: #fdfdfd;color: #6b6b6b;border: 1px solid #efefef;display: inline-block;padding: 7px 8px;border-radius: 2px;font-size: 12px;line-height: 1;margin-right: 5px;margin-top: 10px;cursor: pointer;transition: all .3s;}
+.shop-module ul li:hover{background: #f2f2f2}
+/* 商品模块 */
+.search-container{margin-top: 10px;text-align: right}
+.search-container .input-common{margin-top: 10px;}
+.search-container .btn-common-white{outline: none;}
+.goods-module .table-class{margin-top: 10px;}
+.goods-module .table-class .select-btn{background: #fdfdfd;color: #6b6b6b;border: 1px solid #efefef;display: inline-block;padding: 7px 8px;border-radius: 2px;font-size: 12px;line-height: 1;cursor: pointer;transition: all .3s;}
+.goods-module .table-class .select-btn:hover{background: #f2f2f2}
+.goods-module .table-class td{overflow:hidden;text-overflow: ellipsis;}
+</style>
+
+<div class="select-url-container" id="url-container">
+	<ul class="url-tab-list clear">
+		<li><a href="javascript:;" class="active" data-pane="shop-module">商城模块</a></li>
+		<li><a href="javascript:;" data-pane="goods-module">商品</a></li>		
+	</ul>
+	<div class="url-tab-content">
+		<!-- 商城模块 -->
+		<div class="url-tab-pane shop-module">
+			<ul>
+				{notempty name="$nav_data"}
+					{foreach name="$nav_data" item="vo"}
+						<li onclick="selectUrl('{$vo.template_url}')">{$vo.template_name}</li>
+					{/foreach}
+				{/notempty}
+			</ul>	
+		</div>
+		<div class="url-tab-pane goods-module" style="display: none;">
+			<div class="search-container">
+				<input type="text" class="input-common" placeholder="请输入商品名称" name="goods_name">
+				<button class="btn-common-white" onclick="LoadingInfo(1)">搜索</button>
+			</div>
+			<table class="table-class">
+				<colgroup>
+					<col width="50%">
+					<col width="20%">
+					<col width="15%">
+					<col width="15%">
+				</colgroup>
+				<thead>
+					<tr>
+						<th>商品名称</th>
+						<th style="text-align: right;">价格</th>
+						<th style="text-align: center;">库存</th>
+						<th style="text-align: right;">操作</th>
+					</tr>
+				</thead>
+				<tbody class="goodsList"></tbody>
+			</table>
+			{include file="admin/pageCommon"}
+		</div>
+	</div>
+</div>
+
+<script>
+function selectUrl(url){
+	if(curlEl != undefined){
+		$(curlEl).prev('input').val(url);
+		layer.closeAll();		
+	}else{
+		console.error('curlEl nnot found');
+	}
+}	
+
+function LoadingInfo(page_index){
+	var goods_name = $('.goods-module [name="goods_name"]').val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/promotion/goodsSelectList')}",
+		data : {
+			"page_index" : page_index,
+			"page_size" : 5,
+			"value" : JSON.stringify({'from_type' : 'search', 'search' : goods_name})
+		},
+		success : function(data) {
+			if (data["data"].length > 0) {
+				$(".goods-module .table-class tbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					html += '<tr align="center">';
+
+						html += '<td align="left">' + data["data"][i]["goods_name"] + '</td>';
+
+						html += '<td align="right" class="right-indent">' + data["data"][i]["price"] + '</td>';
+						
+						html += '<td align="center" class="right-indent">' + data["data"][i]["stock"]  + '</td>';
+
+						{if $terminal eq 3}
+                    	html += '<td align="right" class="right-indent"><a href="javascript:;" onclick="selectUrl(\'/pages/goods/goodsdetail/goodsdetail?goods_id='+ data["data"][i]["goods_id"] +'\')" class="select-btn">选取</a></td>';
+                    	{else/}
+						html += '<td align="right" class="right-indent"><a href="javascript:;" onclick="selectUrl(\'/goods/detail?goods_id='+ data["data"][i]["goods_id"] +'\')" class="select-btn">选取</a></td>';
+						{/if}
+
+					html += '</tr>';
+					$(".goods-module .table-class tbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="4" style="text-align: center;font-weight: normal;color: #999;">暂无符合条件的数据记录</td></tr>';
+				$(".goods-module .table-class tbody").html(html);
+			}
+			$("#showNumber").val('8').parent().hide();
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+$(function(){
+	$('.url-tab-list li a').click(function(){
+		var pane = $(this).attr('data-pane'); 
+		$('.url-tab-list li a').removeClass('active');
+		$(this).addClass('active');
+		$('.select-url-container .url-tab-content .url-tab-pane').hide();
+		$('.select-url-container .url-tab-content .' + pane).show();
+	})
+})
+</script>

@@ -1,0 +1,26 @@
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/product.css">
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<link href="__STATIC__/blue/css/goods/add_goods.css" rel="stylesheet" type="text/css">
+<style>
+.goods-nav li{width: 130px;}
+.table-class tr th,.table-class tr td{border: none;}
+.ns-main{margin-top: 0px;}
+.table-class tr th:first-child, .table-class tr td:first-child{border-left: none;}
+.table-class tr th:last-child, .table-class tr td:last-child{border-right:none;}
+.mod-table{padding:15px;}
+</style>
+<nav class="goods-nav">
+		<ul>
+			{foreach name="express_child" item="v" key="k" }
+				{if condition="$v['child_name'] != ''"}
+					{if condition="$v['active'] == 1"}
+					<li class="selected"><a href="{:__URL('ADMIN_MAIN/'.$v['url'])}" child_id="{$v['child_id']}">{$v['child_name']}</a></li>
+					{else}
+						<li><a href="{:__URL('ADMIN_MAIN/'.$v['url'])}" child_id="{$v['child_id']}">{$v['child_name']}</a></li>
+					{/if}
+				{/if}
+				
+			{/foreach}
+		
+		</ul>
+</nav>

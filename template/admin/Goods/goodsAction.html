@@ -1,0 +1,466 @@
+{if addon_is_exit('Nsfx')}
+<style>
+.set-style dl dt{width:200px !important;}
+.set-style dl dd{width:auto !important;}
+#queryGoodsCommissionRate .set-style dl dd{line-height: 34px;}
+#distributionSetting .modal-body{overflow-y: initial}
+.progress-modal {width: 360px;height: 140px;background: #fff;position: fixed;z-index: 100;top: 50%;left: 50%;transform: translate(-50%,-50%);box-shadow: 0 5px 15px rgba(0,0,0,0.2);padding: 20px;box-sizing: border-box;}
+.progress-modal h4 {text-align: center;font-size: 14px;}
+.progress-modal .progress-bar {width: 100%;margin: 5px auto;height: 10px;border:1px solid #ddd;border-radius: 10px;overflow:hidden;margin-top: 20px;}
+.progress-modal .progress-bar div {width: 0;height: 100%;background: #00A0DE;}
+.progress-modal .progress-desc {text-align: center;margin-top: 10px;}
+</style>
+
+<!-- 分销设定 -->
+<div class="modal fade hide" id="distributionSetting" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+    	<div class="modal-content">
+      		<div class="modal-header">
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        		<h4 class="modal-title">分销设定</h4>
+      		</div>
+      		<div class="modal-body">
+        		<div class="set-style">
+            		<dl>
+						<dt>是否开启：</dt>
+						<dd>
+							<p>
+								<input type="checkbox"  class="checkbox" name="is_open" />
+							</p>	
+						</dd>
+					</dl>
+            		<dl>
+						<dt>分销佣金比率：</dt>
+						<dd>
+							<p>
+								<input name="distribution_commission_rate" type="number"  class="input-common harf" value="0" /><em class="unit">%</em>
+							</p>	
+						</dd>
+					</dl>
+					<dl>
+						<dt>区域分销佣金比率：</dt>
+						<dd>
+							<p>
+								<input name="regionagent_commission_rate" type="number" class="input-common harf" value="0" /><em class="unit">%</em>
+							</p>	
+						</dd>
+					</dl>
+					<dl>
+						<dt>股东分红佣金比率：</dt>
+						<dd>
+							<p>
+								<input name="partner_commission_rate" type="number" value="0" class="input-common harf" /><em class="unit">%</em>
+							</p>	
+						</dd>
+					</dl>
+					<dl class="hide">
+						<dt>分销团队分红佣金比率：</dt>
+						<dd>
+							<p>
+								<input name="distribution_team_commission_rate" type="number" value="0" class="input-common harf" /><em class="unit">%</em>
+							</p>	
+						</dd>
+					</dl>
+					<dl class="hide">
+						<dt>股东团队分红佣金比率：</dt>
+						<dd>
+							<p>
+								<input name="partner_team_commission_rate" type="number" value="0" class="input-common harf" /><em class="unit">%</em>
+							</p>	
+						</dd>
+					</dl>
+					<dl class="hide">
+						<dt>渠道代理分红佣金比率：</dt>
+						<dd>
+							<p>
+								<input name="channelagent_commission_rate" type="number" value="0" class="input-common harf" /><em class="unit">%</em>
+							</p>	
+						</dd>
+					</dl>
+					<dl>
+						<dt>选择商品：</dt>
+						<dd>
+							<p>
+								<label class="radio inline normal">
+									<i class="radio-common selected">
+										<input type="radio" name="type" checked="checked" value="1" />
+									</i>
+									<span>全部</span>
+								</label>
+								<label class="radio inline normal">
+									<i class="radio-common">
+										<input type="radio" name="type" value="0" />
+									</i>
+									<span>部分</span>
+								</label>
+							</p>
+						</dd>
+					</dl>
+					<div class="goods-select hide">
+						<dl>
+							<dt>商品来源：</dt>
+							<dd>
+								<label class="radio inline normal">
+									<i class="radio-common selected">
+										<input type="radio" name="from_type" checked="checked" value="label" />
+									</i>
+									<span>标签</span>
+								</label>
+								<label class="radio inline normal">
+									<i class="radio-common">
+										<input type="radio" name="from_type" value="category" />
+									</i>
+									<span>分类</span>
+								</label>
+								<label class="radio inline normal">
+									<i class="radio-common">
+										<input type="radio" name="from_type" value="brand" />
+									</i>
+									<span>品牌</span>
+								</label>
+								<label class="radio inline normal">
+									<i class="radio-common">
+										<input type="radio" name="from_type" value="recommend" />
+									</i>
+									<span>推荐</span>
+								</label>
+								<label class="radio inline normal">
+									<i class="radio-common">
+										<input type="radio" name="from_type" value="goods_type" />
+									</i>
+									<span>类型</span>
+								</label>
+								<label class="radio inline normal hide">
+									<i class="radio-common">
+										<input type="radio" name="from_type" value="goods_ids" />
+									</i>
+									<span>已选商品</span>
+								</label>
+							</dd>
+						</dl>
+						<dl data-type="label">
+							<dt></dt>
+							<dd>
+								<select name="label" class="select-common">
+									{foreach $goods_group as $vo}
+										<option value="{$vo.group_id}">{$vo.group_name}</option>
+									{/foreach}
+								</select>
+							</dd>
+						</dl>
+						<dl data-type="category" class="hide">
+							<dt></dt>
+							<dd>
+								<div class="goods-category-container">
+									<input type="text" placeholder="请选择商品分类" show="false" class="input-common select-category" name="category" data-value="">
+									<div class="category-wrap hide">
+										<div class="goodsCategory one">
+											<ul>
+												{volist name="oneGoodsCategory" id="vo"}
+												<li data-value="{$vo.category_id}" data-level="{$vo.level}" data-has-child="{$vo.is_parent}">
+													<span>{$vo.category_name}</span>
+													{if condition="$vo.is_parent eq 1"}
+														<i class="fa fa-angle-right fa-lg"></i>
+													{/if}
+												</li>
+												{/volist}
+											</ul>
+										</div>
+										<div class="goodsCategory two hide" style="border-left:0;">
+											<ul></ul>
+										</div>
+										<div class="goodsCategory three hide">
+											<ul></ul>
+										</div>
+										<div class="selectGoodsCategory">
+											<a href="javascript:;" style="float:right;" class="confirm-select">确认选择</a>
+										</div>
+									</div>
+								</div>
+							</dd>
+						</dl>
+						<dl data-type="goods_type" class="hide">
+							<dt></dt>
+							<dd>
+								<select name="goods_type" class="select-common">
+									{volist name = "goods_type_list" id = "vo"}
+										<option value="{$vo.id}">{$vo.title}</option>
+									{/volist}
+								</select>
+							</dd>
+						</dl>
+						<dl data-type="recommend" class="hide">
+							<dt></dt>
+							<dd>
+								<select name="recommend" class="select-common">
+									<option value="1">热卖</option>
+									<option value="2">精品</option>
+									<option value="3">新品</option>
+								</select>
+							</dd>
+						</dl>
+						<dl data-type="brand" class="hide">
+							<dt></dt>
+							<dd>
+								<select name="brand" class="select-common">
+									{foreach $brand_list as $k => $v}
+										<option value="{$v['brand_id']}" >{$v['brand_name']}</option>
+									{/foreach}
+								</select>
+							</dd>
+						</dl>
+					</div>
+
+            	</div>
+      		</div>
+      		<div class="modal-footer">
+        		<button class="btn-common btn-big" onclick="saveDistributionSetting('distributionSetting');">保存</button>
+				<button class="btn-common-cancle btn-big" data-dismiss="modal">关闭</button>
+      		</div>
+    	</div>
+  	</div>
+</div>
+
+<!-- 商品分销 -->
+<div class="modal fade hide" id="goodsDistribution" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+    	<div class="modal-content">
+      		<div class="modal-header">
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        		<h4 class="modal-title">商品分销</h4>
+      		</div>
+      		<div class="modal-body">
+				<div class="set-style">
+            		<dl>
+						<dt>是否开启：</dt>
+						<dd>
+							<p class="is-open">
+								<input type="checkbox"  class="checkbox" name="is_open" />
+							</p>	
+						</dd>
+					</dl>
+            		<dl>
+						<dt>分销佣金比率：</dt>
+						<dd>
+							<p>
+								<input name="distribution_commission_rate" type="number"  class="input-common harf" value="0" /><em class="unit">%</em>
+							</p>	
+						</dd>
+					</dl>
+					<dl>
+						<dt>区域分销佣金比率：</dt>
+						<dd>
+							<p>
+								<input name="regionagent_commission_rate" type="number" class="input-common harf" value="0" /><em class="unit">%</em>
+							</p>	
+						</dd>
+					</dl>
+					<dl>
+						<dt>股东分红佣金比率：</dt>
+						<dd>
+							<p>
+								<input name="partner_commission_rate" type="number" value="0" class="input-common harf" /><em class="unit">%</em>
+							</p>	
+						</dd>
+					</dl>
+					<dl class="hide">
+						<dt>分销团队分红佣金比率：</dt>
+						<dd>
+							<p>
+								<input name="distribution_team_commission_rate" type="number" value="0" class="input-common harf" /><em class="unit">%</em>
+							</p>	
+						</dd>
+					</dl>
+					<dl class="hide">
+						<dt>股东团队分红佣金比率：</dt>
+						<dd>
+							<p>
+								<input name="partner_team_commission_rate" type="number" value="0" class="input-common harf" /><em class="unit">%</em>
+							</p>	
+						</dd>
+					</dl>
+					<dl class="hide">
+						<dt>渠道代理分红佣金比率：</dt>
+						<dd>
+							<p>
+								<input name="channelagent_commission_rate" type="number" value="0" class="input-common harf" /><em class="unit">%</em>
+							</p>	
+						</dd>
+					</dl>
+				</div>
+  			</div>
+  			<div class="modal-footer">
+        		<button class="btn-common btn-big" onclick="saveDistributionSetting('goodsDistribution');">保存</button>
+				<button class="btn-common-cancle btn-big" data-dismiss="modal">关闭</button>
+      		</div>
+    	</div>
+  	</div>
+</div>
+
+<div class="progress-modal hide">
+	<h4>本次共设置<span class="num">0</span>件商品</h4>
+	<div class="progress-bar"><div></div></div>
+	<p class="progress-desc">正在进行中...</p>
+</div>
+
+<script>
+var currDistributionGoodsId = '';	
+/**
+ * 分销设定
+*/
+function distributionSetting(){
+	$('#distributionSetting').modal('show');
+}
+
+// 保存设定
+var distribution_is_sub = false;
+function saveDistributionSetting(id, page){
+	var field = getDistributionField(id);
+		field.page = page != null ? page : 1;
+
+	if(distribution_is_sub) return;
+	if(distributionVertify(field)){
+		distribution_is_sub = true;
+		$.ajax({
+			type:"post",
+			url:"{:__URL('__URL__/nsfx/ADMIN_MODULE/Distribution/goodsDistributionSetting')}",
+			data:{ value : JSON.stringify(field)},
+			success:function (data) {
+				$("#"+id).modal("hide");
+				distribution_is_sub = false;
+				if (data != undefined && data.page_count >= 1) {
+					if(data.page < data.page_count) {
+						if(data.page == 1){
+							$('.progress-modal .num').text(data.total_count);
+							$('.progress-modal').removeClass('hide');
+						}
+						var percentage = parseFloat((data.page / data.page_count)).toFixed(2) * 100;
+						$('.progress-modal .progress-bar div').css('width', percentage+'%');
+						$('.progress-modal .progress-desc').text('已完成'+ data.page + '/' + data.page_count);
+						var page = data.page + 1;
+						saveDistributionSetting(id, page);
+					}else{
+						$('.progress-modal').addClass('hide');
+						showTip('设置成功', 'success');
+						LoadingInfo(1);
+					}
+				}
+
+				// if (data["code"] > 0) {
+				// 	showMessage('success', data["message"]);
+				// 	LoadingInfo(1);
+				// }else{
+				// 	showMessage('error', data["message"]);
+				// 	LoadingInfo(1);
+				// }	
+			}
+		});
+	}
+}
+
+// 获取数据
+function getDistributionField(id){
+	var field = {};
+	$('#'+id+' [name]').each(function(index, el) {
+		var name = $(el).attr('name');
+		switch (name){
+			case 'is_open':
+				field[name] = $(el).is(':checked') ? 1 : 0;
+			break;
+			case 'type':
+				field[name] = $('#'+id+' [name="type"]:checked').val();
+			break;
+			case 'from_type':
+				field[name] = $('#'+id+' [name="from_type"]:checked').val();
+			break;
+			case 'category':
+				field[name] = $('#'+id+' [name="category"]').attr('data-value');
+			break;
+			default:
+				field[name] = $(el).val();
+			break;
+		}
+	});
+	if(field.from_type == 'goods_ids'){
+		var goods_ids= new Array();
+		$("#productTbody input[type='checkbox']:checked").each(function() {
+			if (!isNaN($(this).val())) {
+				goods_ids.push($(this).val());
+			}
+		});
+		field.goods_ids = goods_ids.toString();
+	}
+	if(id == 'goodsDistribution'){
+		field.type = 0;
+		field.from_type = 'goods_ids';
+		field.goods_ids = currDistributionGoodsId;
+	}
+	return field;
+}
+
+// 数据验证
+function distributionVertify(data){
+	var all = parseFloat(data.distribution_commission_rate) + parseFloat(data.partner_commission_rate) + parseFloat(data.distribution_team_commission_rate) + parseFloat(data.partner_team_commission_rate) + parseFloat(data.regionagent_commission_rate) + parseFloat(data.channelagent_commission_rate);
+	if(all > 100){
+		showTip('总的分佣比率不能大于100%', 'error');
+		return false;
+	}
+	if(data.from_type == 'category' && data.category == ''){
+		showTip('请选择商品分类', 'error');
+		return false;
+	}
+	if(data.from_type == 'goods_ids' && data.goods_ids == ''){
+		showTip('请选择要设置的商品', 'error');
+		return false;
+	}
+	return true;
+}
+
+$(function(){
+	$('#distributionSetting [name="type"]').click(function(){
+		if($(this).val() == 1){
+			$("#distributionSetting .goods-select").addClass('hide');
+		}else if($(this).val() == 0){
+			$("#distributionSetting .goods-select").removeClass('hide');
+		}
+	})
+
+	$("#distributionSetting [name='from_type']").click(function(event) {
+		var type = $(this).val();
+		$('#distributionSetting [data-type]').addClass('hide');
+		$('#distributionSetting [data-type="'+ type +'"]').removeClass('hide');
+	});
+})
+
+
+function setGoodsDistribution(goods_id, type){
+	currDistributionGoodsId = goods_id;
+	$.ajax({
+		type : "post",
+		url : "{:__URL('__URL__/nsfx/ADMIN_MODULE/Distribution/getGoodsCommissionRateDetail')}",
+		data : {
+			"goods_id" : goods_id
+		},
+		success : function(data) {
+			$('#goodsDistribution').modal('show');
+			$("#goodsDistribution [name='distribution_commission_rate']").val(data.distribution_commission_rate);
+			$("#goodsDistribution [name='partner_commission_rate']").val(data.partner_commission_rate);
+			$("#goodsDistribution [name='regionagent_commission_rate']").val(data.regionagent_commission_rate);
+			$("#goodsDistribution [name='distribution_team_commission_rate']").val(data.distribution_team_commission_rate);
+			$("#goodsDistribution [name='partner_team_commission_rate']").val(data.partner_team_commission_rate);
+			$("#goodsDistribution [name='channelagent_commission_rate']").val(data.channelagent_commission_rate);
+			if(data.is_open == 1){
+				$("#goodsDistribution .is-open").html('<input type="checkbox" class="checkbox" name="is_open" checked/>');
+			}else{
+				$("#goodsDistribution .is-open").html('<input type="checkbox" class="checkbox" name="is_open" />');
+			}
+			$("#goodsDistribution [name='is_open']").simpleSwitch({
+				"theme": "FlatRadius"
+			});
+			$('#goodsDistribution').modal('show');
+		}
+	})	
+}
+//**************************************New*********************************************
+</script>
+{/if}

@@ -1,0 +1,72 @@
+{if condition="$is_presell == 1"}
+<h4 class="h4-title"><span></span>预售设置</h4>
+<dl>
+	<dt>是否支持预售：</dt>
+	<dd>
+		<label class="radio inline normal">
+			<i class="radio-common {if condition="$goods_info.is_open_presell == 1"}selected{/if}"><input type="radio" name="open_presell"  value="1" {if condition="$goods_info.is_open_presell == 1"}checked="checked"{/if}></i>
+			<span>是</span>
+		</label>
+		<label class="radio inline normal">
+			<i class="radio-common {if condition="$goods_info.is_open_presell == 0"}selected{/if}">
+				<input type="radio" name="open_presell" value="0" {if condition="$goods_info.is_open_presell == 0"}checked="checked"{/if}>
+			</i>
+			<span>否</span>
+		</label>
+	</dd>
+	
+</dl>
+{else/}
+<dl class="presell hide">
+	<dt>是否支持预售：</dt>
+	<dd>
+		<label class="radio inline normal">
+			<i class="radio-common {if condition="$goods_info.is_open_presell == 1"}selected{/if}"><input type="radio" name="open_presell"  value="1" {if condition="$goods_info.is_open_presell == 1"}checked="checked"{/if}></i>
+			<span>是</span>
+		</label>
+		<label class="radio inline normal">
+			<i class="radio-common {if condition="$goods_info.is_open_presell == 0"}selected{/if}">
+				<input type="radio" name="open_presell" value="0" {if condition="$goods_info.is_open_presell == 0"}checked="checked"{/if}>
+			</i>
+			<span>否</span>
+		</label>
+	</dd>
+	
+</dl>
+{/if}
+<dl class="presell hide">
+	<dt>预售金额：</dt>
+	<dd>
+		<input class="goods_price input-common harf" type="number" id="presell_price" min="0" placeholder="0.00" value="{$goods_info.presell_price}"><em class="add-on">元</em>
+		<span class="help-inline">预售金额必须是数字，且不能为负数</span>
+	</dd>
+	
+</dl>
+<dl class="presell hide">
+	<dt>预售发货方式：</dt>
+	<dd>
+		<label class="radio inline normal">
+			<i class="radio-common {if condition="$goods_info.presell_delivery_type == 1"}selected{/if}"><input type="radio" name="presell_delivery_type"  value="1" {if condition="$goods_info.presell_delivery_type == 1"}checked="checked"{/if}></i>
+			<span>按照预售发货时间</span>
+		</label>
+		<label class="radio inline normal">
+			<i class="radio-common {if condition="$goods_info.presell_delivery_type == 2 || $goods_info.presell_delivery_type == '' || $goods_info.presell_delivery_type == 0"}selected{/if}">
+				<input type="radio" name="presell_delivery_type" value="2" {if condition="$goods_info.presell_delivery_type == 2"}checked="checked"{/if}>
+			</i>
+			<span>按照预售发货天数</span>
+		</label>
+	</dd>
+	
+</dl>
+<dl class="presell hide">
+	<dt>预售发货时间：</dt>
+	<dd>
+		<input type="text" class="input-common" id="presell_time" value="{$goods_info.presell_time}" onclick="WdatePicker({dateFmt: 'yyyy-MM-dd HH:mm:ss',minDate: '%y-%M-#{%d+1}' })">&nbsp;开始发货
+	</dd>
+</dl>
+<dl class="presell hide">
+	<dt>预售发货时间：</dt>
+	<dd>
+		付款成功&nbsp;<input type="number" value="{$goods_info.presell_day}" class="span1 input-common short" id="presell_day" placeholder="0">&nbsp;天后发货
+	</dd>
+</dl>

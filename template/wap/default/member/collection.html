@@ -1,0 +1,28 @@
+{extend name="$base" /}
+{block name="resources"}
+    <link rel="stylesheet" type="text/css" href="WAP_CSS/member_collection.css">
+{/block}
+{block name="main"}
+<div class="cf-container ns-border-color-gray" data-reactid="2">
+	<div class="cf-edge" data-reactid="3"></div>
+	<ul class="cf-content" data-reactid="4">
+		<li class="cf-tab-item " data-type="0"><a href="javascript:;" class="selected ns-text-color-hover ns-border-color-hover">全部</a></li>
+		<li class="cf-tab-item" data-type="1"><a href="javascript:;"  class="ns-text-color-hover">本周</a></li>
+		<li class="cf-tab-item" data-type="2"><a href="javascript:;"  class="ns-text-color-hover">本月</a></li>
+		<li class="cf-tab-item" data-type="3"><a href="javascript:;" class="ns-text-color-hover">本年</a></li>
+	</ul>
+</div>
+<section class="collection-goods-list"></section>
+<input type="hidden" id="page_count">
+<input type="hidden" id="page" value="1">
+<input type="hidden" id="type" value="0">
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script>
+var lang_member_collection = {
+	member_abolish_successful : "{:lang('member_abolish_successful')}"
+}
+</script>
+<script src="WAP_JS/member_collection.js"></script>
+{/block}

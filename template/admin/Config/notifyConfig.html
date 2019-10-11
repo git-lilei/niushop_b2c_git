@@ -1,0 +1,193 @@
+{extend name="admin/base" /}
+{block name="resources"}
+<style>
+	.flex-wrap{
+		width: 100%;
+		display: flex;
+		flex-wrap: wrap;
+		margin: -5px auto -9px;}
+	
+	.block-diy, .block-big-diy{
+		width: 20%;
+		box-sizing: border-box;
+		padding: 0 7.5px;
+		margin-top: 15px;
+		z-index: 1;
+	}
+	.block-diy  .diy-content, .diy-big-content{
+		padding: 15px 10px 15px 15px;
+		margin-bottom: 0;
+		color: #5e6166;
+		font-size: 12px;
+		background-color: #f5f7fa;
+		overflow: hidden;
+		z-index: 1;
+		display: flex;
+		cursor: pointer;
+	}
+	.block-diy  .diy-content .diy-icon{
+		flex: none;
+		height: 40px;
+		width: 40px;
+		line-height:42px;
+		position: relative;
+	}
+	.block-diy  .diy-content .diy-info{
+		margin-left: 10px;
+	}
+	.block-diy  .diy-content .diy-info .diy-title{
+		height: 24px;
+		line-height: 25px;
+		margin: 0;
+		font-size: 14px;
+		font-weight: bold;
+		color: #5e6166;
+		
+	}
+	.block-diy  .diy-content .diy-info .diy-desc{
+		color: #aaa;
+		font-size: 12px;
+		font-weight: 400;
+		margin: 0;
+		height: 23px;
+		line-height: 23px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	
+	.block-diy .diy-content, .diy-big-content{transition: all .3s;}
+	.block-diy .diy-content:hover{box-shadow: 0 2px 5px 0 rgba(2,31,65,.1)}
+	.diy-icon img {width: 100%;}
+	.set-style h4{
+		box-sizing: border-box;
+		background: #fff;
+	}
+	.set-style h4.first{
+		margin: 5px 0px 0px 0px;
+	}
+	.diy-big-info {
+	    width: 100%;
+		height: 90px;
+	}
+	.diy-big-title {
+	    text-align: left;
+	    height: 24px;
+	    line-height: 25px;
+	    margin: 0;
+	    font-size: 14px;
+	    font-weight: bold;
+	    color: #5e6166;
+	    margin-bottom: 10px;
+	}
+	.diy-big-desc {
+	    text-align: left;
+	    float: left;
+	    width: 50%;
+	}
+	.check-icon {
+		background: url(ADMIN_IMG/check-icon.png) no-repeat;
+	    width: 12px;
+	    display: inline-block;
+	    height: 12px;
+	    background-size: 100% 100%;
+	    margin-right: 7px;
+	    margin-bottom: -3px;
+	}
+	.no-check-icon {
+		background: url(ADMIN_IMG/no-check-icon.png) no-repeat;
+	    width: 12px;
+	    display: inline-block;
+	    height: 12px;
+	    background-size: 100% 100%;
+	    margin-right: 7px;
+	    margin-bottom: -3px;
+	}
+</style>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<h4 class="first"><span></span>消息设置</h4>
+	<div class="flex-wrap">
+			
+		<a class="block-diy" title="短信设置" href = '{:__URL('ADMIN_MAIN/config/smsconfig')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/diy-icon-sms.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">短信设置</p>
+					<p class="diy-desc">短信基础设置</p>
+				</div>
+			</div>
+		</a>
+		<a class="block-diy" title="邮箱设置" href = '{:__URL('ADMIN_MAIN/config/messageconfig')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/diy-icon-email.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">邮箱设置</p>
+					<p class="diy-desc">邮箱基础设置</p>
+				</div>
+			</div>
+		</a>
+		{if addon_is_exit("NsWxtemplatemsg") }
+			<a class="block-diy" title="模板消息设置" href = '{:__URL("__URL__/NsWxtemplatemsg/ADMIN_MODULE/TempMsg/config")}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/weixin_template.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">模板消息</p>
+					<p class="diy-desc">模板消息基础设置</p>
+				</div>
+			</div>
+			</a>
+		{/if}
+		<a class="block-diy" title="邮箱设置" href = '{:__URL('ADMIN_MAIN/config/shopNotifyConfig')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/diy-icon-shop-notify.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">商家消息设置</p>
+					<p class="diy-desc">商家消息基础设置</p>
+				</div>
+			</div>
+		</a>
+	</div>
+	
+	<h4><span></span>会员消息</h4>
+	<div class="flex-wrap">
+		{foreach $user_template_list as $k => $v}
+		<a class="block-big-diy" title="{$v['template_name']}" href = '{:__URL('ADMIN_MAIN/config/editNotice?template_code='.$v['template_code'])}'>
+			<div class="diy-big-content">
+				<div class="diy-big-info">
+					<p class="diy-big-title">{$v['template_name']}</p>
+					{foreach $v['template_list'] as $key => $val}
+					<p class="diy-big-desc"><i class="{if $val['info']['is_enable']}check-icon{else /} no-check-icon{/if}"></i>{$val['template_type_name']}</p>
+					{/foreach}
+				</div>
+			</div>
+		</a>
+	 	{/foreach}
+	</div>
+	
+	<h4><span></span>商家消息</h4>
+	<div class="flex-wrap">
+		{foreach $business_template_list as $k => $v}
+		<a class="block-big-diy" title="{$v['template_name']}" href = '{:__URL('ADMIN_MAIN/config/editNotice?template_code='.$v['template_code'])}'>
+			<div class="diy-big-content">
+				<div class="diy-big-info">
+					<p class="diy-big-title">{$v['template_name']}</p>
+					{foreach $v['template_list'] as $key => $val}
+					<p class="diy-big-desc"><i class="{if $val['info']['is_enable']}check-icon{else /} no-check-icon{/if}"></i>{$val['template_type_name']}</p>
+					{/foreach}
+				</div>
+			</div>
+		</a>
+	 	{/foreach}
+	</div>
+	
+</div>
+{/block}

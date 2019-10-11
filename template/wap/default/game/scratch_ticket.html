@@ -1,0 +1,123 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/game_scratch_ticket.css">
+{/block}
+{block name="head"}{/block}
+{block name="main"}
+{if condition="$game_open"}
+<div class="login-layer">
+	<div class="layer-curtain"></div>
+	<div class="layer-content">
+		<div class="layer-icon"><img src="WAP_IMG/game/member-icon.png"></div>
+		<div class="layer-text ns-text-color-black">您还未登录</div>
+		<div class="layer-desc ns-text-color-gray">（请先登录/注册在进行此操作）</div>
+		<a href="{:__URL('APP_MAIN/login')}">
+			<div class="layer-btn primary">登录</div>
+		</a>
+	</div>
+</div>
+{/if}
+{if $game_info}
+	<div class="container ns-bg-color">
+		{php}
+			$member_account = api("System.Member.memberAccount");
+			$member_account = $member_account['data'];
+		{/php}
+		<!-- 顶部区域 -->
+		{if $member_account}
+		<div>
+			<div class="promotion-top ns-bg-color">
+				<div class="promotion-info">
+					<span class="member-integral ns-text-color">{$member_account.point}</span>
+					<span class="game-rule ns-text-color-gray" onclick="document.getElementById('shade').style.display='block';">活动规则</span>
+				</div>
+				<div class="how-many ns-bg-color">{$game_info.level_name}可参与此次活动，<em id="integral">{$game_info.points|round}</em>积分一次</div>
+			</div>
+		</div>
+		{/if}
+		<!-- 刮卡区域 -->
+		<div class="scratch-cards">
+			<div class="scratch-cards-area" >
+				<canvas id="scratch_card"></canvas>
+				<img src="WAP_IMG/game/guaguale_center_two.png" id="redux">
+			</div>
+		</div>
+		<!-- 提示信息 -->
+		{notempty name="$game_info['remark']"}
+		<div class="tip">
+			<span>小提示：{$game_info.remark}</span>
+		</div>
+		{/notempty}
+		<!-- 获奖记录 -->
+		{notempty name="$winning_records"}
+		<div class="winning-record">
+			<ul>
+				{foreach name="$winning_records" item="vo"}
+				<li>
+					<span>{$vo.remark}</span>
+				</li>
+				{/foreach}
+			</ul>
+		</div>
+		{/notempty}
+		<input type="hidden" id="hidden_game_id" value="{$game_info.game_id}">
+		<!-- 当前用户所有积分 -->
+		<input type="hidden" id="hidden_member_point" value="{$member_account.point ? $member_account.point : 0}">
+		<!-- 刮取一次所需积分 -->
+		<input type="hidden" id="hidden_need_point" value="{$game_info.points|round}">
+		<img src="WAP_IMG/game/winning.png" id="hidden_winning_img" class="dis-none">
+		<img src="WAP_IMG/game/no_winning.png" id="hidden_no_winning_img" class="dis-none">
+	</div>
+	<!-- 游戏规则弹出层 -->
+	<div class="shade" id="shade">
+		<div class="promotion-game-rule-container ns-border-color ns-bg-color">
+			<h4 class="popup-title">活动规则</h4>
+			<div class="popup-content">
+				<h5 class="project-title">【活动时间】</h5>
+				<time>{$game_info.start_time|date="Y年m月d日",###}-{$game_info.end_time|date="Y年m月d日",###}</time>
+				{if count($game_info["rule"]) > 0}
+				<h5 class="project-title">【活动奖品】</h5>
+				<table border="1">
+					<tr>
+						<th>奖品名称</th>
+						<th>份数</th>
+					</tr>
+					{foreach name="$game_info['rule']" item="vo"}
+					<tr>
+						<td>{$vo.rule_name}&nbsp;
+							{switch name="$vo['type']"}
+								{case value="1"}{$vo.points|round}积分{/case}
+								{case value="2"}{$vo.type_value}{/case}
+								{case value="3"}{$vo.hongbao}元余额红包{/case}
+								{case value="4"}{$vo.type_value}{/case}
+							{/switch}
+						</td>
+						<td>{$vo.rule_num}</td>
+					</tr>
+					{/foreach}
+				</table>
+				{/if}
+				<h5 class="project-title">【活动规则】</h5>
+				{if $game_info['member_level'] == 0}
+				<p>1.本次活动所有会员都可以参与。</p>
+				{else/}
+				<p>1.本次活动仅{$game_info.level_name}可以参与。</p>
+				{/if}
+				<p>2.中奖积分与红包会自动发放到账户中,实物奖品需到我的奖品进行领取</p>
+			</div>
+			<span class="shade-close ns-bg-color ns-border-color" onclick="document.getElementById('shade').style.display='none';"><i class="fa fa-times"></i></span>
+		</div>
+	</div>
+	{notempty name="$participation_restriction"}
+	<div class="restriction">
+		<div class="tip-info-container">
+			<p class="tip-info ns-text-color-gray">{$participation_restriction}</p>
+			<button onclick="location.href=__URL('APP_MAIN')" class="ns-bg-color">知道了</button>
+		</div>
+	</div>
+	{/notempty}
+	<script src="WAP_JS/jquery.eraser.js"></script>
+	<script src="WAP_JS/game_scratch_ticket.js"></script>
+{/if}
+{/block}
+{block name="footer"}{/block}

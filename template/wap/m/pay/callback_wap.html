@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>{:lang('pay')}</title>
+<link type="text/css" rel="stylesheet" href="WAP_CSS/common.css">
+<link type="text/css" rel="stylesheet" href="WAP_CSS/themes/theme.css">
+<link type="text/css" rel="stylesheet" href="WAP_CSS/pay/callback_wap.css">
+<script src="WAP_PLUGIN/mzui/lib/jquery/jquery-3.2.1.min.js"></script>
+<script src="WAP_JS/common.js"></script>
+</head>
+<body>
+{if condition="$status==-1"}
+<div class="on-wechat">
+<img src="WAP_IMG/pay/other_view.png" class="other-view"/>
+</div>
+{else/}
+<article>
+	{if condition="$status==1"}
+		<div class="pay-block">
+			<img src="WAP_IMG/pay/pay_success.png"/>
+		</div>
+		<h3>{:lang('the_payment_successful')}</h3>
+		{notempty name="$order_info.order_no"}
+		<p>{:lang('order_number')}{$order_info.order_no}</p>
+		{/notempty}
+	{else/}
+		<div class="pay-block">
+			<img src="WAP_IMG/pay/pay_error.png"/>
+		</div>
+		<h3>{:lang('payment_failed')}</h3>
+		{notempty name="$order_info.order_no"}
+		<p class="ns-text-color-black">{:lang('order_number')}{$order_info.order_no}</p>
+		{/notempty}
+	{/if}
+	<button onclick="enterOrderList()">{:lang('access_member_center')}</button>
+{/if}
+</article>
+<script>
+var APPMAIN = 'APP_MAIN',
+	SHOPMAIN = 'SHOP_MAIN';
+	
+$(document).ready(function(e) {
+	var counter = 0;
+	if (window.history && window.history.pushState) {
+		$(window).on('popstate', function () {
+			window.history.pushState('forward', null, '#');
+			window.history.forward(1);
+			if($(window).width()<768){
+				//手机端
+				location.href = __URL(APPMAIN+'/member');
+			}else{
+				//PC端
+				location.href = __URL(SHOPMAIN+'/member');
+			}
+		});
+	}
+	window.history.pushState('forward', null, '#'); //在IE中必须得有这两行
+	window.history.forward(1);
+});
+function enterOrderList(){
+	if($(window).width()<768){
+		//手机端
+		location.href = __URL(APPMAIN+'/member');
+	}else{
+		//PC端
+		location.href = __URL(SHOPMAIN+'/member');
+	}
+}
+</script>
+</body>
+</html>

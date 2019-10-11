@@ -1,0 +1,85 @@
+@CHARSET "UTF-8";
+
+.app-template {
+    padding: 20px 20px;
+    overflow: hidden;
+}
+
+.app-template li {
+    margin: 0 30px 20px 0;
+    padding: 10px;
+    width: 307px;
+    float: left;
+    border: 1px solid #e6e9f0;
+    box-sizing: border-box;
+}
+
+/** 模板列表 **/
+.wap-template-item {
+    float: left;
+    width: 250px;
+    height: 535px;
+    margin-right: 25px;
+    margin-bottom: 25px;
+    background: #f5f7fa;
+}
+
+.wap-template-box {
+    padding-top: 20px !important;
+}
+
+.wap-template-img {
+    padding: 5px;
+    position: relative;
+    width: 191px;
+    height: 365px;
+    overflow: hidden;
+    margin: 0 auto;
+    margin-top: 12px;
+}
+
+.wap-template-img img {
+    width: 100%;
+}
+
+.wap-template-name {
+    padding: 10px 15px;
+    font-size: 14px;
+    color: #333;
+}
+
+.wap-template-introduce {
+    height: 25px;
+    font-size: 12px;
+    text-align: center;
+    border-radius: 3px;
+    line-height: 26px;
+    background: #E7EBF1;
+    color: #979799;
+}
+
+.wap-template-state .btn-common-temimg {
+    background: #00a0de;
+    color: #fff;
+    width: 140px;
+    height: 36px;
+    text-align: center;
+    line-height: 36px;
+    margin: 15px auto 0;
+    border-radius: 3px;
+}
+
+.wap-template-state .btn-common-tem {
+    color: #00a0de;
+    border: 1px solid #00a0de;
+    width: 140px;
+    height: 34px;
+    text-align: center;
+    line-height: 34px;
+    margin: 10px auto 0;
+    border-radius: 3px;
+}
+
+.clear {
+    clear: both;
+}

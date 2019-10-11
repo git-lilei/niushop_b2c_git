@@ -1,0 +1,125 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/product.css">
+<style type="text/css">
+.num{width:40px;text-align:center;}
+.ns-main{margin-top:0px;}
+</style>
+{/block}
+{block name="main"}
+<div class="options-btn">
+	<button class="btn-common" onclick="location.href='{:__URL('ADMIN_MAIN/config/addhelpclass')}';">添加帮助类型</button>
+</div>
+<table class="table-class">
+	<colgroup>
+		<col style="width: 2%">
+		<col style="width: 84%;">
+		<col style="width: 4%;">
+		<col style="width: 10%;">
+	</colgroup>
+	<thead>
+		<tr align="center">
+			<th><i class="checkbox-common"><input type="checkbox" ></i></th>
+			<th align="left">类型名称</th>
+			<th>排序</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody id="linkList"></tbody>
+</table>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+$(function(){
+	$("#linkList input[type='number']").live("keyup",function(){
+		if($(this).val().length>0){
+			var reg = /^[0-9]+$/;
+			if(!reg.test($(this).val())){
+				$(this).val(0);
+			}
+			if($(this).val().indexOf(".")>-1){
+				$(this).val(0);
+			}
+		}
+	});
+});
+
+
+//分页数据
+function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/config/helpclass')}",
+		data : { "page_index" : page_index, "page_size" : $("#showNumber").val() },
+		success : function(data) {
+			if (data["data"].length > 0) {
+				$(".table-class tbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					html += '<tr align="center">';
+					html += '<td><i class="checkbox-common"><input name="sub" type="checkbox" class="input-common" value="'+ data['data'][i]['class_id']+'"></i></td>';
+					html += '<td align="left"><input type="text" id="class_name'+i+'" value="' + data["data"][i]["class_name"]+ '"onchange="updateClass('+i+','+data["data"][i]["class_id"]+')" class="input-common" /></td>';
+					html += '<td><input type="number" min="0" value="'+ data["data"][i]["sort"]+'" nav_id="'+ data['data'][i]['class_id']+'" class="num input-common input-common-sort" onchange="updateClass('+i+','+data["data"][i]["class_id"]+')" id="sort'+i+'"></td>';
+					html += '<td><a onclick="deleteClass('+data['data'][i]['class_id']+')">删除</a></td>';
+					html += '</tr>';
+					$(".table-class tbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="4">暂无帮助类型</td></tr>';
+				$(".table-class tbody").html(html);
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+//修改input值
+function updateClass(index,class_id){
+	var class_name = $("#class_name"+index).val();
+	var sort = $("#sort"+index).val();
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/config/updateclass')}",
+		data:{'class_name':class_name,'sort':sort,"class_id":class_id},
+		success: function (data) {
+			var flag = "error";
+			if(data.code>0){
+				flag = "success";
+			}
+			showTip(data['message'],flag);
+		}
+	});
+}
+
+//删除分类
+function deleteClass(class_id){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				$.ajax({
+					type : "post",
+					url: "{:__URL('ADMIN_MAIN/config/classdelete')}",
+					data: { "class_id": class_id},
+					success : function(data) {
+						if(data["code"] > 0 ){
+							showTip(data['message'],'success');
+							location.href = "{:__URL('ADMIN_MAIN/config/helpclass')}";
+						}else{
+							showTip(data['message'],'error');
+						}
+					}
+				});
+			},
+			"取消,#f5f5f5,#666": function() {
+				$(this).dialog('close');
+			}
+		},
+		contentText:"你确定删除该分类以及该分类下所有内容吗？",
+		title:"消息提醒"
+	});
+}
+</script>
+{/block}

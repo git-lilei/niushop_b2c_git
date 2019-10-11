@@ -1,0 +1,93 @@
+{extend name="$base" /}
+{block name="resources"}
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>是否开启：</dt>
+		<dd >
+			<input id="sms_is_use" type="checkbox" class="checkbox" {if condition="$mobile_message.is_use=='1'"}checked="checked"{/if}/>
+			<p class="hint" style="margin-top:10px;">当前使用阿里云短信配置</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>APP_KEY：</dt>
+		<dd>
+			<input id="app_key" type="text" value="{$mobile_message['value']['appKey']}" class="input-common long" />
+		</dd>
+	</dl>
+	<dl>
+		<dt>SECRET_KEY：</dt>
+		<dd>
+			<input id="secret_key" type="text" value="{$mobile_message['value']['secretKey']}" class="input-common long" />
+		</dd>
+	</dl>
+	<dl>
+		<dt>短信内容签名：</dt>
+		<dd>
+			<input id="free_sign_name" type="text" value="{$mobile_message['value']['freeSignName']}" class="input-common long" />
+		</dd>
+	</dl>
+	<dl>
+		<dt>阿里云用户：</dt>
+		<dd class="user_type">
+		
+			<label class="radio inline normal">
+				<i class="radio-common {if condition="$mobile_message['value']['user_type'] == 0"}selected{/if}"><input type="radio" value="0" name="user_type" id="user_type_old" {if condition="$mobile_message['value']['user_type'] == 0"}checked="checked"{/if} /></i>
+				<span>旧用户</span>
+			</label>
+			<label class="radio inline normal">
+				<i class="radio-common {if condition="$mobile_message['value']['user_type'] == 1"}selected{/if}"><input type="radio" value="1" name="user_type" id="user_type_new" {if condition="$mobile_message['value']['user_type'] == 1"}checked="checked"{/if} /></i>
+				<span>新用户</span>
+			</label>
+			<p class="hint">注：旧用户为已入驻阿里大于短信的用户</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="setConfigAjax();" >保存</button>
+			<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);" >返回</button>
+		</dd>
+	</dl>
+</div>
+<script>
+$("#sms_is_use").click(function(){
+	if($("#sms_is_use").prop("checked")){
+		$(".showmessage").toggle();
+	}else{
+		$(".showmessage").toggle();
+	}
+})
+
+function setConfigAjax(){
+	var is_use = 0;
+	if($("#sms_is_use").is(':checked')){
+		var is_use = 1;
+	}
+	var app_key = $("#app_key").val();
+	var secret_key = $("#secret_key").val();
+	var free_sign_name = $("#free_sign_name").val();
+	var user_type = $("input[name='user_type']:checked").val();//用户类型
+	$.ajax({
+		type:"post",
+		url:"{:__URL('__URL__/NsAlisms/ADMIN_MODULE/config/alismsConfig')}",
+		data:{
+			'is_use':is_use,
+			'app_key':app_key,
+			'secret_key':secret_key,
+			'free_sign_name':free_sign_name,
+			'user_type' : user_type
+		},
+		success:function (data) {
+			if (data["code"] > 0) {
+				showTip(data["message"],'success');
+				location.href=__URL("ADMIN_MAIN/config/notifyindex");
+			}else{
+				showTip(data["message"],'error');
+			}
+		}
+	});
+}
+</script>
+{/block}

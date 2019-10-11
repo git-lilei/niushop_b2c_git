@@ -1,0 +1,144 @@
+{extend name="$base" /}
+{block name="resources"}
+<style>
+.modal-infp-style{width:90%;margin:10px auto;}
+.modal-infp-style table{width:100%;}
+.modal-infp-style table tr td{border: 1px solid #e5e5e5;padding: 10px;}
+.ns-main{margin-top: 0;}
+</style>
+{/block}
+{block name="thirdmenu"}
+<nav class="ns-third-menu">
+	<ul>
+		<li data-statu="-1" class="selected">全部</li>
+		<li data-statu="1">未使用</li>
+		<li data-statu="2">已使用</li>
+		<li data-statu="3">已过期</li>
+	</ul>
+</nav>
+{/block}
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<th width="20%" style="text-align:left;"><button class="btn-common btn-small" onclick="location.href='{:__URL('ADMIN_MAIN/promotion/addcoupontype')}';" style="margin:0 5px 0 0 !important;">添加优惠券</button>
+		</th>
+	</tr>
+</table>
+<table class="table-class">
+	<colgroup>
+	<!-- <col style="width: 2%;"> -->
+	<col style="width: 15%;">
+	<col style="width: 10%;">
+	<col style="width: 15%;">
+	<col style="width: 10%;">
+	<col style="width: 10%;">
+	<col style="width: 10%;">
+	<col style="width: 15%;">
+	<col style="width: 15%;">
+	</colgroup>
+	<thead>
+		<tr align="center">
+			<th align="left">优惠券名称</th>
+			<th align="left">领取人</th>
+			<th align="right">优惠券编码</th>
+			<th align="right">面额</th>
+			<th class="">获取方式</th>
+			<th class="">状态</th>
+			<th>领取时间</th>
+			<th>使用时间</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+<input type="hidden" id="hidden_status" value="-1">
+<input type="hidden" id="page" value="1">
+{/block}
+{block name="script"}
+<script type="text/javascript">
+$(".ns-third-menu ul li").click(function(){
+	$(this).addClass("selected").siblings().removeClass("selected");
+	$("#hidden_status").val($(this).attr("data-statu"));
+	var page_index = $("#page").val();
+	LoadingInfo(page_index);
+});
+
+function LoadingInfo(page_index) {
+	$("#page").val(page_index);
+	var search_text = $("#search_text").val();
+	var status = $("#hidden_status").val();
+	var coupon_type_id = {$coupon_type_id};
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/promotion/couponGrantLog')}",
+		data : {
+			"page_index" : page_index, "page_size" : $("#showNumber").val(), "search_text" : search_text,"status" : status, "coupon_type_id" : coupon_type_id
+		},
+		success : function(data) {
+			if (data["data"].length > 0) {
+
+				$(".table-class tbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					var item = data['data'][i];
+					html += '<tr align="center">';
+					// html += '<td><div class="cell">';
+					// 	html += '<i class="checkbox-common"><input name="sub_use" type="checkbox" value="'+item["coupon_id"]+'"';
+					// html += '</div></td>';
+					html += '<td align="left">' + item["coupon_name"] + '</td>';
+					var nick_name = "---";
+					if(item['uid'] > 0){
+						nick_name = item['user_info']['nick_name'] == null || item['user_info']['nick_name'] == undefined ? "" : item['user_info']['nick_name'];
+					}
+					html += '<td align="left">'+ nick_name +'</td>';
+					html += '<td align="right">'+ item['coupon_code'] +'</td>';
+					html += '<td align="right">'+ item['money'] +'</td>';
+
+					if(item['state'] == 0 || item['state'] == 3){
+						html += '<td>---</td>';
+					}else{
+						if(item['get_type'] == 2){
+							html += '<td>首页领取</td>';
+						}else{
+							html += '<td>订单领取</td>';
+						}
+					}
+					
+					switch(parseInt(item['state'])){
+						case 0:
+							html += '<td >未领用</td>';
+							break;
+						case 1:
+							html += '<td >未使用</td>';
+							break;
+						case 2:
+							html += '<td >已使用</td>';
+							break;
+						case 3:
+							html += '<td >已过期</td>';
+							break;
+					}
+					if(item["fetch_time"] == ''){
+					html += '<td>---</td>';
+					}else{
+						html += '<td>' + timeStampTurnTime(item["fetch_time"])+ '</td>';
+					}
+					
+					if(item['use_time'] == ''){
+						html += '<td>---</td>';
+					}else{
+						html += '<td>' + timeStampTurnTime(data["data"][i]["use_time"]) +  '</td>';
+					}
+					html += '</tr>';
+					$(".table-class tbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="9">暂无符合条件的数据记录</td></tr>';
+				$(".table-class tbody").html(html);
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+</script>
+{/block}

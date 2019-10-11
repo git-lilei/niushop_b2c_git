@@ -1,0 +1,29 @@
+{extend name="$member_base" /}
+{block name="left_main"}{/block}
+{block name="right_main"}
+<link rel="stylesheet" href="WEB_CSS/member_footprint.css">
+{php}
+$category_list = api('System.Goods.goodsCategoryListByParentId');
+$category_list = $category_list['data'];
+{/php}
+<div class="member-main">
+	<div class="goods-category">
+		<ul class="clearfix">
+			<li class="ns-bg-color active" data-category="0">全部分类</li>
+			{notempty name="$category_list"}
+				{foreach name="$category_list" item='vo'}
+					<li data-category="{$vo.category_id}" class="ns-text-color-gray ns-text-color-hover">{$vo.category_name}</li>
+				{/foreach}
+			{/notempty}
+		</ul>
+	</div>
+	<div class="footprint-content">
+		<div class="line ns-bg-color-gray"></div>
+		<div class="line-height ns-bg-color"></div>
+		<section></section>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script src="WEB_JS/member_footprint.js"></script>
+{/block}

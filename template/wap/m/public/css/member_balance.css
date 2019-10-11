@@ -1,0 +1,13 @@
+.account-box{padding: 45px 0 15px; border-top: 1px solid;text-align: center;}
+.account-box .account-title{font-size: 16px;line-height: 45px;border: 1px solid; padding: 7px 18px;color: #fff;border-radius: 6%;}
+.account-box .balance{font-size: 42px; color: #fff;}
+.member-balance table{width:100%;border:none;margin-bottom: 54px;}
+.member-balance table tr{overflow: hidden; border-bottom: 1px solid; float: left; width: 100%; background: #fff;padding: 10px;}
+.member-balance table tr td{float: left;padding-bottom: 5px;width: 100%;}
+.account-option{width:100%; height:48px;}
+.account-option-left{float: left; margin-top: 21px; text-align: center; line-height: 40px; font-size: 16px; border-top: 1px solid; border-bottom: 1px solid; border-right: 1px solid; color: #fff; width: 50%;}
+.account-option-right{float: right; border-left: 1px solid; border-top: 1px solid; border-bottom: 1px solid; border-left: none; text-align: center; line-height: 40px; font-size: 16px; color: #fff; width: 49.5%; margin-top: 21px;}
+.style{padding-bottom: 5px; margin-top: 17px; color: #fff;}
+.empty{width: 100%; margin: 60px auto 0;}
+.empty i{background: url(../img/member/balance.png) no-repeat; width: 110px; height: 68px; background-size: 100%; display: inline-block; margin-left: 34%;}
+.empty span{width: 100%; text-align: center; font-size: 12px; float: left; display: inline-block; margin-top: 20px;}

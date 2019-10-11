@@ -1,0 +1,29 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" href="WAP_CSS/notice_detail.css" />
+{/block}
+{block name="seo"}
+<meta name="keywords" content="{$seo_config.seo_meta},{$web_info['title']}_商城公告" />
+<meta name="description" content="{$seo_config.seo_desc},{$notice_info.notice_title}"/>
+{/block}
+{block name="head_operation"}<a class="ns-operation" href="{:__URL('APP_MAIN/notice/lists.html')}">全部</a>{/block}
+{block name="main"}
+{notempty name="$notice_info"}
+<div class="main-content">
+	<h3 class="fu-name ns-text-color-black">{$notice_info.notice_title}</h3>
+	<p class="fu-title">{:lang('position_posted_on')}：{$notice_info.create_time|getTimeStampTurnTime}</p>
+	<div id="html_content" class="content">{$notice_info.notice_content}</div>
+	<div class="location-other-article">
+		{notempty name="$prev_info"}
+		<a href="{:__URL('APP_MAIN/notice/detail', 'id='.$prev_info[0]['id'])}" class="prev text-over">上一篇：{$prev_info[0]['notice_title']}</a>
+		{else/}
+		<a href="javascript:;" class="prev text-over"> &nbsp;</a>
+		{/notempty}
+		{notempty name="$next_info"}
+		<a href="{:__URL('APP_MAIN/notice/detail', 'id='.$next_info[0]['id'])}" class="next text-over">下一篇：{$next_info[0]['notice_title']}</a>
+		{/notempty}
+	</div>
+</div>
+{/notempty}
+{/block}
+{block name="footer"}{/block}

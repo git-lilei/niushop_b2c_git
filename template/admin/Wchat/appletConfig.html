@@ -1,0 +1,119 @@
+{extend name="admin/base" /}
+{block name="resources"}
+<style type="text/css">
+.help-inline {
+    padding-top: 5px;
+}
+.set-style dl dt{width:10%;}
+.muted {
+	font-weight:normal;
+	font-size:12px
+}
+</style>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<h4><span></span>小程序开发者设置<span class="muted">（必填）</span></h4>
+
+	<dl>
+		<dt>APPID：</dt>
+		<dd>
+			<input onkeyup="value=value.replace(/[\u4e00-\u9fa5]/g,'')" class="span2 input-common" id="appid" placeholder="AppID" value="{$applet_config.appid}" type="text" style="width:270px;">
+			<span class="help-inline" id="appiderror" style="color:red;"></span>
+		</dd>
+	</dl>
+	<dl>
+		<dt>APP密钥：</dt>
+		<dd>
+			<input onkeyup="value=value.replace(/[\u4e00-\u9fa5]/g,'')" class="span2 input-common" id="appsecret" type="text" placeholder="Appsecret" value="{$applet_config.appsecret}" style="width:270px;">
+			<span class="help-inline" id="appsecreterror" style="color:red;"></span>
+			<p class="hint">
+				AppID以及Appsecret来自于您申请的小程序账号，使用小程序账号密码公众平台，在设置->开发设置中可以找到AppID(小程序ID)及AppSecret(小程序密钥)	
+			</p>
+		</dd>
+	</dl>
+
+    <h4><span></span>配置说明</h4>
+    <dl>
+		<dt></dt>
+		<dd>
+			<p><span class="text">设置业务域名</span></p>
+			<p class="titlestep">
+				<a href="https://mp.weixin.qq.com/" target="_blank">登录微信小程序</a>点击设置&gt;开发设置&gt;业务域名设置：
+			</p>
+			<p class="text-success">
+				<span class="muted">域名1：</span>{$url}
+			</p>
+			<p>业务域名设置完毕！</p>
+		</dd>
+	</dl>
+    <dl>
+		<dt></dt>
+		<dd>
+			<p><span class="text">设置服务器域名</span><span class="muted"></span></p>
+			<p class="titlestep">
+				<a href="https://mp.weixin.qq.com/" target="_blank">登录微信小程序</a>点击设置&gt;开发设置&gt;服务器域名设置：
+			</p>
+			<p class="text-success">
+				<span class="muted">request合法域名：</span>{$url}
+			</p>
+			<p class="text-success">
+				<span class="muted">uploadFile合法域名：</span>{$url}
+			</p>
+			<p class="text-success">
+				<span class="muted">downloadFile合法域名：</span>{$url}
+			</p>
+			<p>服务器域名设置完毕！</p>
+		</dd>
+	</dl>    
+
+    <dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="save();">保存</button>
+		    <input type="hidden" id="IsChange" value="true">
+		</dd>
+	</dl>
+</div>
+<script>
+$(function(){
+	$("#appid").keyup(function(){
+		if($("#appid").val().length > 100){
+			$("#appiderror").text('AppID长度不能超过100').show();
+			$("#apppid").focus();
+			return false;
+		}else{
+			$("#appiderror").text('');
+		}
+	});
+	$("#appsecret").keyup(function(){
+		if($("#appsecret").val().length > 100){
+			$("#appsecreterror").text('Appsecret长度不能超过100').show();
+			$("#appsecret").focus();
+			return false;
+		}else{
+			$("#appsecreterror").text('');
+		}
+	});
+});
+
+function save() {
+	var appid = $("#appid").val();
+	var appsecret = $("#appsecret").val();
+	if(appid.length < 100 && appsecret.length < 100){
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/wchat/setInstanceAppletConfig')}",
+			data : { "appid" : appid, "appsecret" : appsecret},
+			success : function(res) {
+				if (res.code > 0) {
+					showTip(res["message"],'success');
+				} else {
+					showTip(res["message"],'error');
+				}
+			}
+		});
+	}
+}
+</script>
+{/block}

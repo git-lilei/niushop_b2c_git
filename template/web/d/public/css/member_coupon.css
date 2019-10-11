@@ -1,0 +1,11 @@
+@charset "utf-8";
+.member-main{background: #fff; overflow: hidden; margin-top: 20px; padding: 20px;}
+.nav-tabs{border-bottom: none;}
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus{border: none;}
+.tab-pane ul{display: flex; flex-wrap: wrap;}
+.tab-pane ul li{justify-content: space-around; width: 32.2%; margin: 10px 0 0 10px; color: #fff;}
+.tab-pane ul li .card{height: 180px; border: 1px dashed #fff; margin-bottom: 0;}
+.tab-pane ul li .card .state{position: absolute; right: -22px; top: 5px; height: 30px; line-height: 30px; width: 118px; text-align: center;transform: rotate(35deg); -ms-transform: rotate(35deg); /* IE 9 */ -moz-transform: rotate(35deg); /* Firefox */ -webkit-transform: rotate(35deg); /* Safari 和 Chrome */ -o-transform: rotate(35deg); /* Opera */}
+.tab-pane ul li .card p{margin: 10px 20px;}
+.tab-pane ul li div > :first-child{font-size: 22px;}
+.empty{padding: 20px 0; text-align: center;}

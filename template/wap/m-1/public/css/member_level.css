@@ -1,0 +1,4 @@
+.member-level{padding: 12px; background: #fff;}
+.member-level li{padding-bottom: 10px; margin-top: 10px; border-bottom: 1px solid; overflow: hidden;}
+.member-level li .level-name{font-size: 16px; line-height: 15px; border-left: 4px solid; padding-left: 6px; margin-bottom: 10px;}
+.member-level li .level-upgrade{width: 50%; float: left; margin-bottom: 5px;}

@@ -1,0 +1,294 @@
+{extend name="$base" /}
+{block name="resources"}
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+<style>
+.modal-infp-style{width:100%;margin:10px auto;}
+.modal-infp-style table{width:100%;}
+.modal-infp-style table tr td{border: 1px solid #e5e5e5;padding: 10px;}
+.ns-main{margin-top: 0;}
+</style>
+{/block}
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<th width="40%" style="text-align: left;">
+			<button style="margin:0 5px 0 0 !important;" class="btn-common-delete btn-small" onclick="batchDelete()">批量删除</button>
+			<button style="margin:0 5px 0 0 !important;" class="btn-common btn-small" onclick="location.href='{:__URL('__URL__/NsBargain/ADMIN_MODULE/bargain/addBargain')}';">添加活动</button>
+		</th>
+		<th>  
+			活动名称：<input id="bargain_name" class="input-common middle" type="text" value="">
+			状态：<select id="status" class="select-common middle">
+			<option value="all">全部</option>
+			<option value="0">未发布</option>
+			<option value="1">进行中</option>
+			<option value="4">已结束</option>
+			<option value="3">已关闭</option>
+		</select>
+			<button onclick="LoadingInfo(1)" class="btn-common">搜索</button>
+		</th>
+	</tr>
+</table>
+<div id="myTabContent" class="tab-content">
+	<div class="tab-pane active">
+		<table class="table-class" border="0">
+			<colgroup>
+				<col style="width: 2%;">
+				<col style="width: 20%;">
+				<col style="width: 10%;">
+                <col style="width: 10%;">
+				<col style="width: 20%;">
+				<col style="width: 10%;">
+			</colgroup>
+			<thead>
+			<tr class="table-title" >
+				<th><i class="checkbox-common"><input id="ckall" type="checkbox" ></i></th>
+				<th align="left">活动名称</th>
+				<th>活动状态</th>
+                <th>发布时间</th>
+				<th>有效时间</th>
+				<th>删除</th>
+			</tr>
+			</thead>
+			<tbody id="productTbody" style="border: 0;"></tbody>
+		</table>
+	</div>
+</div>
+
+<!-- 模态框（Modal） -->
+<div class="modal fade hide" id="bargainInfo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>砍价活动详情</h3>
+			</div>
+			<div class="modal-body">
+				<div class="modal-infp-style">
+					<table>
+						<tr>
+							<td style="width:60px;">活动名称</td>
+							<td colspan='3' id="bargain_names"></td>
+						</tr>
+						<tr>
+							<td>有效期</td>
+							<td colspan='3' id="time"></td>
+						</tr>
+						<tr>
+							<td>活动状态</td>
+							<td colspan='3' id="info_status"></td>
+						</tr>
+						<tr>
+							<td>首刀比例</td>
+							<td colspan='3' id="one_rate"></td>
+						</tr>
+						<tr>
+							<td>砍价最少次数</td>
+							<td colspan='3' id="bargain_min_number">次</td>
+						</tr>
+						<tr>
+							<td>最低比例</td>
+							<td colspan='3' id="bargain_min_rate">%</td>
+						</tr>
+						<tr>
+							<td colspan='3'>商品列表</td>
+						</tr>
+						<tr id="goods_list"></tr>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+{include file="admin/pageCommon" /}
+<script type="text/javascript">
+function LoadingInfo(page_index) {
+    var bargain_name = $('#bargain_name').val();
+    var status = $('#status').val();
+// 	var start_time = $('#start_time').val();
+// 	var end_time = $("#end_time").val();
+    $.ajax({
+        type : "post",
+        url : "{:__URL('__URL__/NsBargain/ADMIN_MODULE/Bargain/index')}",
+        data : {
+            "page_index" : page_index,
+            "page_size" : $("#showNumber").val(),
+            "bargain_name" : bargain_name,
+            "status" : status,
+// 			"start_time" : start_time,
+// 			'end_time' : end_time
+        },
+        success : function(data) {
+
+            if (data["data"].length > 0) {
+                $(".table-class tbody").empty();
+                for (var i = 0; i < data["data"].length; i++) {
+                    var html = '';
+                    switch(data['data'][i]['status']){
+                        case 0:
+                            var status_name = '未发布';
+                            break;
+                        case 1:
+                            var status_name = '正常';
+                            break;
+                        case 3:
+                            var status_name = '关闭';
+                            break;
+                        case 4:
+                            var status_name = '结束';
+                            break;
+                    }
+                    html += '<tr align="center">';
+                    html += '<td><div class="cell">';
+                    if(data['data'][i]['status'] == 1){
+                        html += '<i class="checkbox-common disabled"><input name="sub_use" type="checkbox" value="'+data["data"][i]["bargain_id"]+'" disabled></i>';
+                    }else{
+                        html += '<i class="checkbox-common"><input name="sub_no_use" type="checkbox"  value="'+data["data"][i]["bargain_id"]+'"></i>';
+                    }
+                    html += '<td align="left">' + data["data"][i]["bargain_name"] + '</td>';;
+
+                    html += '<td>'+ status_name +'</td>';
+                    html += '<td>'+ timeStampTurnTime(data["data"][i]["create_time"]) +'</td>';
+                    html += '<td>开始时间：' + timeStampTurnTime(data["data"][i]["start_time"]) + '<br/>结束时间：' + timeStampTurnTime(data["data"][i]["end_time"]) + '</td>';
+                    html += '<td>';
+                    if(data['data'][i]['status'] == 0){
+                        html += '<a href="'+__URL('NsBargain/ADMIN_MODULE/Bargain/editBargain?bargain_id=' + data["data"][i]["bargain_id"])+'">编辑</a>&nbsp;';
+                        html += '<a href="javascript:void(0);"onclick="delBargain('+data["data"][i]["bargain_id"]+')">删除</a>&nbsp;';
+                    }else if(data['data'][i]['status'] == 1){
+                        html += '<a href="javascript:void(0);"onclick="closeBargain('+data["data"][i]["bargain_id"]+')">关闭</a>&nbsp;';
+                    }else if(data['data'][i]['status'] != 1){
+                         html += '<a href="javascript:void(0);"onclick="delBargain('+data["data"][i]["bargain_id"]+')">删除</a>&nbsp;';
+                    }
+                    html += '<a href="javascript:void(0);"onclick="bargainInfo('+data["data"][i]["bargain_id"]+')">详情</a>&nbsp;';
+                    html += '</td>';
+                    html += '</tr>';
+                    $(".table-class tbody").append(html);
+                }
+            }else {
+                var html = '<tr align="center"><td colspan="6">暂无符合条件的数据记录</td></tr>';
+                $(".table-class tbody").html(html);
+            }
+            initPageData(data["page_count"],data['data'].length,data['total_count']);
+            $("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+        }
+    })
+}
+
+/**
+ * 删除活动
+ */
+function delBargain(bargain_id){
+
+    $.ajax({
+        type : "post",
+        url : "{:__URL('__URL__/NsBargain/ADMIN_MODULE/Bargain/delBargain')}",
+        data : { "bargain_id" : bargain_id.toString() },
+        dataType : "json",
+        success : function(data) {
+            if (data["code"] > 0) {
+                showMessage('success', data["message"],"{:__URL('__URL__/NsBargain/ADMIN_MODULE/Bargain/index')}");
+            }else if(data["code"] == -1){
+                showMessage('error', '正在进行中的活动不可删除！');
+            }else{
+                showMessage('error', data['message']);
+            }
+        }
+    })
+}
+
+/**
+ * 活动详情
+ */
+function bargainInfo(bargain_id){
+
+    $("#bargainInfo").modal("show");
+    $.ajax({
+        type:"get",
+        url : "{:__URL('__URL__/NsBargain/ADMIN_MODULE/Bargain/getBarginInfo')}",
+        data : { "bargain_id" : bargain_id },
+        success : function(data) {
+            $("#bargain_names").text(data['bargain_name']);
+            $("#time").text(timeStampTurnTime(data['start_time'])+' 至 '+timeStampTurnTime(data['end_time']));
+            switch(data['status']){
+                case 0:
+                    var status_name = '未发布';
+                    break;
+                case 1:
+                    var status_name = '正常';
+                    break;
+                case 3:
+                    var status_name = '关闭';
+                    break;
+                case 4:
+                    var status_name = '结束';
+                    break;
+            }
+            $("#info_status").text(status_name);
+            $("#one_rate").text(data['one_min_rate']+'%至 '+data['one_max_rate']+'%');
+            $("#bargain_min_number").text(data["bargain_min_number"]+'次');
+            $("#bargain_min_rate").text(data["bargain_min_rate"] + '%');
+
+            var goods_list = '';
+
+            for(var i=0;i<data['goods_list'].length;i++){
+                goods_list += '<tr>';
+                goods_list += '<td><img src="'+__IMG(data['goods_list'][i]['pic_cover_micro'])+'"></td>';
+                goods_list += '<td>'+data['goods_list'][i]['goods_name']+'</td>';
+                goods_list += '</tr>';
+            }
+            $("#goods_list").next("tr").remove();
+            $("#goods_list").after(goods_list);
+        }
+    })
+}
+//全选
+function CheckAll(event){
+    var checked = event.checked;
+    if(checked) $(".table-class tbody input[type = 'checkbox'][name='sub_no_use']").prop("checked",checked).parent().addClass("selected");
+    else $(".table-class tbody input[type = 'checkbox'][name='sub_no_use']").prop("checked",checked).parent().removeClass("selected");
+}
+
+//批量删除
+function batchDelete() {
+    var bargain_id = new Array();
+    $(".table-class tbody input[type='checkbox']:checked").each(function() {
+        if (!isNaN($(this).val())) {
+            bargain_id.push($(this).val());
+        }
+    });
+
+    if(bargain_id.length ==0){
+        $( "#dialog" ).dialog({
+            buttons: {
+                "确定,#0059d6,#fff": function() {
+                    $(this).dialog('close');
+                }
+            },
+            contentText:"请选择需要操作的记录",
+            title:"消息提醒",
+        });
+        return false;
+    }
+    delBargain(bargain_id);
+}
+
+function closeBargain(bargain_id){
+    $.ajax({
+        type:"get",
+        url : "{:__URL('__URL__/NsBargain/ADMIN_MODULE/Bargain/closeBargain')}",
+        data : { "bargain_id" : bargain_id },
+        success : function(data) {
+            if (data["code"] > 0) {
+                showMessage('success', data["message"],"{:__URL('__URL__/NsBargain/ADMIN_MODULE/Bargain/index')}");
+            }else{
+                showMessage('error', data['message']);
+            }
+        }
+    })
+}
+</script>
+{/block}

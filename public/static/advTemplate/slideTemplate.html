@@ -1,0 +1,35 @@
+<link type="text/css" rel="stylesheet" href="__STATIC__/swiper/css/swiper.min.css">
+<script type="text/javascript" src="__STATIC__/js/jquery.min.js"></script>
+<script type="text/javascript" src="__STATIC__/swiper/js/swiper.min.JS"></script>
+<style>
+{if $info.type eq 1}
+.swiper-{$rand_str} {display: inline-block;width: {$info.ap_width}px;height: {$info.ap_height}px;margin-bottom: 0;}
+{else/}
+.swiper-{$rand_str}{width: 100%;height:auto; margin-bottom: 0;padding: 25% 0;}
+.swiper-{$rand_str} .swiper-wrapper {position: absolute;width: 100%;height: 100%;top: 0;left: 0}
+{/if}
+.swiper-{$rand_str} .swiper-slide {text-align: center;}
+.swiper-{$rand_str} .swiper-slide img {height: 100%;width: auto;}
+</style>
+
+<div class="swiper-container swiper-{$rand_str}">
+    <div class="swiper-wrapper">
+        {foreach name="$info['advs']" item="vo" key="k"}
+            <div class="swiper-slide" style="background: {$vo.background};">
+                {if $info.type eq 1}
+                    <a href="{:__URL('SHOP_MAIN'.$vo['adv_url'])}"  target="_blank">
+                {else/}
+                    <a href="{:__URL('APP_MAIN'.$vo['adv_url'])}">
+                {/if}
+                    <img src="{:__IMG($vo['adv_image'])}" alt="">
+                </a>
+            </div>
+        {/foreach}
+    </div>
+</div>
+
+<script>
+var mySwiper{$rand_str} = new Swiper('.swiper-{$rand_str}', {
+    autoplay: 5000,//可选选项，自动滑动
+})
+</script>

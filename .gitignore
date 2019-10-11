@@ -1,0 +1,7 @@
+.idea
+composer.lock
+*.log
+/upload/goods*
+/public/upload
+/runtime/temp*
+/runtime/cache*

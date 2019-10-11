@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="renderer" content="webkit"/>
+	<meta http-equiv="X-UA-COMPATIBLE" content="IE=edge,chrome=1"/>
+	<meta content="text/html; charset=UTF-8">
+	<meta name="viewport" content="initial-scale=1.0,maximum-scale=1.0,user-scalable=no,width=device-width,viewport-fit=cover">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="format-detection" content="telephone=no">
+	<title>{if condition="$title_before neq ''"}{$title_before}&nbsp;-&nbsp;{/if}{$platform_shop_name}{if condition="$seo_config.seo_title neq ''"}-{$seo_config.seo_title}{/if}</title>
+	{block name="seo"}
+	<meta name="keywords" content="{$seo_config.seo_meta}"/>
+	<meta name="description" content="{$seo_config.seo_desc}"/>
+	{/block}
+	<link rel="shortcut icon" type="image/x-icon" href="__STATIC__/images/favicon.ico" media="screen"/>
+	<link type="text/css" rel="stylesheet" href="__STATIC__/font-awesome/css/font-awesome.css">
+	<link rel="stylesheet" href="WAP_CSS/normalize.css"/>
+	<link rel="stylesheet" href="WAP_PLUGIN/mzui/css/mzui.css"/>
+	<link rel="stylesheet" href="WAP_PLUGIN/mescroll/css/mescroll.css"/>
+	<link rel="stylesheet" href="WAP_CSS/common.css"/>
+	<link type="text/css" rel="stylesheet" href="WAP_CSS/themes/{$theme_css}">
+	<script src="WAP_PLUGIN/mzui/lib/jquery/jquery-3.2.1.min.js"></script>
+	<script src="WAP_PLUGIN/mzui/js/mzui.js"></script>
+	<script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"> </script>
+	<script src="__STATIC__/js/jquery.cookie.js"></script>
+	<script src="WAP_PLUGIN/mescroll/js/mescroll.js"></script>
+	<script src="WAP_JS/common.js"></script>
+	<script>
+		var APPMAIN = 'APP_MAIN';
+		var SHOPMAIN = "SHOP_MAIN";
+		var STATIC = "__STATIC__";
+		var WAPIMG = "WAP_IMG";
+		var WAPPLUGIN = "WAP_PLUGIN";
+		var UPLOAD = "__UPLOAD__";
+		var DEFAULT_HEAD_IMG = "{:__IMG($default_headimg)}";
+		var DEFAULT_GOODS_IMG = "{:__IMG($default_goods_img)}";
+		var uid = "{$uid}";
+	</script>
+	{block name="resources"}{/block}
+</head>
+<body>
+{block name="head"}
+<header class="ns-header">
+	<a  class="go-back" href="{block name="head_href"}javascript:history.go(-1);{/block}"><i class="icon-angle-left"></i></a>
+	{block name="head_operation"}<!-- <a class="ns-operation">操作</a> -->{/block}
+	<h1>{$title}</h1>
+</header>
+<div></div>
+{/block}
+{block name="main"}{/block}
+
+{block name="goods"}
+
+	{block name="goods_data"}<!--所需数据-->{/block}
+	
+	{block name="goods_head"}<!--头部、面包屑-->{/block}
+	
+	{block name="goods_media"}<!--//受模板限时，当前模块引入整体头部，改变-->{/block}
+	
+	{block name="goods_promotion"}<!--商品活动-->{/block}
+	
+	{block name="goods_title"}<!--商品标题、名称、描述-->{/block}
+	
+	{block name="goods_price"}<!--价格-->{/block}
+	
+	{block name="goods_promotion_detail"}<!--单品活动-->{/block}
+
+	{block name="goods_sales_evaluation"}<!--销量评价-->{/block}
+
+	{block name="goods_service"}<!--商家服务-->{/block}
+
+	{block name="goods_attribute"}<!--商品属性-->{/block}
+
+	{block name="goods_combo"}<!--面板右侧，看了又看，推荐商品等-->{/block}
+
+	{block name="goods_description"}<!--商品详情、商品属性、评价、咨询-->{/block}
+	
+	{block name="goods_bottom_left"}<!--中部左侧，推荐商品-->{/block}
+	
+	{block name="goods_action"}<!--操作，立即购买/加入购物车-->{/block}
+	
+	{block name="goods_current_info"}<!--当前选中商品信息-->{/block}
+
+	{block name="goods_sku"}<!--商品规格-->{/block}
+
+	{block name="goods_promotion_bottom"}<!--商品活动弹框形式-->{/block}
+	
+	{block name="goods_share"}<!--商品分享-->{/block}
+
+{/block}
+
+{block name="footer"}
+{php}
+	$data = api('System.Config.bottomNav');
+	$nav_list = $data['data'];
+	$nav_width = 100/count($nav_list['template_data']);
+	$method = strtolower($controller.'/'.$action);
+	$url_index_str = __URL('APP_MAIN/index');
+{/php}
+{if strpos($nav_list['showPage'], $method) !== false}
+<div class="bottom-menu">
+{else /}
+<div class="bottom-menu" style="display: none">
+{/if}
+	<ul>
+		{foreach $nav_list['template_data'] as $k => $v}
+		<li style="width:{$nav_width}%">
+			<a href="{$v.href}" class="ns-text-color-black">
+				{if (strpos($v['href'], $method) !== false) || ($v['href'] == $url_index_str && $method == 'index/index')}
+				<div id="bottom_home">
+					<img src="{:__IMG($v['img_src_hover'])}" data-hover-src="{:__IMG($v['img_src'])}">
+				</div>
+				<!--color:{$v['color_hover']}-->
+				<span data-hover-color="{$v['color']}" class="ns-text-color">{$v['menu_name']}</span>
+				{else /}
+				<div id="bottom_home">
+					<img src="{:__IMG($v['img_src'])}" data-hover-src="{:__IMG($v['img_src_hover'])}">
+				</div>
+				<!--style="color:{$v['color']}"-->
+				<span data-hover-color="{$v['color_hover']}">{$v['menu_name']}</span>
+				{/if}
+			</a>
+		</li>
+		{/foreach}
+	</ul>
+</div>
+<div></div>
+{/block}
+<input type="hidden" id="niushop_rewrite_model" value="{:rewrite_model()}">
+<input type="hidden" id="niushop_url_model" value="{:url_model()}">
+<input type="hidden" value="{$uid}" id="uid"/>
+<input type="hidden" id="hidden_shop_name" value="{$web_info['title']}">
+<input type="hidden" id="appId" value="{$signPackage['appId']}">
+<input type="hidden" id="jsTimesTamp" value="{$signPackage['jsTimesTamp']}">
+<input type="hidden" id="jsNonceStr"  value="{$signPackage['jsNonceStr']}">
+<input type="hidden" id="jsSignature" value="{$signPackage['jsSignature']}">
+{block name="script"}{/block}
+</body>
+</html>

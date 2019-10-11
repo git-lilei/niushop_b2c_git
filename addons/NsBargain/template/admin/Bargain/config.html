@@ -1,0 +1,114 @@
+{extend name="$base" /}
+{block name="resources"}
+<style type="text/css">
+.textarea{height: 100px !important; width: 500px !important;}
+</style>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>是否开启：</dt>
+		<dd>
+			<div class="controls">
+				<p>
+					<input id="is_use" type="checkbox" {if condition="$config['is_use'] eq 1"}checked{/if} class="checkbox"/>
+				</p>
+			</div>
+			<p class="hint">设置砍价活动的开启关闭</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>活动时间：</dt>
+		<dd>
+			<div class="controls">
+				<p>
+					<input type = "number" id = "activity_time" name = "activity_time" value="{$config['activity_time']}" class="input-common harf" /><em class="unit">天</em>
+				</p>
+			</div>
+			<p class="hint">设置发起活动后多长时间结束 单位：天</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>最大砍价次数：</dt>
+		<dd>
+			<div class="controls">
+				<p>
+					<input type = "number" id = "bargain_max_number" name = "bargain_max_number" value="{$config['bargain_max_number']}" class="input-common harf"/><em class="unit">次</em>
+				</p>
+			</div>
+			<p class="hint">每个人帮助砍价最多次数</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>推广语：</dt>
+		<dd>
+			<div class="controls">
+				<p>
+					<input type = "text" id = "propaganda" name = "propaganda" value="{$config['propaganda']}" class="input-common" />
+				</p>
+			</div>
+			<p class="hint">设置推广语</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>砍价提示语：</dt>
+		<dd>
+			<textarea rows="10" id="cut_methods" class="textarea-common" maxlength="50">{$config['cut_methods']}</textarea>
+			<p class="hint">用户砍价后的提示说明，用,分隔</p>
+		</dd>
+	</dl>
+	<dl >
+		<dt>第一刀的提示语：</dt>
+		<dd>
+			<input type="text" id = "launch_cut_method" name = "launch_cut_method" value="{$config['launch_cut_method']}" class="input-common"/>
+			<p class="hint">第一刀的的提示语</p>
+		</dd>
+	</dl>
+	
+	<dl >
+		<dt>活动规则：</dt>
+		<dd>
+			<textarea rows="10" id="rule" name = "rule" class="textarea-common" maxlength="50">{$config["rule"]}</textarea>
+			<p class="hint">整个活动的活动规则介绍</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="setConfigAjax();">保存</button></dd>
+	</dl>
+</div>
+<script type="text/javascript">
+function setConfigAjax(){
+	var is_use = $("#is_use").prop('checked') ? 1 : 0 ;
+	var activity_time = $('#activity_time').val();
+	var bargain_max_number = $('#bargain_max_number').val();
+	var propaganda = $('#propaganda').val();
+	var cut_methods = $('#cut_methods').val();
+	var launch_cut_method = $('#launch_cut_method').val();
+	var rule = $('#rule').val();
+	
+	$.ajax({
+		type:"post",
+		url : "{:__URL('__URL__/NsBargain/ADMIN_MODULE/Bargain/config')}",
+		data : {
+			"is_use" : is_use,
+			"activity_time": activity_time,
+			"bargain_max_number" : bargain_max_number,
+			"propaganda" : propaganda,
+			"cut_methods" : cut_methods,
+			'launch_cut_method' : launch_cut_method,
+			"rule" : rule
+		},
+		success : function(data){
+			if(data['code'] > 0){
+				showTip(data["message"],'success');
+			}else{
+				showTip(data["message"],'error');
+			}
+		}
+	});
+}
+</script>
+{/block}

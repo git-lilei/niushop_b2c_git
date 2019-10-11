@@ -1,0 +1,178 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/member_list.css" />
+<style>
+.is-enabled{display: block;width:15px;cursor: pointer;}
+.count-table{border-top: 1px solid #ddd}
+.count-table .title{font-weight:bold;margin-bottom:10px;}
+.count-table span{display:inline-block;width:16%;}
+#add_virtual_goods{width: 800px;left: 45%;}
+#add_virtual_goods span{line-height: 7px;display: block;margin-top: 8px;}
+#add_virtual_goods textarea {width: 80% !important;height: 128px !important;}
+.group{margin-bottom: 5px;}
+.card-info p{margin-bottom: 0}
+</style>
+{/block}
+{block name="main"}
+<table class="table-class count-table">
+	<tbody>
+		<tr>
+			<td width="1%"></td>
+			<td>
+				<div class="title">商品信息</div>
+				<div class="group">
+					<span>商品名称：{$goods_info['goods_name']}</span>
+					<span>总库存：{$goods_info['stock']}</span>
+				</div>
+				{notempty name="$goods_info['sku_list']"}
+					{foreach name="$goods_info['sku_list']" item="sku_item"}
+					<div class="group">
+						<span>规格：{$sku_item.sku_name}</span>
+						<span>价格：{$sku_item.promote_price}</span>
+						<span>库存：{$sku_item.stock}</span>
+					</div>
+					{/foreach}
+				{/notempty}
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<table class="mytable">
+	<tr>
+		<th style="text-align: left;width: 15%;"></th>
+		
+		<th>
+			虚拟码：
+			<input type="text" id='virtual_code' placeholder="输入虚拟码" class="input-common middle"/>
+			状态：
+			<select id="use_status" class="select-common w100">
+				<option value="" >全部</option>
+				<option value="1">已使用</option>
+				<option value="-1">已过期</option>
+				<option value="0" >未使用</option>
+				<option value="-2" >未发放</option>
+			</select>
+			<input type="button" onclick="LoadingInfo(1)" value="搜索" class="btn-common"/>
+		</th>
+	</tr>
+</table>
+
+<table class="table-class">
+	<colgroup>
+		<col style="width: 3%;">
+		<col style="width: 14%;">
+		<col style="width: 14%;">
+		<col style="width: 12%;">
+		<col style="width: 12%;">
+		<col style="width: 12%;">
+		<col style="width: 12%;">
+		<col style="width: 15%;">
+		<col style="width: 10%;">
+	</colgroup>
+	<thead>
+		<tr>
+			<th>
+				<i class="checkbox-common">
+					<input type="checkbox"  />
+				</i>
+			</th>
+			<th align="left">商品名称</th>
+			<th align="left">虚拟码</th>
+			<th align="left">买家</th>
+			<th>开始时间</th>
+			<th>结束时间</th>
+			<th>状态</th>
+			<th align="left">说明</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody class="virtual_goods_list"></tbody>
+</table>
+
+{/block}
+{block name="script"}
+<script type="text/javascript">
+var goods_id = '{$goods_info["goods_id"]}';
+//加载数据
+function LoadingInfo(page_index) {
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/goods/getVirtualGoodsListByGoodsId')}",
+		data : {
+			"page_index" : page_index,
+			"page_size" : $("#showNumber").val(),
+			"use_status" : $("#use_status").val(),
+			"virtual_code" : $("#virtual_code").val(),
+			"goods_id" : goods_id
+		},
+		success : function(data) {
+			if (data['data'] != undefined && data["data"].length > 0) {
+				$(".virtual_goods_list").empty();
+				for (var i = 0; i < data["data"].length; i++) {	
+					var html = '';
+					html += '<tr align="center">';
+
+					if(data["data"][i]['use_status'] == -2){
+						html += '<td><i class="checkbox-common"><input name="sub" type="checkbox" value="'+ data["data"][i]["virtual_goods_id"] +'" ></i></td>';
+					}else{
+						html += '<td><i class="checkbox-common disabled"><input name="sub" type="checkbox" value="'+ data["data"][i]["virtual_goods_id"] +'" disabled></i></td>';
+					}
+
+					if(data["data"][i]["goods_name"] != null){
+						html += '<td align="left">' + data["data"][i]["goods_name"] + ' ' + data["data"][i]["sku_name"] + '</td>';
+					}else{
+						html += '<td align="left">--</td>';
+					}
+					html += '<td align="left">'+data["data"][i]["virtual_code"]+'</td>';
+
+ 					var row=1;//订单数量，用于设置跨行
+ 					if(data["data"][i]["nick_name"]){
+ 						html += '<td align="left">'+data["data"][i]["nick_name"]+'</td>';
+ 					}else{
+ 						html += '<td align="left">--</td>';
+ 					}
+					
+					if(data["data"][i]["start_time"] != 0){
+						html += '<td>'+timeStampTurnTime(data["data"][i]["start_time"])+'</td>';
+					}else{
+						html += '<td>--</td>';
+					}
+					if(data["data"][i]["end_time"] != 0){
+						html += '<td>'+timeStampTurnTime(data["data"][i]["end_time"])+'</td>';
+					}else{
+						html += '<td>--</td>';
+					}
+					
+					if (data["data"][i]["use_status"] == - 1) {
+						var use_status = '已过期';
+					} else if (data["data"][i]["use_status"] == 0) {
+						var use_status = '未使用';
+					} else if (data["data"][i]["use_status"] == 1) {
+						var use_status = '已使用';
+					}else if (data["data"][i]["use_status"] == -2) {
+						var use_status = '未发放';
+					}
+					html += '<td>'+use_status+'</td>';
+					
+					if(data["data"][i]["remark"]){
+						html += '<td align="left" class="card-info">'+ data["data"][i]["remark"] +'</td>';
+					}else{
+						html += '<td align="left">--</td>';
+					}
+					
+					html += '<td>';
+					html +='</td></tr>';
+					$(".virtual_goods_list").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="10">暂无符合条件的数据记录</td></tr>';
+				$(".virtual_goods_list").html(html);
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+</script>
+{/block}

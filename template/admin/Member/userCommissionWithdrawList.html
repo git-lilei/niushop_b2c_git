@@ -1,0 +1,558 @@
+{extend name="$base" /}
+{block name="resources"}
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+<style>
+.modal-infp-style{width:90%;margin:10px auto;}
+.modal-infp-style table{width:100%;}
+.modal-infp-style table tr td{border: 1px solid #e5e5e5;padding: 10px;}
+.modal{width:614px;}
+.type-two{display: none;}
+.ns-main{margin-top:0px;}
+.alert .mt5 .h30{
+	font-size:12px;
+	margin-top:10px;
+}
+.basic_data_ons{
+	width: 100%;
+	height: 150px;
+    box-sizing: border-box;
+	border: 1px solid  #e6e9f0;
+}
+.basic_data_ons	.basic_data_ons_son{
+	width: 100%;
+	height: 30px;
+	line-height: 30px;
+	font-size: 13px;
+	border-bottom: 1px solid  #e6e9f0;
+	text-indent: 10px;
+	background: #f5f7fa;
+}
+.basic_data_ons .basic_data_ons_son_list{
+	width: 100%;
+	height: 84%;
+}
+.basic_data_ons .basic_data_ons_son_list li{
+	width: 14%;
+	height: 100%;
+	float: left;
+}
+.basic_data_ons .basic_data_ons_son_list li .basic_data_ons_son_list_nvs{
+    width:80%;
+	height:80%;
+	margin:0 auto;
+	text-align:center;
+}
+.basic_data_ons .basic_data_ons_son_list li .basic_data_ons_son_list_nvs p{
+    line-height:30px;
+	font-size:12px;
+	color:#5e6166;
+	margin-top:40px;
+	margin-bottom: 0;
+}
+.basic_data_ons .basic_data_ons_son_list li .basic_data_ons_son_list_nvs cite{
+    line-height: 39px;
+    font-size: 20px;
+    color: #00A0DE;
+}
+</style>
+{/block}
+{block name="main"}
+<div class="basic_data_ons">
+	<ul class="basic_data_ons_son_list">
+        <li>
+            <div class="basic_data_ons_son_list_nvs">
+                <p>等待处理金额总和</p>
+				<cite>￥{$zong_money.tx_status_0_money}</cite>
+			</div>
+		</li>
+		<li>
+			<div class="basic_data_ons_son_list_nvs">
+                <p>已同意的金额总和</p>
+				<cite>￥{$zong_money.tx_status_1_money}</cite>
+			</div>
+		</li>
+		<li>
+			<div class="basic_data_ons_son_list_nvs">
+                <p>已拒绝的金额总和</p>
+				<cite>￥{$zong_money.tx_status_2_money}</cite>
+			</div>
+		</li>
+		<li>
+			<div class="basic_data_ons_son_list_nvs">
+                <p>线下转账金额总和</p>
+				<cite>￥{$zong_money.xx_status_2_money}</cite>
+			</div>
+		</li>
+		<li>
+			<div class="basic_data_ons_son_list_nvs">
+                <p>线上转账金额总和</p>
+				<cite>￥{$zong_money.xs_status_2_money}</cite>
+			</div>
+		</li>
+		<li>
+			<div class="basic_data_ons_son_list_nvs">
+                <p>支付宝转账金额总和</p>
+				<cite>￥{$zong_money.zfb_status_money}</cite>
+			</div>
+		</li>
+		<li>
+			<div class="basic_data_ons_son_list_nvs">
+                <p>微信转账金额总和</p>
+				<cite>￥{$zong_money.wx_status_money}</cite>
+			</div>
+		</li>
+	</ul>
+</div>
+
+<table class="mytable">
+	<tr>
+		<td class="default-condition">
+			<input id="userName" class="input-small input-common middle" type="text" placeholder="请输入会员账号">
+			<!-- 更多搜索按钮 -->
+			<button onclick="searchData()" value="搜索" class="btn-common" >搜索</button>
+			<button onclick="openSeniorSearch('.default-condition')" value="搜索" class="btn-common" >高级搜索</button>
+			<button onclick="daochu()" value="搜索" class="btn-common" >导出数据</button>
+			<!-- 更多搜索下拉框 -->
+		</td>
+	</tr>
+</table>
+
+<!-- 高级搜索 -->
+<div class="nui-condition">
+	<div class="c-item-column">
+		<label>会员账号：</label>
+		<input id="userName" class="input-small input-common middle" type="text" placeholder="请输入会员账号">
+	</div>
+	<div class="c-item-column">
+		<label>订单类型：</label>
+		<select id='txclass' class="select-common middle">
+			<option value="">选择类型</option>
+			<option value="0">待处理</option>
+			<option value="1">已通过</option>
+			<option value="-1">已拒绝</option>
+			<option value='8'>线下转账</option>
+			<option value='9'>线上转账</option>
+			<option value='6'>支付宝转账</option>
+			<option value='7'>微信转账</option>
+		</select>
+	</div>
+	<div class="c-item-column">
+		<label>提现时间：</label>
+		<input type="text" id="startDate" class="input-common middle" placeholder="请选择开始日期" onclick="WdatePicker()" />
+		&nbsp;-&nbsp;
+		<input type="text" id="endDate" placeholder="请选择结束日期" class="input-common middle" onclick="WdatePicker()" />
+	</div>
+	
+	<div class="c-operation">
+		<button onclick="searchData()"  value="搜索" class="btn-common" >搜索</button>
+		<button onclick="daochu()"  value="导出" class="btn-common-white" >导出</button>
+		<a href="javascript:clearCondition();">清空筛选条件</a>
+	</div>
+	<a href="javascript:retractSeniorSearch();" class="retract">收起↑</a>
+</div>
+
+<table class="table-class">
+	<colgroup>
+		<col style="width: 2%;">
+		<col style="width: 9%;">
+		<col style="width: 9%;">
+		<col style="width: 9%;">
+		<col style="width: 9%;">
+		<col style="width: 9%;">
+		<col style="width: 9%;">
+		<col style="width: 9%;">
+		<col style="width: 9%;">
+		<col style="width: 16%;">
+		<col style="width: 10%;">
+	</colgroup>
+	<thead>
+		<tr>
+			<th ><i class="checkbox-common"><input type="checkbox" ></i></th>
+			<th align="left">会员账号</th>
+			<th align="left">手机号</th>
+			<th align="left">提现流水号</th>
+			<th align="left">提现银行</th>
+			<th align="left">提现账户</th>
+			<th align="left">账户姓名</th>
+			<th align="right">提现金额</th>
+			<th>状态</th>
+			<th>提现日期</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+
+<!-- 通过提现申请 -->
+<div class="modal fade hide" id="agree" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>通过提现申请</h3>
+			</div>
+			<div class="modal-body">
+				<div class="modal-infp-style">
+					<table>
+						<tr>
+							<td>转账类型</td>
+							<td>
+								<select onchange="choose()" id="choose-type" class="select-common">
+									<option value="1" >线下转账</option>
+									<option value="2" >线上转账</option>
+								</select>
+							</td>
+						</tr>
+						<!-- <tr class="type-two">
+							<td>转账方式</td>
+							<td>
+								<select id="online_type" class="select-common">
+									{if condition="$wechat['is_use'] != 1 && $alipay['is_use'] != 1"}
+										<option value="0">未开启转账方式</option>
+									{else/}
+										{if condition="$wechat['is_use'] == 1"}
+										<option value="1">微信转账</option>
+										{/if}
+										{if condition="$alipay['is_use'] == 1"}
+										<option value="2">支付宝转账</option>
+										{/if}
+									{/if}
+									
+								</select>
+							</td>
+						</tr> -->
+						<tr class="type-one">
+							<td>转账银行</td>
+							<td>
+								<input type="text" name="transfer_name" id="transfer_name" class="input-common"/>
+							</td>
+						</tr>
+						<tr class="type-one">
+							<td>银行账户</td>
+							<td>
+								<input type="text" name="transfer_account_no" id="transfer_account_no" class="input-common"/>
+							</td>
+						</tr>
+						<tr class="type-one">
+							<td>交易流水</td>
+							<td>
+								<input type="text" name="transfer_no" id="transfer_no" class="input-common"/>
+							</td>
+						</tr>	
+							<tr>
+								<td>转账金额</td>
+								<td><input type="text" name="transfer_money" id="transfer_money" placeholder="请输入转账金额" value="" onkeyup="this.value=this.value.replace(/[^\d+(\.\d+)?]/g,'')" class="input-common"/>
+									<input type="hidden" name="post-id" id="post-id" value="">
+								</td>
+							</tr>
+							<tr>
+								<td>备注</td>
+								<td><textarea name="transfer_remark" id="transfer_remark" class="textarea-common"></textarea></td>
+							</tr>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn-common btn-big" onclick="audit()">确定</button>
+				<button class="btn-common-cancle btn-big" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 拒绝提现申请 -->
+<div class="modal fade hide" id="recharge_balance" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<input type="hidden" id="balance_id">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>拒绝提现申请</h3>
+			</div>
+			<div class="modal-body">
+				<div class="modal-infp-style">
+					<table>
+						<tr>
+							<td>备注</td>
+							<td colspan='3' id="time"><textarea id="remark" class="textarea-common"></textarea></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn-common btn-big" onclick="refusetrue()">确定</button>
+				<button class="btn-common-cancle btn-big" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- 提现详情模态框（Modal） -->
+<div class="modal fade hide" id="details" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>提现详情</h3>
+			</div>
+			<div class="modal-body">
+				<div class="modal-infp-style">
+					<table>
+						<tr>
+							<td>会员</td>
+							<td colspan='4' id="real_name"></td>
+							<td>手机号</td>
+							<td colspan='4' id="mobile"></td>
+						</tr>
+						<tr>
+							<td>提现流水号</td>
+							<td colspan='4' id="withdraw_no"></td>
+							<td>提现银行</td>
+							<td colspan='4' id="bank_name"></td>
+						</tr>
+						<tr>
+							<td>提现账户</td>
+							<td colspan='4' id="account_number"></td>
+							<td>账户姓名</td>
+							<td colspan='4' id="realname"></td>
+						</tr>
+						<tr>
+							<td>提现金额</td>
+							<td colspan='4' id="cash"></td>
+							<td>提现日期</td>
+							<td colspan='4' id="ask_for_date"></td>
+						</tr>
+						<tr>
+							<td>状态</td>
+							<td colspan='4' id="status"></td>
+							<td>备注</td>
+							<td colspan='4' id="memo"></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-big" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+<input type="hidden" id="uid"/>
+<input type="hidden" id="hidden_status"/>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+function searchData(){
+	LoadingInfo(1);
+}
+//加载数据
+function LoadingInfo(pageIndex) {
+	var user_name = $("#userName").val();
+	var user_phone = $("#userTel").val();
+	var start_date = $("#startDate").val();
+	var end_date = $("#endDate").val();
+	var txclass = $("#txclass").val();
+		$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/member/usercommissionwithdrawlist')}",
+		data : {
+			"pageIndex" : pageIndex,
+			"user_name":user_name,
+			"user_phone":user_phone,
+			"start_date" : start_date,
+			"end_date" : end_date,
+			"txclass" : txclass
+		},
+		success : function(data) {
+			$("#page_count").val(data["page_count"]);
+			$("#pageNumber a").remove();
+			if (data["data"].length > 0) {
+				$(".table-class tbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					var status = "";
+					if(data["data"][i]["status"] == 0){
+						status = "审核中";
+					}else if(data["data"][i]["status"] == 1){
+						status = "已通过";
+					}else{
+						status = "已拒绝";
+					}
+					html += '<tr align="center">';
+					html += '<td><i class="checkbox-common"><input name="sub" type="checkbox" value="'+ data["data"][i]["id"]+'" ></i></td>';
+					html += '<td align="left">'+data["data"][i]["real_name"]+'</td>';
+					html += '<td align="left">' + data["data"][i]["mobile"] + '</td>';
+					html += '<td align="left">' + data["data"][i]["withdraw_no"] + '</td>';
+					html += '<td align="left">' + data["data"][i]["bank_name"] + '</td>';
+					html += '<td align="left">' + (data["data"][i]["account_number"] == "" ? "-" : data["data"][i]["account_number"]) + '</td>';
+					html += '<td align="left">' + data["data"][i]["realname"] + '</td>';
+					html += '<td   align="right" id="cash-'+ data["data"][i]["id"] +'" data-transfer-money="' + data["data"][i]["cash"] + '">￥' + data["data"][i]["cash"] + '</td>';
+					
+					html += '<td>' + status + '</td>';
+					html += '<td>' + timeStampTurnTime(data["data"][i]["ask_for_date"]) + '</td>';
+					html += '<td  align="center">';
+					if(data["data"][i]["status"] == 0){
+						html += '<a  href="javascript:void(0);" onclick="goNext('+ data["data"][i]["id"] +', 1);">通过</a>';
+						html += '<a  href="javascript:void(0);" onclick="refuse('+ data["data"][i]["id"] +', -1);">拒绝</a>';
+					}else{
+						html += '<a  href="javascript:void(0);" onclick="details('+ data["data"][i]["id"] +');">详情</a>';
+					}
+					html += '</td> ';
+					html += '</tr>';
+					$(".table-class tbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="11">暂无符合条件的数据记录</td></tr>';
+				$(".table-class tbody").html(html);
+			}
+			
+			var totalpage = $("#page_count").val();
+			if (totalpage == 1) {
+				changeClass("all");
+			}
+			var $html = pagenumShow(jumpNumber,totalpage,{$pageshow});
+			$("#pageNumber").append($html);
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+function audit(){
+	var id = $("#post-id").val();
+	var transfer_type = $("#choose-type").val();
+	
+	var transfer_money = $("#transfer_money").val();
+	var transfer_remark = $("#transfer_remark").val();
+	var transfer_no = $("#transfer_no").val();
+	var transfer_account_no = $("#transfer_account_no").val();
+	
+	if(transfer_type == 2 && transfer_remark.length == 0){
+		showTip("请填写备注信息", "warning");
+		return;
+	}
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/member/usercommissionwithdrawaudit')}",
+		data : {
+			"id" : id,
+			"status":1,
+			"transfer_type":transfer_type,
+			"transfer_money":transfer_money,
+			"transfer_remark":transfer_remark,
+			"transfer_no":transfer_no,
+			"transfer_account_no":transfer_account_no,
+		},
+		success : function(data) {
+			if (data["code"] > 0) {
+				showTip(data["message"],'success');
+				location.href = "{:__URL('ADMIN_MAIN/member/usercommissionwithdrawlist')}";
+			}else{
+				showTip(data["message"],'error');
+			}
+		}
+	})
+}
+
+//拒绝提现申请
+function refuse(id,status){
+	$("#recharge_balance").modal("show");
+	$('#uid').val(id);
+	$('#hidden_status').val(status);
+}
+
+function refusetrue(){
+	var uid = $('#uid').val();
+	var status = $('#hidden_status').val();
+	var remark = $('#remark').val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/member/usercommissionwithdrawrefuse')}",
+		data : {
+			"id" : uid,
+			"status":status,
+			'remark':remark
+		},
+		success : function(data) {
+			if (data["code"] > 0) {
+				showTip(data["message"],'success');
+				location.href = "{:__URL('ADMIN_MAIN/member/usercommissionwithdrawlist')}";
+			}else{
+				showTip(data["message"],'error');
+			}
+			$("#recharge_balance").modal("hide");
+		}
+	})
+}
+
+//提现详情
+function details(id){
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/member/getwithdrawalsinfo')}",
+		data : { "id" :id },
+		success : function(data) {
+			if (data) {
+				$("#real_name").html(data["real_name"]);
+				$("#mobile").html(data["mobile"]);
+				$("#withdraw_no").html(data["withdraw_no"]);
+				$("#bank_name").html(data["bank_name"]);
+				$("#account_number").html(data["account_number"]);
+				$("#realname").html(data["realname"]);
+				$("#cash").html(data["cash"]);
+				$("#ask_for_date").html(timeStampTurnTime(data["ask_for_date"]));
+				var status = "";
+				if(data["status"] == 0){
+					status = "审核中";
+				}else if(data["status"] == 1){
+					status = "已通过";
+				}else{
+					status = "已拒绝";
+				}
+				$("#status").html(status);
+				$("#memo").html(data["memo"]);
+				if(data['status'] )
+					$("#details").modal("show");
+				}else{
+					showTip(data["message"],'error');
+				}
+			}
+	})
+}
+
+//通过提现弹框显示
+function goNext(id){
+	var transfer_money = $("#cash-"+id).data("transfer-money");
+	$("#transfer_money").val(transfer_money);
+	$("#post-id").val(id);
+	$("#agree").modal("show");
+}
+
+//选择转账类型 默认线上
+function choose(){
+	var type = $("#choose-type").val();
+	if (type == 1) {
+		$(".type-one").show();
+		$(".type-two").hide();
+	}else{
+		$(".type-one").hide();
+		$(".type-two").show();
+	}
+}
+
+//点击显示更多搜索
+$(".more-search").click(function(){
+	$(".more-search-container").slideToggle();
+});
+
+function daochu(){
+	var user_name = $("#userName").val();
+	var user_phone = $("#userTel").val();
+	var start_date = $("#startDate").val();
+	var end_date = $("#endDate").val();
+	var txclass = $("#txclass").val();
+
+	location.href = __URL('ADMIN_MAIN/member/txDaochu?txclass='+ txclass +'&user_name='+ user_name +'&user_phone='+ user_phone +'&start_date='+ start_date +'&end_date='+end_date );
+}
+</script>
+{/block}

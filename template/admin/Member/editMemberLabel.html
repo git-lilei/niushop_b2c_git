@@ -1,0 +1,67 @@
+{extend name="$base" /}
+{block name="resources"}{/block}
+{block name="main"}
+<div class="space-10"></div>
+<div class="set-style">
+	<dl>
+		<dt><span class="required">*</span>标签名称：</dt>
+		<dd>
+			<input type="text" id="label_name" class="input-common" value="{$info['label_name']}">
+			<p class="error">请输入标签名称</p>
+			<p class="hint">设置会员标签名称</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>标签描述：</dt>
+		<dd>
+			<textarea id="desc" class="textarea-common">{$info['desc']}</textarea>
+			<p class="hint">会员标签描述信息</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="save();">保存</button>
+			<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);" >返回</button>
+		</dd>
+	</dl>
+</div>
+{/block}
+{block name="script"}
+<script>
+var flag = false;//防止重复提交
+var id = "{$id}";
+//保存
+function save(){
+	var label_name = $("#label_name").val();
+	var desc = $("#desc").val();
+	if (label_name == '') {
+		$("#label_name").focus().next().show().css("display","inline-block");
+		return false;
+	} else {
+		$(".error").hide();
+	}
+	if(flag) return;
+	flag = true;
+	$.ajax({
+		type : "post",
+		url : "{:__url('ADMIN_MAIN/member/editmemberlabel')}",
+		data : {
+			id : id,
+			label_name : label_name,
+			desc : desc
+		},
+		success : function(data) {
+			if (data["code"] > 0) {
+				showTip(data['message'],'success');
+				location.href="{:__url('ADMIN_MAIN/member/memberlabellist')}";
+			}else{
+				showTip(data['message'],'error');
+				flag = false;
+			}
+		
+		}
+	});
+}
+</script>
+{/block}

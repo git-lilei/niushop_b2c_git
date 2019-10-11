@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>{if !empty($title)}{$title},{/if}{:lang('wechat_payment')}</title>
+<link rel="stylesheet" href="WAP_CSS/normalize.css"/>
+<link type="text/css" rel="stylesheet" href="WAP_CSS/common.css">
+<link type="text/css" rel="stylesheet" href="WAP_CSS/themes/theme.css">
+<link rel="stylesheet" type="text/css" href="WAP_CSS/pay/pay_qrcode.css">
+<script src="WAP_PLUGIN/mzui/lib/jquery/jquery-3.2.1.min.js"></script>
+<script src="WAP_JS/common.js"></script>
+</head>
+<body>
+<article class="ns-pay">
+	<div class="order clearfix">
+		<!-- 订单信息 -->
+		<div class="o-left">
+			<h3 class="o-title">{:lang('the_order_is_submitted_successfully_please_pay_as_soon_as_possible')}！{:lang('payment_transaction')}：{$pay_value.out_trade_no}</h3>
+		</div>
+		<!-- 订单金额 -->
+		<div class="o-right">
+			<div class="o-price">
+				<em>{:lang('member_amount_payable')}</em><strong class="ns-text-color">{$pay_value.pay_money}</strong><em>{:lang('element')}</em>
+			</div>
+		</div>
+	</div>
+	<div class="payment">
+		<!-- 微信支付 -->
+		<div class="pay-weixin">
+			<div class="p-w-hd">{:lang('wechat_payment')}</div>
+			<div class="p-w-bd" style="position: relative">
+				<div class="js-weixin-info">
+					{:lang('the_two_dimensional_code_expires_and_remains')}<span class="js-qrcode-time qrcode-time ns-text-color">45</span>{:lang('second')}，{:lang('after_expiration_refresh_page_get_two_dimensional_code_again')}。
+				</div>
+				<div class="p-w-box">
+					<div class="pw-box-hd">
+						<img id="qrcode" src="{$path}" width="298" height="298">
+					</div>
+					<div class="pw-box-ft">
+						<p>{:lang('please_use_wechat_to_sweep_away')}</p>
+						<p>{:lang('scan_two_dimensional_code_payment')}</p>
+					</div>
+				</div>
+				<div class="p-w-sidebar"></div>
+			</div>
+		</div>
+	</div>
+</article>
+<script>
+var APPMAIN = 'APP_MAIN',
+	SHOPMAIN = 'SHOP_MAIN';
+$(function() {
+	setInterval("wchatOverdue()", 1000);
+});
+
+function wchatOverdue() {
+	var time = parseInt($(".js-qrcode-time").text());
+	if (time != 0) {
+		$(".js-qrcode-time").text(--time);
+	} else {
+		$(".js-weixin-info").html("<span class='ns-text-color-gray'>{:lang('the_two_dimensional_code_has_expired')}，<a href='' class='ns-text-color'>刷新</a>页面重新获取二维码</span>");
+		$("#qrcode").attr("src","WAP_IMG/pay/default_qrcode.png").css({"width": "278px","height": "278px","margin": "10px 0 0 10px"});
+	}
+}
+
+window.setInterval("payStatus()", 2000);
+
+function payStatus(){
+	$.ajax({
+		type : "post",
+		url : "{:__URL('APP_MAIN/pay/payStatus')}",
+		data : {
+			out_trade_no : "{$pay_value.out_trade_no}"
+		},
+		success : function(data){
+			if(data['code'] > 0){
+				location.href = __URL(APPMAIN + '/pay/payReturn?out_trade_no={$pay_value["out_trade_no"]}&msg=1');
+				clearInterval(payStatus);
+			}
+		}
+	})
+}
+</script>
+</body>
+</html>

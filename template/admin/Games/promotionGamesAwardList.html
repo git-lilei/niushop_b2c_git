@@ -1,0 +1,61 @@
+{extend name="$base" /}
+{block name="resources"}{/block}
+{block name="main"}
+<!-- <table class="mytable"> -->
+<!-- 	<tr> -->
+<!-- 		<th width="10%"> -->
+<!-- 			<input type="text" id = 'search_text' placeholder="请输入活动名称" class="input-common" /> -->
+<!-- 			<input type="button" onclick="searchData()" value="搜索" class="btn-common" /> -->
+<!-- 		</th> -->
+<!-- 	</tr> -->
+<!-- </table> -->
+<table class="table-class">
+	<thead>
+		<tr>
+			<th align="left">游戏活动名称</th>
+			<th align="left">奖励规则等级</th>
+			<th align="left">奖励</th>
+			<th align="center">剩余奖品数/总奖品数</th>
+			<th align="center">操作</th>
+		</tr>
+	</thead>
+	<tbody>
+		{if condition="$game_detail"}
+			{if condition="count($game_detail.rule)>0"}
+			{foreach name="$game_detail.rule" item="vo" key="k"}
+			<tr>
+				<td align="left">{$game_detail.name}</td>
+				<td align="left">{$vo.rule_name}</td>
+				<td align="left">
+					奖励
+					{if condition="$vo.type==1"}
+					{$vo.points}积分
+					{elseif condition="$vo.type==2"}
+					优惠券
+					{elseif condition="$vo.type==3"}
+					￥{$vo.hongbao}余额红包
+					{elseif condition="$vo.type==4"}
+					赠品
+					{/if}
+				</td>
+				<td align="center">
+					{if condition="$vo.remaining_number==0"}
+					<span><b style="color:red;font-weight:normal;">{$vo.remaining_number}</b>/{$vo.rule_num}</span>
+					{else/}
+					<span>{$vo.remaining_number}/{$vo.rule_num}</span>
+					{/if}
+				</td>
+				<td align="center"><a href="{:__URL('ADMIN_MAIN/Promotion/updatePromotionGame?game_id=').$vo.game_id.'&game_type='.$game_detail.game_type}">编辑游戏活动</a></td>
+			</tr>
+			{/foreach}
+			{else/}
+			<tr>
+				<td colspan="5" align="center">暂无奖项</td>
+			</tr>
+			
+			{/if}
+		{/if}
+	</tbody>
+</table>
+{/block}
+{block name="script"}{/block}

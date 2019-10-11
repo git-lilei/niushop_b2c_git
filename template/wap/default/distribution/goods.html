@@ -1,0 +1,423 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/distribution_goods.css">
+{/block}
+{block name="head_href"}{:__URL('APP_MAIN/distribution/index')}{/block}
+{block name="main"}
+<section class="category-content-section">
+	<div class="goods-search ns-border-color-gray">
+		<input type="text" id="search_text" placeholder="请输入商品名称">
+		<img class="search-img" onclick="getgoodlist(1)" src="WAP_IMG/distribution/search_icon.png">
+	</div>
+	<section class="filtrate-term">
+		<ul>
+			<li class="drop_down data-category ns-border-color-gray"><a href="javascript:;" class="ns-text-color-black">分类<i class="fa fa-angle-down fa-lg" aria-hidden="true"></i></a></li>
+			<li class="drop_down data-ordrt-sort ns-border-color-gray"><a href="javascript:;" class="ns-text-color-black">排序<i class="fa fa-angle-down fa-lg" aria-hidden="true"></i></a></li>
+			{if !empty($category_id)}
+			<li class="data-screen"><a href="javascript:;" class="ns-text-color-black">筛选<i class="fa fa-angle-down fa-lg" aria-hidden="true"></i></a></li>
+			{/if}
+		</ul>
+	</section>
+	
+	<!-- 商品列表 -->
+	<div class="goods-list-grid open-list">
+		<div class="tablelist-append clearfix"></div>
+	</div>
+	
+	{if !empty($category_id)}
+		<!-- 筛选条件 -->
+		<div class="shade-div"></div>
+		<div class="screening-condition">
+			<div class="head-title ns-border-color-gray">
+				<div class="ns-text-color-black">筛选</div>
+			</div>
+			{php}
+				 $category_brands = api("System.Goods.brandSelection", ["category_id"=>$category_id]);
+				 $category_brands = $category_brands['data'];
+			{/php}
+			<ul class="conditions ns-border-color-gray">
+				<!-- 品牌筛选 -->
+				{notempty name="$category_brands"}
+				<li class="ns-border-color-gray">
+					{if condition="count($category_brands) > 2"}
+					<div class="condition-name click-down ns-text-color-black" is_open = "0"><span class="ns-text-color-black">品牌</span><i class="fa fa-angle-down fa-lg" aria-hidden="true"></i></div>
+					{else/}
+					<div class="condition-name ns-text-color-black" is_open = "0"><span class="ns-text-color-black">品牌</span></div>
+					{/if}
+					<div class="condition-value"  data-screen-type="brand">
+						<a href="javascript:;" class="ns-text-color-hover ns-border-color-hover selected all ns-text-color-black ">全部</a>
+						{foreach name="category_brands" item="brand" key="k"}
+						<a href="javascript:;" class="ns-text-color-hover ns-border-color-hover"  data-brand-id="{$brand.brand_id}">{$brand.brand_name}</a>
+						{/foreach}
+					</div>
+				</li>
+				{/notempty}
+				<!-- 属性筛选 -->
+				{php}
+				 $attr_or_spec = api("System.Goods.attributeSelection", ["category_id"=>$category_id]);
+				 $attr_or_spec = $attr_or_spec['data'];
+				{/php}
+				{if condition="count($attr_or_spec) gt 0 "}
+					{foreach name="attr_or_spec" item="vo" key="key"}
+						{if condition="$vo.type neq 1 and $vo.value neq ''"}
+							{if condition="$vo.is_search eq '1'"}
+							<li class="ns-border-color-gray">
+								{if condition="count($vo['value_items']) > 2"}
+								<div class="condition-name click-down" is_open = "0"><span class="ns-text-color-black">{$vo.attr_value_name}</span><i class="fa fa-angle-down fa-lg" aria-hidden="true"></i></div>
+								{else/}
+								<div class="condition-name" is_open = "0"><span class="ns-text-color-black">{$vo.attr_value_name}</span></div>
+								{/if}
+								<div class="condition-value" data-screen-type="attr">
+									<a href="javascript:;" class="ns-text-color-hover ns-border-color-hover selected all">全部</a>
+									{foreach name="vo.value_items" item="value" key="k"}
+										<a href="javascript:;" class="ns-text-color-hover ns-border-color-hover" data-attr-value="{$vo.attr_value_name},{$value.value},{$vo.attr_value_id}">{$value.value}</a>
+									{/foreach}
+								</div>
+							</li>
+							{/if}
+						{/if}
+					{/foreach}
+				{/if}
+				{php}
+					$goods_spec_array = api("System.Goods.goodsSpecArray", ["category_id"=>$category_id]);
+					$goods_spec_array = $goods_spec_array['data'];
+				{/php}
+				<!-- 规格筛选 -->
+				{if condition="count($goods_spec_array) gt 0 "}
+					{foreach name="goods_spec_array" item="vo" key="key"}
+						{if condition="$vo.is_screen eq 1 and $vo.spec_name neq ''"}
+						<li class="ns-border-color-gray">
+							{if condition="count($vo['values']) > 2"}
+							<div class="condition-name click-down" is_open = "0"><span class="ns-text-color-black">{$vo.spec_name}</span><i class="fa fa-angle-down fa-lg" aria-hidden="true"></i></div>
+							{else/}
+							<div class="condition-name" is_open = "0"><span class="ns-text-color-black">{$vo.spec_name}</span></div>
+							{/if}
+							<div class="condition-value" data-screen-type="spec">
+								<a href="javascript:;" class="ns-text-color-hover ns-border-color-hover selected all">全部</a>
+								{foreach name="vo.values" item="value" key="k"}
+									<a href="javascript:;" class="ns-text-color-hover ns-border-color-hover" data-spec-value="{$value.spec_id}:{$value.spec_value_id}">{$value.spec_value_name}</a>
+								{/foreach}
+							</div>
+						</li>
+						{/if}
+					{/foreach}
+				{/if}
+				<!-- 价格筛选 -->
+				{php}
+				    $category_price_grades = api("System.Goods.categoryPriceGrades", ["category_id"=>$category_id]);
+				    $category_price_grades = $category_price_grades['data'];
+				{/php}
+				{notempty name="$category_brands"}
+					<li class="ns-border-color-gray">
+						{if condition="count($category_price_grades) > 2"}
+						<div class="condition-name click-down" is_open = "0"><span class="ns-text-color-black">价格</span><i class="fa fa-angle-down fa-lg" aria-hidden="true"></i></div>
+						{else/}
+						<div class="condition-name" is_open = "0"><span class="ns-text-color-black">价格</span></div>
+						{/if}
+						<div class="price-Section">
+							<span class="explain ns-text-color-black">价格区间(元)</span>
+							<input type="number" class="priceInput ns-border-color-gray" id="min_price">
+							<span class="delimiter">-</span>
+							<input type="number" class="priceInput ns-border-color-gray" id="max_price">
+						</div>
+						<div class="condition-value" data-screen-type="price">
+							{foreach name="$category_price_grades" item="price_grades" key="k"}
+								{if condition="$price_grades[1] != 0"}
+								<a href="javascript:;" class="ns-text-color-hover ns-border-color-hover" data-min-price="{$price_grades[0]}" data-max-price="{$price_grades[1]}">{$price_grades[0]}&nbsp;-&nbsp;{$price_grades[1]}</a>
+								{/if}
+							{/foreach}
+						</div>
+					</li>
+				{/notempty}
+			</ul>
+			<div class="bottom-area ns-bg-color-gray">
+				<a href="javascript:;" class="reset">重置</a>
+				<a href="javascript:;" class="confirm_screen primary">确认</a>
+			</div>
+		</div>
+		<!-- 价格区间 最小 -->
+		<input type="hidden" id="min_price" value="">
+		<!-- 价格区间 最大 -->
+		<input type="hidden" id="max_price" value="">
+		<!-- 筛选属性值 -->
+		<input type="hidden" id="attr" value="">
+		<!-- 筛选规格 -->
+		<input type="hidden" id="spec" value="">
+		<!-- 品牌id -->
+		<input type="hidden" id="brand_id" value="{$brand_id}">
+	{/if}
+	
+	<!-- 选择分类start -->
+	<div class="data-category-select-layer">
+	{php}
+		$goodsCategoryList = api("System.Goods.goodsCategoryTree");
+		$goodsCategoryList = $goodsCategoryList['data'];
+	{/php}
+		<ul class="primary-classification ns-bg-color-gray-fadeout-60 ns-border-color-gray">
+			{empty name="$category_id"}
+			<li onclick="location.href='{:__URL(\'APP_MAIN/distribution/goods\')}'" class="active">全部分类</li>
+			{else/}
+			<li onclick="location.href='{:__URL(\'APP_MAIN/distribution/goods\')}'">全部分类</li>
+			{/empty}
+			{foreach name="$goodsCategoryList" item="vo"}
+			<li onclick="fxCategoryGoods(this)" data-category-id="{$vo['category_id']}"class="ns-text-color-black {if condition="$vo['category_id'] eq $category_id"}active{/if}">{$vo.category_name}</li>
+			{/foreach}
+		</ul>
+		<ul class="two_stage_classification">
+			{foreach name="$goodsCategoryList" item="vo"}
+				{foreach name="$vo['child_list']" item="to"}
+				<li onclick="fxCategoryGoods(this)" class="ns-text-color-black {if condition="$to['category_id'] eq $category_id"}active{/if}"  {if condition="$to['pid'] eq $category_id"} style="display:block;"{/if} data-pid="{$to.pid}" data-category-id="{$to['category_id']}"><a href="{:__URL('APP_MAIN/distribution/goods','category_id='.$to['category_id'])}">{$to.category_name}</a></li>
+				{/foreach}
+			{/foreach}
+		</ul>
+	</div>
+	
+	<!-- 排序start -->
+	<div class="filtrate-more">
+		<a href="javascript:void(0)" class="ns-text-color-black ns-border-color-gray">默认</a>
+		<a href="javascript:void(0)" class="ns-text-color-black ns-border-color-gray" data-order-type="ng.sales" data-sort="asc">{:lang('goods_sales_volume')} </a>
+		<a href="javascript:void(0)" class="ns-text-color-black ns-border-color-gray" data-order-type="ng.is_new" data-sort="desc">{:lang('goods_new')} </a>
+		<a href="javascript:void(0)" class="ns-text-color-black ns-border-color-gray" data-order-type="ng.promotion_price" data-sort="desc">{:lang('goods_price')} </a>
+	</div>
+</section>
+
+<div style="height: 50px;"></div>
+<!-- 底部添加 -->
+<div class="footer ns-border-color-gray">
+	<div class="select-all">
+		<i class="checkbox fa fa-circle-o ns-text-color-gray" is_check="yes" is_del='no' onclick="checkbox(this, 1)"></i>
+		<span>全选</span>
+	</div>
+	<button class="add-btn primary" onclick="addSave()">添加</button>
+</div>
+<div class="mask-div"></div>
+<input type="hidden" id="page" value="1">
+<input type="hidden" id="page_count">
+<input type="hidden" id='order' name="order"/>
+<input type="hidden" id='sort' name="sort"/>
+<input type="hidden" id='category_id' name='category_id' value="{$category_id}" />
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script src="WAP_JS/distribution_goods_list_fx.js" type="text/javascript"></script>
+<script type="text/javascript">
+var scrollTop = getCookie("scrollTop");
+function setCookie(name,value) 
+{
+    var Days = 30; 
+    var exp = new Date(); 
+    exp.setTime(exp.getTime() + Days*24*60*60*1000); 
+    document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString(); 
+} 
+function getCookie(name) 
+{ 
+    var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+    if(arr=document.cookie.match(reg))
+ 
+        return unescape(arr[2]); 
+    else 
+        return null; 
+} 
+function delCookie(name) 
+{ 
+    var exp = new Date(); 
+    exp.setTime(exp.getTime() - 1); 
+    var cval=getCookie(name); 
+    if(cval!=null) 
+        document.cookie= name + "="+cval+";expires="+exp.toGMTString(); 
+}
+
+delCookie("scrollTop");
+var page_size = 10;
+$(function(){
+	getgoodlist(1);
+});
+
+var is_load = true;//防止重复加载
+function getgoodlist(page){
+	$('#grouGoodsListmask').hide();
+	$('.two-list-menu').hide();
+	$('.two-list-menu li[pid]').hide();
+	var order = $("#order").val();
+	var sort = $("#sort").val();
+	var min_price = $("#min_price").val();
+	var max_price = $("#max_price").val();
+	var attr = $("#attr").val();
+	var spec = $("#spec").val();
+	var brand_id = $("#brand_id").val();
+	var search_text = $('#search_text').val();
+	var params = {
+		category_id: '{$category_id}',
+		brand_id: brand_id,
+		obyzd: order,
+		st: sort,
+		page: page,
+		mipe: min_price,
+		mape: max_price,
+		attr: attr,
+		spec: spec,
+		page_size: page_size,
+		search_text: search_text,
+		uid: uid
+	};
+	//展示方式
+	if($.cookie("goods_list_display_mode")!= undefined && $.cookie("goods_list_display_mode") != ""){
+		var display_mode = $.cookie("goods_list_display_mode");
+		if(display_mode == "list"){
+			$(".data-display-mode").find("i").attr("class","fa fa-list-ul fa-lg");
+		}else if(display_mode == "big_img"){
+			$(".data-display-mode").find("i").attr("class","fa fa-th-large fa-lg");
+		}
+	}else{
+		var display_mode = "big_img";
+		$(".data-display-mode").find("i").attr("class","fa fa-th-large fa-lg");
+	}
+	$("#page").val(page);
+	if(is_load){
+		is_load = false;
+		api("System.Distribution.distributionGoodsList",params,function(data){
+				if(data['data']['page_nex']){
+					var data_page = parseInt(data['data']['page_nex']);
+					$("#page").val(data_page);
+				}
+				$("#page_count").val(data['data']['page_count']);//总页数
+				if(page == 1){
+					var list_html = "";
+				}else if(page > 1){
+					var list_html = $('.tablelist-append').html();
+				}
+				if(data['data']['data'].length >0){
+					for(var i=0;i<data['data']['data'].length;i++){
+						var item=data['data']['data'][i];
+						list_html += '<div class="goods-info ns-border-color-gray">';
+						if(item['is_select'] == 1) {
+							list_html += '<div class="goods_select"><i data-id="'+item['goods_id']+'" class="checkbox-old fa fa-check-circle ns-text-color" is_del="no" onclick="checkboxno(this)"></i></div>';
+						}else {
+							list_html += '<div class="goods_select"><i data-id="'+item['goods_id']+'" class="checkbox fa fa-circle-o ns-text-color-gray" is_check="no" is_del="no" onclick="checkbox(this)"></i></div>';
+						}
+						list_html +='<div class="goods-img">';
+						list_html += '<a href="'+__URL(APPMAIN+'/goods/detail?goods_id='+item.goods_id)+'">';
+						list_html += '<img src="'+__IMG(item.pic_cover_small)+'" class="pic">';
+						list_html += '</a></div>';
+						list_html += '<div class="data-info">';
+						list_html += '<p class="goods-name ns-text-color-black" onclick="location.href=\''+__URL(APPMAIN+'/goods/detail?goods_id='+item.goods_id)+'\'">';
+						list_html += item['goods_name'];
+						list_html += '</p>';
+						list_html += '<div class="price-share">';
+						list_html += '<span class="price ns-text-color">'+item['promotion_price'];
+						if(item['shipping_fee'] == 0){
+							list_html += '<i class="shipping-fee ns-text-color ns-border-color">包邮</i>';
+						}
+						list_html += '</span>';
+						
+						list_html += '</div>';
+						list_html += '<div class="data-goods-sales-info"><span class="f12">佣金：'+item['goods_commission']['distribution_commission'].toFixed(2)+'</span></div>';
+						list_html += '<div class="data-goods-sales-info"><span class="data-sales">销售量：<i>'+item.sales+'</i></span></div>';
+						list_html += '</div>';
+						list_html += '</div>';
+					}
+				}else if(data["data"]['data'].length == 0 && page == 1){
+					list_html+= '<p class="empty ns-text-color-gray"><img src="'+WAPIMG+'/wap_nodata.png"><br>Sorry！{:lang("goods_no_goods_you_want")}…</p>';
+				}
+				is_load = true;
+				$('.tablelist-append').html(list_html);
+			    if(data['page_nex']){
+			    	$(window).scrollTop(scrollTop);
+			    	delCookie("scrollTop");
+				}
+		});	
+	}
+}
+
+//滑动到底部加载
+$(window).scroll(function(){
+	var top = $(document).scrollTop();
+	setCookie("scrollTop",top);
+	var totalheight = parseFloat($(window).height()) + parseFloat($(window).scrollTop());
+	var content_box_height = parseFloat($(".tablelist-append").height()); 
+	if(top > 10) {
+		$('.filtrate-term ').css('top', '44px');
+	}else {
+		$('.filtrate-term ').css('top', '80px');
+	}
+	if(totalheight+80 - content_box_height >= 100 && content_box_height > 0){
+		if(is_load){
+			var page = parseInt($("#page").val()) + 1;//页数
+			var total_page_count = $("#page_count").val(); // 总页数
+			if(page > total_page_count){
+				return false;
+			}else{
+				getgoodlist(page);
+			}
+		}
+	}
+});
+
+function checkbox(obj, type){
+	if(type == 1) {
+		//全选
+		if($('.goods-info .checkbox[is_check="yes"]').length < $('.goods-info .checkbox').length) {
+			$('.checkbox').addClass("fa-check-circle ns-text-color").removeClass("fa-circle-o ns-text-color-gray").attr("is_check", "yes");
+		}else {
+			$('.checkbox').addClass("fa-circle-o ns-text-color-gray").removeClass("fa-check-circle ns-text-color").attr("is_check", "no");
+		}
+	}else {
+		if ($(obj).attr("is_check") == 'no') {
+			$(obj).addClass("fa-check-circle ns-text-color").removeClass("fa-circle-o ns-text-color-gray").attr("is_check", "yes");
+			if($('.goods-info .checkbox[is_check="yes"]').length == $('.goods-info .checkbox').length) {
+				$('.select-all .checkbox').addClass("fa-check-circle ns-text-color").removeClass("fa-circle-o ns-text-color-gray").attr("is_check", "yes");
+			}
+		} else {
+			$(obj).addClass("fa-circle-o ns-text-color-gray").removeClass("fa-check-circle ns-text-color").attr("is_check", "no");
+			if($('.goods-info .checkbox[is_check="yes"]').length < $('.goods-info .checkbox').length) {
+				$('.select-all .checkbox').addClass("fa-circle-o ns-text-color-gray").removeClass("fa-check-circle ns-text-color").attr("is_check", "no");
+			}
+		}
+	}
+}
+function checkboxno() {
+	toast('该商品已在分销商城中');
+}
+
+function addSave() {
+	var goods_id_str = '';
+	$('.goods-info .checkbox').each(function(i, e) {
+		if($(e).attr('is_check') == 'yes') {
+			goods_id_str += $(e).attr('data-id') + ',';
+		}
+	});
+	goods_id_str = goods_id_str.substring(0, goods_id_str.length - 1);
+	if(goods_id_str == '') {
+		toast('所选商品已在分销商城中');
+		return;
+	}
+	if(!is_load){
+		return;
+	}
+	is_load = false;
+	api('System.Distribution.addPromoterGoods', {'goods_id_str' : goods_id_str}, function(res) {
+		is_load = true;
+		if(res.data != '') {
+			toast('添加成功');
+			location.href=__URL(APPMAIN+"/distribution/goodsUser");
+		}else {
+			toast('添加失败');
+		}
+	})
+	
+}
+
+//分销店铺点击一级分类
+function fxCategoryGoods(obj) {
+	$(".primary-classification li").removeClass("active");
+	$(obj).addClass("active");
+	var category_id = $(obj).attr('data-category-id');
+	if($(".two_stage_classification li[data-pid='"+category_id+"']").length > 0){
+		$(".two_stage_classification li").hide();
+		$(".two_stage_classification li[data-pid='"+category_id+"']").show();
+	}else{
+		location.href=__URL(APPMAIN+"/distribution/goods?category_id="+category_id);
+	}
+}
+</script>
+{/block}

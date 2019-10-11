@@ -1,0 +1,27 @@
+body{background-color: #fff;}
+@media (min-device-width: 375px) and (max-device-width: 667px) and (-webkit-min-device-pixel-ratio: 2){.mm-appmsg .rich-media-inner, .mm-appmsg .rich-media-meta, .mm-appmsg .discuss-list, .mm-appmsg .rich-media-extra, .mm-appmsg .title-tips .tips{font-size: 17px}}
+@media (min-device-width: 414px) and (max-device-width: 736px) and (-webkit-min-device-pixel-ratio: 3){.mm-appmsg .rich-media-title{font-size: 25px;}}
+@media (min-device-width: 414px) and (max-device-width: 736px) and (-webkit-min-device-pixel-ratio: 3){.mm-appmsg .rich-media-title{font-size: 25px}}
+@media (min-device-width: 375px) and (max-device-width: 667px) and (-webkit-min-device-pixel-ratio: 2){.mm-appmsg .rich-media-inner, .mm-appmsg .rich-media-meta, .mm-appmsg .discuss-list, .mm-appmsg .rich-media-extra, .mm-appmsg .title-tips .tips{font-size: 17px}}
+.mm-appmsg .rich-media{position: relative;}
+.rich-media-title{padding-bottom: 20px; margin-bottom: 14px; border-bottom: 1px solid;}
+@media screen and (min-width: 1024px){.rich-media{width: 740px; margin-left: auto; margin-right: auto} .rich-media-inner{padding: 20px; font-size: 16px; word-wrap: break-word; -webkit-hyphens: auto; -ms-hyphens: auto; hyphens: auto;} .rich-media-meta{max-width: none} a.rich-media-meta-nickname{display: inline-block !important} span.rich-media-meta-nickname{display: none !important} .rich-media-content{min-height: 350px} .rich-media-meta.nickname{max-width: none}}
+.rich-media .rich-media-inner{padding-bottom: 100px; position: relative;}
+.rich-media .rich-media-inner .qr-code-pc-outer{position: fixed; left: 0; right: 0; top: 20px;text-align: center; display: block;}
+.rich-media .rich-media-inner .qr-code-pc-outer .qr-code-pc-inner{position: relative; width: 740px; margin-left: auto; margin-right: auto}
+.rich-media .rich-media-inner .qr-code-pc-outer .qr-code-pc-inner .qr-code-pc{position: absolute; right: -145px; top: 0; padding: 16px; border: 1px solid;}
+.rich-media-inner .rich-media-area-primary{position: relative; padding: 10px 15px 15px;}
+.rich-media-area-primary .rich-media-meta-list{margin-bottom: 18px; line-height: 20px; font-size: 0; position: relative; z-index: 1;}
+.rich-media-meta-list .rich-media-meta{display: inline-block; vertical-align: middle; margin-right: 8px; margin-bottom: 10px; font-size: 16px;}
+.rich-media-meta-nickname{overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 9em;}
+.rich-media-content{overflow: hidden;}
+.rich-media-content *{max-width: 100% !important; box-sizing: border-box !important; -webkit-box-sizing: border-box !important; word-wrap: break-word !important;}
+.rich-media-content p{clear: both; min-height: 1em; white-space: pre-wrap;}
+.rich-media-content em{font-style: italic;}
+.rich-media-content .list-paddingleft-2{padding-left: 30px;}
+.rich-media-tool{overflow: hidden; padding-top: 15px; line-height: 32px;}
+.rich-media-tool .meta-primary{float: left; margin-right: 10px;}
+.rich-media-tool .meta-extra{float: right; margin-left: 10px;}
+.qr-code-pc-outer .qr-code-pc-inner .qr-code-pc p{font-size: 14px; line-height: 20px}
+.qr-code-pc-outer .qr-code-pc-inner .qr-code-pc .qr-code-pc-img{width: 102px; height: 102px;}
+@media screen and (min-width: 1025px){ @media screen and (max-width: 1023px){.qr-code-pc-outer{display: none !important} }}

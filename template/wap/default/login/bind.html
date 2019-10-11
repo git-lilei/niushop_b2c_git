@@ -1,0 +1,105 @@
+{extend name="$base"/}
+{block name="resources"}
+<link rel="stylesheet" href="WAP_CSS/login_bind.css" />
+{/block}
+{block name="head"}{/block}
+{block name="main"}
+{php}
+    //验证配置
+    $code_config = api("System.Config.loginVerifyCode");
+    $code_config = $code_config['data'];
+    $code_config = $code_config['value'];
+{/php}
+<div class="tit-info">
+	<div class="h3 ns-text-color-black">登录已有账号进行绑定</div>
+	<p class="ns-text-color-gray">绑定已有账号信息，您可以直接把第三方登录的用户信息与您已经注册过的账号进行绑定</p>
+</div>
+<div class="reg-box">
+	<div class="reg-cont ns-border-color-gray">
+		<label class="login-txt" for="username">
+			<span>{:lang('account_number')}</span>
+			<input type="text" name="username" id="username" placeholder="{:lang('enter_your_account_number')}">
+		</label>
+	</div>
+	<div class="reg-cont ns-border-color-gray">
+		<label for="password">
+			<span>{:lang('password')}</span>
+			<input type="password" name="password" id="password" placeholder="{:lang('please_input_password')}">
+		</label>
+	</div>
+	{if condition="$code_config['pc'] eq 1"}
+	<div class="reg-cont ns-border-color-gray" >
+		<label class="ns-text-color-black">
+			<span>{:lang('member_verification_code')}</span>
+			<input class="validate" type="text" name="captcha" id="captcha"  placeholder="{:lang('please_enter_verification_code')}" maxlength="4" >
+	        <img class="captcha" src=" {:__URL('SHOP_MAIN/captcha')}" onclick="this.src='{:__URL('SHOP_MAIN/captcha')}'"  alt="captcha" />
+        </label>
+	</div>
+    {/if}
+	<button type="button" class="btn primary" onclick="loginBind()">登录绑定</button>
+	<button type="button" class="btn primary no-account ns-text-color" onclick="location.href='{:__URL('APP_MAIN/login/registerext')}';">没有账号</button>
+</div>
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script>
+var is_sub = false; // 防止重复提交
+function loginBind(){
+	var username = $("#username").val(),
+		pass = $("#password").val(),
+		verify_code = $("#captcha").val();
+	if(vertify(username, pass, verify_code)){
+		if(is_sub) return;
+		is_sub = true;
+		api("System.Login.bindAccount",{ "username" : username,"password" : pass},function (res) {
+			var data = res.data;
+			if (data["code"] > 0) {
+				$.ajax({
+					type: 'post',
+					url: __URL(APPMAIN + "/login/index"),
+					dataType: "JSON",
+					async: false,
+					data: {token: data.token},
+					success: function (code) {
+						if (code == 1) {
+							toast(data['message'], __URL(APPMAIN+'/member/index'));
+						}
+					}
+				});
+			} else {
+				is_sub = false;
+				toast(data['message']);
+			}
+		});
+	}
+}
+function vertify(username, pass, verify_code){
+	if(username.length == 0){
+		$("#username").focus();
+		toast("请输入用户名");
+		return false;
+	}
+	if(pass.length == 0){
+		$("#password").focus();
+		toast("请输入密码");
+		return false;
+	}
+	{if condition="$code_config['pc'] eq 1"}
+	if(verify_code.length == 0){
+		$("#captcha").focus();
+		toast("请输入验证码");
+		return false;
+	}
+	var vertification_error = false;
+	api("System.Login.checkCaptcha", {vertification : vertification}, function(res){
+		if(res.data.code < 0){
+			toast(res.data.message);
+			vertification_error = true;
+		}
+	}, false);
+	if(vertification_error) return false;
+	{/if}
+	return true;
+}
+</script>
+{/block}

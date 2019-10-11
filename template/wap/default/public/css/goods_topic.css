@@ -1,0 +1,10 @@
+.topic-list-grid{margin-top: 15px;padding: 0 10px;}
+.topic-list-grid .tablelist-append{overflow: hidden;}
+.topic-list-grid .tablelist-append ul li{width: 100%;height: auto;margin-bottom: 15px;position: relative;}
+.topic-list-grid .tablelist-append .topic-img{width: 100%;}
+.topic-list-grid .tablelist-append .topic-name{position: absolute;z-index: 9;top: 50%;left: 50%;color: #fff;font-size: 18px;transform: translate(-50%,-50%);}
+.block{display: block;}
+.topic-list-grid .tablelist-append .topic-detail{position: absolute;bottom: 0;opacity: 0.8;width: 100%;height: auto;overflow: hidden;}
+.topic-list-grid .tablelist-append .topic-detail .topic-desc{font-size: 18px;color: #fff;height: 20px;line-height: 20px;padding:0 5px;}
+.topic-list-grid .tablelist-append .topic-detail .topic-introduce{font-size: 14px;color: #fff;padding:2px 5px;height: 20px;}
+.w100{width:100%;}

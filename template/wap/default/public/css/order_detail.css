@@ -1,0 +1,57 @@
+@CHARSET "UTF-8";
+.order-detail .order-detail-l{float: left; margin-right: 10px;}
+.order-detail .order-detail-r{overflow: hidden}
+.order-detail .order-detail-r ul{margin: 0; list-style: none; font-size: 12px;}
+.order-detail .order-detail-r ul li{padding: 0 0 4px 0;}
+.order-detail .order-detail-r ul li:last-child{padding-bottom: 0;}
+.order-detail .order-detail-r .name,
+.order-detail .order-detail-r .name .label{line-height: 12px; font-size: 12px;}
+.order-detail .order-detail-r .label{padding: 0; background: none;}
+.order-detail-sum{padding: 10px 15px; border-bottom: 1px solid;color: #fff;}
+.order-detail-sum .sum-r-ul .status{line-height: 14px; font-size: 14px;}
+.order-detail-sum .sum-r-ul .label{color: #fff;}
+.order-detail-address{padding: 0 15px; background: #fff;}
+.order-detail-address .address-out{padding: 10px 0; border-bottom: 1px solid;}
+.order-detail-remark{padding: 10px 15px; background: #fff;border-bottom: 1px solid;}
+.order-detail .list-myorder{margin: 10px 0 0 0; padding-top: 0; border-top: 1px solid; border-bottom: 1px solid; background: #fff;}
+.order-detail .distribution-info p{font-size: 12px; margin-bottom: 0; padding-left: 25px;}
+.order-detail .list-myorder .text{font-size: 12px; overflow: hidden;}
+.order-detail .list-myorder .pro-name{font-size: 12px;}
+.order-detail .list-myorder .pro-pric{margin-top: 5px; font-size: 12px;}
+.order-detail .list-myorder .pro-pric span{font-size: 12px;}
+.order-detail .money-row{line-height: 25px; overflow: hidden; font-size: 14px;}
+.order-detail .money-content{padding: 0 15px 15px 15px;}
+.order-detail .money-content .name{float: left;}
+.order-detail .money-content .price{float: right;}
+.list-myorder .ul-product{margin: 5px 15px; line-height: 1.2;}
+.list-myorder li{padding: 10px 0; list-style: none; border-bottom: 1px dotted; overflow: hidden;}
+.list-myorder .pic{float: left; width: 70px; height: 70px; margin-right: 10px; padding: 1px;}
+.list-myorder .pic img{width: 100%; height: 100%;}
+.list-myorder .text{overflow: hidden; font-size: 14px;}
+.list-myorder .pro-name{font-size: 14px;}
+.list-myorder .pro-pric{margin-top: 5px; font-size: 16px;}
+.list-myorder .pro-pric span{font-size: 14px;}
+.list-myorder button, .list-myorder .button{margin: 0;}
+.order-tablink{border-top: 1px solid; border-bottom: 1px solid; background: #fff; margin: 10px 0 0 0; padding-bottom: 30px;}
+.order-tablink .tablink-box{display: -webkit-box; padding: 10px 15px;}
+.order-tablink .tablink-box .tablink{-webkit-box-flex: 1;}
+.order-tablink .tablink-box .tablink a{display: block; margin: 0 auto; width: 90%; height: 35px; border: 1px solid; text-align: center; line-height: 35px; font-size: 14px; border-radius: 2px;}
+.order-opcation{width: 100%; height: 45px; background: #fff; position: fixed; bottom: 0; line-height: 45px; box-shadow: 0 1px 3px;}
+.order-opcation .content{padding: 0 10px;}
+.order-opcation a{float: right; font-size: 14px; height: 35px; line-height: 35px; width: 80px; border-radius: 3px; text-align: center; border: 1px solid #fff; color: #fff; margin: 5px 0 5px 10px;}
+.virtual-code ul li h5{float: left;}
+.virtual-code .btn-show{float: right; color: #fff;font-size: 12px; padding: 2px; line-height: 16px; margin: 7px; border-radius: 2px;}
+.order-detail-wating-share{padding: 10px 15px; background: #fff;}
+.order-detail-wating-share label{font-size: 14px;}
+.order-detail-wating-share .user-list{padding: 20px 0 20px 20px; margin: 0;}
+.order-detail-wating-share .user-list li{position: relative; margin: 0 5px 10px 0; display: inline-block;}
+.order-detail-wating-share .user-list li .boss{position: absolute; left: -6px; top: -6px;color:#fff;border-radius: 10px; font-size: 12px; padding: 0 5px;}
+.order-detail-wating-share .user-list li img{width: 40px; max-width: 100%; max-height: 100%; vertical-align: middle; border-radius: 50%;}
+.order-detail-wating-share button{padding: 8px; border-radius: 3px; margin: 8px auto; display: block; width: 90%; height: initial; line-height: initial; font-size: 14px;}
+.spelling-success{text-align: center; margin: 10px 0 0; font-size: 12px;}
+.gift-mark{font-size: 12px; padding: 1px 4px; border-radius: 3px; display: inline-block; color: #FFF; height: 16px; line-height: 16px; overflow: hidden; font-style: normal; margin-left: 5px; position: relative; top: 3px;}
+.logistics-icon{float: right; width: 7px;}
+.logistics-icon i{font-size: 16px;margin-top: 2px;}
+.order-tablink .tablink-box .tablink a span.call{background: url(../img/order/call.png) no-repeat left; background-size: 18px 18px; padding-left: 20px;}
+.order-tablink .tablink-box .tablink a span.kefu{background: url(../img/order/order_kefu.png) no-repeat left; background-size: 18px 18px; padding-left: 20px;}
+.icon-order-detail{width: 18px;}

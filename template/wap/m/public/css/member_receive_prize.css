@@ -1,0 +1,24 @@
+.express-panel{padding: 15px 10px; background-color: #fff; line-height: 22px; min-height: 22px;}
+.express-panel a{display: block;}
+.express-panel .name{width: 200px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;display: inline-block;}
+.express-panel .tel{float: right;}
+.express-panel .info{margin-top: 5px;line-height: 16px;}
+.empty-address{text-align: center;background: #fff;}
+.empty-address:after{content:'';height: 2px; background-size: 34px 2px; display: block; background: url("../img/border_order_top.png"); padding: 0;}
+.empty-address a{padding: 20px;display: block;}
+.order{background: #fff;}
+.order-goods-item{height: 86px; padding: 10px 10px 10px;}
+.order-goods-item .detail{min-height: 38px; width: 100%; position: absolute; float: right; padding-left: 65px; max-width: calc(100% - 20px);}
+.order-goods-item .detail-row{overflow: hidden; min-height: 20px; margin-bottom: 3px;}
+.order-goods-item .goods-name{display: -webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 2;overflow: hidden;}
+.order-goods-item .gift{position: absolute; z-index: 2; width: 16px; margin-top: 5px;}
+.order-goods-item .gift-img-block{display: block; height: 60px; line-height: 60px; width: 60px; float: left;}
+.order-goods-item .gift-img-block img{display: inline-block; max-height: 100%; max-width: 100%; height: auto; width: auto;}
+.line{height: 50px;}
+.item-options{border-bottom: 1px solid;line-height: 45px; padding: 0 10px;}
+.item-options > span{float: right; font-size: 14px;}
+#mobile{height: 45px; float: right; line-height: 1.2; width: 60%;border: none;padding: 15px 7px; text-align: right;}
+.buyer-message{height: 100px;}
+#leave_message{height: 100px; float: right; line-height: 1.2; width: 60%;border: none;resize: none; padding: 15px 7px; text-align: right;}
+.bottom-fix{border: 0; display: block; z-index: 100; position: fixed; left: 0; bottom: 0; width: 100%; text-align: right; background-color: #fff; user-select: none; box-sizing: border-box; font-size: 0; border-top-width: 1px;}
+.bottom-fix button{width: 35%; height: 50px;}

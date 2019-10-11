@@ -1,0 +1,878 @@
+{extend name="$base" /}
+{block name="resources"}
+<!-- 编辑商品时，用到的JS、CSS资源 -->
+<!-- 编辑商品，公共CSS、JS文件引用 -->
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/product.css">
+<!-- 选择商品图，弹出框的样式 -->
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<link href='ADMIN_CSS/select_category_next.css' rel='stylesheet' type='text/css'>
+<link href="ADMIN_CSS/goods/editgoods.css" rel="stylesheet" type="text/css">
+<link href="__STATIC__/blue/css/goods/add_goods.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="ADMIN_CSS/plugin/video-js.css">
+
+<script type="text/javascript" charset="utf-8" src="ADMIN_JS/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="ADMIN_JS/ueditor/ueditor.all.js"></script>
+<!--建议手动加在语言，避免在ie下有时因为加载语言失败导致编辑器加载失败-->
+<!--这里加载的语言文件会覆盖你在配置项目里添加的语言类型，比如你在配置项目里配置的是英文，这里加载的中文，那最后就是中文-->
+<script type="text/javascript" charset="utf-8" src="ADMIN_JS/ueditor/zh-cn.js"></script>
+
+<script src="ADMIN_JS/image_common.js" type="text/javascript"></script>
+
+<!--  用  验证商品输入信息-->
+<script src="ADMIN_JS/jscommon.js" type="text/javascript"></script>
+
+<!-- 用 ，加载数据-->
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+
+<!-- 我的图片 -->
+<script src="ADMIN_JS/material_managedialog.js"></script>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script src='ADMIN_JS/goods/init_address.js'></script>
+
+<script src="__ROOT__/addons/NsCardGoods/template/admin/public/js/goods.js"></script>
+<script src="__ROOT__/addons/NsCardGoods/template/admin/public/js/goods_sku.js"></script>
+
+<script type="text/javascript" src="ADMIN_JS/plugin/jquery.toTop.min.js"></script>
+<script src="__STATIC__/js/BootstrapMenu.min.js"></script>
+
+<!-- 可搜索的下拉选项框 -->
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/plugin/jquery.searchableSelect.css"/>
+<script src="ADMIN_JS/plugin/jquery.searchableSelect.js"></script>
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+
+<script src="ADMIN_JS/plugin/videojs-ie8.min.js"></script>
+<script src="ADMIN_JS/plugin/video.min.js"></script>
+<script src="ADMIN_JS/goods/drag-arrange.js"></script>
+
+<script>
+var goods_attribute_list = eval('{$goods_info.goods_attribute_list}');
+</script>
+{/block}
+{block name="main"}
+<input type="hidden" value="{$goods_info.state}" id ="goodsstate"/>
+<input type="hidden" value="{$goods_type}" id ="goods_type"/>
+<input type="hidden" value="{$goods_id}" id = "goods_id"/>
+
+<div class="space-10"></div>
+<div class="ncsc-form-goods">
+	<nav class="goods-nav">
+		<ul>
+			<li class="selected" data-c="block-basic-setting"><a href="javascript:;">基础设置</a></li>
+			<!-- 如果不是虚拟商品点卡才可编辑商品规格 -->
+			<li data-c="block-goods-type"><a href="javascript:;">商品属性</a></li>
+			<li data-c="block-photo-video-setting"><a href="javascript:;">媒体设置</a></li>
+			<li data-c="block-goods-detail-setting"><a href="javascript:;">商品详情</a></li>
+			{if $is_presell}<li data-c="block-presell-setting"><a href="javascript:;">预售设置</a></li>{/if}
+			<li data-c="block-point-setting"><a href="javascript:;">积分设置</a></li>
+			{notempty name="$level_list"}<li data-c="block-discount-setting"><a href="javascript:;">折扣设置</a></li>{/notempty}
+			<li data-c="block-ladder-setting"><a href="javascript:;">阶梯优惠</a></li>
+		</ul>
+	</nav>
+	<!-- 基础设置 -->
+	<div class="block-basic-setting">
+		<h4 class="h4-title"><span></span>基础信息</h4>
+		<dl>
+			<dt><i class="required">*</i>商品名称：</dt>
+			<dd>
+				<input class="productname input-common long" type="text" id="txtProductTitle" placeholder="请输入商品名称，不能超过60个字符" {if condition="$goods_info"}value="{$goods_info.goods_name}"{/if} oninput='if(value.length>60){value=value.slice(0,60);$(this).next().text("商品名称不能超过60个字符").show();}else{$(this).next().hide();}'/>
+				<span class="help-inline">请填写商品名称</span>
+			</dd>
+		</dl>
+		<dl>
+			<dt><i class="required">*</i>商品分类：</dt>
+			{if condition="$goods_info"}
+			<dd id="tbcNameCategory" data-flag="category" cid="{$goods_info.category_id}" data-attr-id="{$goods_info.goods_attribute_id}" cname="{$goods_info.category_name}" data-goods-id="{$goods_info.goods_id}">
+				<span class="category-text">{$goods_info.category_name}</span>
+			{else/}
+			<dd id="tbcNameCategory" data-flag="category" data-goods-id="0" cid="" data-attr-id="" cname="">
+				<span class="category-text"></span>
+			{/if}
+				<button class="category-button">选择</button>
+				<span><label class="error"><i class="icon-exclamation-sign"></i>商品分类不能为空</label></span>
+				<span class="help-inline">请选择商品分类</span>
+			</dd>
+		</dl>
+		
+		<dl>
+			<dt>商品促销语：</dt>
+			<dd>
+				<input class="productname input-common long" type="text" id="txtIntroduction" placeholder="请输入促销语，不能超过100个字符" {if condition="$goods_info"}value="{$goods_info.introduction}"{/if} oninput='if(value.length>100){value=value.slice(0,100);$(this).next().text("促销语不能超过100个字符").show();}else{$(this).next().hide();}'/>
+				<span class="help-inline">请输入商品促销语，不能超过100个字符</span>
+			</dd>
+		</dl>
+		<dl>
+			<dt>关键词：</dt>
+			<dd>
+				<input class="productname input-common" type="text" id="txtKeyWords" placeholder="商品关键词用于SEO搜索" {if condition="$goods_info"}value="{$goods_info.keywords}"{/if} oninput='if(value.length>40){value=value.slice(0,40);$(this).next().text("商品关键词不能超过40个字符").show();}'/>
+				<span class="help-inline">请输入商品促销语，不能超过40个字符</span>
+			</dd>
+		</dl>
+		<dl>
+			<dt>商品单位：</dt>
+			<dd>
+				<input class="productname input-common" type="text" id="goodsUnit" placeholder="请输入商品单位" {if condition="$goods_info"}value="{$goods_info.goods_unit}"{/if} oninput='if(value.length>10){value=value.slice(0,10);$(this).next().text("商品单位不能超过10个字符").show();}'/>
+				<span class="help-inline">请输入商品单位，不能超过10个字符</span>
+			</dd>
+		</dl>
+		<dl>
+			<dt>商品标签：</dt>
+			<dd>
+				<div class="group-text-check-box">
+					<div class="controls product-category-position">
+						{if condition = "!empty($group_list)"}
+							{if condition="$goods_info['group_id_array'] neq ''"}
+								<select class="select-common" multiple id="goods_group" size="1">
+									<option value="0" disabled>请选择商品标签</option>
+									{foreach $group_list as $k=>$v}
+										{in name="$v.group_id" value="$goods_info['group_id_array']"}
+										<option value="{$v.group_id}" selected>{$v.group_name}</option>
+										{else/}
+										<option value="{$v.group_id}">{$v.group_name}</option>
+										{/in}
+									{/foreach}
+								</select>
+							{else/}
+								<select class="select-common" multiple id="goods_group" size="1">
+									<option value="0" disabled>请选择商品标签</option>	
+									{foreach $group_list as $k=>$v}
+										<option value="{$v.group_id}">{$v.group_name}</option>
+									{/foreach}
+								</select>
+							{/if}
+						{else /}
+							<span class="span-error" style="display:block;">暂无可选的商品标签</span>
+						{/if}
+					</div>
+				</div>
+			</dd>
+		</dl>
+		
+		<dl style="overflow: inherit;">
+			<dt>商品品牌：</dt>
+			<dd class="js-brand-block">
+				<div class="controls brand-controls">
+					<select id="brand_id" class="select-common-ajax" >
+						<option value="0">请选择商品品牌</option>
+					</select>
+					<input type="hidden" id = "hidden_brand_id" value="{$goods_info.brand_id}"/>
+					<input type="text" id="selected_brand_name" style="padding:0;margin:0;opacity: 0;position: absolute;"/>
+					<p class="hint">可输入品牌名或品牌首字母来搜索品牌</p>
+				</div>
+			</dd>
+		</dl>
+		
+		<dl>
+			<dt>供货商：</dt>
+			<dd>
+				<select id="supplierSelect" class="select-common">
+					<option value="0">请选择供货商</option>
+					{foreach name="supplier_list" item="sup"}
+					{if condition="$goods_info"}
+						{if condition = "$sup.supplier_id eq $goods_info.supplier_id"}
+						<option value="{$sup.supplier_id}" selected="selected">{$sup.supplier_name}</option>
+						{else/}
+						<option value="{$sup.supplier_id}">{$sup.supplier_name}</option>
+						{/if}
+					{else/}
+						<option value="{$sup.supplier_id}">{$sup.supplier_name}</option>
+					{/if}
+					{/foreach}
+				</select>
+				<span class="help-inline">请选择供货商</span>
+			</dd>
+		</dl>
+		<dl>
+			<dt>基础销量：</dt>
+			<dd>
+				<input type="number" class="span1 input-common harf" id="BasicSales" placeholder="0" {if condition="$goods_info"}value="{$goods_info.sales}"{/if} 
+				/><em class="unit">件</em>
+				<span class="help-inline">基础销量必须是数字，且不能为负数</span>
+			</dd>
+		</dl>
+		<dl>
+			<dt>基础点击数：</dt>
+			<dd>
+				<input type="number" class="span1 input-common harf" id="BasicPraise" placeholder="0" {if condition="$goods_info"}value="{$goods_info.clicks}"{/if} 
+				/><em class="unit">次</em>
+				<span class="help-inline">基础点击数必须是数字，且不能为负数</span>
+			</dd>
+		</dl>
+		<dl>
+			<dt>基础分享数：</dt>
+			<dd>
+				<input type="number" class="span1 input-common harf" id="BasicShare" placeholder="0" {if condition="$goods_info"}value="{$goods_info.shares}"{/if} 
+				/><em class="unit">次</em>
+				<span class="help-inline">基础分享数必须是数字，且不能为负数</span>
+			</dd>
+		</dl>
+		<dl>
+			<dt>商家编码：</dt>
+			<dd>
+				<input type="text" class="input-common" id="txtProductCodeA" placeholder="请输入商家编码" {if condition="$goods_info"}value="{$goods_info.code}"{/if}/>
+				<span class="help-inline">请输入商家编码，不能超过40个字符</span>
+			</dd>
+		</dl>
+		
+		<dl>
+			<dt>开始日期：</dt>
+			<dd>
+				<input type="text" class="input-common" id="production_date" onclick="WdatePicker()" {if condition="$goods_info"}{if condition='$goods_info["production_date"] != 0'}value="{$goods_info.production_date|date='Y-m-d',###}"{/if}{/if}>
+			</dd>
+		</dl>
+		<dl>
+			<dt>有效期：</dt>
+			<dd>
+				<input type="number" class="goods-stock input-common harf" id="shelf_life" value="{if condition="$goods_info"}{$goods_info.shelf_life}{else/}0{/if}"
+				/><em class="unit">天</em>
+				<span class="help-inline">请输入有效期天数，必须是整数</span>
+			</dd>
+		</dl>
+
+		<dl>
+			<dt><i class="required">*</i>总库存：</dt>
+			<dd>
+				<input type="number" class="goods-stock input-common harf" id="txtProductCount" min="0" disabled value="{if condition="$goods_info"}{$goods_info.stock}{else/}0{/if}"
+				/><em class="unit">件</em>
+				<span class="help-inline">请输入总库存数量，必须是大于0的整数</span>
+				<p class="hint">卡券商品的库存数量通过添加卡密的数量决定，不得手动编辑</p>
+			</dd>
+		</dl>
+
+		<dl>
+			<dt><i class="required">*</i>库存预警：</dt>
+			<dd>
+				<input type="number" class="goods-stock input-common harf" id="txtMinStockLaram" min="0" value="{if condition="$goods_info"}{$goods_info.min_stock_alarm}{else/}0{/if}" 
+				/><em class="unit">件</em>
+				<span class="help-inline">请输入库存预警数，必须是大于0的整数</span>
+				<p class="hint">设置最低库存预警值。当库存低于预警值时商家中心商品列表页库存列红字提醒。<br>0为不预警。</p>
+			</dd>
+		</dl>
+
+		<dl>
+			<dt><i class="required">*</i>库存显示：</dt>
+			<dd>
+				<div class="controls">
+					{if condition="$goods_info"}
+						{if condition = "$goods_info.is_stock_visible  eq 1"}
+						<label class="radio inline normal">
+							<i class="radio-common selected">
+								<input type="radio" name="stock" checked="checked" value="1" />
+							</i>
+							<span>是</span>
+						</label>
+						<label class="radio inline normal">
+							<i class="radio-common">
+								<input type="radio" name="stock" value="0" />
+							</i>
+							<span>否</span>
+						</label>
+						{else /}
+						<label class="radio inline normal">
+							<i class="radio-common">
+								<input type="radio" name="stock"  value="1" />
+							</i>
+							<span>是</span>
+						</label>
+						<label class="radio inline normal">
+							<i class="radio-common selected">
+								<input type="radio" name="stock" value="0" checked="checked" />
+							</i>
+							<span>否</span>
+						</label>
+						{/if}
+					{else/}
+						<label class="radio inline normal">
+							<i class="radio-common selected">
+								<input type="radio" name="stock" checked="checked" value="1" />
+							</i>
+							<span>是</span>
+						</label>
+						<label class="radio inline normal">
+							<i class="radio-common">
+								<input type="radio" name="stock" value="0" />
+							</i>
+							<span>否</span>
+						</label>
+					{/if}
+					<span class="help-inline">请选择库存是否显示</span>
+				</div>
+			</dd>
+		</dl>
+		<dl>
+			<dt><i class="required">*</i>是否上架：</dt>
+			<dd>
+				<div class="controls">
+					{if condition="$goods_info"}
+						{if condition = "$goods_info.state eq 1"}
+						<label class="radio inline normal">
+							<i class="radio-common selected">
+								<input type="radio" name="state" value="1" checked="checked" />
+							</i>
+							<span>立刻上架</span>
+						</label>
+						<label class="radio inline normal">
+							<i class="radio-common">
+								<input type="radio" name="state" value="0" />
+							</i>
+							<span>放入仓库</span>
+						</label>
+						{else /}
+						<label class="radio inline normal">
+							<i class="radio-common">
+								<input type="radio" name="state" value="1" />
+							</i>
+							<span>立刻上架</span>
+						</label>
+						<label class="radio inline normal">
+							<i class="radio-common selected">
+								<input type="radio" name="state" value="0" checked="checked" />
+							</i>
+							<span>放入仓库</span>
+						</label>
+						{/if}
+					{else/}
+						<label class="radio inline normal">
+							<i class="radio-common selected">
+								<input type="radio" name="state" value="1" checked="checked" />
+							</i>
+							<span>立刻上架</span>
+						</label>
+						<label class="radio inline normal">
+							<i class="radio-common">
+								<input type="radio" name="state" value="0" />
+							</i>
+							<span>放入仓库</span>
+						</label>
+					{/if}
+				</div>
+			</dd>
+		</dl>
+		<dl>
+			<dt>商品所在地：</dt>
+			<dd>
+				<select id="provinceSelect" class="select-common middle" onchange="getProvince(this,'#citySelect',-1)">
+					<option value="0">请选择省</option>
+				</select>
+				<input type="hidden" id = "province_id" value = "{$goods_info.province_id}"/>
+				<select id="citySelect" value = "{$goods_info.city_id}" class="select-common middle">
+					<option value="0">请选择市</option>
+				</select>
+				<input type="hidden" id = "city_id" value = "{$goods_info.city_id}"/>
+			</dd>
+		</dl>
+		
+		<h4 class="h4-title"><span></span>购买信息</h4>
+		<dl>
+			<dt><i class="required">*</i>商品规格：</dt>
+			<dd>
+				<div class="controls">
+					 
+					<label class="radio inline normal">
+						{if condition = "$spec_arr_count gt 0"} 
+						<i class="radio-common">
+							<input type="radio" name="sku_type"  value="0"  {if condition="$goods_info"}disabled{/if}>
+						</i>
+						{else /}
+						<i class="radio-common selected">
+							<input type="radio" name="sku_type"  value="0" checked="checked" />
+						</i>
+						{/if}
+						<span>统一规格</span>
+					</label>
+					<label class="radio inline normal">
+						{if condition = "$spec_arr_count gt 0"} 
+						<i class="radio-common selected">
+							<input type="radio" name="sku_type" value="1" checked="checked"/>
+						</i>
+						{else /}
+						<i class="radio-common ">
+							<input type="radio" name="sku_type" value="1" {if condition="$goods_info"}disabled{/if}/>
+						</i>
+						{/if}
+						<span>多规格</span>
+					</label>
+					<span class="help-inline">请选择库存是否显示</span>
+				</div>
+			</dd>
+		</dl>
+
+		{include file="addons/NsCardGoods/template/admin/Goods/goodsSku.html"/}
+
+		<dl class="sku_type_1">
+			<dt>卡卷管理：</dt>
+			<dd>
+                <div name="stock_data" card_data=""><a href="javascript:;" onclick="cardStockDialog(this)">库存管理【{if condition="$goods_info"}{$goods_info.stock}{else/}0{/if}】</a>
+					<input type="hidden" name = "stock" id = "stock" default = '{if condition="$goods_info"}{$goods_info.stock}{else/}0{/if}' value='{if condition="$goods_info"}{$goods_info.stock}{else/}0{/if}'>
+				</div>
+			</dd>
+		</dl>
+
+		<dl class="sku_type_1">
+			<dt>市场价格：</dt>
+			<dd>
+				<input class="goods_price input-common harf" type="number" id="txtProductMarketPrice" {if condition="$goods_info"}value="{$goods_info.market_price}"{/if} min="0" placeholder="0.00" 
+				/><em class="unit">元</em>
+				<span class="help-inline">商品市场价格必须是数字，且不能为负数</span>
+			</dd>
+		</dl>
+		<dl class="sku_type_1">
+			<dt><i class="required">*</i>销售价格：</dt>
+			<dd>
+				<input class="goods_price input-common harf" type="number" id="txtProductSalePrice" {if condition="$goods_info"}value="{$goods_info.price}"{else /} value = "0.00"{/if} min="0" placeholder="0.00" 
+				/><em class="unit">元</em>
+				<span class="help-inline">商品销售价不能为空，且不能为负数</span>
+			</dd>
+		</dl>
+		<dl class="sku_type_1">
+			<dt>成本价格：</dt>
+			<dd>
+				<input class="goods_price input-common harf" type="number" id="txtProductCostPrice" {if condition="$goods_info"}value="{$goods_info.cost_price}"{/if} min="0" placeholder="0.00" 
+				/><em class="unit">元</em>
+				<span class="help-inline">商品成本必须是数字，且不能为负数</span>
+			</dd>
+		</dl>
+		
+		<dl>
+			<dt>每人限购：</dt>
+			<dd>
+				<div class="controls">
+					<input type="number" class="input-mini input-common harf" min="0" placeholder="0" id="PurchaseSum" {if condition="$goods_info"}value="{$goods_info.max_buy}"{/if} 
+					/><em class="unit">件</em>
+					<p class="hint notice" >输入0表示不限购</p>
+				</div>
+			</dd>
+		</dl>
+		<dl>
+			<dt>最少购买数：</dt>
+			<dd>
+				<div class="controls">
+					<input type="number" class="input-mini input-common harf" min="1" placeholder="0" id="minBuy" {if condition="$goods_info"}value="{$goods_info.min_buy}"{/if}
+					/><em class="unit">件</em>
+					<span class="help-inline">最少购买数必须是大于0的整数</span>
+				</div>
+			</dd>
+		</dl>
+		
+	</div>
+
+	<!-- start 预售设置 start -->
+	<div class="block-presell-setting goods-block-hide">
+		<div id="presell_set" {if empty($is_presell)} style="display:none" {/if}>
+			{include file="admin/Goods/controlGoodsPresell" }
+		</div>
+	</div>
+	<!-- end 预售设置 end -->
+
+	<!-- start 积分设置 start -->
+	<div class="block-point-setting goods-block-hide">
+		<h4 class="h4-title"><span></span>积分设置</h4>
+		<dl id="integral_balance">
+			<dt>最大可使用积分：</dt>
+			<dd>
+				<input type="number" class="input-common harf" id="max_use_point" value="{$goods_info.max_use_point}" onchange="integrationChange(this);"
+				/><em class="unit">分</em>
+				<p class="hint">设置购买时积分抵现最大可使用积分数，0为不可使用 </span></p>
+			</dd>
+		</dl>
+		<dl>
+			<dt>积分兑换设置：</dt>
+			<dd>
+				<label class="radio inline normal">
+					<i class="radio-common {if $goods_info.point_exchange_type eq 0}selected{/if}">
+						<input type="radio" name="integralSelect" {if $goods_info.point_exchange_type eq 0}checked{/if} value="0">
+					</i>
+					<span>非积分兑换</span>
+				</label>
+				<label class="radio inline normal">
+					<i class="radio-common {if $goods_info.point_exchange_type eq 1}selected{/if}">
+						<input type="radio" name="integralSelect" {if $goods_info.point_exchange_type eq 1}checked{/if} value="1">
+					</i>
+					<span>积分加现金购买</span>
+				</label>
+				<label class="radio inline normal">
+					<i class="radio-common {if $goods_info.point_exchange_type eq 2}selected{/if}">
+						<input type="radio" name="integralSelect" {if $goods_info.point_exchange_type eq 2}checked{/if} value="2">
+					</i>
+					<span>积分兑换或直接购买</span>
+				</label>
+				<label class="radio inline normal">
+					<i class="radio-common {if $goods_info.point_exchange_type eq 3}selected{/if}">
+						<input type="radio" name="integralSelect" {if $goods_info.point_exchange_type eq 3}checked{/if} value="3">
+					</i>
+					<span>只支持积分兑换</span>
+				</label>
+			</dd>
+		</dl>
+		<dl>
+			<dt>兑换所需积分：</dt>
+			<dd>
+				<input type="number" class="input-common harf" id="integration_available_use" value="{if condition="$goods_info.point_exchange"}{$goods_info.point_exchange}{else/}0{/if}" onchange="integrationChange(this);"
+				/><em class="unit">分</em>
+				<span class="help-inline">请设置积分</span>
+			</dd>
+		</dl>
+		<dl>
+			<dt>购买赠送积分：</dt>
+			<dd>
+				<label class="radio inline normal">
+					<i class="radio-common {if $goods_info.integral_give_type eq 0}selected{/if}">
+						<input type="radio" name="integral_give_type" {if $goods_info.integral_give_type eq 0}checked{/if} value="0">
+					</i>
+					<span>赠送固定积分</span>
+				</label>
+				<label class="radio inline normal">
+					<i class="radio-common {if $goods_info.integral_give_type eq 1}selected{/if}">
+						<input type="radio" name="integral_give_type" {if $goods_info.integral_give_type eq 1}checked{/if} value="1">
+					</i>
+					<span>按比率赠送积分</span>
+				</label>
+			</dd>
+		</dl>
+		<dl>
+			<dt></dt>
+			<dd>
+				<div class="controls" {if $goods_info.integral_give_type neq 0}style="display: none;"{/if}>
+					<input id="integration_available_give" class="input-mini input-common harf" placeholder="0" min="0" type="number" onchange="integrationChange(this);" value="{if condition="$goods_info && $goods_info['integral_give_type'] eq 0"}{$goods_info.give_point}{else/}0{/if}" 
+					/><em class="unit">分</em>
+					<span class="help-inline">请设置积分</span>
+				</div>
+				<div class="controls" {if $goods_info.integral_give_type neq 1}style="display: none;"{/if}>
+					<input id="integration_available_give_ratio" class="input-mini input-common harf" placeholder="0" min="0" max="100" type="number" onchange="integrationChange(this);" value="{if condition="$goods_info && $goods_info['integral_give_type'] eq 1"}{$goods_info.give_point}{else/}0{/if}" 
+					/><em class="unit">%</em>
+					<span class="help-inline">请设置积分</span>
+				</div>
+			</dd>
+		</dl>
+	</div>
+	<!-- end 积分设置 end -->
+
+	<!-- start 折扣设置 start -->
+	<div class="block-discount-setting goods-block-hide">
+		{notempty name="$level_list"}
+			<h4 class="h4-title"><span></span>折扣设置</h4>
+			{foreach name="$level_list" item="vo"}
+				<dl>
+					<dt>{$vo.level_name}：</dt>
+					<dd>
+						<div class="controls">
+							<input class="input-common harf" name="member_discount" placeholder="0" min="0" type="number" value="{$vo.discount}" data-level-id="{$vo.level_id}"/><em class="unit">%</em>
+						</div>
+					</dd>
+				</dl>
+			{/foreach}
+			<dl>
+				<dt>价格保留方式：</dt>
+				<dd>
+					<label class="radio inline normal decimal_reservation_number">
+						<i class="radio-common {if $level_list[0]['decimal_reservation_number'] eq 0}selected{/if}">
+							<input type="radio" name="decimal-reservation-number" value="0" {if $level_list[0]['decimal_reservation_number'] eq 0}checked{/if}>
+						</i>
+						<span>抹去角和分</span>
+					</label>
+					<label class="radio inline normal decimal_reservation_number">
+						<i class="radio-common {if $level_list[0]['decimal_reservation_number'] eq 1}selected{/if}">
+							<input type="radio" name="decimal-reservation-number" value="1" {if $level_list[0]['decimal_reservation_number'] eq 1}checked{/if}>
+						</i>
+						<span>抹去分</span>
+					</label>
+					<label class="radio inline normal decimal_reservation_number">
+						<i class="radio-common {if $level_list[0]['decimal_reservation_number'] eq 2}selected{/if}">
+							<input type="radio" name="decimal-reservation-number" value="2" {if $level_list[0]['decimal_reservation_number'] eq 2}checked{/if}>
+						</i>
+						<span>保留角和分</span>
+					</label>
+				</dd>
+			</dl>
+		{/notempty}
+	</div>
+	<!-- end 折扣设置 end -->
+
+	<div class="block-goods-type goods-block-hide">
+		
+		<h4 class="h4-title"><span></span>基础信息</h4>
+		
+		<dl>
+			<dt>商品类型：</dt>
+			<dd>
+				<select id="goods_attribute_id" class="select-common">
+					<option value="0">请选择商品类型</option>
+					{foreach name="goods_attribute_list" item="attribute"}
+					{if condition="$goods_info"}
+						{if condition="$goods_info.goods_attribute_id == $attribute.attr_id"}
+						<option value="{$attribute.attr_id}" selected="selected">{$attribute.attr_name}</option>
+						{else/}
+						<option value="{$attribute.attr_id}">{$attribute.attr_name}</option>
+						{/if}
+					{else/}
+						{if condition="$goods_attr_id == $attribute.attr_id"}
+						<option value="{$attribute.attr_id}" selected="selected">{$attribute.attr_name}</option>
+						{else/}
+						<option value="{$attribute.attr_id}">{$attribute.attr_name}</option>
+						{/if}
+					{/if}
+					{/foreach}
+				</select>
+				<span class="help-inline">请选择商品类型</span>
+			</dd>
+		</dl>
+		
+		<h4 class="h4-title hide js-goods-attribute-block" ><span></span>商品属性：</h4>
+		<div class="goods-sku-attribute-block js-goods-attribute-block">
+			<table class="goods-sku-attribute js-goods-sku-attribute"></table>
+		</div>
+	</div>
+	
+	<!-- 图片视频设置 -->
+	<div class="block-photo-video-setting goods-block-hide">
+		
+		<div class="goods-photos">
+			<h4 class="h4-title"><span></span>商品图片</h4>
+			<dl>
+				<dt>图片上传：</dt>
+				<dd>
+<!-- 			（第一张图片将作为商品主图，支持同时上传多张图片,多张图片之间可随意调整位置；支持jpg、gif、png格式上传或从图片空间中选择，建议使用尺寸800x800像素以上、大小不超过1M的正方形图片，上传后的图片将会自动保存在图片空间的默认分类中。） -->
+					
+					<div id="goods_picture_box" class="controls">
+						<div class="goodspic-uplaod">
+							<div class='img-box' style="min-height:160px;">
+								{if condition="$goods_info"}
+									{if condition="!empty($goods_info['img_temp_array'])" }
+										{foreach $goods_info["img_temp_array"]  as $vo}
+											<div class="upload-thumb draggable-element">
+												<img src="{:__IMG($vo['pic_cover'])}" />
+												<input type="hidden" class="upload_img_id" value="{$vo['pic_id']}" />
+												<div class="black-bg hide">
+													<div class="off-box">&times;</div>
+												</div>
+											</div>
+										{/foreach}
+									{else /}
+										<div class="upload-thumb" id="default_uploadimg">
+											<img src="ADMIN_IMG/album/default_goods_image_240.gif" />
+										</div>
+									{/if}
+								{else/}
+								<div class="upload-thumb" id="default_uploadimg">
+									<img src="ADMIN_IMG/album/default_goods_image_240.gif">
+								</div>
+								{/if}
+							</div>
+							<div class="clear"></div>
+							<span class="img-error">最少需要一张图片作为商品主图</span>
+							<p class="hint">第一张图片将作为商品主图,支持同时上传多张图片,多张图片之间可随意调整位置；支持jpg、gif、png格式上传或从图片空间中选择，建议使用尺寸800x800像素以上、大小不超过1M的正方形图片，上传后的图片将会自动保存在图片空间的默认分类中。</p>
+							<div class="handle" style="margin-top: 5px;">
+								<div class="ncsc-upload-btn" style="margin-left:0;">
+									<a href="javascript:void(0);">
+										<span>
+											<input style="cursor:pointer;font-size:0;" type="file" id="fileupload" hidefocus="true" class="input-file" name="file_upload"multiple="multiple" />
+										</span>
+										<p>图片上传</p>
+									</a>
+								</div>
+								<a class="ncsc-btn mt5" id="img_box" nctype="show_image" href="javascript:void(0);">从图片空间选择</a>
+							</div>
+						</div>
+					</div>
+					<span class="help-inline">最少需要一张图片作为商品主图</span>
+				</dd>
+			</dl>
+		</div>
+		
+		<div class="goods-video">
+			<h4 class="h4-title"><span></span>展示视频</h4>
+			<dl>
+				<dt>视频上传：</dt>
+				<dd style="padding:0;">
+					<div class="goodspic-uplaod" style="overflow: hidden;position:relative;">
+				
+						<div class="video-thumb">
+							{if condition="$goods_info"}
+								<video id="my-video" class="video-js vjs-big-play-centered" controls 
+									{if condition="empty($goods_info['goods_video_address'])"} poster="__STATIC__/blue/img/goods_video_upload_bg.png" {else/} poster="" {/if}
+									 src="{:__IMG($goods_info['goods_video_address'])}">
+									<p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that</p>
+								</video>
+								<span class="del-video {if condition='empty($goods_info.goods_video_address)'} hide {/if}" onclick="del_video(this)"></span>
+							{else/}
+								<video id="my-video" class="video-js vjs-big-play-centered" controls poster="__STATIC__/blue/img/goods_video_upload_bg.png" preload="auto">
+									<p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that</p>
+								</video>
+								<span class="del-video hide" onclick="del_video()"></span>
+							{/if}
+						</div>
+						<input class="input-file" name="file_upload" id="videoupload" type="file" onchange="fileUpload_video(this);" title="视频上传" style="position: absolute;left: 0;width: 290px;height: 140px;opacity: 0;cursor: pointer;z-index:10;" />
+					</div>
+				</dd>
+			</dl>
+			
+			<dl>
+				<dt>输入网址：</dt>
+				<dd>
+					<input type="text" id="video_url" class="input-common" style="width: 290px !important;" placeholder="在此输入外链视频地址" {if condition="$goods_info"}value="{$goods_info.goods_video_address}"{/if} />
+					<span style="display: block;margin-top: 5px;">注意事项：</span>
+					<ul style="color:#FF6600;">
+						<li>1、检查upload文件夹是否有读写权限。</li>
+						<li>2、PHP默认上传限制为2MB，需要在php.ini配置文件中修改“post_max_size”和“upload_max_filesize”的大小。</li>
+						<li>3、视频支持手动输入外链视频地址或者上传本地视频文件</li>
+						<li>4、必须上传.mp4视频格式</li>
+						<li>5、视频文件大小不能超过500MB</li>
+					</ul>
+				</dd>
+			</dl>
+		</div>
+		
+		{include file="admin/Goods/fileAlbumImg"/}
+	</div>
+	
+	<!-- 详情设置 -->
+	<div class="block-goods-detail-setting goods-block-hide">
+	
+		<div class="controls" id="discripContainer">
+			<textarea id="tareaProductDiscrip" name="discripArea" style="height: 500px; width: 800px; display: none;"></textarea>
+			<script id="editor" type="text/plain" style="width: 100%; height: 500px;"></script>
+			<span class="help-inline">请填写商品描述</span>
+		</div>
+	</div>
+	
+	<div class="block-template-setting goods-block-hide">
+	
+		<!-- 模板设置 -->
+		<h4 class="h4-title"><span></span>模板设置</h4>
+		<dl>
+			<dt>电脑端：</dt>
+			<dd>
+				{$template_url['pc_template_url']}&nbsp;<input type="text" class="input-common harf" name="" id="pc_custom_template" value="{$goods_info.pc_custom_template}" style="width: 80px;" onkeyup="value=value.replace(/[^\w\.\/]/ig,'')">&nbsp;.html
+				<p class="hint">用户自定义模板必须存放在{$template_url['pc_template_url']}下，模板名只能由英文组成，默认不填写</p>
+			</dd>
+		</dl>
+		<dl>
+			<dt>手机端：</dt>
+			<dd>
+				{$template_url['wap_template_url']}&nbsp;<input type="text" class="input-common harf" name="" id="wap_custom_template" value="{$goods_info.wap_custom_template}" style="width: 80px;" onkeyup="value=value.replace(/[^\w\.\/]/ig,'')">&nbsp;.html
+				<p class="hint">用户自定义模板必须存放在{$template_url['wap_template_url']}下，模板名只能由英文组成，默认不填写</p>
+			</dd>
+		</dl>
+	</div>
+	
+	<div class="block-ladder-setting goods-block-hide">
+		<dl>
+				<dt>阶梯优惠：</dt>
+				<dd>
+					<p class="hint notice" >设置商品阶梯优惠，当购买数量达到所设数量时，商品单价 = 商品销售价 - 优惠价格</p>
+					<div class="ladder_preference_content">
+						<div>
+							<span class="label-title">数量</span><span class="label-title" style="margin-left: 30px;">优惠价格</span>
+						</div>
+						{notempty name="ladder_preferential"}
+							{foreach name="$ladder_preferential" item="vo"}
+							<div class="ladder_preference">
+								<input type="number" class="input-common short ladder" value="{$vo.quantity}">
+								<input type="number" class="input-common short preference" value="{$vo.price}">
+								<a href="javascript:;" class="delete_preference">删除</a></div>
+							{/foreach}
+						{/notempty}
+						<div id="ladder_preference"></div>
+					</div>
+					<div class="add_ladder_preference"><i class="fa fa-plus" aria-hidden="true"></i></div>
+				</dd>
+			</dl>
+	</div>
+	<div class="js-mask-category" style="position: fixed; width: 100%; height: 100%; top: 0px; left: 0px; right: 0px; bottom: 0px; z-index: 90; display: none; background: rgba(0, 0, 0, 0);"></div>
+	
+</div>
+
+<div class="edit-sku-popup-mask-layer"></div>
+<div class="edit-sku-popup">
+	<header>
+		<h3>选择规格</h3>
+		<span>×</span>
+	</header>
+	<div class="edit-sku-popup-body">
+		<aside>
+			<p>选择规格 [单选]</p>
+			<!-- 原始规格 -->
+			<div class="original-sku">
+				<div class="attribute">
+				
+				{foreach name="goods_attribute_list" item="attribute"}
+					<div class="attribute-item" attr_id = "{$attribute.attr_id}">
+						<p class="item-name">{$attribute.attr_name} {if condition="$attribute['spec_id_array'] neq ''"}<span>▴</span>{/if}</p>
+						<ul class="original-sku-list">
+							{volist name = "goods_spec_list" id = "goods_spec"}
+							{in name="$goods_spec['spec_id']" value="$attribute['spec_id_array']"}
+							<li title="{$goods_spec['spec_des']}" data-spec-id="{$goods_spec['spec_id']}" data-spec-value-json='{:json_encode($goods_spec.values)}' data-spec-name="{$goods_spec['spec_name']}" data-show-type="{$goods_spec['show_type']}" data-spec-value-length="{:count($goods_spec['values'])}"><span>{$goods_spec['spec_name']}</span><span style='display: none;'>[{:count($goods_spec['values'])}]</span></li>
+							{/in}
+							{/volist}
+						</ul>
+					</div>
+				{/foreach}
+				
+				<div class="attribute-item" attr_id = "0">
+						<p class="item-name">其他<span>▴</span></p>
+						<ul class="original-sku-list">
+							{volist name = "rests_goods_spec_list" id = "goods_spec"}
+							<li title="{$goods_spec['spec_des']}" data-spec-id="{$goods_spec['spec_id']}" data-spec-value-json='{:json_encode($goods_spec.values)}' data-spec-name="{$goods_spec['spec_name']}" data-show-type="{$goods_spec['show_type']}" data-spec-value-length="{:count($goods_spec['values'])}"><span>{$goods_spec['spec_name']}</span><span style='display: none;'>[{:count($goods_spec['values'])}]</span></li>
+							{/volist}
+						</ul>
+					</div>
+				</div>
+			</div>
+		</aside>
+		<article>
+			<p>选择规格值 [可多选]</p>
+			<div class="sku-value">
+				
+				<p class="empty-info">请选择左侧规格列表</p>
+				
+				<div class="sku-value-list">
+					<label>
+						<i class="checkbox-common">
+							<input class="margin-small-right" id="checkAll" type="checkbox">
+						</i>
+						<span>全选</span>
+					</label>
+					<div class="add-sku-value-input">
+						<input type="text" class="input-common" placeholder="输入规格值名称(回车保存)" />
+					</div>
+					<ul></ul>
+				</div>
+				
+			</div>
+		</article>
+	</div>
+	
+	<footer>
+		<span class="box-spec-bottom">注意：改变规格会删除现有的有的商品规格数据，并生成新的规格数据。</span>
+		<button class="btn-common btn-big btn-top" onclick="sku_popup_spec_generate()">确定</button>
+		<button class="btn-common-cancle btn-big btn-bottom">取消</button>
+	</footer>
+</div>
+
+<div class="point-card-inventory-management-popup">
+	<div class="point-card-inventory-management-body">
+	</div>
+	<footer></footer>
+</div>
+
+<div style="height: 50px;" class="h50"></div>
+<div class="btn-submit ncsc-form-goods" style="text-align: left;">
+	<dl>
+		<dt></dt>
+		<dd style="padding: 0;">
+			<button class="btn-common" id="btnSave" type="button" onClick="SubmitProductInfo(0,'ADMIN_MAIN','SHOP_MAIN')">保存</button>
+			<button class="btn-common" id="btnSavePreview" type="button" onClick="SubmitProductInfo(1,'ADMIN_MAIN','SHOP_MAIN')">保存并预览</button>
+		</dd>
+	</dl>
+</div>
+
+{include file="addons/NsCardGoods/template/admin/Goods/dialogFrame.html"/}
+
+<script type="text/javascript">
+var ue = UE.getEditor('editor');
+ue.ready(function() {
+	ue.setContent('{$goods_info.description}', false);
+});
+</script>
+{/block}

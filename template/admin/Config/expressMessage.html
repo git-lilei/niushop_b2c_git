@@ -1,0 +1,127 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<script src="ADMIN_JS/material_managedialog.js"></script>
+{/block}
+{block name="alert_info"}
+<p>1、快递鸟接口与快递100接口配置成功后，订单物流跟踪查询会当前所选择的接口进行查询</p>
+<p>2、快递100免费版不支持主流快递公司的查询</p>
+<p>3、两个接口的快递公司编码不同</p>
+<p style="margin: 0;"><a href="http://www.kdniao.com/file/2017%E5%BF%AB%E9%80%92%E9%B8%9F%E6%8E%A5%E5%8F%A3%E6%94%AF%E6%8C%81%E5%BF%AB%E9%80%92%E5%85%AC%E5%8F%B8%E7%BC%96%E7%A0%81.xlsx">快递鸟物流公司编码下载</a></p>
+<p style="margin: 0;"><a href="https://cdn.kuaidi100.com/download/chaxun(20140729).doc">快递100免费版物流公司编码下载</a></p>
+<p style="margin: 0;"><a href="https://poll.kuaidi100.com/pollquery/pollStep.do?method=kdbm">快递100企业版物流公司编码下载</a></p>
+{/block}
+{block name="main"}
+<div class="space-10"></div>
+<div class="ncsc-form-goods">
+	{include file="admin/Express/expressTitle"}
+	<!-- 基础设置 -->
+	<div class="block-basic-setting">
+		
+		
+		<div class="set-style">
+		<h4 style = "background: #fff;"><span></span>物流跟踪设置</h4>
+			<dl>
+				<dt>接口名称：</dt>
+				<dd>
+					<select name="" id="type" class="select-common">
+						<option value="1" {if $emconfig.value.type eq 1}selected{/if}>快递鸟</option>
+						<option value="2" {if $emconfig.value.type eq 2}selected{/if}>快递100（免费版）</option>
+						<option value="3" {if $emconfig.value.type eq 3}selected{/if}>快递100（企业版）</option>
+					</select>
+				</dd>
+			</dl>
+			<dl id="Js-appid" {if $emconfig.value.type neq 1}style="display:none;"{/if}>
+				<dt>APPID：</dt>
+				<dd>
+					<input id="appid" type="text" value="{$emconfig.value.appid}" class="input-common long"/>
+					<p class="hint">应用APPID</p>
+				</dd>
+				
+			</dl>
+			<dl>
+				<dt>APPKEY：</dt>
+				<dd>
+					<input id="appkey" type="text" value="{$emconfig.value.appkey}" class="input-common long"/>
+					<p class="hint">应用密钥</p>
+				</dd>
+			</dl>
+			<dl id="Js-customer" {if $emconfig.value.type neq 3}style="display:none;"{/if}>
+				<dt>CUSTOMER：</dt>
+				<dd>
+					<input type="text" name="" id="customer" value="{$emconfig.value.customer}" class="input-common long">
+					<p class="hint">快递100分配给的公司编号</p>
+				</dd>
+			</dl>
+			<dl>
+				<dt>说明：</dt>
+				<dd>
+					<a id="apply_address" href="{if $emconfig.value.type neq 1}http://www.kuaidi100.com/{else/}http://www.kdniao.com/{/if}" target="_blank" id="">点击申请</a>&nbsp;&nbsp;&nbsp;
+					<span style="display:none;">回调地址：<a style="color:#666;font-size:13px;">http://域名/</a></span>
+				</dd>
+			</dl>
+			<dl>
+				<dt>是否启用：</dt>
+				<dd>
+					<div class="controls">
+						<p>
+							<input id="is_use" type="checkbox"  class="checkbox" {if condition="$emconfig['is_use'] eq 1"}checked{/if}/>
+						</p>
+					</div>
+				</dd>
+			</dl>
+			<dl>
+				<dt></dt>
+				<dd><button class="btn-common btn-big" onclick="setExpressConfigAjax();">保存</button></dd>
+			</dl>
+		</div>
+	</div>
+</div>
+<script>
+$("#type").change(function(){
+	if($(this).val() == 2){
+		$("#Js-appid,#Js-customer").hide();
+		$("#apply_address").attr("href","http://www.kuaidi100.com/");
+	}else if($(this).val() == 3){
+		$("#Js-appid").hide();
+		$("#Js-customer").show();
+		$("#apply_address").attr("href","http://www.kuaidi100.com/");
+	}else{
+		$("#Js-appid").show();
+		$("#Js-customer").hide();
+		$("#apply_address").attr("href","http://www.kdniao.com/");
+	}
+});
+
+function setExpressConfigAjax(){
+	var type = $("#type").val();
+	var appid = type == 1 ? $('#appid').val() : "";
+	var appkey = $('#appkey').val();
+	var customer = type == 3 ? $("#customer").val() : "";
+	var back_url = $(".back_url").text();
+	var is_use = $("#is_use").prop('checked') ? 1 : 0 ;
+	$.ajax({
+		type:"post",
+		url : "{:__URL('ADMIN_MAIN/config/expressmessage')}",
+		data : {
+			"type" : type,
+			"appid" : appid,
+			"appkey":appkey,
+			"back_url" : back_url,
+			"is_use" : is_use,
+			"customer" : customer
+		},
+		success : function(data){
+			if(data['code'] > 0){
+				showTip(data['message'],'success');
+				location.href = "{:__URL('ADMIN_MAIN/config/expressmessage')}";
+			}else{
+				showTip(data["message"],'error');
+			}
+		}
+	});
+}
+</script>
+{/block}

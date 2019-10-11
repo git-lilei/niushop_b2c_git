@@ -1,0 +1,117 @@
+{extend name="admin/base" /}
+{block name="resources"}
+<style>
+.wrap {display: flex;}
+.custom-template {margin: 0 10px 0;border: 1px solid #e5e5e5;background: #F8F8F8;width: 320px;position: relative;min-height: 500px;}
+.custom-template .menu-list {width: 100%;background: #fff;min-height: 300px;margin-top: 10px;} 
+.custom-template .menu-list ul {padding: 10px 0 10px 0;margin-bottom: 10px;}
+.custom-template .menu-list ul li {width: 25%;float: left;padding: 8px 0;cursor: pointer;user-select: none;}
+.custom-template .menu-list ul li:hover{background:#f5f5f5}
+.custom-template .menu-list ul li.active{border:1px dashed #00A0DE;padding: 7px 0px;width: calc(25% - 2px)}
+.custom-template .menu-list ul li.add{background: #f5f5f5}
+.custom-template .menu-list ul li div{width: 25px;margin: 0 auto 8px auto;}
+.custom-template .menu-list ul li p{text-align: center;line-height: 1;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
+.info-container {flex: 1;border:1px solid #ddd;padding: 10px;display: none;}
+.set-style dl dt {width: 120px!important;}
+.delete-btn {display: none;}
+.input-common.disabled {background:#eee!important}
+</style>
+{/block}
+{block name="main"}
+<div class="space-10"></div>
+<div class="wrap clearfix" id="app">
+	<div class="custom-template">
+		<header>
+			<img src="__STATIC__/wapCustomTemplate/images/titlebar.png">
+		</header>
+		<div class="top">
+			<img src="ADMIN_IMG/member-top.png" alt="">
+		</div>
+		<div class="menu-list">
+			<ul class="clearfix">
+				<li class="draggable-element" :class="{active : item.id == currEl.id}" v-for="(item, index) in lists" @click="selectLi(item, index)" :data-id="item.id">
+					<div class="">
+						<img :src="__IMG(item.icon)">
+					</div>
+					<p class="ns-text-color">{{ item.title }}</p>
+				</li>
+				<li class="add" @click="newadd" v-show="!isExitsNewAdd">
+					<div>
+						<img src="ADMIN_IMG/newadd.png">
+					</div>
+					<p class="ns-text-color">添加</p>
+				</li>
+			</ul>
+		</div>
+		<div class="bottom">
+			<img src="ADMIN_IMG/member-bottom.png" alt="">
+		</div>
+	</div>
+
+	<div class="info-container" :style="{display : (currEl.id == undefined) ? 'none' : 'inline-block'}">
+		<div class="set-style">
+			<dl>
+				<dt>名称：</dt>
+				<dd>
+					<input type="text" class="input-common" v-model="currEl.title">
+				</dd>
+			</dl>
+			<dl>
+				<dt>跳转链接：</dt>
+				<dd>
+					<input type="text" class="input-common" :class="{disabled : currEl.type == 0}" v-model="currEl.url" :disabled="currEl.type == 0">
+				</dd>
+			</dl>
+			<dl>
+				<dt>图标：</dt>
+				<dd>
+					<div class="upload-btn-common">
+						<div>
+							<input class="input-file" name="file_upload" id="uploadImg" type="file" onchange="imgUpload(this);" title="上传">
+							<input type="hidden" id="cube_img" value="" v-model="currEl.icon"/>
+						</div>
+						<input type="text" id="text_cube_img" class="input-common" readonly="readonly" :value="currEl.icon" name="img_path"/>
+						<em>上传</em>
+						<img id="preview_cube_img" src="__STATIC__/blue/img/upload-common-select.png" data-html="true" data-container="body" data-placement="top" data-trigger="manual" :data-src="__IMG(currEl.icon)"/>
+					</div>
+				</dd>
+			</dl>
+			<dl>
+				<dt>状态：</dt>
+				<dd>
+					<div class="total">
+						<label class="radio inline normal">
+							<i class="radio-common" :class="{selected : currEl.status == 1}">
+								<input type="radio" value="1" name="status" :checked="currEl.status == 1" v-model="currEl.status">
+							</i>
+							<span>显示</span>
+						</label>
+						<label class="radio inline normal">
+							<i class="radio-common" :class="{selected : currEl.status == 0}">
+								<input type="radio" value="0" name="status" v-model="currEl.status" :checked="currEl.status == 0">
+							</i>
+							<span>隐藏</span>
+						</label>
+					</div>
+				</dd>
+			</dl>
+			<dl>
+				<dt></dt>
+				<dd>
+					<button class="btn-common" @click="save">保存</button>
+					<button class="btn-common-white delete-btn" @click="deleteMemu" :style="{display : (currEl.type == 1) ? 'inline-block' : 'none'}">删除</button>
+				</dd>
+			</dl>
+		</div>
+	</div>
+</div>
+
+<script>
+	var value = eval('{$value}');
+</script>
+<script src="ADMIN_JS/vue.js"></script>
+<script src="ADMIN_JS/drag-arrange.js"></script>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script src="ADMIN_JS/menu_manage.js"></script>
+{/block}

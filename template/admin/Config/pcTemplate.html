@@ -1,0 +1,79 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" href="ADMIN_CSS/pc_template.css" >
+{/block}
+{block name="main"}
+{php}
+$template_now['bgcolor'] = "";
+$template_now['theme'] = "";
+$template_now['introduce'] = "";
+$template_now['folder'] = "";
+$template_now['preview'] = "";
+{/php}
+<article class="pc-template set-style ">
+	{php}
+		foreach($template_list as $k=>$v){
+			if($v['folder'] == $use_template){
+				if($template_now[0]['bgcolor'] != $v['bgcolor']){
+					$template_now[0]['bgcolor'] = $v['bgcolor'];
+				}
+				if($template_now[0]['theme'] != $v['theme']){
+					$template_now[0]['theme'] = $v['theme'];
+				}
+				if($template_now[0]['introduce'] != $v['introduce']){
+					$template_now[0]['introduce'] = $v['introduce'];
+				}
+				if($template_now[0]['folder'] != $v['folder']){
+					$template_now[0]['folder'] = $v['folder'];
+				}
+				if($template_now[0]['preview'] != $v['preview']){
+					$template_now[0]['preview'] = $v['preview'];
+				}
+			}
+		}
+	{/php}
+	<div class="template-list">
+		<ul>
+			{foreach name="$template_list" item="template" key="k"}
+			<li style="background-color: #f5f7fa;/* {$template.bgcolor} */" {if condition="$k>0 &&($k+1)%5==0"}style="margin-right:0;"{/if} data-bgcolor="{$template.bgcolor}" class="wap-template-item" data-folder="{$template['folder']}">
+				<div class="wap-template-img">
+					<img src="__TEMP__/web/{$template['folder']}/{$template['preview']}" alt="缩略图">
+				</div>
+				<div class="wap-template-text">
+					<div class="wap-template-name">{$template.theme}</div>
+					<div class="wap-template-state">
+						<div class="wap-template-introduce">{$template.introduce}</div>
+						{if condition="$template['folder']==$use_template"}
+						<div class="btn-common-temimg" data-folder="{$template.folder}">正在使用</div>
+						{else /}
+						<div class="btn-common-tem" data-folder="{$template.folder}">立即使用</div>
+						{/if}
+						<div class="clear"></div>
+					</div>
+				</div>
+			</li>
+			{/foreach}
+		</ul>
+	</div>
+</article>
+<script>
+$(function(){
+	$(".wap-template-item").click(function(){
+		var $self = $(this);
+		$.ajax({
+			type : "post",
+			url :  "{:__URL('ADMIN_MAIN/Config/updateTemplateUse')}",
+			data : { 'type' : "web", 'folder' : $(this).attr("data-folder") },
+			success : function(res){
+				if(res.code>0){
+					location.reload();
+					showTip("操作成功","success");
+				}else{
+					showTip("操作失败","error");
+				}
+			}
+		});
+	});
+});
+</script>
+{/block}

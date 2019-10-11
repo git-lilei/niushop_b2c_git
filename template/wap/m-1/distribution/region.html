@@ -1,0 +1,45 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/distribution_partner.css">
+{/block}
+{block name="main"}
+{php}
+$region_agent = api("System.Distribution.regionAgentDetail");
+$region_agent = $region_agent['data'];
+
+$member_info = api('System.Member.memberInfo');
+$member_info = $member_info['data'];
+{/php}
+<div class="main-content">
+	<div class="cells-title ns-text-color-gray">会员名称：{$member_info.user_info.nick_name}</div>
+	<div class="cells">
+        <div class="cell">
+            <div class="cell-bd cell-primary">
+                <p class="ns-text-color-black">代理类型：{$region_agent.agent_name}</p>
+            </div>
+        </div>
+        <div class="cell">
+            <div class="cell-bd cell-primary">
+                <p class="ns-text-color-black">代理地区：{$region_agent.address_info}</p>
+            </div>
+        </div>
+        <div class="cell">
+            <div class="cell-bd cell-primary">
+                <p class="ns-text-color-black">佣金比率：{$region_agent.rate}%</p>
+            </div>
+        </div>
+    </div>
+    <div class="cells-title ns-text-color-gray">佣金</div>
+    <div class="cells cells-access">
+        <a class="cell" href="{:__URL('APP_MAIN/distribution/accountDetail','type_id=2')}">
+            <div class="cell-bd cell-primary">
+                <p class="ns-text-color-black">区域代理佣金</p>
+            </div>
+            <div class="cell-ft ns-text-color">¥{$region_agent.commission_region_agent}</div>
+            <i class="fa fa-angle-right ns-text-color-gray"></i>
+        </a>
+    </div>
+</div>
+{/block}
+{block name="footer"}{/block}
+{block name="script"}{/block}

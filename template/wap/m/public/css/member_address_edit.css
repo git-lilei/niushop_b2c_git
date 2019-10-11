@@ -1,0 +1,37 @@
+.btn-save{display: block; height: 35px; line-height: 35px; text-align: center; color: #fff; width: 85%; border: 0; margin: 20px auto 20px;border-radius: 5px;}
+.div-item{padding: 8px 10px;background: #fff;border-bottom: 1px solid;}
+.div-item span{width: 20%;text-align: center;display: inline-block;vertical-align: middle;}
+.div-item input,.div-item select{display: inline-block; width: 70%; border: none; line-height: 30px; height: 30px; margin: 0; background: #fff; border: 0; vertical-align: middle; font-size: inherit;}
+input::-webkit-input-placeholder{font-size: inherit;}
+select{appearance: none;-moz-appearance: none;-webkit-appearance: none;outline: none;-moz-outline: none;-webkit-outline: none;}
+.tabs-list nav{height: 42px; top: 0; width: 100%; z-index: 6; background: #fff; overflow: hidden;}
+.tabs-list nav ul{position: relative; top: 0; white-space: nowrap; z-index: 5; -webkit-overflow-scrolling: touch;overflow-y: auto;}
+.tabs-list nav ul li{display: inline-block;line-height: 45px; text-align: center;}
+.tabs-list nav ul li.selected{border-bottom: 2px solid;}
+.tabs-list nav ul li a{padding-right: 3px; padding-left: 3px;display: block;}
+.tabs-list .tabs-content{overflow: hidden; min-height: 200px;}
+.tabs-list .tabs-content .empty{text-align: center;}
+.tabs-list .tabs-content .empty .icon-none{display: block; width: 70px; height: 80px; background: url(../img/order/empty.png) no-repeat; background-size: 100%; margin: 20% auto 0;}
+.tabs-list .tabs-content .empty > span{display: block; text-align: center; line-height: 30px;}
+.tabs-list .tabs-content .empty > a{margin-top:10px;}
+
+.hide{display: none;}
+.delivery-wrap .title{height: 40px; line-height: 40px; position: relative; padding-left: 30px; font-weight: normal; font-size: 14px; margin-bottom: 0; background: #fff;}
+.delivery-wrap .title:before{content: ''; position: absolute; background: url(../img/order/delivery-icon.png) no-repeat; width: 14px; height: 14px; display: block; background-size: contain; left: 10px; top: 13px;}
+.delivery-wrap .shipping-type-list{padding: 0 0 5px 10px; background: #fff;}
+.delivery-wrap .shipping-type-list li{display: inline-block; margin: 0 10px 10px 0; height: 30px; line-height: 30px; padding: 0 10px;border: 1px solid; border-radius: 3px;}
+.delivery-wrap .panel{background: #fff;}
+.delivery-wrap .panel .v2-title{margin: 0 10px 0; height: 45px; line-height: 45px; font-weight: 400; font-size: 14px;border-bottom: 1px solid;}
+.delivery-wrap .panel .express-company-list{margin: 0 10px;}
+.delivery-wrap .panel .express-company-list li{padding: 10px 0; border-bottom: 1px solid;}
+.delivery-wrap .panel .express-company-list li .iconfont{display: inline-block; font-size: 16px; margin-right: 5px; line-height: 20px;}
+.delivery-wrap .panel .shipping-time{position: relative; padding: 0 10px; height: 42px; line-height: 42px; font-size: 12px;text-align: right;}
+.delivery-wrap .panel .shipping-time .fa{margin-left: 5px;}
+.delivery-wrap .panel .pickup-point-list li{padding: 10px 10px 10px 36px; position: relative;}
+.delivery-wrap .panel .pickup-point-list .line{margin: 0 10px; height: 1px;}
+.delivery-wrap .panel .pickup-point-list li .iconfont{position: absolute; left: 10px; top: 50%; transform: translateY(-50%);}
+.delivery-wrap .panel .pickup-point-list li .pickup-point-info{display: inline-block;}
+.delivery-wrap .panel .pickup-point-list li .pickup-point-info h5{margin-bottom: 5px;}
+.delivery-wrap .panel .pickup-point-list li .pickup-point-info .address{font-size: 12px;}
+.delivery-bottom{left: 0; right: 0; margin: 0 auto; background-color: #fff; position: fixed; z-index: 101; bottom: 0; display: flex;}
+.delivery-confirm-btn{height: 46px; line-height: 46px; text-align: center; font-size: 16px; display: block; color: #fff; flex: 1;}

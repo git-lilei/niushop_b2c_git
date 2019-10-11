@@ -1,0 +1,26 @@
+.hide{display: none;}
+.evaluate-item{padding: 10px 10px 20px;background: #fff;}
+.evaluate-item .head-warp{height: 40px;margin-bottom: 10px;}
+.evaluate-item .head-warp .goods-img{width: 40px;height: 40px;margin-right: 10px;float: left;}
+.evaluate-item .head-warp .goods-img img{max-width: 100%;}
+.evaluate-item .head-warp .score{width: calc(100% - 55px);line-height: 40px;float: left;}
+.evaluate-item .head-warp .score .tit{margin-right: 10px;float: left;}
+.evaluate-item .head-warp .score .star{float: left;}
+.evaluate-item .head-warp .score .star li{float: left;margin-right: 10px;color: #eee;}
+.evaluate-item .body-wrap textarea{width: 100%;height: 130px;padding: 10px;border: none;resize: none;}
+.evaluate-item .body-wrap .evaluate-img-group li{float: left;width: calc((100% - 20px) / 3);margin: 15px 10px 0 0;text-align: center;overflow:hidden;position: relative;}
+.evaluate-item .body-wrap .evaluate-img-group li:before{content: '';display: block;padding: 50% 0;}
+.evaluate-item .body-wrap .evaluate-img-group li:nth-child(3n+3){margin-right: 0;}
+.evaluate-item .body-wrap .evaluate-img-group li .box{position: absolute;width: 100%;height: 100%;left: 0;top: 0;padding: 0;}
+.evaluate-item .evaluate-img{position: relative;width: 100%;height: 100%;overflow:hidden;text-align: center;}
+.evaluate-item .evaluate-img img{height: 100%;width: auto;}
+.evaluate-item .evaluate-img .del{display: block;position: absolute;width: 25px;height: 25px;right: 0;top: 0;z-index: 5;background: rgba(0,0,0,.5);}
+.evaluate-item .evaluate-img .del .iconfont{color: #fff;margin-top: 50%;display: block;transform: translateY(-50%);}
+.evaluate-item .upload{border : 1px dashed;width: calc(100% - 2px);height: calc(100% - 2px);border-radius: 3px;}
+.evaluate-item .upload-shade{position: absolute;width: 100%;height: 100%;top: 0;left: 0;text-align: center;line-height: 100%;}
+.evaluate-item .upload-shade > div{margin-top: 50%;transform: translateY(-50%);}
+.evaluate-item .upload-shade .iconfont{margin-bottom: 5px;display: inline-block;}
+.evaluate-item .webuploader-pick{width: 100%;height: 100%;}
+.evaluate-footer{position: fixed;width: 100%;height: 50px;line-height: 50px;padding-left: 10px;z-index: 10;left: 0;bottom: 0;background: #fff;font-size: 12px;}
+.evaluate-footer .iconfont{display: inline-block;margin-right: 5px;position: relative;top: 2px;font-size: 18px;}
+.evaluate-footer .sub-btn{display: block;width: 120px;height: 50px;line-height: 50px;text-align: center;color: #fff}

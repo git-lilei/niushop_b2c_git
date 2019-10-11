@@ -1,0 +1,287 @@
+{extend name="$base" /}
+{block name="resources"}
+<style type="text/css">
+.discount_price dd p{margin-bottom: 5px!important;}
+.discount_price dd p input[type="text"]{width: 15%; display: inline-block;}
+.discount_price dd p .remark {width: 30% !important;}
+.set-style dl:last-child {border-bottom:0;}
+.add_discount_price {
+    width: 180px;
+    height: 30px;
+    line-height: 30px;
+    border: 1px solid #ddd;
+    text-align: center;
+    background: #f5f5f5;
+    color: #555;
+}
+.ns-main{min-height:700px;}
+</style>
+{/block}
+{block name="main"}
+<div class="space-10"></div>
+<div class="ncsc-form-goods">
+	{include file="admin/Express/expressTitle"}
+	<!-- 基础设置 -->
+	<div class="block-basic-setting">
+		
+		<h4>本地配送管理</h4>
+		<div class="set-style">
+			<dl>
+				<dt><span class="required">*</span>起送消费金额：</dt>
+				<dd>
+					<p>
+						<input id="order_money" name="order_money" type="text" class="input-common harf" value="{$distribution_config['order_money']|default=''}" />
+						<em class="unit top">元</em>
+					</p>
+					<p class="error">请输入起送消费金额</p>
+				</dd>
+			</dl>
+			<dl>
+				<dt><span class="required">*</span>起送配送费用：</dt>
+				<dd>
+					<p>
+						<input id="freight" name="freight" type="text" class='input-common harf' value="{$distribution_config['freight']|default=''}" />
+						<em class="unit top">元</em></p>
+					<p class="error">请输入起送配送费用</p>
+				</dd>
+				<input type="hidden" id="is_start"  name="is_start" value="1"> 
+			</dl>
+			<dl>
+				<dt><span class="required">*</span>配送时间：</dt>
+				<dd class="time-config">
+					<p>
+						<span>上午：</span>
+						<select class="select-common harf" id="morning_start"></select>
+						<span>&nbsp;至&nbsp;</span>
+						<select class="select-common harf" id="morning_end"></select>
+					</p>
+				</dd>
+			</dl>
+			<dl>
+				<dt></dt>
+				<dd class="time-config">
+					<p>
+						<span>下午：</span>
+						<select class="select-common harf" id="afternoon_start"></select>
+						<span>&nbsp;至&nbsp;</span>
+						<select class="select-common harf" id="afternoon_end"></select>
+					</p>
+					<p class="hint">配送时间可单独设置上午或下午，若起始时间与结束时间均未设置，则默认为该时间段不提供配送服务。</p>
+					<p class="error time-error"></p>
+				</dd>
+				
+			</dl>
+			<dl class="discount_price">
+				<dt>优惠配送金额：</dt>
+				<dd id = "discount_price">
+				{notempty name="$distribution_config['freight_query']"}
+					{volist name="$distribution_config['freight_query']" id="vo"}
+						<p>
+							<input name="order_money" type="text" class="input-common order_money harf" placeholder="消费金额" value="{$vo['order_money']}">
+							<input name="freight" type="text" class="input-common freight harf" placeholder="配送费用" value="{$vo['freight']}">
+							<input type="hidden" name="is_start" value="0"> 
+							<a href="javascript:;" class="delete_discount">删除</a>
+						</p>
+					{/volist}
+				{else/}
+						<p>
+							<input name="order_money" type="text" class="input-common order_money harf" placeholder="消费金额">
+							<input name="freight" type="text" class="input-common freight harf" placeholder="配送费用">
+							<input type="hidden" name="is_start" value="0"> 
+							<a href="javascript:;" class="delete_discount">删除</a>
+						</p>
+				{/notempty}
+				</dd>
+			</dl>
+			<dl>
+				<dt></dt>
+				<dd>
+					<div class="add_discount_price"><i class="fa fa-plus" aria-hidden="true"></i></div>
+				</dd>
+			</dl>
+			<dl>
+				<dt></dt>
+				<dd><button class="btn-common btn-big" onclick="setDistributionConfig();">保存</button></dd>
+			</dl>
+		</div>
+	</div>
+</div>
+
+<div style="height: 50px;" class="h50"></div>
+<!-- 配送时间隐藏域 -->
+<input type="hidden" id="time_json" value='{$time_json}'/>
+<script>
+$(function(){
+	//添加优惠价格
+	$(".add_discount_price").click(function(){	
+		var html = '<p><input name="order_money" type="text" class="input-common order_money harf" placeholder="消费金额">\n<input name="freight" type="text" class="input-common freight harf" placeholder="配送费用"><input type="hidden" name="is_start" value="0"> \n<a href="javascript:;" class="delete_discount">删除</a></p>';
+		var prev_obj = $("#discount_price p").last();
+			if(prev_obj.find(".order_money").val() != undefined &&　prev_obj.find(".freight").val() != undefined){
+				if(prev_obj.find(".order_money").val() == 0 || prev_obj.find(".freight").val() == 0){
+					showTip("请输入消费金额和优惠配送费用","warning");
+				}else{
+		 			$("#discount_price").append(html);
+				}
+ 			}else{
+				$("#discount_price").append(html);
+			} 
+	});
+	
+	//删除优惠价格
+	$(".delete_discount").live('click',function(){
+		$(this).parent().remove();
+	});
+	
+	//配送时间
+	var morning_arr = ['00','01','02','03','04','05','07','08','09','10','11','12',];
+	var afternoon_arr = ['12','13','14','15','16','17','18','19','20','21','22','23','24'];
+	var morning_option = '<option value="">请选择</option>';
+	var afternoon_option = '<option value="">请选择</option>';
+	var time_json = $("#time_json").val();
+	var time_obj = JSON.parse(time_json);
+	for(var i=0;i < morning_arr.length;i ++){
+		if(i != morning_arr.length - 1){
+			morning_option += '<option>' + morning_arr[i] + '&nbsp;:&nbsp;' + '00' + '</option>';
+			morning_option += '<option>' + morning_arr[i] + '&nbsp;:&nbsp;' + '30' + '</option>';
+		}else{
+			morning_option += '<option>' + morning_arr[i] + '&nbsp;:&nbsp;' + '00' + '</option>';
+		}
+	}
+	for(var i=0;i < afternoon_arr.length;i ++){
+		if(i != afternoon_arr.length - 1){
+			afternoon_option += '<option>' + afternoon_arr[i] + '&nbsp;:&nbsp;' + '00' + '</option>';
+			afternoon_option += '<option>' + afternoon_arr[i] + '&nbsp;:&nbsp;' + '30' + '</option>';
+		}else{
+			afternoon_option += '<option>' + afternoon_arr[i] + '&nbsp;:&nbsp;' + '00' + '</option>';
+		}
+	}
+	$("#morning_start,#morning_end").html(morning_option);
+	$("#afternoon_start,#afternoon_end").html(afternoon_option);
+	if(time_obj){
+		$("#morning_start").val(time_obj['morning_start']);
+		$("#morning_end").val(time_obj['morning_end']);
+		$("#afternoon_start").val(time_obj['afternoon_start']);
+		$("#afternoon_end").val(time_obj['afternoon_end']);
+	}
+	$("#morning_start,#morning_end").selectric();
+	$("#afternoon_start,#afternoon_end").selectric();
+})
+
+
+//验证数据
+function verify(order_money, freight) {
+	if (order_money == '') {
+		$("#order_money").focus().parent().next().show();
+		return false;
+	}else{
+		$("#order_money").parent().next().hide();
+	}
+	
+	if (freight == '') {
+		$("#freight").focus().parent().next().show();
+		return false;
+	} else {
+		$("#freight").parent().next().hide();
+	}
+	
+	//验证配送时间
+	var morning_start = $('#morning_start').val();
+	var morning_end = $('#morning_end').val();
+	var afternoon_start = $('#afternoon_start').val();
+	var afternoon_end = $('#afternoon_end').val();
+	
+	var morning_num = 0;
+	if(morning_start) morning_num ++;
+	if(morning_end) morning_num ++;
+	
+	var afternoon_num = 0;
+	if(afternoon_start) afternoon_num ++;
+	if(afternoon_end) afternoon_num ++;
+	
+	if(morning_num == 1){
+		$('.time-error').html('请完善上午的配送时间').show();
+		return false;
+	}
+	
+	if(afternoon_num == 1){
+		$('.time-error').html('请完善下午的配送时间').show();
+		return false;
+	}
+	
+	if(morning_start != '' && morning_end != ''){
+		if(morning_start >= morning_end){
+			$('.time-error').html('上午配送结束时间必须晚于开始时间').show();
+			return false;
+		}
+	}
+	
+	if(afternoon_start != '' && afternoon_end != ''){
+		if(afternoon_start >= afternoon_end){
+			$('.time-error').html('下午配送结束时间必须晚于开始时间').show();
+			return false;
+		}
+	}
+	
+	return true;
+	
+}
+
+var flag = false;//防止重复提交
+//添加修配送费用
+function setDistributionConfig() {
+	var order_money = $("#order_money").val();
+	var freight = $("#freight").val();
+	
+	var order_money_arr = $("input[name='order_money']");
+	var freight_arr = $("input[name='freight']");
+	var is_start_arr = $("input[name='is_start']");
+	
+	var discount_arr = [];
+	for(var i=0;i < order_money_arr.length;i ++){
+		var order_money_json = order_money_arr.eq(i).val();
+		var freight_json = freight_arr.eq(i).val();
+		var is_start_json = is_start_arr.eq(i).val();
+		discount_arr[i] = [order_money_json,freight_json,is_start_json];
+	}
+	var discount_json = JSON.stringify(discount_arr);
+	
+	//获取配送时间   组装成json格式的数据
+	var morning_start = $('#morning_start').val();
+	var morning_end = $('#morning_end').val();
+	var afternoon_start = $('#afternoon_start').val();
+	var afternoon_end = $('#afternoon_end').val();
+	
+	var distribution_time = {};
+	distribution_time.morning_start = morning_start;
+	distribution_time.morning_end = morning_end;
+	distribution_time.afternoon_start = afternoon_start;
+	distribution_time.afternoon_end = afternoon_end;
+	
+	var distribution_time_json = JSON.stringify(distribution_time);
+
+	if(verify(order_money, freight)){
+		if(flag){
+			return;
+		}
+		flag = true;
+		
+		$.ajax({
+			type : "post",
+			url : __URL(ADMINMAIN+"/distribution/DistributionConfig"),
+			data : {
+				'discount_json'         : discount_json,
+				'distribution_time_json': distribution_time_json
+			},
+			success : function(data) {
+				if(data['code']>0){
+					showTip(data['message'],'success');
+					location.href = __URL(ADMINMAIN + '/distribution/DistributionConfig');
+				}else{
+					showTip(data['message'],'error');
+				}
+			}
+		});
+	}
+}
+</script>
+{/block}

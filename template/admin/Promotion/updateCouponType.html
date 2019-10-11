@@ -1,0 +1,242 @@
+{extend name="$base" /}
+{block name="resources"}
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+<style  type="text/css">
+input[type="radio"]{margin-top:6px;}
+.total{width: 100%;overflow: hidden;}
+.total label {float:left;text-align: left;font-size: 15px; width:10%;overflow:hidden;color:#666;font-weight: normal;line-height: 32px;margin-bottom:0px}
+.total label input {margin: 0 5px 0 0;}
+.mTop{margin-top: 5px;}
+</style>
+{/block}
+{block name="main"}
+<div class="space-10"></div>
+<div class="set-style">
+	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;名称：</dt>
+		<dd>
+			<input type="text" id="coupon_name" maxlength="10"value="{$coupon_type_info.coupon_name}" class="input-common">
+			<p class="hint">10个字以内</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;面额：</dt>
+		<dd>
+			<input class="input-mini w70 input-common harf" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')"value="{$coupon_type_info.money}" type="text" id="money"/>
+			<em class="unit top">元</em>
+			<p class="error">请输入面额，必须大于0</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;补发数量：</dt>
+		<dd><input class="input-mini w70 input-common harf" onkeyup='this.value=this.value.replace(/\D/gi,"")' type="text" id="repair_count"value="0"
+		/><em class="unit top">份</em></dd>
+	</dl>
+	<dl>
+		<dt>&nbsp;&nbsp;已发放数量：</dt>
+		<dd><p>{$coupon_type_info.count}份</p><input type="hidden" id="count" value="{$coupon_type_info.count}"></dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;每人最大领取数：</dt>
+		<dd>
+		<input class="input-mini w70 input-common harf" onkeyup='this.value=this.value.replace(/\D/gi,"")' type="text" id="max_fetch"value="{$coupon_type_info.max_fetch}"
+		/><em class="unit top">份</em>
+		<p class="hint">输入0表示无限制</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>满多少元使用：</dt>
+		<dd><input class="input-mini w70 input-common harf" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" type="text" id="at_least"value="{$coupon_type_info.at_least}"
+		/><em class="unit top">元</em></dd>
+	</dl>
+	<dl style="display:none;">
+		<dt>领取人等级：</dt>
+		<dd><input class="input-mini w70 input-common" onkeyup='this.value=this.value.replace(/\D/gi,"")' type="text" id="need_user_level"value="{$coupon_type_info.need_user_level}"><span class="help-inline">级</span></dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;有效时间：</dt>
+		<dd>
+			<div>
+				<label class="radio inline normal">
+					<i class="radio-common {if $coupon_type_info.term_of_validity_type eq 0} selected {/if}"><input type="radio" value="0" name="term_of_validity_type" {if $coupon_type_info.term_of_validity_type eq 0} checked {/if}></i>
+					<span>固定日期</span>
+				</label>
+				<label class="radio inline normal">
+					<i class="radio-common {if $coupon_type_info.term_of_validity_type eq 1} selected {/if}"><input type="radio" value="1" name="term_of_validity_type" {if $coupon_type_info.term_of_validity_type eq 1} checked {/if}></i>
+					<span>领到券当日开始N天内有效</span>
+				</label>
+			</div>
+			<!-- 固定日期 -->
+			<div class="fixed_time mTop" {if $coupon_type_info.term_of_validity_type neq 0} style="display: none;" {/if}>
+				<div class="mTop">
+					<span>生效时间：</span>
+					<input class="input-medium input-common harf" type="text" id="start_time" style="width:250px;"onclick="WdatePicker({skin:'twoer',dateFmt:'yyyy-MM-dd HH:mm:ss'})" value="{$coupon_type_info.start_time | getTimeStampTurnTime}">
+				</div>
+				<div class="mTop">
+					<span>过期时间：</span>
+					<input class="input-medium input-common harf" size="15" type="text" id="end_time" style="width:250px;"onclick="WdatePicker({skin:'twoer',dateFmt:'yyyy-MM-dd HH:mm:ss'})" value="{$coupon_type_info.end_time | getTimeStampTurnTime}">
+				</div>
+				<p class="error">请输入有效时间</p>
+				<p class="hint">生效前买家可以领取但不能使用</p>
+			</div>
+			<!-- 相对时间 -->
+			<div class="relative_time mTop" {if $coupon_type_info.term_of_validity_type neq 1} style="display: none;" {/if}>
+				<p>领取之日起<input type="number" min="1" max="365" id="fixed_term" class="input-common short" style="margin:0 5px!important;display: inline-block;" value="{$coupon_type_info.fixed_term}">天内有效</p>
+				<span class="error">生效天数必须在1到365内</span>
+			</div>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否允许直接领取：</dt>
+		<dd>
+			<p>
+				<input id="is_show" type="checkbox"  class="checkbox"  {if condition="$coupon_type_info.is_show eq 1"}checked{/if}/>
+			</p>
+		</dd>
+	</dl>
+	<!-- ******************************************* start 选择商品 start ******************************************* -->
+	<!-- 
+		is_limit_sku 是否限制只查询单规格商品 1限制 0不限制
+		is_many_select 是否可多选 1可多选 0只能单选
+		is_limit_skock 是否只查询有库存的商品 1只查询有库存商品 0不限制
+		is_limit_state 是否只查询已上架商品 1只查询上架商品 0不限制
+		is_limit_goods_type 是否限制只查询实物商品 1限制 0不限制
+	 -->
+	<input type="hidden" id="range_type" value="{$coupon_type_info.range_type}">
+	<input type="hidden" id="is_show_select" value="1">
+	<input type="hidden" id="goods_id_array" value="{$coupon_type_info.goods_id_array}">
+	<input type="hidden" id="select-goods-limit" value='{"is_limit_sku" : 0, "is_many_select" : 1, "is_limit_skock" : 1, "is_limit_state" : 1, "is_limit_goods_type" : 0}'>
+	{include file="admin/Promotion/goodsSelectDialog"/}
+	<!-- ******************************************* end 选择商品 end ******************************************* -->
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="updateCouponType();">保存</button>
+			<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);">返回</button>
+		</dd>
+	</dl>
+</div>
+<input type="hidden" id="coupon_type_id" value="{$coupon_type_info.coupon_type_id}"/>
+<script>
+var flag = false;//防止重复提交
+function updateCouponType() {
+	var coupon_type_id = $("#coupon_type_id").val();
+	var coupon_name = $("#coupon_name").val();
+	var money = $("#money").val();
+	var count = $("#count").val();
+	var repair_count = $("#repair_count").val();
+	var max_fetch = $("#max_fetch").val();
+	var at_least = $("#at_least").val();
+	var need_user_level = $("#need_user_level").val();
+	var range_type = $("input[name='range_type']:checked").val();
+	var start_time = $("#start_time").val();
+	var end_time = $("#end_time").val();
+	var is_show = $("#is_show").prop('checked') ? 1 : 0 ;
+	var obj = $(".select-two table tbody tr");
+	var term_of_validity_type = $("input[name='term_of_validity_type']:checked").val();
+	var fixed_term = $("#fixed_term").val();
+
+	var goods_id_array = $("#goods_id_array").val();
+	if(verify(coupon_name, money, count, max_fetch, at_least, start_time, end_time, range_type, term_of_validity_type, fixed_term)){
+		if(flag){
+			return;
+		}
+		flag = true;
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/promotion/updatecoupontype')}",
+			data : {
+				'coupon_type_id' : coupon_type_id,
+				'coupon_name' : coupon_name,
+				'money' : money,
+				'count' : count,
+				'repair_count' : repair_count,
+				'at_least' : at_least,
+				'max_fetch' : max_fetch,
+				'need_user_level' : need_user_level,
+				'range_type' : range_type,
+				'start_time' : start_time,
+				'end_time' : end_time,
+				'is_show' : is_show,
+				'goods_list' : goods_id_array,
+				'term_of_validity_type' : term_of_validity_type,
+				'fixed_term' : fixed_term
+			},
+			success : function(data) {
+				if (data["code"] > 0) {
+					showMessage('success', data["message"], "{:__URL('ADMIN_MAIN/promotion/coupontypelist')}");
+				}else{
+					showMessage('error', data["message"]);
+					flag = false;
+				}
+			}
+		});
+	}
+}
+
+$("input[name='term_of_validity_type']").change(function(){
+	if($(this).val() == 1) $(".relative_time").show().prev(".fixed_time").hide();
+	else $(".fixed_time").show().next(".relative_time").hide();
+});
+
+function verify(coupon_name, money, count, max_fetch, at_least, start_time, end_time, range_type, term_of_validity_type, fixed_term){
+	if(coupon_name == ''){
+		$("#coupon_name").focus().parent().find('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(money == '' || money == 0){
+		$("#money").focus().parent().find('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(count == '' || count == 0){
+		$("#count").focus().parent().find('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(max_fetch == ''){
+		$("#max_fetch").focus().parent().find('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(term_of_validity_type == 0){
+		if(start_time == '' || end_time == ''){
+			$("#start_time").focus().parent().parent().find('.error').text("请输入有效时间").show();
+			return false;
+		}else{
+			$(".error").hide();
+		}
+		if(start_time > end_time){
+			$("#start_time").focus().parent().parent().find('.error').text("开始时间不能大于结束时间").show();
+			return false;
+		}else{
+			$(".error").hide();
+		}
+	}else if(term_of_validity_type == 1){
+		if(fixed_term == ""){
+			$("#fixed_term").focus().parent().next('.error').text("生效天数不能为空").show();
+			return false;
+		}else{
+			if(fixed_term < 1 || fixed_term > 365){
+				$("#fixed_term").focus().parent().next('.error').text("生效天数必须在1到365内").show();
+				return false;
+			}else{
+				$(".error").hide();
+			}
+		}
+	}
+	if(range_type == 0 && BatchSend.length == 0){
+		$(".js-select-goods").find(".error").html('请至少选择一件商品').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	return true;
+}
+</script>
+{/block}

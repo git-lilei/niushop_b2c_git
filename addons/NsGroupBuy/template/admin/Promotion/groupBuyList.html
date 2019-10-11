@@ -1,0 +1,157 @@
+{extend name="$base" /}
+{block name="resources"}
+<style>
+.modal-infp-style{width:90%;margin:10px auto;}
+.modal-infp-style table{width:100%;}
+.modal-infp-style table tr td{border: 1px solid #e5e5e5;padding: 10px;}
+.align_left{text-align: left;}
+.align_right{text-align: right;}
+.align_center{text-align:center;}
+</style>
+{/block}
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<th width="20%" style="text-align:left;">
+			<button class="btn-common btn-small" onclick="location.href='{:__URL('__URL__/nsgroupbuy/ADMIN_MODULE/promotion/addGroupBuy')}';" style="margin:0 5px 0 0 !important;">添加团购活动</button>
+			<button class="btn-common-delete" onclick="batchDelete();">批量删除</button>
+		</th>
+		<th width="10%">
+			<input type="text" id = 'search_text' placeholder="请输入活动名称" class="input-common" />
+			<input type="button" onclick="searchData()" value="搜索" class="btn-common" />
+		</th>
+	</tr>
+</table>
+<table class="table-class">
+		<colgroup>
+		<col style="width: 2%;">
+		<col style="width: 21%;">
+		<col style="width: 21%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 20%;">
+		<col style="width: 16%;">
+		</colgroup>
+	<thead>
+		<tr align="center">
+			<th><i class="checkbox-common"><input type="checkbox" ></i></th>
+			<th class="align_left">活动名称</th>
+			<th class="align_left">商品名称</th>
+			<th class="align_right">最大购买量</th>
+			<th class="align_right">最小购买量<span class="row-20"></span></th>
+			<th class="align_center">有效时间</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('__URL__/nsgroupbuy/ADMIN_MODULE/promotion/groupBuyList')}",
+		data : {
+			"page_index" : page_index, "page_size" : $("#showNumber").val(), "search_text" : search_text
+		},
+		success : function(data) {
+			if (data["data"].length > 0) {
+				$(".table-class tbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					html += '<tr align="center">';
+					html += '<td><i class="checkbox-common"><input name="sub" type="checkbox" value="'+ data["data"][i]["group_id"]+'" ></i></td>';
+					html += '<td class="align_left">' + data["data"][i]["group_name"] + '</td>';
+					
+					if(data["data"][i]["goods_name"] != null && data["data"][i]["goods_name"] !=""){
+						html += '<td class="align_left goods-name"><a href="'+__URL('SHOP_MAIN/goods/detail?goods_id='+data["data"][i]["goods_id"])+'" target="_blank">' + data["data"][i]["goods_name"] + '</a></td>';
+					}else{
+						html += '<td class="align_left goods-name"><a href="'+__URL('SHOP_MAIN/goods/detail?goods_id='+data["data"][i]["goods_id"])+'" target="_blank">-</a></td>';
+					}
+
+					html += '<td class="align_right">' + data["data"][i]["max_num"] + '</td>';
+					html += '<td class="align_right">' + data["data"][i]["min_num"] + '<span class="row-20"></td>';
+					html += '<td class="align_center">开始时间：' + timeStampTurnTime(data["data"][i]["start_time"]) + '<br/>结束时间：'+ timeStampTurnTime(data["data"][i]["end_time"]) +'</td>';
+					html += '<td>';
+						html += '<a href="'+__URL('__URL__/nsgroupbuy/ADMIN_MODULE/Promotion/updateGroupBuy?group_id=' + data["data"][i]["group_id"])+'">编辑</a>&nbsp;';
+						html += '<a href="javascript:;" onclick="delete_group_buy('+data["data"][i]["group_id"]+');">删除</a>';
+					html += '</td>';
+					html += '</tr>';
+					$(".table-class tbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="8">暂无符合条件的数据记录</td></tr>';
+				$(".table-class tbody").html(html);
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+//全选
+function CheckAll(event){
+	var checked = event.checked;
+	if(checked) $(".table-class tbody input[type = 'checkbox']").prop("checked",checked).parent("i").addClass("selected");
+	else $(".table-class tbody input[type = 'checkbox']").prop("checked",checked).parent("i").removeClass("selected");
+}
+
+function searchData(){
+	LoadingInfo(1);
+}
+
+function delete_group_buy(group_id){
+	$("#dialog").dialog({
+		buttons: {
+			"确定": function() {
+				$.ajax({
+					type:"post",
+					url : "{:__URL('__URL__/nsgroupbuy/ADMIN_MODULE/promotion/delGroupBuy')}",
+					data : { "group_id" : group_id.toString()},
+					dataType : "json",
+					success : function(data) {
+						if (data["code"] > 0) {
+							showMessage('success', data["message"],"{:__URL('__URL__/nsgroupbuy/ADMIN_MODULE/promotion/groupbuylist')}");
+						}else{
+							showMessage('error', data['message']);
+						}
+					}
+				});
+				$(this).dialog('close');
+			},
+			"取消,#f5f5f5,#666": function() {
+				$(this).dialog('close');
+			},
+		},
+		contentText:"确定要删除该团购吗？",
+	});
+}
+
+/**
+* 批量删除
+*/
+function batchDelete(){
+	var ids= [];
+	$(".table-class tbody input[type = 'checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			ids.push($(this).val());
+		}
+	});
+	if(ids.length ==0){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#0059d6,#fff": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:"请选择需要操作的记录",
+			title:"消息提醒",
+		});
+		return false;
+	}
+	delete_group_buy(ids);
+}
+</script>
+{/block}

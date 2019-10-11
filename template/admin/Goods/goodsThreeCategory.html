@@ -1,0 +1,159 @@
+<style>
+.goods-category-container {display: inline-block;position: relative;}
+.goodsCategory{width: 148px;height: 300px;border: 1px solid #CCCCCC;position: absolute;z-index: 100;background: #fff;right: 0;overflow-y: auto;top: 31px;}
+.goodsCategory::-webkit-scrollbar{width: 3px;}
+.goodsCategory::-webkit-scrollbar-track{-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);border-radius: 10px;background-color: #fff;}
+.goodsCategory::-webkit-scrollbar-thumb{height: 20px;border-radius: 10px;-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);background-color: #ccc;}
+.goodsCategory ul{height: 280px;margin-top: -2px;margin-left: 0;}
+.goodsCategory ul li{text-align: left;padding:0 10px;line-height: 30px;}
+.goodsCategory ul li i{float: right;line-height: 30px;}
+.goodsCategory ul li:hover{cursor: pointer;}
+.goodsCategory ul li:hover,.goodsCategory ul li.selected{background: #00A0DE;color: #fff;}
+.goodsCategory ul li span{width: 110px;display: inline-block;white-space: nowrap;text-overflow: ellipsis;overflow: hidden;vertical-align: middle;font-size:12px;}
+.one{left: 0;}
+.two{left: 150px;border-left:0;}
+.three{left: 299px;width: 148px;border-left:0;}
+.selectGoodsCategory{width: 148px;height: 45px;border:1px solid #CCCCCC;position: absolute;z-index: 100;left: 0;margin-top: 299px;border-collapse: collapse;background: #fff;}
+.selectGoodsCategory a{height: 30px;width: 100px;text-align: center;color: #fff;line-height: 30px;margin:8px;background: #00A0DE;text-decoration:none;}
+</style>
+
+
+<div class="goods-category-container">
+	<input type="text" placeholder="请选择商品分类" show="false" class="input-common middle select-category">
+	<div class="category-wrap hide">
+		<div class="goodsCategory one">
+			<ul>
+				{volist name="oneGoodsCategory" id="vo"}
+				<li data-value="{$vo.category_id}" data-level="{$vo.level}" data-has-child="{$vo.is_parent}">
+					<span>{$vo.category_name}</span>
+					{if condition="$vo.is_parent eq 1"}
+						<i class="fa fa-angle-right fa-lg"></i>
+					{/if}
+				</li>
+				{/volist}
+			</ul>
+		</div>
+		<div class="goodsCategory two hide" style="border-left:0;">
+			<ul></ul>
+		</div>
+		<div class="goodsCategory three hide">
+			<ul></ul>
+		</div>
+		<div class="selectGoodsCategory">
+			<a href="javascript:;" style="float:right;" class="confirm-select">确认选择</a>
+		</div>
+	</div>
+</div>
+
+<script>
+var rootEl;
+$(function(){
+	// 点击显示选择分类
+	$(".goods-category-container .select-category").unbind("click");
+	$('.goods-category-container .select-category').click(function(e) {
+		rootEl = $(this).parents('.goods-category-container');
+		var isShow = $(this).attr('show');
+		if(isShow == 'true'){
+			$(this).attr('show', 'false');
+			rootEl.find('.category-wrap').addClass('hide');
+		}else{
+			$(this).attr('show', 'true');
+			rootEl.find('.category-wrap').removeClass('hide');
+
+			$(document).one("click", function(){
+		        var isShow = rootEl.find('.select-category').attr('show');
+			    if(isShow == 'true'){
+					$(this).attr('show', 'false');
+					rootEl.find('.category-wrap').addClass('hide');
+				}
+		    });
+		    e.stopPropagation();
+		}
+	});
+
+	// 点击选择分类
+	$('body').on('click', '.goodsCategory ul li', function(e){
+		var data = $(this).data();
+
+		$(this).addClass('selected').siblings('li').removeClass('selected');
+		$.ajax({
+			type : 'post',
+			url : "{:__URL('ADMIN_MAIN/goods/getcategorybyparentajax')}",
+			data : { "parentId" : data.value },
+			async : false,
+			success : function(res){
+				if(res.length > 0){
+					var html = '';
+					for (var i = 0; i < res.length; i++) {
+						var item = res[i];
+						html += `
+							<li data-value="`+ item.category_id +`" data-level="`+ item.level +`" data-has-child="`+ item.is_parent +`">
+								<span>`+ item.category_name +`</span>`;
+						if(item.is_parent == 1){
+							html += `<i class="fa fa-angle-right fa-lg"></i>`
+						}	
+						html += `</li>`;
+					}
+					if(data.level == 1){
+						rootEl.find(".two ul").html(html);
+						rootEl.find(".two").removeClass('hide');
+						rootEl.find(".three ul li").remove();
+						rootEl.find(".three").addClass('hide');
+						rootEl.find('.selectGoodsCategory').css({'width' : 297});
+					}else if(data.level == 2){
+						rootEl.find(".three ul").html(html);
+						rootEl.find(".three").removeClass('hide');
+						rootEl.find('.selectGoodsCategory').css({'width' : 446});
+					}
+				}else{
+					if(data.level == 1 && !rootEl.find(".two").hasClass('hide')){
+						rootEl.find(".two ul li,.three ul li").remove();
+						rootEl.find(".two,.three").addClass('hide');
+						rootEl.find('.selectGoodsCategory').css({'width' : 148});
+					}else if(data.level == 2 && !rootEl.find(".three").hasClass('hide')){
+						rootEl.find(".three ul li").remove();
+						rootEl.find(".three").addClass('hide');
+						rootEl.find('.selectGoodsCategory').css({'width' : 297});
+					}
+					rootEl.find('.select-category').attr('show', 'false');
+					rootEl.find('.category-wrap').addClass('hide');
+				}
+			}
+		})
+
+		var selected = {
+			text : [],
+			id : []
+		}
+		var categoryText = '';
+		rootEl.find('.goodsCategory ul li.selected').each(function(index, el) {
+			selected.id[index] = $(this).attr('data-value');
+			selected.text[index] = $(this).find('span').text();
+			if($(this).attr('data-has-child') == 1) categoryText += $(this).find('span').text() + ' > ';
+			else categoryText += $(this).find('span').text();
+		});
+		rootEl.find('.select-category').val(categoryText).attr('data-value', selected.id.toString());
+	    e.stopPropagation();
+	})
+
+	// 点击确认
+	$('.goods-category-container .confirm-select').click(function(event) {
+		rootEl = $(this).parents('.goods-category-container');
+		var selected = {
+			text : [],
+			id : []
+		}
+		var categoryText = '';
+		rootEl.find('.goodsCategory ul li.selected').each(function(index, el) {
+			selected.id[index] = $(this).attr('data-value');
+			selected.text[index] = $(this).find('span').text();
+			if($(this).attr('data-has-child') == 1) categoryText += $(this).find('span').text() + ' > ';
+			else categoryText += $(this).find('span').text();
+		});
+		rootEl.find('.select-category').val(categoryText).attr('data-value', selected.id.toString());
+		rootEl.find('.select-category').attr('show', 'false');
+		rootEl.find('.category-wrap').addClass('hide');
+	});
+})
+
+</script>

@@ -1,0 +1,149 @@
+{extend name="$base" /}
+{block name="resources"}
+<script type="text/javascript" charset="utf-8" src="ADMIN_JS/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="ADMIN_JS/ueditor/ueditor.all.common.js"></script>
+<style>
+#editor{width: 100%;}
+</style>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt><span class="required">*</span>专题标题：</dt>
+		<dd>
+			<input id="title" class="input-common long" type="text" value="{$info.title}"/>
+			<span class="error">请输入专题标题</span>
+		</dd>
+	</dl>
+	<dl>
+		<dt>专题封面：</dt>
+		<dd>
+			<div class="upload-btn-common">
+				<div>
+					<input class="input-file" name="file_upload" id="uploadLogo" type="file" onchange="imgUpload(this);" title="上传">
+					<input type="hidden" id="logo" value="{$info.image}">
+				</div>
+				
+				<input type="text" id="text_logo" class="input-common" readonly="readonly" value="{$info.image}">
+				<em>上传</em>
+				<img id="preview_logo" src="__STATIC__/blue/img/upload-common-select.png" data-src="{:__IMG($info.image)}" data-html="true" data-container="body" data-placement="top" data-trigger="manual" data-original-title="" title="">
+			</div>
+			<p class="hint">
+				建议使用<i class="important-note">宽1200</i>像素-<i class="important-note">高300</i>像素内的<i class="important-note">GIF</i>或<i class="important-note">PNG</i>透明图片
+			</p>
+			<p class="error">请上传图片</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>专题内容：</dt>
+		<dd>
+			<script id="editor" type="text/plain">{$info.content}</script>
+		</dd>
+	</dl>
+	<dl>
+		<dt>保存类型：</dt>
+		<dd>
+			<label  class="radio inline normal">
+				<i class="radio-common {if condition="$info['status'] eq 0"}selected{/if}"><input type="radio" value="0" name="status" {if condition="$info['status'] eq 0"}checked{/if}/></i>
+				<span>存为草稿</span>
+			</label>
+			<label  class="radio inline normal">
+				<i class="radio-common {if condition="$info['status'] eq 1"}selected{/if}"><input type="radio" value="1" name="status"  {if condition="$info['status'] eq 1"}checked{/if}/></i>
+				<span>正式发布</span>
+			</label>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="save()" >保存</button>
+			<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);">返回</button>
+		</dd>
+	</dl>
+</div>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script>
+function validation(){
+	var title=$("#title");//专题标题
+	if(title.val() == ""){
+		title.next().css("display","inline-block");
+		title.focus();
+		return false;
+	}
+	return true;
+}
+
+var ue = UE.getEditor('editor', {"initialFrameHeight" : 450});
+$(function(){
+	UE.getEditor('editor').addListener( 'ready', function() {
+		if($("#content").val()){
+			UE.getEditor('editor').setContent($("#content").val());
+		}
+	} );
+});
+
+var flag = false;//防止重复提交
+function save(){
+	
+	var status = $("input[name='status']:checked").val();
+	var topic_id={$info.topic_id};
+	var title = $("#title").val();
+	var image = $("#logo").val();
+	var content = UE.getEditor('editor').getContent();
+	
+	if(!validation()){
+		return;
+	}
+	if(flag){
+		return;
+	}
+	flag = true;
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/cms/updatetopic')}",
+		data:{
+			'topic_id':topic_id,
+			'title':title,
+			'image':image,
+			'content':content,
+			'status':status
+			},
+		success:function(data){
+			if (data["code"] > 0) {
+				showTip(data["message"],'success');
+				location.href=__URL("ADMIN_MAIN/cms/topiclist");
+			}else{
+				showTip(data["message"],'error');
+				flag = false;
+			}
+		}
+	});
+}
+
+/**
+ *图片上传
+ */
+ function imgUpload(event) {
+	var fileid = $(event).attr("id");
+	var id = $(event).next().attr("id");
+	var data = { 'file_path' : "cms" };
+	uploadFile({
+		url: __URL(ADMINMAIN + '/cms/uploadimage'),
+		fileId: fileid,
+		data : data,
+		callBack: function (res) {
+			if(res.code){
+				$("#" + id).val(res.data.path);
+				$("#text_" + id).val(res.data.path);
+				$("#preview_"+ id).attr("data-src",__IMG(res.data.path));
+				showTip(res.message,"success");
+			}else{
+				showTip(res.message,"error");
+			}
+		}
+	});
+}
+</script>
+{/block}

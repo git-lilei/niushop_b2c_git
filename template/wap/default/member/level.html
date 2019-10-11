@@ -1,0 +1,171 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/member_level.css">
+{/block}
+{block name="main"}
+{php}
+// 会员等级
+$member_level_list = api('System.Member.memberLevelQuery');
+$member_level_list = $member_level_list['data']['data'];
+// 会员账户信息
+$member_account = api("System.Member.memberAccount");
+$member_account = $member_account['data'];
+// 会员等级配置
+$level_config = api('System.Config.memberLevelConfig');
+$level_config = $level_config['data']; // 1按积分 2按消费额 3按购买次数
+// 会员信息
+$member_info = api('System.Member.memberInfo');
+$member_info = $member_info['data'];
+if(!empty($member_level_list)){
+	foreach($member_level_list as $key => $item){
+		if($item['level_id'] == $member_info['member_level']){
+			$member_info['level_info'] = $item;
+			if(!empty($member_level_list[$key + 1])) $member_info['next_level_info'] = $member_level_list[$key + 1];
+		}		
+	}
+}
+if(!empty($member_info['next_level_info'])){
+	if ($level_config['type'] == 1) {
+		$member_info['next_level_info']['need'] = $member_info['next_level_info']['min_integral'] - $member_account['member_sum_point'];
+		$member_info['next_level_info']['need'] = $member_info['next_level_info']['need'] < 0 ? 0 : $member_info['next_level_info']['need'];
+		$member_info['next_level_info']['desc']	= '已有'.round($member_account['member_sum_point']).'积分，升级还需'.round($member_info['next_level_info']['need']).'积分';
+		$member_info['next_level_info']['ratio'] = round($member_account['member_sum_point'] / $member_info['next_level_info']['min_integral'], 2) * 100;
+		$member_info['next_level_info']['ratio'] = $member_info['next_level_info']['ratio'] > 100 ? 100 : $member_info['next_level_info']['ratio'];
+	} elseif($level_config['type'] == 2) {
+		$member_info['next_level_info']['need'] = $member_info['next_level_info']['quota'] - $member_account['member_cunsum'];
+		$member_info['next_level_info']['need'] = $member_info['next_level_info']['need'] < 0 ? 0 : $member_info['next_level_info']['need'];
+		$member_info['next_level_info']['desc']	= '已消费'.$member_account['member_cunsum'].'元，升级还需'.$member_info['next_level_info']['need'].'元';
+		$member_info['next_level_info']['ratio'] = round($member_account['member_cunsum'] / $member_info['next_level_info']['quota'], 2) * 100;
+		$member_info['next_level_info']['ratio'] = $member_info['next_level_info']['ratio'] > 100 ? 100 : $member_info['next_level_info']['ratio'];
+	} elseif($level_config['type'] == 3) {
+		$member_info['next_level_info']['need'] = $member_info['next_level_info']['order_num'] - $member_account['order_num'];
+		$member_info['next_level_info']['need'] = $member_info['next_level_info']['need'] < 0 ? 0 : $member_info['next_level_info']['need'];
+		$member_info['next_level_info']['desc']	= '已购买'.$member_account['order_num'].'次，升级还需购买'.$member_info['next_level_info']['need'].'次';
+		$member_info['next_level_info']['ratio'] = round($member_account['order_num'] / $member_info['next_level_info']['order_num'], 2) * 100;
+		$member_info['next_level_info']['ratio'] = $member_info['next_level_info']['ratio'] > 100 ? 100 : $member_info['next_level_info']['ratio'];
+	}
+}
+{/php}
+
+<div class="member-level">
+	<div class="member-info-container">
+		<div class="member-info">
+			<div class="member-face">
+				<div>
+					{if condition="$member_info['user_info']['user_headimg'] eq ''"}
+						<img src="{:__IMG($default_headimg)}" />
+						{else/}
+						<img src="{:__IMG($member_info['user_info']['user_headimg'])}"/>
+					{/if}
+				</div>
+			</div>
+			<div class="info">
+				<p class="nick-name">{$member_info['user_info']['nick_name']}</p>
+				{notempty name="$member_info['level_info']"}
+				<div class="level-name">
+					<span>{$member_info['level_info']['level_name']}</span>
+				</div>
+				{/notempty}
+				{notempty name="$member_info['next_level_info']"}
+					<div class="upgrade-progress"><span style="width: {$member_info['next_level_info']['ratio']}%"></span></div>
+					<div class="upgrade-desc">{$member_info['next_level_info']['desc']}</div>
+				{else/}
+					<div class="upgrade-progress"><span style="width: 100%;"></span></div>
+					<div class="upgrade-desc">您已经是最高级别的会员了！</div>
+				{/notempty}
+			</div>
+		</div>
+		<div class="level-equity">
+			<div class="equity-top">
+				<img src="WAP_IMG/member/member_level_star.png" alt="">
+				<p class="title">升级会员，享专属权益</p>
+			</div>
+			<ul class="clearfix">
+				<li>
+					<img src="WAP_IMG/member/equity-bg.png" alt="">
+					<div>
+						<i class="icon icon-label"></i>
+						<p class="title">专属标签</p>
+						<p class="desc">标签达人</p>
+					</div>
+				</li>
+				<li>
+					<img src="WAP_IMG/member/equity-bg.png" alt="">
+					<div>
+						<i class="icon icon-discount"></i>
+						<p class="title">专享折扣</p>
+						{if !empty($member_info['level_info']) && $member_info['level_info']['goods_discount'] < 1}
+							<p class="desc">专享<b class="ns-text-color">{$member_info['level_info']['goods_discount'] * 10}</b>折</p>
+						{/if}
+					</div>
+				</li>
+				<li>
+					<img src="WAP_IMG/member/equity-bg.png" alt="">
+					<div>
+						<i class="icon icon-service"></i>
+						<p class="title">优质服务</p>
+						<p class="desc">360度全方位</p>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div class="member-info-bottom"><img src="WAP_IMG/member/member_level_bottom.png" alt=""></div>
+	</div>
+	
+	{notempty name="$member_level_list"}
+	<div class="level-lists">
+		<h3 class="title"><span>会员等级</span></h3>
+		<ul>
+			{foreach name="$member_level_list" item="vo"}
+			<li>
+				<table>
+					<colgroup>
+						<col style="width: 30%">
+						<col style="width: 70%;">
+					</colgroup>
+					<thead>
+						<tr>
+							<th colspan="2"><span>{$vo.level_name}</span></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>条件</td>
+							<td>
+								{if $level_config['type'] eq 1}
+									累计积分满{$vo.min_integral}分
+								{elseif $level_config['type'] eq 2}
+									消费额满{$vo.quota}元
+								{elseif $level_config['type'] eq 3}
+									购买量满{$vo.order_num}笔
+								{/if}
+							</td>
+						</tr>
+						<tr>
+							<td>权益</td>
+							<td>{if $vo.goods_discount < 1}购物享{$vo.goods_discount * 10}折优惠{/if}</td>
+						</tr>
+						<tr>
+							<td>升级礼包</td>
+							<td>
+								{if $vo.give_coupon > 0}升级送优惠券 {/if}
+								{if $vo.give_point > 0}升级送积分 {/if}
+								{if $vo.give_money > 0}升级送余额 {/if}
+							</td>
+						</tr>
+						{notempty name="$vo.desc"}
+						<tr>
+							<td>等级说明</td>
+							<td>{$vo.desc}</td>
+						</tr>
+						{/notempty}
+					</tbody>
+				</table>
+			</li>
+			{/foreach}
+		</ul>
+	</div>
+	{/notempty}
+</div>
+{/block}
+{block name="footer"}{/block}

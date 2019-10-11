@@ -1,0 +1,95 @@
+<style>
+.brand-pop-up .layui-layer-content{overflow: initial;}
+.brand-pop-up .layui-form{padding: 10px;}
+.brand-pop-up .selected-brand{padding: 10px;border: 1px solid #0d73f9;display: none;}
+.brand-pop-up .selected-brand h4{margin:0 0 10px;}
+.brand-pop-up .selected-brand ul{display: block;overflow: hidden;clear: both;}
+.brand-pop-up .selected-brand li{float: left;margin: 0 5px 10px 0;padding: 0 15px 0 10px;color: #636363;line-height: 28px;border: 1px solid #ccc;font-size: 12px;cursor: pointer;position: relative;}
+.brand-pop-up .selected-brand li:hover{color: #126AE4;border-color: #0059d6;background-color: #eff7fe;}
+.brand-pop-up .selected-brand li i{position: absolute;top: 0;right: 0;width: 14px;height: 14px;line-height: 14px;text-align: center;font-style: normal;background-color: #eee;z-index: 2;font-size: 12px;display: none;}
+.brand-pop-up .selected-brand li:hover i{display: block}
+</style>
+<div class="layui-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label sm">品牌</label>
+        <div class="layui-input-block">
+            <select name="select_brand" lay-filter="select_brand" lay-search>
+                <option value="">请选择</option>
+                {foreach name="$brand_list" item="vo"}
+                <option value="{$vo['brand_id']}">{$vo['brand_name']}</option>
+                {/foreach}
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item selected-brand">
+        <label class="layui-form-label">已选产品分类</label>
+        <ul></ul>
+    </div>
+
+    <div class="layui-form-item" style="margin-bottom: 0;">
+        <label class="layui-form-label sm"></label>
+        <div class="layui-input-block">
+            <input type="hidden" value="{$data}" id="hidden_brand_id">
+            <button class="layui-btn" lay-submit lay-filter="brand_save">确定</button>
+        </div>
+    </div>
+</div>
+<script>
+var selected_brand_data = {};
+layui.use('form', function() {
+    var form = layui.form;
+    form.render();
+
+    var product_category_id_arr = $("#hidden_brand_id").val().split(",");
+    for (var i=0;i<product_category_id_arr.length;i++){
+        var id = product_category_id_arr[i];
+        selected_brand_data[id] = $.trim($("select[name='select_brand'] option[value='" + id + "']").text());
+    }
+	renderSelectedBrand();
+
+    form.on('select(select_brand)', function(data){
+        if(data.value){
+            var value = $.trim($('select[name="select_brand"]').next().find('.layui-select-title input').val());
+            selected_brand_data[data.value] = value;
+            $('select[name="select_brand"]').next().find('.layui-select-title input').val(value);
+			renderSelectedBrand();
+        }
+    });
+
+    //监听提交
+    form.on('submit(brand_save)', function(data){
+        var id_arr = new Array();
+        for (d in selected_brand_data) id_arr.push(d);
+
+        if(id_arr.length>0) {
+            block.setData(id_arr.toString());
+            layer.close(block.layer_open_index);
+        }else{
+            layer.msg("请选择产品分类");
+        }
+        return false;
+    });
+
+});
+
+function renderSelectedBrand(){
+    var h = '';
+    for (d in selected_brand_data){
+        if(selected_brand_data[d]) {
+            h += '<li>';
+            h += '<span>' + selected_brand_data[d] + '</span>';
+            h += '<i data-id="' + d + '">x</i>';
+            h += '</li>';
+        }
+    }
+    if(h) $(".brand-pop-up .selected-brand ul").html(h).parent().show();
+    else $(".brand-pop-up .selected-brand").hide();
+}
+
+//删除已选品牌
+$("body").on("click",".brand-pop-up .selected-brand ul i",function () {
+    delete selected_brand_data[$(this).attr("data-id")];
+    renderSelectedBrand();
+});
+</script>

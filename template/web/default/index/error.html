@@ -1,0 +1,61 @@
+{extend name="$base" /}
+{block name="resources"}
+<style type="text/css">
+.error-container{width: 1200px;padding: 30px 0;margin: 0 auto; display: flex;}
+.error-container .error-message{width: 600px;display: inline-block;float: left;padding-left: 150px;}
+.error-container .error-message h3.title{font-size: 40px;margin-top: 100px;margin-bottom: 15px;}
+.error-container .error-message .reason p.reason-title{font-size: 17px;}
+.error-container .error-message .reason p.text{font-size: 17px;}
+.error-container .operation{margin-top: 15px;}
+.error-container .operation a{display: inline-block;width: 140px;height: 34px;text-align: center;line-height: 34px;margin-right: 5px;}
+.error-container .operation a:first-child{color: #fff !important;}
+.error-container .error-img{width: 600px;display: inline-block;float: left;}
+</style>
+{/block}
+{block name="main"}
+<div class="error-container clearfix">
+	<div class="error-message">
+		 <h3 class="title">哎呀！页面找不到了！</h3>
+		 <div class="reason">
+			 <p class="reason-title">可能原因：</p>
+			 <p class="text">网站可能正在维护或者是程序错误</p>
+		 </div>
+		 <div class="operation">
+	 		<a href="javascript:jump('home');" class="ns-bg-color">返回首页</a>
+	 		<a href="javascript:jump('back');" class="ns-bg-color-gray ns-text-color-black">返回前页</a>
+		 </div>
+	</div>
+	<div class="error-img">
+		<img src="WEB_IMG/error_img.png">
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+window.onload = function(){
+	var title = "哎呀！页面找不到了！",
+		reason = '网站可能正在维护或者是程序错误';
+
+	if(window.sessionStorage && sessionStorage.errorMsg != undefined){
+		var errorMsg = JSON.parse(sessionStorage.errorMsg);
+		if(errorMsg.title != undefined && errorMsg.title != ''){
+			title = errorMsg.title;
+		}
+		if(errorMsg.message != undefined && errorMsg.message != ''){
+			reason = errorMsg.message;
+		}
+	}
+
+	$(".error-message .title").text(title);
+	$(".error-message .reason .text").text(reason);
+};
+
+function jump(type){
+	if(window.sessionStorage){
+		sessionStorage.removeItem('errorMsg');
+	}
+	if(type == 'home') location.href = "{:__URL('SHOP_MAIN')}";
+	if(type == 'back') window.history.back(-1);
+}
+</script>
+{/block}

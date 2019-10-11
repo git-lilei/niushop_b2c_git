@@ -1,0 +1,43 @@
+.clear:after,.clear:before{content: '';display: block;clear: both;}
+.hide{display: none;}
+.align-center{text-align: center;}
+.align-left{text-align: left;}
+
+.display-type-list li{width: 200px;height: 150px;border: 1px solid #ddd;color: #000;text-align: center;float: left;margin: 0 15px 10px 0;cursor: pointer;}
+.display-type-list li img{width: 180px;height: 100px;margin-top: 10px;}
+.display-type-list li.active,.display-type-list li:hover{border: 2px solid #00A0DE;margin: -1px 14px 9px -1px;}
+.display-type-list li .tit{margin: 10px 0;line-height: 20px;font-size: 14px;}
+
+.adv-container{width: 100%;background-color: #FFF;max-width: calc(100% - 1px);box-sizing: content-box;}
+.adv-container .head,.adv-container .body{width: 100%;}
+.adv-container .head .item{background: #f5f7fa;}
+.adv-container .item-block{padding: 6px;display: inline-block;float: left;line-height: 20px;box-sizing: border-box;}
+.adv-container .head .item-block{border-top: 1px solid #e6e9f0;border-bottom: 1px solid #e6e9f0;font-size: 12px;}
+.adv-container .body .item-block{border-bottom: 1px solid #e6e9f0;font-size: 12px;}
+.adv-container .head .empty{height: 34px;}
+
+.adv-container .item .item-block:nth-child(1){width: 8%}
+.adv-container .item .item-block:nth-child(2){width: 42%}
+.adv-container .item .item-block:nth-child(3){width: 42%}
+.adv-container .item .item-block:nth-child(4){width: 8%}
+.adv-container .item .item-block:first-child{border-left: 1px solid #e6e9f0}
+.adv-container .item .item-block:last-child{border-right: 1px solid #e6e9f0}
+
+.adv-container.slides .item .item-block:nth-child(2){width: 38%}
+.adv-container.slides .item .item-block:nth-child(3){width: 38%}
+.adv-container.slides .item .item-block:nth-child(4){width: 8%}
+.adv-container.slides .item .item-block:nth-child(5){width: 8%}
+
+.adv-container.slides .foot .item .item-block:nth-child(1){width: 100%;border-width: 0 1px 1px 1px; border-style:solid;border-color:#e6e9f0;}
+
+
+.upload-btn-common em{line-height: 30px;}
+.url{position: relative;}
+.url em{cursor: pointer; font-style: normal;position: absolute;padding: 0 10px;z-index: 1;left: 256px;background-color: #f5f7fa;color: #5e6166;line-height: 30px;height: 30px;}
+
+@media screen and (max-width:1400px) {
+	.adv-container .item-block .input-common{width: 200px!important}
+	.upload-btn-common em{left: 200px;}
+	.upload-btn-common>div{margin-left: 200px;}
+	.url em{left: 206px;}
+}

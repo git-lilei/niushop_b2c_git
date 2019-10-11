@@ -1,0 +1,120 @@
+{extend name="$base" /}
+{block name="resources"}{/block}
+{block name="main"}
+<div class="options-btn">
+	<button class="btn-common-delete" onclick="batchDelete()">批量删除</button>
+	<button class="btn-common" onclick="location.href='{:__URL('ADMIN_MAIN/config/editAppUpgrade')}';">添加App版本</button>
+</div>
+<table class="table-class">
+	<colgroup>
+		<col style="width: 5%">
+		<col style="width: 8%;">
+		<col style="width: 7%;">
+		<col style="width: 15%;">
+		<col style="width: 30%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 15%;">
+	</colgroup>
+	<thead>
+		<tr align="center">
+			<th><i class="checkbox-common" ><input type="checkbox" ></i>
+			</th>
+			<th align="left">App类型</th>
+			<th align="left">版本号</th>
+			<th align="left">标题</th>
+			<th align="left">更新日志</th>
+			<th align="left">App文件地址</th>
+			<th>创建时间</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+
+//分页数据
+function LoadingInfo(page_index) {
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/config/appUpgradeList')}",
+		data : { "page_index" : page_index, "page_size" : $("#showNumber").val() },
+		success : function(data) {
+			if (data["data"].length > 0) {
+				$(".table-class tbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					html += '<tr align="center">';
+						html += '<td><i class="checkbox-common"><input name="sub" type="checkbox" value="'+ data['data'][i]['id']+'" ></i></td>';
+						html += '<td align="left">' + data["data"][i]["app_type"]+ '</td>';
+						html += '<td align="left">' + data["data"][i]["version_number"]+ '</td>';
+						html += '<td align="left">' + data["data"][i]["title"]+ '</td>';
+						html += '<td align="left">'+ data["data"][i]["update_log"] +'</td>';
+						html += '<td align="left"><a href="'+ __IMG(data["data"][i]["download_address"]) +'">'+ __IMG(data["data"][i]["download_address"]) +'</a></td>';
+						html += '<td>'+ timeStampTurnTime(data['data'][i]['create_time']) +'</td>';
+						html += '<td><a href="'+__URL('ADMIN_MAIN/config/editAppUpgrade?id='+ data['data'][i]['id'])+'">修改</a><a style="cursor: pointer;" onclick="deleteLink('+data['data'][i]['id']+')">删除</a></td> ';
+					html += '</tr>';
+					$(".table-class tbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="7">暂无App版本</td></tr>';
+				$(".table-class tbody").html(html);
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+function batchDelete() {
+	var id= new Array();
+	$(".table-class tbody input[type='checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			id.push($(this).val());
+		}
+	});
+	if(id.length ==0){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#0059d6,#fff": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:"请选择需要操作的记录",
+			title:"消息提醒",
+		});
+		return false;
+	}
+	deleteLink(id);
+}
+
+function deleteLink(id){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+					$.ajax({
+					type:"post",
+					url:"{:__URL('ADMIN_MAIN/config/deleteAppUpgrade')}",
+					data:{ 'id':id.toString() },
+					success:function (data) {
+						if(data['code'] > 0){
+							showTip(data['message'],'success');
+							LoadingInfo(getCurrentIndex(id,'.table-class tbody'));
+						}else{
+							showTip(data['message'],'error');
+						}
+					}
+				});
+			},
+			"取消,#f5f5f5,#666": function() {
+				$(this).dialog('close');
+			}
+		},
+		contentText:"确定删除？",
+	});
+}
+</script>
+{/block}

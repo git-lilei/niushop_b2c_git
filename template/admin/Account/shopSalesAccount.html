@@ -1,0 +1,171 @@
+{extend name="$base" /}
+{block name="resources"}
+<style type="text/css">
+.basic_data_ons{
+	width: 100%;
+    height: 120px;
+    box-sizing: border-box;
+    border: 1px solid #e6e9f0;
+}
+.basic_data_ons .basic_data_ons_son{
+	width: 100%;
+	height: 30px;
+	line-height: 30px;
+	font-size: 13px;
+	border-bottom: 1px solid  #e6e9f0;
+	text-indent: 10px;
+	background: #f5f7fa;
+}
+.basic_data_ons .basic_data_ons_son_list{
+	width: 100%;
+	height: 84%;
+}
+.basic_data_ons .basic_data_ons_son_list li{
+	width: 25%;
+	height: 100%;
+	float: left;
+}
+.basic_data_ons .basic_data_ons_son_list li .basic_data_ons_son_list_nvs{
+    width:80%;
+	height:80%;
+	margin:0 auto;
+	text-align:center;
+}
+.basic_data_ons .basic_data_ons_son_list li .basic_data_ons_son_list_nvs p{
+    line-height: 30px;
+    font-size: 13px;
+    color: #5e6166;
+    margin-top: 10px;
+    margin-bottom: 0;
+}
+.basic_data_ons .basic_data_ons_son_list li .basic_data_ons_son_list_nvs cite{
+    line-height: 39px;
+    font-size: 20px;
+    color: #00A0DE;
+}
+.mg-top-10{
+	margin-top: 10px;
+}
+.today-survey{
+	height: 130px;
+}
+
+.today-survey .survey-data ul{
+	height: 100%;
+	width: 100%;
+}
+.today-survey .survey-data ul li{
+  	height: 100%;
+    width: 20%;
+    float: left;
+    padding-top: 20px;
+	text-align: center;
+    box-sizing: border-box;
+}
+.today-survey .survey-data ul li h4.item-name{
+    font-weight: normal;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 13px;
+}
+.today-survey .survey-data ul li .item-value{
+    color: #5e6166;
+    font-size: 20px;
+}
+.today-survey .survey-data ul li .trend{
+	font-size: 12px;
+	margin-left: 5px;
+	color: rgba(179, 178, 178, 0.89);
+}
+.today-survey .survey-data ul li .trend em{
+	font-style: normal;
+}
+.today-survey .survey-data ul li .trend em.rise{
+	color: #ff4444;
+}
+.today-survey .survey-data ul li .trend em.rise:after{
+	content: '';
+	width: 15px;
+	height: 12px;
+	display: inline-block;
+	background: url('ADMIN_IMG/shangsheng.png') no-repeat center;
+	background-size: auto 100%; 
+}
+.today-survey .survey-data ul li .trend em.decline{
+	color: #2fae44;
+}
+.today-survey .survey-data ul li .trend em.decline:after{
+	content: '';
+	width: 15px;
+	height: 12px;
+	display: inline-block;
+	background: url('ADMIN_IMG/xiajiang.png') no-repeat center;
+	background-size: auto 100%; 
+    position: relative;
+    top: 1px;
+}
+</style>
+{/block}
+{block name="main"}
+<div class="basic_data_ons">
+	<div class="basic_data_ons_son">数据概况</div>
+	<ul class="basic_data_ons_son_list">
+        <li>
+            <div class="basic_data_ons_son_list_nvs">
+                <p>订单总数</p>
+				<cite>{$base_data.order_num}</cite>
+			</div>
+		</li>
+		<li>
+			<div class="basic_data_ons_son_list_nvs">
+                <p>商品总数</p>
+				<cite>{$base_data.goods_num}</cite>
+			</div>
+		</li>
+		<li>
+			<div class="basic_data_ons_son_list_nvs">
+                <p>会员总数</p>
+				<cite>{$base_data.member_num}</cite>
+			</div>
+		</li>
+		<li>
+			<div class="basic_data_ons_son_list_nvs">
+                <p>粉丝数</p>
+				<cite>{$base_data.fans_num}</cite>
+			</div>
+		</li>
+	</ul>
+</div>
+<div class="basic_data_ons mg-top-10 today-survey">
+	<div class="basic_data_ons_son">今日概况</div>
+	<div class="survey-data">
+		<ul>
+			<li>
+				<h4 class="item-name">下单订单数</h4>
+				<span class="item-value">{$base_data.today_data.order_num.value}</span>
+				<span class="trend">较前一日 <em class="{$base_data.today_data.order_num.trend}">{$base_data.today_data.order_num.ratio}%</em></span>
+			</li>
+			<li>
+				<h4 class="item-name">支付订单数</h4>
+				<span class="item-value">{$base_data.today_data.pay_num.value}</span>
+				<span class="trend">较前一日 <em class="{$base_data.today_data.pay_num.trend}">{$base_data.today_data.pay_num.ratio}%</em></span>
+			</li>
+			<li>
+				<h4 class="item-name">支付金额</h4>
+				<span class="item-value">{$base_data.today_data.pay_money.value}</span>
+				<span class="trend">较前一日 <em class="{$base_data.today_data.pay_money.trend}">{$base_data.today_data.pay_money.ratio}%</em></span>
+			</li>
+			<li>
+				<h4 class="item-name">新增会员数</h4>
+				<span class="item-value">{$base_data.today_data.newadd_member_num.value}</span>
+				<span class="trend">较前一日 <em class="{$base_data.today_data.newadd_member_num.trend}">{$base_data.today_data.newadd_member_num.ratio}%</em></span>
+			</li>
+			<li>
+				<h4 class="item-name">新增粉丝数</h4>
+				<span class="item-value">{$base_data.today_data.newadd_fans_num.value}</span>
+				<span class="trend">较前一日 <em class="{$base_data.today_data.newadd_fans_num.trend}">{$base_data.today_data.newadd_fans_num.ratio}%</em></span>
+			</li>
+		</ul>
+	</div>
+</div>
+{/block}

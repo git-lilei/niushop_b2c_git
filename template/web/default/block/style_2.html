@@ -1,0 +1,142 @@
+<link rel="stylesheet" href="__STATIC__/plugin/swiper/swiper.min.css">
+<script src="__STATIC__/plugin/swiper/swiper.min.js"></script>
+<link rel="stylesheet" href="{$pc_path}/style_2.css"/>
+<div class="floor-two floor-item">
+    <nav class="clearfix floor-top">
+        <div class="pull-left floor-title" data-block-type="text" data-block-name="left_title">
+            <h3 floor-block-name="text">{if condition="$data['text']['left_title']['value']"}{$data['text']['left_title']['value']}{else/}手机{/if}</h3>
+        </div>
+        <div class="pull-right floor-nav">
+            <div data-block-type="product_category" data-block-name="top_category">
+                <ul class="floor-nav-list  pull-left">
+                    {if condition="$data['product_category']['top_category']"}
+                    {foreach name="$data['product_category']['top_category']" item="vo"}    
+                    <li><a class="ns-text-color-gray" href="{:__URL('SHOP_MAIN/goods/lists?category_id='.$vo['category_id'])}">{$vo['category_name']}</a></li>
+                    {/foreach}
+                    {/if}
+                </ul>
+            </div>
+            <div class="floor-nav-right">
+                <a class="pull-right nav-more-btn" href="{:__URL("SHOP_MAIN/goods/lists")}">更多<i class="icon icon-angle-right"></i></a>
+            </div>
+        </div>
+    </nav>
+    <article class="clearfix">
+        <div class="template-adsense pull-left">
+            <a class="brand-big" data-block-type="adv" data-width="240" data-height="385" data-block-name="left_adv" target="_blank" href="{if condition="$data['adv']['left_adv']['link']!=''"}{:__URL($data['adv']['left_adv']['link'])}{else/}javascript:;{/if}">
+                {if condition="$data['adv']['left_adv']['img_src'] != ''"}
+                    <img src="{:__img($data['adv']['left_adv']['img_src'])}">
+                {else/}
+                    <div class="img-skeletonsc-screen ns-bg-color-gray skeleton-reen"></div>
+                {/if}
+            </a>
+            <a class="brand-samll" data-block-type="adv" data-width="240" data-height="140" data-block-name="left_adv_adsense" target="_blank" href="{if condition="$data['adv']['left_adv']['link']!=''"}{:__URL($data['adv']['left_adv']['link'])}{else/}javascript:;{/if}">
+                {if condition="$data['adv']['left_adv_adsense']['img_src'] != ''"}
+                    <img src="{:__img($data['adv']['left_adv_adsense']['img_src'])}">
+                {else/}
+                    <div class="img-skeletonsc-screen ns-bg-color-gray skeleton-reen"></div>
+                {/if}
+            </a>
+        </div>
+        <div class="template-goods pull-right">
+            <ul class="pull-left floor-goods-list" data-block-type="product" data-block-name="middle">
+                {if condition="$data['product']['middle']"}
+                {foreach name="$data['product']['middle']" item="product"}
+                <li class="ns-border-color-gray">
+                    <a href="{:__URL('SHOP_MAIN/goods/detail?goods_id='.$product['goods_id'])}" target="_blank">
+                        <div class="goods-pic">
+                            {if condition="$product['pic_cover_small'] != '' "}
+                            <img src="{:__img($product['pic_cover_small'])}">
+                            {else/}
+                            <img src="WEB_IMG/discount_product_default.png">
+                            {/if}
+                        </div>
+                        <div class="googs-title ellipsis-1">{$product.goods_name}</div>
+                        {if condition="$product.point_exchange_type == 3"}
+                      	    <div class="goods-price ns-text-color ellipsis-1">{$product.point_exchange}积分</div>
+                        {else/}
+                        	<div class="goods-price ns-text-color ellipsis-1">￥{$product.promotion_price}</div>
+                        {/if}
+                    </a>
+                </li>
+                {/foreach}
+                {else/}
+                {php}for($i=0;$i<8;$i++){ {/php}
+                <li>
+                    <a href="javascript:;">
+                        <div class="goods-pic back-floor-recommend-pic">
+                            <img src="">
+                        </div>
+                        <div class="googs-title ellipsis-1 back-googs-title"></div>
+                        <div class="goods-price ellipsis-1 back-googs-title"></div>
+                    </a>
+                </li>
+                {php} }; {/php}
+                {/if}
+            </ul>
+            <div class="pull-left floor-recommend">
+                <div class="floor-recommend-title ns-border-color-gray">热门推荐</div>
+                <div class="floor-recommend-wrap swiper-container" data-block-type="product" data-block-name="side_wheel">
+                    <div class="floor-recommend-list swiper-wrapper">
+                        {if condition="$data['product']['side_wheel']"}
+                        {foreach name="$data['product']['side_wheel']" item="product"}
+                        <a href="{:__URL('SHOP_MAIN/goods/detail?goods_id='.$product['goods_id'])}" class="floor-recommend-item ns-border-color-gray swiper-slide" style="height: 67px;">
+                            <div class="floor-recommend-pic">
+                                {if condition="$product['pic_cover_small'] != '' "}
+                                <img src="{:__img($product['pic_cover_small'])}">
+                                {else/}
+                                <img src="WEB_IMG/discount_product_default.png">
+                                {/if}
+                            </div>
+                            <div class="floor-recommend-cont">
+                                <div class="recommend-goods-name ellipsis-1">{$product.goods_name}</div>
+                                <div class="recommend-goods-des ns-text-color-gray ellipsis-1"></div>
+                                <div class="recommend-goods-price ns-text-color recommend-goods-des">￥{$product.promotion_price}</div>
+                            </div>
+                        </a>
+                        {/foreach}
+                        {else/}
+                        {php}for($i=0;$i<8;$i++){ {/php}
+                        <a href="JavaScript:;" class="floor-recommend-item swiper-slide" style="height: 108px;">
+                            <div class="floor-recommend-pic back-floor-recommend-pic">
+                                <img>
+                            </div>
+                            <div class="floor-recommend-cont">
+                                <div class="recommend-goods-name ellipsis-1 back-googs-title"></div>
+                                <div class="recommend-goods-des ellipsis-1"></div>
+                                <div class="recommend-goods-price  recommend-goods-des back-googs-title"></div>
+                            </div>
+                        </a>
+                        {php} }; {/php}
+                        {/if}
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
+                <div class="floor-nav-right">
+                    <a class="recommend-more-btn" href="{:__URL("SHOP_MAIN/goods/lists")}">更多<i class="icon icon-angle-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </article>
+</div>
+<input type="hidden" name="floor_name" value="{$name}">
+<script type='text/javascript'>
+var mySwiper = new Swiper ('.swiper-container', {
+    direction: 'vertical',
+    slidesPerView : 4,
+    loop : true,
+    autoplay:true,
+});
+
+$(".swiper-wrapper").mouseover(function(){
+    mySwiper.autoplay.stop();
+}).mouseout(function(){
+    mySwiper.autoplay.start();
+});
+
+$(".swiper-slide").mouseover(function(){
+    $(this).css("background-color","#f5f5f5");
+}).mouseout(function(){
+    $(this).css("background-color","#fff");
+});
+</script>

@@ -1,0 +1,8 @@
+.goods-category .item{width: 100%; margin-bottom: 15px;}
+.goods-category .item .first-category{height: 40px; padding-left: 16px; line-height: 40px; font-size: 16px; display: block;}
+.goods-category .item dl{border-bottom: 1px solid; margin-top: 16px; border-top: 1px solid; background: #f2f2f2; overflow: hidden;}
+.goods-category .item dt{float: left; width: 175px; min-height: 20px; padding: 10px 25px 9px 0; text-align: right; font-weight: normal;}
+.goods-category .item dd{float: left; width: 1025px; padding: 10px 10px 10px 0; min-height: 20px; background: #fff;}
+.goods-category .item dd a{float: left; padding-left: 20px; white-space: nowrap;}
+.no-category{text-align: center;}
+.no-category p{margin-top: 10px;}

@@ -1,0 +1,797 @@
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/anticon.css">
+<style type="text/css">
+.table-class tr th{width: 60px !important;}
+.sku_spec_list{}
+.sku_spec_list .spec-item{margin: 0px 0px 10px;border: 1px solid;border-style: dashed;border-color:transparent;}
+.sku_spec_list .spec-item:hover{border-color: rgba(153, 153, 153, 0.54);}
+.sku_spec_list .spec-head{background: #f5f7fa;overflow: hidden; line-height: 40px;}
+.spec-head>div{float: left;}
+.spec-head>div.spec-1-l{width: 20px;text-align: center;background: #E0E6F2;cursor: all-scroll;}
+.spec-head>div.spec-1-c>div{float: left; padding: 0px 0px 0px 8px;}
+.spec-head>a.spec-1-r{float: right;margin-right: 10px;}
+.spec-1-c>div.c-input-text{position: relative;}
+.spec-1-c>div.c-input-text input{border-radius: 0px;border-color: #eceef1;box-shadow: none;font-size: 12px;}
+.spec-1-c>div.c-input-text .bg-primary{
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 18px;
+    line-height: 15px;
+    cursor: pointer;
+    color: #999;
+}
+
+.spec-content{
+	    display: block;
+    overflow: hidden;
+    padding: 10px 0px 0px 84px;
+}
+.spec-content .spec-value-item{
+    position: relative;
+    display: inline-block;
+    float: left;
+    margin: 0px 10px 5px 0px;
+    padding: 0px 0px;
+    min-width: 28px;
+    cursor: all-scroll;
+}
+.spec-content .spec-value-item .value-item-affiliate{
+    float: left;
+    margin-right: 5px;
+    height: 30px;
+    width: 30px;
+	cursor: pointer;
+}
+.spec-content .spec-value-item .value-item-affiliate span{
+    background: red;
+    height: 16px;
+    width: 16px;
+	display: block;
+}
+.spec-content .spec-value-item .value-item-affiliate .affiliate_img{
+	left: 0px;
+    margin-left: 0px;
+    border: 1px solid #eceef1;
+    padding: 6px 6px;
+    box-sizing: border-box;
+    display: block;
+    text-align: center;
+    width: 100%;
+}
+.spec-content .spec-value-item .value-item-affiliate img{
+	height: 16px;
+    margin-left:0px;
+	display: block;
+}
+.spec-content .spec-value-item .input_div{
+    float: left;
+    position: relative;
+}
+.spec-content .spec-value-item .input_div span{
+    color: transparent;
+    display: inline-block;
+    min-width: 30px;
+	padding: 0px 8px;
+}
+.spec-content .spec-value-item .input_div input{
+	position: absolute;
+    right: 0px;
+    top: 0px;
+}
+.spec-content .spec-value-item:hover i{display: inline-block;}
+.spec-content .spec-value-item input{
+    width: 100%;
+    border-radius: 0px;
+    border-color: #eceef1;
+    box-shadow: none;
+    color: #5e6166;
+    box-sizing: border-box;
+    height: 30px;
+    font-size: 12px;
+    left: 0px;
+	text-align: center;
+	cursor: all-scroll;
+}
+.spec-content .spec-value-item>i{
+	display: none;
+ position: absolute;
+   right: -8px;
+    top: -8px;
+    line-height: 16px;
+    cursor: pointer;
+    color: #fff;
+    border-radius: 15px;
+    background: rgba(0, 0, 0, 0.3);
+    width: 16px;
+    text-align: center;
+    font-style: inherit;
+    font-size: 12px;
+}
+.spec-value-add{margin-left: 84px;}
+.layui-layer-prompt textarea.layui-layer-input{box-shadow: none;}
+.hide-spec-value-width{display: inline-block; color: transparent;}
+.table-class tr th{border: 1px solid #E1E6F0;padding: 0px;}
+
+.table-class tr th:nth-last-child(1),.table-class tr th:nth-last-child(2),.table-class tr th:nth-last-child(3),.table-class tr th:nth-last-child(4),.table-class tr th:nth-last-child(5),.table-class tr th:nth-last-child(6),.table-class tr th:nth-last-child(7){
+	width:10%;
+	max-width: 100px;
+}
+
+.table-class tr td .input-common.middle{
+	text-align:center;
+	width:62% !important;
+	min-width: 35px;
+}
+.table-class tr td{padding: 3px 0px;}
+
+/* sku图片 */
+.goods-info-img-upload {
+    zoom: 1;
+    font-size: 12px;
+    overflow: hidden;
+    display: block;
+    float: left;
+	padding-left: 5px;
+}
+.ant-upload-select-picture-card {
+    border: 1px dashed #d9d9d9;
+    width: 40px;
+    height: 40px;
+    border-radius: 2px;
+    background-color: #fbfbfb;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+    display: -webkit-box;
+    margin: 2px 2px 2px 0px;
+	float: left;
+}
+.ant-upload.ant-upload-select-picture-card > .ant-upload {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 7px 0;
+    box-sizing: border-box;
+}
+.anticon {
+    display: inline-block;
+    font-style: normal;
+    vertical-align: baseline;
+    text-align: center;
+    text-transform: none;
+    text-rendering: auto;
+    line-height: 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.anticon-plus:before {
+    content: "+";
+    font-size: 22px;
+    color: #999;
+}
+.anticon:before {
+    display: block;
+    font-family: "anticon" !important;
+}
+
+.goods-info-img-upload .ant-upload-list-item {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    margin: 2px 2px 2px 0;
+    border-radius: 2px;
+    border: 1px solid #d9d9d9;
+    overflow: hidden;
+    position: relative;
+    transition: background-color 0.3s ease;
+    float: left;
+}
+
+.goods-info-img-upload .ant-upload-list-item .ant-upload-list-item-thumbnail {
+    line-height: 46px;
+    display: block;
+    height: 100%;
+    text-align: center;
+    position: static;
+    top: 8px;
+    left: 8px;
+}
+
+.goods-info-img-upload .ant-upload-list-item:before {
+    content: ' ';
+    position: absolute;
+    z-index: 1;
+    background-color: #808080;
+    transition: all 0.3s ease;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.goods-info-img-upload .ant-upload-list-item:hover:before {
+    opacity: .8;
+}
+
+.goods-info-img-upload .ant-upload-list-item:hover .anticon-eye-o,
+.goods-info-img-upload .ant-upload-list-item:hover .anticon-delete {
+    opacity: 1;
+}
+
+.goods-info-img-upload .ant-upload-list-item:hover .anticon-eye-o:hover,
+.goods-info-img-upload .ant-upload-list-item:hover .anticon-delete:hover {
+    color: #fff;
+}
+
+.goods-info-img-upload .ant-upload-list-item .ant-upload-list-item-thumbnail img {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    display: inline-block;
+    vertical-align: middle;
+    overflow: hidden;
+    border-radius: 2px;
+}
+</style>
+<dl class="sku_type_2">
+	<dt></dt>
+	<dd>
+		<div class="sku_spec_list" >
+		</div>
+		<button class="btn-common" name = "add_spec_item">添加规格</button>
+	</dd>
+</dl>
+<dl class="sku_type_2" >
+	<dt><div class="hide-spec-value-width"></div></dt>
+	<dd>
+		<div class="block-goods-sku" style="display: block;">
+			<div class="volume-set-sku-info">
+				<span>批量设置：</span>
+				<a href="javascript:;" data-tag="sku-price">销售价</a>
+				<a href="javascript:;" data-tag="market-price">市场价</a>
+				<a href="javascript:;" data-tag="cost-price">成本价</a>
+				<input type="text" class="input-common middle">
+				<button class="btn-common">确定</button>
+				<button class="btn-common-cancle">取消</button>
+			</div>
+			<div class="goods-sku-list">
+				<table class="table-class">
+					<thead></thead>
+					<tbody>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</dd>
+</dl>
+
+<script type="text/javascript">
+var h, l, t_obj, obj, l_obj;
+
+var goods_spec_format = StringTransference('{$goods_info.goods_spec_format}', {" " : "&nbsp;"});
+var sku_list = eval('{$goods_info.sku_list}');//SKU数据
+
+var spec_item_arr = new Array();
+let sku_spec_obj = $('.sku_spec_list');
+spec_item = function(){
+	
+	l = $('.spec-item').length;
+	var spec_id, spec_name ='', spec_show_type = 1;
+	if(spec_item_arr.length == 0){
+		spec_id = -(($(".js-sku-list-popup li").length-1) + Math.floor(new Date().getSeconds()) + Math.floor(new Date().getMilliseconds()));
+	}else{
+		spec_id = spec_item_arr['spec_id'];
+		spec_name = spec_item_arr['spec_name'];
+		spec_show_type = spec_item_arr['spec_show_type'];
+	}
+	
+	if(l > 3){layer.msg('规格项最多为4项！');return;}
+	h = `<div class="spec-item" >
+			<div class="spec-head">
+				<div class="spec-1-l">
+					<img src="ADMIN_IMG/sku_spec_1.png" alt="" draggable="false">
+				</div>
+				<div class="spec-1-c">
+					<div class="c-title">规格项：</div>
+					<div class="c-input-text">
+						<input type="text" placeholder="请输入规格名称" name = "spec_name" spec_id = ${spec_id} value = "${spec_name}">
+						<span class="bg-primary" onclick="edit_sku_popup(this)">...</span>
+					</div><div class="c-spec-img">`;
+	h +=`		</div></div>
+				<a href="javascript:;" class ="spec-1-r" sku-data-generate onclick = "spec_del(this, 'spec-item')">删除</a>
+			</div>
+			<div class = "spec-content">`;
+		if(spec_item_arr != ''){
+			for(value_item of spec_item_arr['value']){
+				
+				h += `<div class="spec-value-item" title ="${value_item.spec_value_name}">`;
+				if(spec_show_type == 2){
+					
+					if(value_item.spec_value_data == ''){
+						h += `<div class="value-item-affiliate upload-btn-common"> <div class="affiliate_img"><img src="ADMIN_IMG/spec_value_item_affiliate.png" alt=""></div></div>`;	
+					}else{
+						h += `<div class="value-item-affiliate upload-btn-common"> <div class="affiliate_img"><img src="${__IMG(value_item.spec_value_data)}" alt="" src_path = "${value_item.spec_value_data}"></div></div>`;	
+					}
+				}else if(spec_show_type == 3){
+					h += `<div class ="value-item-affiliate"><input type="color" class="input-common-color" value="${value_item.spec_value_data }"></div>`;
+				}
+
+				h += `<div class="input_div"><span>${value_item.spec_value_name}</span><input type="text" value = "${value_item.spec_value_name}"  name="spec_value" spec_value_id = "${value_item.spec_value_id}" /></div>
+				 		<i onclick = "spec_del(this, 'spec-value-item')" sku-data-generate>×</i>
+				 	</div>`;
+			}	
+		}
+			
+ 	h +=`</div>
+			<a href="javascript:;" class="spec-value-add" onclick="spec_value_item(this)">+添加规格值</a>
+		</div>`;
+		
+	sku_spec_obj.append(h);if(l==0){spec_value_subsidiry(spec_show_type);} //加载附属值选项
+	
+};
+
+//加载附属值选项
+spec_value_subsidiry = function(spec_show_type){
+	
+	var subsidiary_arr = [];
+	obj = {};obj.value = 1;obj.name = '无';subsidiary_arr.push(obj);
+	obj = {};obj.value = 2;obj.name = '图片';subsidiary_arr.push(obj);
+	obj = {};obj.value = 3;obj.name = '颜色';subsidiary_arr.push(obj);
+	h = '';
+	for(subsidiary_item of subsidiary_arr){
+		h +=`<label class="radio inline normal spec_value_subsidiary">`;
+		
+		if(spec_show_type == subsidiary_item.value){
+			h +=`<i class="radio-common selected">
+				<input type="radio" name="spec_value_subsidiary" value="${subsidiary_item.value}" checked="checked" />
+				</i>`;
+		}else{
+			h +=`<i class="radio-common">
+				<input type="radio" name="spec_value_subsidiary" value="${subsidiary_item.value}"/>
+			</i>`;
+		}
+			
+		h +=`	<span>${subsidiary_item.name}</span>
+			</label>`;
+	}
+	$('.sku_spec_list .spec-item:gt(0) .c-spec-img').html('');
+	$('.sku_spec_list .spec-item:eq(0) .c-spec-img').html(h);
+	
+	$('.sku_spec_list .spec-item:gt(0) .value-item-affiliate').remove();
+};
+
+spec_value_item = function(e){
+
+	t_obj = $(e).parent().children('.spec-content');
+	spec_id = $(e).parent().find('[name="spec_name"]').attr('spec_id');
+	spec_name = $(e).parent().find('[name="spec_name"]').val();
+	spec_show_type = $(e).parent().find('[name="spec_value_subsidiary"]:checked').val();
+   	layer.prompt({title: '输入规格值，多个换行即可', formType: 2}, function(text, index){
+   		 
+   		  if(text != ''){
+   			  v = text.replace(/\n/g,",");
+   			  arr = v.split(',');
+   			  i = 0;
+   			  for(ele of arr){
+   				if(ele=='')continue;
+   				if(t_obj.find(`[title ="${ele}"]`).length > 0)continue;
+			    
+   				spec_value_id = -(Math.abs(spec_id) + Math.floor(new Date().getSeconds()) + Math.floor(new Date().getMilliseconds()))+""+i;
+   				i++;
+   				
+  			 	h = `<div class="spec-value-item" title ="${ele}">`;
+  			 	
+  			 	if(spec_show_type == 2){
+  			 		h += `<div class="value-item-affiliate upload-btn-common"> <div class="affiliate_img"><img src="ADMIN_IMG/spec_value_item_affiliate.png" alt=""></div></div>`;
+  			 	}else if(spec_show_type == 3){
+  			 		h += `<div class ="value-item-affiliate"><input type="color" class="input-common-color" value="#000000"></div>`;
+  			 	}
+		  			h+=`<div class="input_div"><span>${ele}</span><input type="text" value = "${ele}"  name="spec_value" spec_value_id = "${spec_value_id}" /></div>
+		  		 		<i onclick = "spec_del(this, 'spec-value-item')" sku-data-generate>×</i>
+		  		 	</div>`;
+	  		 	t_obj.append(h);
+	  		 	
+	  		 	//如果是在现有的规格上的话添加
+	  		 	if(spec_id > 0){
+	  		 		obj_value = {spec_id : spec_id,
+			  				spec_name : spec_name,
+			  				spec_show_type : 1,
+			  				spec_value_id : spec_value_id,
+			  				spec_value_name : ele,
+			  				spec_value_data : ""};
+		  		 	add_original_sku(obj_value);
+	  		 	}
+   			  }
+   		  }
+   		sku_table_generate();
+   		layer.close(index);
+	});
+};
+
+//弹出框规格添加值
+add_original_sku = function(obj_value){
+	obj = $(`.original-sku-list li[data-spec-id="${obj_value.spec_id}"]`);
+	var spec_value_json = eval(obj.attr("data-spec-value-json"));
+	spec_value_json.push(obj_value);
+
+	obj.attr("data-spec-value-json",JSON.stringify(spec_value_json));
+	obj.attr("data-spec-value-length",spec_value_json.length);
+};
+
+//执行删除
+spec_del = function(e, p_name){
+	t_obj = $(e).parents('.'+p_name);
+	t_obj.remove();
+};
+
+sku_spec_list = function(){
+	
+	var obj = {};
+	var arr = [];
+	$('.sku_spec_list .spec-item').each(function(){
+		
+		obj = {};
+		obj.spec_name = $(this).find('[name="spec_name"]').val();
+		obj.spec_id = $(this).find('[name="spec_name"]').attr('spec_id');
+		obj.spec_show_type = $(this).find('[name="spec_value_subsidiary"]:checked').val();
+		obj.spec_show_type = typeof(obj.spec_show_type) == 'undefined' ? 1 : obj.spec_show_type;
+		var l_arr = [];
+		$(this).find('.spec-value-item').each(function(){
+			
+			l_obj = {};
+			l_obj.spec_id = obj.spec_id;
+			l_obj.spec_name = obj.spec_name;
+			l_obj.spec_value_name = $(this).find('[name="spec_value"]').val();
+			l_obj.spec_value_id = $(this).find('[name="spec_value"]').attr('spec_value_id');
+			l_obj.spec_show_type = obj.spec_show_type;
+			
+			//根据不同的类型取不同的附属值
+			if(obj.spec_show_type == 1){
+				l_obj.spec_value_data = '';	
+			}else if(obj.spec_show_type == 2){
+				var src_path = $(this).find('.affiliate_img img').attr('src_path');
+				l_obj.spec_value_data = typeof(src_path) == 'undefined' ? '' :src_path;
+			}else if(obj.spec_show_type = 3){
+				l_obj.spec_value_data = $(this).find('.input-common-color').val();
+			}
+			
+			l_arr.push(l_obj);
+		});
+		
+		//如果值为空的话规格名也不取
+		if(l_arr.length > 0){
+			obj.value = l_arr;
+			arr.push(obj);
+		}
+		
+	});
+	
+	return arr;
+};
+
+get_sku_arr = function(){
+	
+	var arr = sku_spec_list();
+	var prop_value_arr = [];
+	for(var ele_1 of arr){
+		var item_prop_arr = [];
+		if(prop_value_arr.length > 0){
+			
+			for(var ele_2 of prop_value_arr){
+				
+				for(var ele_3 of ele_1['value']){
+					
+					obj = {};
+					obj.sku_name = `${ele_2.sku_name}♀${ele_3.spec_value_name}`;
+					obj.sku_spec_name = `${ele_2.sku_spec_name},${ele_1['spec_name']}:${ele_3.spec_value_name}`;
+					obj.sku_id = `${ele_2.sku_id};${ele_1['spec_id']}:${ele_3.spec_value_id}`;
+					item_prop_arr.push(obj);
+				}
+			}
+		}else{
+			for(var ele_3 of ele_1['value']){
+				
+				obj = {};
+				obj.sku_id = `${ele_1['spec_id']}:${ele_3.spec_value_id}`;
+				obj.sku_name = ele_3.spec_value_name;
+				obj.sku_spec_name = `${ele_1['spec_name']}:${ele_3.spec_value_name}`;
+				item_prop_arr.push(obj);
+			}
+		}
+
+		prop_value_arr = item_prop_arr.length > 0 ? item_prop_arr : prop_value_arr; 
+	}
+
+	return prop_value_arr;
+};
+
+//type = 1 ajax提交数据; type = 2 页面加载数据
+sku_table_data = function(type = 1){
+	
+	var sku_arr = new Array();
+	$('.goods-sku-list tbody tr').each(function(){
+		var obj = $(this);
+		
+		var sku_obj = new Object();
+		sku_obj.attr_value_items = obj.attr('skuid'); 
+
+		//图片
+		if(type == 1){
+			var sku_img = new Array();
+			obj.find('.ant-upload-list-item').each(function(){
+				
+				sku_img.push($(this).attr('id'));	
+			});
+			sku_obj.sku_img = sku_img.toString();
+		}else{
+			
+			var sku_img = new Array();
+			obj.find('.ant-upload-list-item').each(function(){
+				l_obj = new Object();
+				l_obj.id = $(this).attr('id');
+				l_obj.img_src = $(this).attr('img-src');
+				sku_img.push(l_obj);	
+			});
+			sku_obj.sku_img = sku_img;
+		}
+		
+		//库存
+		var stock_num = 0;
+		if(obj.find('[name="stock_num"]').length > 0){
+			stock_num = obj.find('[name="stock_num"]').val();
+		}
+		sku_obj.stock_num = stock_num;
+	
+		//销售价
+		sku_obj.sku_price = obj.find('[name="sku_price"]').val();
+		//市场价
+		sku_obj.market_price = obj.find('[name="market_price"]').val();
+		//成本价
+		sku_obj.cost_price = obj.find('[name="cost_price"]').val();
+		//编码
+		sku_obj.code = obj.find('[name="code"]').val();
+        //库存管理
+        var card_arr = obj.find('[name="stock_data"]').attr('card_data').split("\n");
+        sku_obj.cards = card_arr.toString();
+		sku_arr.push(sku_obj);
+	});
+	return sku_arr;
+};
+
+//规格重新排序
+spec_sort = function(type){
+	
+	if(type == 'spec_name')spec_value_subsidiry(1);
+	sku_table_generate();
+};
+
+var sku_table_obj = $('.goods-sku-list table');
+
+sku_table_generate = function(){
+	
+	var sku_data = sku_table_data(2);
+	
+	$(".spec-item").unbind().arrangeable();
+	$(".spec-value-item").unbind().arrangeable();
+	arr = sku_spec_list();
+	var colspan = arr.length;
+	colspan = colspan == 0 ? 1 : colspan;
+	rowspan = colspan == 1 ? 1 : 2;
+	//SKU表格头部
+	var head_h = `<tr><th align="center" colspan="${colspan}" style = "min-width:100px;">商品规格</th>
+					<th rowspan="${rowspan}" style = "min-width:120px;"><span>sku图片</span></th>
+					<th rowspan="${rowspan}" style = "max-width:80px;"><span>销售价</span></th>
+					<th rowspan="${rowspan}" style = "max-width:80px;"><span>市场价</span></th>
+					<th rowspan="${rowspan}" style = "max-width:80px;"><span>成本价</span></th>
+					<th rowspan="${rowspan}" style = "max-width:80px;"><span>库存管理</span></th>
+					<th rowspan="${rowspan}" style = "max-width:80px;"><span>编码</span></th>
+				 </tr>`;
+		if(colspan > 1){
+			head_h += `<tr>`;
+			for(ele of arr){
+				head_h += `<th>${ele.spec_name}</th>`;
+			}
+			head_h +=`</tr>`;
+		}
+	
+	sku_table_obj.children('thead').html(head_h);
+	
+	updateSpecObjData();
+	arr = get_sku_arr();
+
+	html = '';
+	for(var ele of arr){
+		html += '<tr skuid="'+ele.sku_id+'" title = "'+ele.sku_spec_name+'">';	
+// 		html += '<td>'+ele.sku_spec_name+'</td>';
+		//sku图片
+		html += '<td>';
+			html += '<div class="goods-info-img-upload" name="sku_imgs">';
+			html += '<div class="ant-upload ant-upload-select-picture-card upload-btn-common" sign="sku_img"><span class="ant-upload ant-upload-disabled"><i class="anticon anticon-plus"></i></span></div></div>';
+		html += '</td>';
+		//销售价格
+		html += '<td>';
+			html += '<input type="text" class="input-common middle js-price" maxlength="10" name="sku_price" value="0.00"  />';
+			html += '<span class="help-inline" >销售价最小为 0.01</span>';
+		html += '</td>';
+		
+		//市场价格
+		html += '<td>';
+			html += '<input type="text" class="input-common middle js-market-price" maxlength="10" name="market_price" value="0.00"/>';
+			html += '<span class="help-inline" >市场价最小为 0.01</span>';
+		html += '</td>';
+		
+		//成本价格
+		html += '<td>';
+			html += '<input type="text" class="input-common middle js-cost-price" maxlength="10" name="cost_price" value="0.00"/>';
+			html += '<span class="help-inline" >成本价最小为 0.01</span>';
+		html += '</td>';
+		
+		//库存
+		html += '<td>';
+			html += '<div name="stock_data" card_data=""><a href="javascript:;" onclick="cardStockDialog(this)">库存管理【0】</a><input type="hidden" name="stock" default="0"></div>';
+		html += '</td>';
+
+		//商品编码
+		html += '<td><input type="text" class="input-common middle js-code" name="code" value=""/></td>';
+		
+		html += '</tr>';
+	}
+	$('.goods-sku-list tbody').html(html);
+	sku_table_left(arr.length);
+
+	//附属原有值
+	if(sku_data.length > 0){
+		
+		for(ele of sku_data){
+			obj = $(`.goods-sku-list tbody tr[skuid="${ele.attr_value_items}"]`);
+			obj.find('[name="sku_price"]').val(ele.sku_price);
+			obj.find('[name="market_price"]').val(ele.market_price);
+			obj.find('[name="cost_price"]').val(ele.cost_price);
+			obj.find('[name="stock_num"]').val(ele.stock_num);
+			obj.find('[name="volume"]').val(ele.volume);
+			obj.find('[name="weight"]').val(ele.weight);
+			obj.find('[name="code"]').val(ele.code);
+			
+			//sku_图
+			for(ele1 of ele.sku_img){
+				
+				var h = `<div class="ant-upload-list-item" id="${ele1.id}" img-src="${ele1.img_src}">
+						 	<a href="javascript:void(0)" class="ant-upload-list-item-thumbnail"><img src="${__IMG(ele1.img_src)}" ></a>
+							<span><a href="javascript:;"><i title="图片预览" class="anticon anticon-eye-o" name = "img_click" img_src="${ele1.img_src}"></i></a>
+							<a href="javascript:;"><i title="删除图片" class="anticon anticon-delete" name = "img_delete" del_class="ant-upload-list-item"></i></a></span>
+						</div>`;
+				obj.find('.goods-info-img-upload .upload-btn-common').before(h);
+			}
+		}
+	}
+};
+
+sku_table_left = function(r_c){
+
+	var html_arr = [];
+	var arr = sku_spec_list();
+	var c_n = 1;
+	
+	for(var x = arr.length-1; x >= 0 ; x--){
+	
+		for(var i = 0; i < r_c;){
+			for(ele of arr[x]['value']){
+				sku_table_obj.find('tbody tr:eq('+i+')').prepend('<td rowspan="'+c_n+'">'+ele.spec_value_name+'</td>');
+				i = i + c_n;
+			}
+		}	
+		c_n = c_n * arr[x]['value'].length;
+	}
+
+};
+
+spec_name_rows = function(row){
+	
+	var rows_num = 1;
+	$('.spec-item').each(function(i, value){
+		
+		if(i >= row){
+			rows_num *= $(this).find('[name="spec_value"]').length;
+		}
+	});
+	
+	return rows_num;
+};
+
+$(function(){
+	
+	//添加规格项
+	$('[name = "add_spec_item"]').click(function(){
+		sku_spec_obj.append(spec_item());
+		$('.spec-item').arrangeable();	
+	});
+
+	//那些属性点击时调用表格重新成功
+	$('[sku-data-generate]').live('click', function(){
+		
+		updateSpecObjData();
+		sku_table_generate();
+	});
+	$('[name="spec_value"],[name="spec_name"]').live('keyup', function(){
+	
+		if($(this).attr('name') == 'spec_value'){
+			$(this).prev('span').text($(this).val());
+		}
+
+		sku_table_generate();
+	});
+	
+	//添加规格附属值 如：图片、颜色
+	$('[name="spec_value_subsidiary"]').live('click', function(){
+		obj = $(this);
+		v = $(this).val();
+		
+		obj.parents('.spec-item').find('.spec-value-item').children('.value-item-affiliate').remove();
+		if(v == 2){
+			obj.parents('.spec-item').find('.spec-value-item').each(function(){
+				$(this).prepend(`<div class ="value-item-affiliate upload-btn-common"> <div class ='affiliate_img'><img src="ADMIN_IMG/spec_value_item_affiliate.png" alt="" /></div></div>`);
+			})
+		}else if(v == 3){
+			obj.parents('.spec-item').find('.spec-value-item').each(function(){
+				$(this).prepend(`<div class ="value-item-affiliate"><input type="color" class="input-common-color" value="#000000"></div>`);
+			})
+		}
+	});
+
+	//如果单规格不执行下面代码
+	if($("input[name='sku_type']:checked").val() == 0)return;
+	
+	//编辑页初始化数据
+	if(goods_spec_format != ''){
+		goods_spec_arr = JSON.parse(goods_spec_format);
+		
+		//选择规格类型 单规格|多规格
+		if(goods_spec_arr.length > 0){
+			 
+			$("input[name='sku_type']").trigger('change'); 
+		}
+		//如果是多规格就加载规格
+		for(ele of goods_spec_arr){
+			
+			spec_item_arr = ele;
+			spec_item();
+			$('.sku_spec_list').parents('dl').hide();
+		}
+		
+		spec_item_arr = [];
+		if(sku_list.length > 0){
+			sku_table_generate();
+			for(sku_item of sku_list){
+				obj = $(`.goods-sku-list tbody tr[skuid = "${sku_item.attr_value_items}"]`);
+			
+				obj.find('[name="sku_price"]').val(sku_item['price']);
+				obj.find('[name="market_price"]').val(sku_item['market_price']);
+				obj.find('[name="cost_price"]').val(sku_item['cost_price']);
+				obj.find('[name="code"]').val(sku_item['code']);
+				obj.find('[name="stock_data"]').find('a').text('库存管理【'+sku_item['stock']+'】');
+                obj.find('[name="stock_data"]').find('[name="stock"]').val(sku_item['stock']);
+                obj.find('[name="stock_data"]').find('[name="stock"]').attr('default',sku_item['stock']);
+
+				for(picture_item of sku_item['picture_list']){
+					var h = `<div class="ant-upload-list-item" id="${picture_item['pic_id']}" img-src="${picture_item['pic_cover']}">
+								<a href="javascript:void(0)" class="ant-upload-list-item-thumbnail"><img src="${__IMG(picture_item['pic_cover'])}" ></a>
+								<span><a href="javascript:;"><i title="图片预览" class="anticon anticon-eye-o" name = "img_click" img_src="${picture_item['pic_cover']}"></i></a>
+								<a href="javascript:;"><i title="删除图片" class="anticon anticon-delete" name = "img_delete" del_class="ant-upload-list-item"></i></a></span>
+							</div>`;
+					obj.find('.goods-info-img-upload .upload-btn-common').before(h);
+				}
+			}
+            stockToUpdate();
+			//修改商品时默认选中
+// 			if($sku_goods_picture.length > 0 ){
+// 				var default_spec_id = $sku_goods_picture[0]["spec_id"];
+// 				$(".sku-picture-span[spec_id="+ default_spec_id +"]").click();
+// 			}
+		}
+	}
+	
+})
+</script>

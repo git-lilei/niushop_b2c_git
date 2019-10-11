@@ -1,0 +1,107 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>版权logo：</dt>
+		<dd>
+			<div class="upload-btn-common">
+				<div>
+					<input class="input-file" name="file_upload" id="uploadImg" type="file" onchange="imgUpload(this);">
+					<input type="hidden" id="logo" value="{$info.copyright_logo}" />
+				</div>
+				<input type="text" id="text_logo" class="input-common" readonly="readonly" value="{if condition="$info.copyright_logo"}{$info.copyright_logo}{/if}" />
+				<em>上传</em>
+				
+				<img id="preview_logo" src="__STATIC__/blue/img/upload-common-select.png" {if condition="$info.copyright_logo"}data-src="{:__IMG($info.copyright_logo)}"{/if} data-html="true" data-container="body" data-placement="top" data-trigger="manual"/>
+
+			</div>
+
+			<p class="hint">
+				<span>建议使用<i class="important-note">宽280</i>像素-<i class="important-note">高50</i>像素内的<i class="important-note">GIF</i>或<i class="important-note">PNG</i>透明图片</span>
+			</p>
+
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>公司名称：</dt>
+		<dd>
+			<input id="companyname" type="text" value="{$info.copyright_companyname}" class="input-common long" />
+<!-- 			<p class="hint">Description出现在页面头部的Meta标签中，用于记录本页面的摘要与描述，建议不超过80个字</p> -->
+		</dd>
+	</dl>	
+	<dl>
+		<dt>版权链接：</dt>
+		<dd>
+			<input id="link" type="text"  value="{$info.copyright_link}" class="input-common long" />
+<!-- 			<p class="hint">Keywords项出现在页面头部的标签中，用于记录本页面的关键字，多个关键字请用分隔符分隔</p> -->
+		</dd>
+	</dl>
+	<dl>
+		<dt>版权信息：</dt>
+		<dd>
+			<textarea id="desc" class="textarea-common" maxlength="200">{$info.copyright_desc}</textarea>
+<!-- 			<p class="hint">如需在中添加其他的HTML代码，可以使用本设置，否则请留空</p> -->
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="setConfigAjax();">保存</button></dd>
+	</dl>
+</div>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script>
+//图片上传
+function imgUpload(event) {
+	var fileid = $(event).attr("id");
+	var id = $(event).next().attr("id");
+	var data = { 'file_path' : "config" };
+	uploadFile({
+		url: __URL(ADMINMAIN + '/config/uploadimage'),
+		fileId: fileid,
+		data : data,
+		callBack: function (res) {
+			if(res.code){
+				$("#" + id).val(res.data.path);
+				$("#text_" + id).val(res.data.path);
+				$("#preview_"+ id).attr("data-src",__IMG(res.data.path));
+				showTip(res.message,"success");
+			}else{
+				showTip(res.message,"error");
+			}
+		}
+	});
+}
+function setConfigAjax(){
+	var Logo = $("#logo").val();
+	var meta = $("#meta").val();
+	var link = $("#link").val();
+	var desc = $("#desc").val();
+	var companyname = $("#companyname").val();
+	$.ajax({
+		type:"post",
+		url : "{:__URL('ADMIN_MAIN/config/copyrightinfo')}",
+		data : {
+			"copyright_logo" : Logo,
+			"copyright_meta" : meta,
+			'copyright_link' : link,
+			"copyright_desc" : desc,
+			"copyright_companyname" : companyname
+		},
+		success : function(data){
+			if(data['code'] > 0){
+				showTip(data["message"],'success');
+				location.href=__URL("ADMIN_MAIN/config/copyrightinfo");
+			}else{
+				showTip(data["message"],'error');
+			}
+		}
+	})
+}
+</script>
+{/block}

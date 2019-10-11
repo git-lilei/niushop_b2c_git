@@ -1,0 +1,38 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/goods_topic_detail.css">
+{/block}
+{block name="main"}
+<div class="goods-list-grid">
+	<div class="topic-scroll"><img src="{:__IMG($info['scroll_img'])}"></div>
+	<div class="goods-list">
+		<ul>
+			{foreach name="info['goods_list']" id="v"}
+			<li class="item">
+				<div class="item-pic">
+					<a href="{:__URL('APP_MAIN/goods/detail?goods_id='.$v['goods_id'])}">
+						<img src="{:__IMG($v['picture_info']['pic_cover_small'])}" alt="{$v['goods_name']}">
+					</a>
+				</div>
+				<dl>
+					<dt><a href="{:__URL('APP_MAIN/goods/detail?goods_id='.$v['goods_id'])}">{$v['goods_name']}</a></dt>
+					<dd>
+						{in name="$v.point_exchange_type" value="0,2"}
+							<p class="goods-price ns-text-color">￥{$v['promotion_price']}</p>
+						{else/}
+							{if $v['point_exchange_type'] == 1 && $v['promotion_price'] > 0}
+								<p class="goods-price ns-text-color">￥{$v.promotion_price}+{$v.point_exchange}积分</p>
+							{else/}
+								<p class="goods-price ns-text-color">{$v.point_exchange}积分</p>
+							{/if}
+						{/in}
+					</dd>
+				</dl>
+			</li>
+			{/foreach}
+		</ul>
+	</div>
+</div>
+{/block}
+{block name="footer"}{/block}
+{block name="script"}{/block}

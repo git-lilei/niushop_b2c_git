@@ -1,0 +1,44 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/promotion_block.css">
+{/block}
+{block name="main"}
+<div class="set-style">
+	<h4 class="first"><span></span>互动游戏</h4>
+	<div class="flex-wrap">
+		<a class="block-diy" title="互动游戏" href = '{:__URL('ADMIN_MAIN/promotion/promotiongameslist?type=8')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/icon-promotion-turntable.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">大转盘</p>
+					<p class="diy-desc">设置大转盘活动</p>
+				</div>
+			</div>
+		</a>
+		<a class="block-diy" title="互动游戏" href = '{:__URL('ADMIN_MAIN/promotion/promotiongameslist?type=3')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/icon-promotion-scratch.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">刮刮乐</p>
+					<p class="diy-desc">设置刮刮乐活动</p>
+				</div>
+			</div>
+		</a>
+		<a class="block-diy" title="互动游戏" href = '{:__URL('ADMIN_MAIN/promotion/promotiongameslist?type=7')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/icon-promotion-golden-egg.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">砸金蛋</p>
+					<p class="diy-desc">设置砸金蛋活动</p>
+				</div>
+			</div>
+		</a>
+	</div>
+</div>
+{/block}

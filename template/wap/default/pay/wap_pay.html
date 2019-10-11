@@ -1,0 +1,170 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" href="WAP_CSS/pay/get_pay_value.css"/>
+{/block}
+{block name="main"}
+<div class="head-info">
+	<div class="head-pay">支付金额</div>
+	<div class="head-pay-value">￥{$need_pay_money}</div>
+</div>
+<div class="available-balance">
+	<span>可用余额：￥{$member_balance}元</span>
+	<span class="balance_checkbox">
+		<input type="checkbox" class="switch-checkbox" id="is_use_balance" checked>
+		<label for="is_use_balance" class="switch-label ns-border-color-gray">
+            <span class="switch-circle"></span>
+        </label>
+    </span>
+</div>
+{php}
+	$pay_config = api("System.Pay.getPayConfig");// 支付方式配置
+	$pay_config = $pay_config['data'];
+{/php}
+
+{assign name="un_num" value="0"}
+{notempty name="$pay_config"}
+<div class="pay-type-item">
+	<div class="codes">
+			{foreach name="$pay_config" item="pay_item"}
+				{if $pay_item.is_use}
+				<div class="pay-type" data-url="{:__URL($pay_item['pay_url'], 'type='. $pay_item['addon_name'].'&no='.$pay_value['out_trade_no'])}">
+					<img src="WAP_IMG/pay/{$pay_item.h5_icon}" class="wchat-photo">
+					<span class="pay-title">{:lang($pay_item.lang)}</span>
+					<span class="pay-check"><img src="WAP_IMG/pay/hgou.png"></span>
+				</div>
+				{else/}
+					{php}$un_num += 1;{/php}
+				{/if}
+			{/foreach}
+		{else/}
+		<div class="not-pay-type">商家未配置支付方式</div>
+	</div>
+</div>
+{/notempty}
+
+<input type="hidden" id="out_trade_no" value="{$pay_value.out_trade_no}">
+<input type="hidden" name="" id="member_balance" value="{$member_balance}">
+<input type="hidden" name="" id="need_pay_money" value="{$need_pay_money}">
+<input type="hidden" name="" id="pay_money" value="{$pay_value.pay_money}">
+
+{if $un_num eq count($pay_config)}
+	<div class="not-pay-type">商家未配置支付方式</div>
+{else/}
+	<section class="s-btn">
+		<a class="alipay btn primary" onclick="subOrder()">{:lang('confirm_payment')}</a>
+	</section>
+{/if}
+
+<div class="ns-copyright">
+    {php}
+        $copyright = api('System.Config.copyRight');
+        $copyright = $copyright['data'];
+    {/php}
+    {if $copyright['is_load'] > 0}
+        {notempty name="$copyright['bottom_info']['copyright_logo']"}
+            <img src="{:__IMG($copyright['bottom_info']['copyright_logo'])}">
+        {else/}
+            <img src="WAP_IMG/logo_copy.png">
+        {/notempty}
+        {notempty name="$copyright['bottom_info']['copyright_companyname']"}
+            <a href="{$copyright['bottom_info']['copyright_link']}" target="_blank" class="ns-text-color-gray">{$copyright['bottom_info']['copyright_companyname']}</a>
+        {else/}
+            <a href="http://www.niushop.com.cn" target="_blank" class="ns-text-color-gray">山西牛酷信息科技有限公司&nbsp;提供技术支持</a>
+        {/notempty}
+    {else/}
+        <img src="WAP_IMG/logo_copy.png">
+        <a href="http://www.niushop.com.cn" target="_blank" class="ns-text-color-gray">山西牛酷信息科技有限公司&nbsp;提供技术支持</a>
+    {/if}
+</div>
+
+<script>
+$("#is_use_balance").change(function(){
+	var member_balance = $("#member_balance").val(),
+		need_pay_money = $("#need_pay_money").val(),
+		pay_money = $("#pay_money").val(),
+		pay_type = $("#pay_type").val();
+	if($(this).is(":checked")){
+		$(".head-pay-value").text("￥"+need_pay_money);
+		if(need_pay_money == 0 && pay_type == -1){
+			$(".alipay").show();
+		}
+	}else{
+		$(".head-pay-value").text("￥"+pay_money);
+		if(need_pay_money == 0 && pay_type == -1){
+			$(".alipay").hide();
+		}
+	}
+});
+var __IMG__ = 'WAP_IMG';
+
+$(function(){
+	$('.pay-type:eq(0)').addClass('active');
+	$('.pay-type:eq(0) .pay-check').html("<img src='" + __IMG__ + "/pay/segou.png'>");
+});
+
+var is_sub = false;
+function subOrder(){
+	if(is_sub) return;
+	is_sub = true;
+	var is_use_balance = $("#is_use_balance").is(":checked") ? 1 : 0;
+	var out_trade_no = $("#out_trade_no").val();
+	$.ajax({
+		url : __URL(APPMAIN+'/pay/pay'),
+		type : "post",
+		data : {
+			"out_trade_no" : out_trade_no,
+			"is_use_balance" : is_use_balance
+		},
+		success : function(data){
+			if(data['code'] == 0){
+				calculate();
+			}else if(data['code'] == 1){
+				location.href = __URL(APPMAIN + '/pay/payReturn?msg=1&out_trade_no=' + out_trade_no);
+			}else if(data['code'] < 0){
+				toast(data['message']);
+			}
+		}
+	})
+}
+function calculate() {
+	var pay_type = $("#pay_type").val();
+	var out_trade_no = $("#out_trade_no").val();
+	var need_pay_money = $("#need_pay_money").val();
+	var is_use_balance = $("#is_use_balance").is(":checked") ? 1 : 0;
+	var pay_url = $('.pay-type.active').attr('data-url');
+
+	if (pay_url != undefined) {
+		window.location.href = pay_url;
+	}else{
+		toast("{:lang('choose_payment_method')}");
+	}
+}
+$(".alipay").click(function(){
+	window.webkit.messageHandlers.calculate.postMessage(null);
+})
+
+$('.pay-type').click(function(){
+	$(this).addClass('active').siblings('.pay-type').removeClass('active');
+	$(this).find('.pay-check').html("<img src='" + __IMG__ + "/pay/segou.png'>");
+	$(this).siblings('.pay-type').find('.pay-check').html("<img src='" + __IMG__ + "/pay/hgou.png'>");
+})
+
+window.setInterval("payStatus()", 2000);
+function payStatus(){
+	$.ajax({
+		type : "post",
+		url : __URL(APPMAIN+'/pay/payStatus'),
+		data : {
+			out_trade_no : "{$pay_value.out_trade_no}"
+		},
+		success : function(data){
+			if(data['code'] > 0){
+				location.href=__URL(APPMAIN+'/pay/payReturn?out_trade_no={$pay_value["out_trade_no"]}&msg=1');
+				clearInterval(payStatus);
+			}
+		}
+	})
+}
+</script>
+{/block}
+{block name="footer"}{/block}

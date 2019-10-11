@@ -1,0 +1,18 @@
+.help::after {display: block;content: "";clear: both;}
+
+.help .category {width: 210px;margin-bottom: 10px;float: left;}
+.help .category > h3 {height: 40px;line-height: 40px;text-align: center;color: #fff;}
+.help .category > ul li {position: relative;line-height: 30px;background: #fff;}
+.help .category > ul li > div {position: relative;border-bottom: 1px solid #fff;padding: 5px 10px;height: 41px;line-height: 30px;}
+.help .category > ul li:last-child div {border-bottom: 0;}
+.help .category > ul li div i {position: absolute;right: 10px;top: 50%;margin-top: -7px;}
+.help .category > ul li ul li {padding: 0 40px;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
+
+.help .detail {float: right;width: 82%;padding: 0 20px;}
+.help .detail h3 {text-align: center;padding: 10px 0;font-size: 18px;font-weight: normal;border-bottom: 1px dashed;}
+.help .detail .content {padding: 15px 20px;}
+.help .detail > ul li {padding: 5px 0;}
+.help .detail time {display: block;line-height: 30px;text-align: center;}
+
+.help .dis-no {display: none;}
+.help .text-over {width: 50%;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}

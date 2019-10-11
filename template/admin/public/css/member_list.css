@@ -1,0 +1,139 @@
+@CHARSET "UTF-8";
+
+.mytable {
+    border: 0;
+}
+
+.style0list tbody td {
+    vertical-align: middle;
+}
+
+.style0list tbody tr {
+    border-bottom: 1px dashed #E3E3E3;
+}
+
+a {
+    cursor: pointer;
+}
+
+select {
+    height: 32px;
+}
+
+.head-portrait {
+width: 40px;
+    height: 40px;
+    float: left;
+    margin: 5px 10px 0px 0px;
+    box-sizing: border-box;
+}
+
+.modal-body {
+    max-height: none;
+}
+
+.modal-infp-style {
+    width: 90%;
+    margin: 10px auto;
+}
+
+.modal-infp-style table {
+    width: 100%;
+}
+
+.modal-infp-style table tr td {
+    border: 1px solid #e6e6e6;
+    padding: 8px;
+}
+
+#balance {
+    margin-bottom: 0;
+}
+
+#point {
+    margin-bottom: 0;
+}
+
+#remark_point {
+    margin-bottom: 0;
+}
+
+#remark_balance {
+    margin-bottom: 0;
+}
+
+input[type="text"], input[type="password"], input.text, input.password {
+    margin-bottom: 0;
+}
+
+input[type="radio"], input[type="checkbox"] {
+    margin: 0 5px 0;
+}
+
+label {
+    width: 20%;
+    float: left;
+    font-weight: normal;
+	font-size: 12px;
+}
+
+.required {
+    color: red;
+    margin-right: 10px;
+}
+
+.modal-tab tr td:first-child {
+    text-align: right;
+}
+
+.mytable th {
+    padding-left: 0;
+}
+
+.btn-common-white {
+    line-height: 20px;
+}
+
+.member-div label {
+    font-size: 12px;
+    margin-bottom: 0px;
+}
+.member-div label:first-child{
+    margin-top: 14px;
+}
+
+/* 会员基础信息 */
+.member-basics{position: relative;}
+.member-basics:hover .msg_member{
+	display: block;
+}
+.msg_member {
+  	position: absolute;
+    background: #fff;
+    border: 1px solid rgba(221, 221, 221, 0.43);
+    padding: 10px 10px 10px 18px;
+    left: 65%;
+    top: -54px;
+    width: 200px;
+    display: none;
+    z-index: 10;
+	box-shadow: 3px 3px 21px rgba(136, 136, 136, 0.38);
+	border-radius: 5px;
+}
+.msg_member .transform-left{
+	width: 20px;
+    height: 20px;
+    transform: rotate(7deg);
+    -ms-transform: rotate(7deg);
+    -moz-transform: rotate(7deg);
+    -webkit-transform: rotate(43deg);
+    -o-transform: rotate(7deg);
+    position: absolute;
+    left: -10px;
+    top: 44%;
+    z-index: 11;
+    background: #fff;
+    border-left: 1px solid rgba(221, 221, 221, 0.43);
+    border-bottom: 1px solid rgba(221, 221, 221, 0.43);
+}
+

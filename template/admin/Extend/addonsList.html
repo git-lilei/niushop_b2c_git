@@ -1,0 +1,179 @@
+{extend name="admin/base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/product.css">
+<style type="text/css">
+.flex-class{width:100%;display:flex;flex-wrap: wrap;margin: 0 auto;}
+.block-tag{
+    width: 20%;
+    box-sizing: border-box;
+    padding: 0 7.5px;
+    margin-bottom: 15px;
+    z-index: 1;
+    position: relative;
+}
+.block-tag .tag-content{
+    padding: 15px 10px 15px 15px;
+    margin-bottom: 0;
+    background-color: #f5f7fa;
+    overflow: hidden;
+    z-index: 1;
+    display: flex;
+    cursor: pointer;
+	height: 70px;
+}
+.block-tag .ac-icon{height: 50px; width: 50px;}
+.ac-icon .img-icon{width: 34px;height: 34px;margin: 8px;color: #fff;font-size: 34px;line-height: 34px;background: #fff;display:block;position: absolute;}
+.tag-content .ac-info{margin-left: 10px;    width: 80%;}
+.tag-content .ac-info .ad-wrap{height:25px;line-height:25px;margin:0;}
+.tag-content .ac-info .ad-describe{
+	color: #aaa;
+    font-size: 12px;
+    font-weight: 400;
+    margin: 0;
+}
+.tag-content .ac-info  .ad-wrap .ad-title{color: #5e6166;font-size: 14px;font-weight: bold;}
+.tag-content .ac-info  .ad-wrap .ad-mark{color: #5e6166;font-size: 14px;font-weight:400;line-height:25px;}
+.tag-content .ac-info .ad-state{font-size: 14px;font-weight:400;color:#00A0DE;margin-left:25px;margin-right:5px;position: absolute;right: 15px;bottom: 10px;}
+.tag-content .ac-info .ad-wrap .ad-detail{font-size: 14px;font-weight: 400;color:#00A0DE;}
+.block-tag .ad-version{position: absolute;background:#fa7161;right: 20px;top: 0;width: 22px;padding: 5px 0 2px 0; color: #fff;font-size: 12px;line-height: 14px;text-align: center;}
+.arrow{position: absolute;left: 0;right: 0;bottom: -16px;display: block;border-style: solid;border-width: 8px 11px;}
+.block-tag .tag-content{transition: all .3s;}
+.block-tag .tag-content:hover{box-shadow: 0 2px 5px 0 rgba(2,31,65,.1)}
+.addon-fix{display:inline-block;height:20px;width:40px;border:1px solid #00A0DE;text-align:center;line-height:20px;font-weight:400;font-size: 12px;}
+.unload-addon{margin-left:15px;color:#BBBBBC;font-size: 12px;}
+.unload-addon:hover{color:#BBBBBC;}
+</style>
+{/block}
+{block name="main"}
+<div class="space-10"></div>
+<div class="flex-class"></div>
+<div class="modal fade hide" id="detail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="width:700px;left:45%;top:30%;">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>插件详情</h3>
+			</div>
+			<div class="set-style">
+				<dl>
+					<dt>详情：</dt>
+					<dd>
+						<div id="content" style="min-width:400px;min-height:100px;"></div>
+					</dd>
+				</dl>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+LoadingList();
+function LoadingList(page_index) {
+	$.ajax({
+		type : "post",
+		url : __URL("ADMIN_MAIN/extend/addonslist"),
+		success : function(data) {
+			if (data['data'].length > 0) {
+				$(".table-class tbody").empty();
+				for (var i = 0; i < data['data'].length; i++) {
+					var html = '';
+					var status = '';
+					var operation = '';
+					var url = '';
+					if(data['data'][i]['has_addonslist'] == 1){
+						url = __URL('ADMIN_MAIN/extend/pluginlist?id='+data['data'][i]['id']);
+					}else{
+						url = __URL('ADMIN_MAIN/extend/addonsconfig?id='+data['data'][i]['id']);
+					}
+					if(data['data'][i]['status'] == -1){
+						status = '损坏';
+						operation = '';
+					}else if(data['data'][i]['status'] == 0){
+						status = '禁用';
+						operation = '&nbsp;<a  class="unload-addon" onclick="uninstall('+ data['data'][i]['id'] +')">卸载</a>';
+					}else if(data['data'][i]['status'] == 1){
+						status = '启用';
+						operation = '&nbsp;<a class="unload-addon" onclick="uninstall('+ data['data'][i]['id'] +')">卸载</a>';
+					}else if(data['data'][i]['status'] == undefined){
+						operation = '<a  class="addon-fix" onclick="install(\''+ data['data'][i]['name'] +'\')">安装</a>';
+						status = '未安装';
+					}
+					
+					html+= '<div class="block-tag"><div class="tag-content"><div class="ac-icon"><img src="__ROOT__/'+data['data'][i]['ico']+'"></div><div class="ac-info"><p class="ad-wrap">';
+					html+='<span class="ad-title">'+ data['data'][i]['title'] +'</span>&nbsp;';
+					//html+='<span class="ad-mark">'+ data['data'][i]['name'] +'</span>';
+					html+='';
+					html+='<span class="ad-detail"></span></p>';
+					html+='<p class="ad-describe">'+ data['data'][i]['description'] +'</p><span class="ad-state">'+ operation +'</span></div></div>';
+				    html+='<div class="ad-version"><b class="arrow" style="border-color: rgb(243, 106, 90) transparent transparent;"></b>';
+					html+='<span class="version">'+ data['data'][i]['version'] +'</span></div></div>';
+					html+='<input type="hidden" id="hide-statue" value="'+ status +'">';
+					
+					$(".flex-class").append(html);
+	
+				}
+				
+			} else {
+				var html = '<tr align="center"><th colspan="8">暂无符合条件的数据记录</th></tr>';
+				$(".flex-class").html(html);
+			}
+// 			initPageData(data["page_count"],data.length,data['total_count']);
+// 			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+function install(name){
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/extend/install')}",
+		data : { "addon_name" : name },
+		async : false,
+		success : function(data) {
+			if(data.code == 1){
+				showMessage("success", "安装成功");
+				$(".flex-class").html('');
+				LoadingList();
+			}else{
+				showMessage("error", "安装失败");
+			}
+		}
+	});
+}
+
+function uninstall(id){
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/extend/uninstall')}",
+		data : { "id" : id },
+		async : false,
+		success : function(data) {
+			if(data.code == 1){
+				showMessage("success", data.message);
+				$(".flex-class").html('');
+				LoadingList();
+			}else{
+				showMessage("error", data.message);
+			}
+		}
+	});
+}
+
+function detail(id){
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/extend/getAddonsDetail')}",
+		data : { "id" : id },
+		success : function(data) {
+			$("#content").html(data.content);
+			$("#detail").modal("show");
+		}
+	});
+}
+
+
+$('body').on('mouseout','.block-tag',function(){
+})
+</script>
+{/block}

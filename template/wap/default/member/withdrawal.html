@@ -1,0 +1,51 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/member_withdrawal.css">
+{/block}
+{block name="main"}
+<div class="withdraw-record mescroll" id="withdraw">
+	<table>
+		<tbody></tbody>
+	</table>
+</div>
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script>
+var mescroll;
+$(function(){
+	mescroll = new ScrollList("withdraw", loadinfo);
+});
+
+function loadinfo(page, is_append){
+	api('System.Member.withdrawRecordList', {page_index : 1}, function(res){
+		var data = res.data,
+			html = '';
+		if(data['data'].length == 0){
+			html += '<div class="nothing-data ns-text-color-gray"><img src="'+WAPIMG+'/wap_nodata.png"/><div>{:lang("you_have_not_withdraw")}</div></div>';
+		}else{
+			for(var i = 0; i < data.data.length; i++){
+				var item = data['data'][i];
+				html += `
+					<tr class="ns-border-color-gray">
+						<td>
+							<p>
+								<span class="text-name">`+ item.bank_name +`</span>
+								<span class="text-money ns-text-color">￥`+ item.cash +`</span>
+							</p>
+							<p>
+								<span class="text-2 ns-text-color-gray">`+ timeStampTurnTime(item.ask_for_date) +`</span>
+								<span class="text-money ns-text-color">`+ item.status +`</span>
+							</p>
+						</td>
+					</tr>
+				`;
+			}
+		}
+		if (is_append) $(".withdraw-record table tbody").append(html);
+		else $(".withdraw-record table tbody").html(html);
+		mescroll.endByPage(data.total_count, data.page_count);
+	})
+}
+</script>
+{/block}

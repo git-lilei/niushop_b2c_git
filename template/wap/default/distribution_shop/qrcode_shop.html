@@ -1,0 +1,33 @@
+{extend name="$base" /}
+{block name="resources"}
+<script src="WAP_JS/clipboard.min.js"></script>
+{/block}
+{block name="head_operation"}<a class="ns-operation" id="copy_btn" onclick="copy('copy_btn')">复制网址</a>{/block}
+{block name="main"}
+<img class="shop-qrcode" src="{:__IMG('upload/qrcode/promote_qrcode/user_fx/shop_goods_qrcode_'.$uid.'.png')}" style="display:block;width:100%;">
+<input type="hidden" id="url" value="{$url}">
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script type="text/javascript">
+$(function(){
+	niushop.share({ flag : "fx_shop_qrcode" });
+});
+
+function copy(copy_num_id_btn){
+	var s = $('#url').val();
+	var clipboard = new Clipboard('#'+copy_num_id_btn, {
+	    text: function() {
+	        return s;
+	    }
+	});
+	clipboard.on('success',
+	function(e) {
+		toast('复制成功');
+	});
+	clipboard.on('error',
+		function(e) {
+	});
+}
+</script>
+{/block}

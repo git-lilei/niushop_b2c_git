@@ -1,0 +1,163 @@
+{extend name="$base" /}
+{block name="resources"}
+<script>fbTouch.TouchAddPaymentInfo();</script>
+<link rel="stylesheet" type="text/css" href="WAP_CSS/member_address_edit.css">
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1087048_ti88xqkwo0p.css">
+{/block}
+{block name="main"}
+{php}
+	$id = request()->get('id', '');
+	$goods_id = request()->get('goods_id', '');
+	$bargain_id = request()->get('bargain_id', '');
+	$flag = request()->get('flag', '');
+	$pre_url = request()->get('url', '');
+	if($id) {
+		$address_info = api('System.Member.addressDetail', ['id' => $id]);
+		$address_info = $address_info['data'];
+	}
+{/php}
+<form class="form-info">
+	<div class="div-item ns-border-color-gray">
+		<span class="ns-text-color-black">{:lang('member_full_name')}</span>
+		<input type="text" placeholder="{:lang('please_enter_the_recipient_name')}" id="Name" value="{notempty name="$address_info"}{$address_info['consigner']}{/notempty}" />
+	</div>
+	<div class="div-item ns-border-color-gray">
+		<span class="ns-text-color-black">{:lang('member_phone')}</span>
+		<input type="text" placeholder="{:lang('member_enter_your_phone_number')}" id="Moblie" value="{notempty name="$address_info"}{$address_info['mobile']}{/notempty}" />
+	</div>
+	<div class="div-item ns-border-color-gray">
+		<span class="ns-text-color-black">{:lang('member_fixed_telephone')}</span> <input type="text" id="phone" placeholder="{:lang('member_fixed_telephone')}{:lang('（选填）')}" value="{notempty name="$address_info"}{$address_info['phone']}{/notempty}" />
+	</div>
+	<div class="div-item ns-border-color-gray" style="display:none;">
+		<span class="ns-text-color-black">{:lang('goods_province')}</span>
+		<select id="seleAreaNext" onchange="GetProvince();">
+			<option value="">{:lang('member_select_province')}</option>
+		</select>
+	</div>
+	<div class="div-item ns-border-color-gray">
+		<span class="ns-text-color-black">{:lang('city')}</span>
+		<select id="seleAreaThird" onchange="getSelCity();">
+			<option value="">{:lang('member_select_city')}</option>
+		</select>
+	</div>
+	<div class="div-item ns-border-color-gray">
+		<span class="ns-text-color-black">{:lang('county')}</span>
+		<select id="seleAreaFouth">
+			<option value="-1">{:lang('goods_select_district_or_county')}</option>
+		</select>
+	</div>
+	<div id="address_detail" class="div-item ns-border-color-gray"{if $address_info['shipping_company_id'] eq 0} style="display:none;"{/if}>
+		<span class="ns-text-color-black">{:lang('member_detailed_address')}</span>
+		<input type="text" placeholder="{:lang('please_enter_detailed_address')}" id="AddressInfo" value="{notempty name="$address_info"}{$address_info['address']}{/notempty}" />
+	</div>
+	<div class="delivery-wrap">
+		<h3 class="title">{:lang('配送方式')}</h3>
+		<ul class="clearfix shipping-type-list">
+			<li class="ns-border-color-gray" data-value="1">711取貨</li>
+			<li class="ns-border-color-gray" data-value="2">全家取貨</li>
+			<li class="{if $address_info['shipping_company_id'] neq 0} selected ns-text-color ns-border-color{else}ns-border-color-gray{/if}" data-value="3">宅配送貨</li>
+		</ul>
+		<div class="dividing-line ns-bg-color-gray-fadeout-80"></div>
+
+		<div class="panel logistics {if ($data['express_type'][0]['type_id'] neq 3) and ($address_info['shipping_company_id'] eq 0)}hide{/if}">
+			{notempty name="$data['express_company_list']"}
+			<h3 class="v2-title ns-border-color-gray">{:lang('物流公司')}</h3>
+			<ul class="express-company-list">
+				{foreach name="$data['express_company_list']" item="vo" key="k"}
+				{eq name="$k" value="0"}
+				<li class="selected ns-text-color-hover ns-border-color-gray" data-value="{$vo.co_id}">
+					<i class="iconfont iconchecked ns-text-color"></i>
+					<span>{$vo.company_name}</span>
+				</li>
+				{else/}
+				<li class="ns-border-color-gray" data-value="{$vo.co_id}">
+					<i class="iconfont iconcheckbox ns-text-color-gray"></i>
+					<span>{$vo.company_name}</span>
+				</li>
+				{/eq}
+				{/foreach}
+			</ul>
+			{/notempty}
+			{if $data['order_config']['order_designated_delivery_time']}
+			<div class="shipping-time ns-text-color-gray" onclick="picker.show('shipping-time');">
+				<span class="pull-left">{:lang('配送时间：')} <time>{:lang('工作日、雙休日與節假日不配送')}</time></span><i class="fa fa-pencil"></i>
+			</div>
+			{else /}
+			<div class="shipping-time ns-text-color-gray">
+				<span class="pull-left">{:lang('配送时间：')} <time>{:lang('工作日、雙休日與節假日不配送')}</time></span></i>
+			</div>
+			{/if}
+		</div>
+
+		<div id="cs_1" class="panel pickup-point {if $data['express_type'][0]['type_id'] neq 1}hide{/if}">
+			{notempty name="$data['pickup_point_list']"}
+			<h3 class="v2-title ns-border-color-gray">{:lang('自提点')}</h3>
+			<ul class="pickup-point-list" style="margin-bottom: 50px;">
+				{foreach name="$data['pickup_point_list']" item="vo" key="k"}
+				{eq name="$k" value="0"}
+				<li class="clearfix selected" data-value="{$vo.id}">
+					<i class="iconfont iconchecked ns-text-color"></i>
+				{else/}
+				<li class="clearfix" data-value="{$vo.id}">
+					<i class="iconfont iconcheckbox ns-text-color-gray"></i>
+				{/eq}
+					<div class="pickup-point-info">
+						<h5 class="name">{$vo.name}</h5>
+						<p class="address ns-text-color-gray" data-addr="{$vo.address}">{$vo.province_name} {$vo.city_name} {$vo.district_name} {$vo.address}</p>
+					</div>
+				</li>
+				<div class="line ns-bg-color-gray"></div>
+				{/foreach}
+			</ul>
+			{/notempty}
+		</div>
+
+		<div id="cs_2" class="panel pickup-point2 {if $data['express_type'][0]['type_id'] neq 2}hide{/if}">
+			{notempty name="$data['pickup_point_list2']"}
+			<h3 class="v2-title ns-border-color-gray">{:lang('自提点')}</h3>
+			<ul class="pickup-point-list" style="margin-bottom: 50px;">
+				{foreach name="$data['pickup_point_list']" item="vo" key="k"}
+				{eq name="$k" value="0"}
+				<li class="clearfix selected" data-value="{$vo.id}">
+					<i class="iconfont iconchecked ns-text-color"></i>
+				{else/}
+				<li class="clearfix" data-value="{$vo.id}">
+					<i class="iconfont iconcheckbox ns-text-color-gray"></i>
+				{/eq}
+					<div class="pickup-point-info">
+						<h5 class="name">{$vo.name}</h5>
+						<p class="address ns-text-color-gray" data-addr="{$vo.address}">{$vo.province_name} {$vo.city_name} {$vo.district_name} {$vo.address}</p>
+					</div>
+				</li>
+				<div class="line ns-bg-color-gray"></div>
+				{/foreach}
+			</ul>
+			{/notempty}
+		</div>
+
+		<p class="distribution-time hide">{$data.distribution_time}</p>
+
+	</div>
+
+</form>
+<div class="delivery-bottom">
+	<a href="javascript:void(0);" onclick="saveAddress()" class="delivery-confirm-btn ns-bg-color">{:lang('member_preservation')}</a>
+</div>
+<input type="hidden" id="ref_url" value="{$pre_url}">
+<input type="hidden" id="hidden_flag" value="{$flag}" />
+<input type="hidden" id="hidden_goods_id" value="{$goods_id}" />
+<input type="hidden" id="hidden_bargain_id" value="{$bargain_id}" />
+<input type="hidden" id="adressid" value="{$address_info['id'] ? $address_info['id'] : ''}">
+<input type="hidden" id="provinceid" value="{$address_info['province'] ? $address_info['province'] : 34}">
+<input type="hidden" id="cityid" value="{$address_info['city'] ? $address_info['city'] : -1}">
+<input type="hidden" id="districtid" value="{$address_info['district'] ? $address_info['district'] : -1}">
+<input type="hidden" id="pickupid" value="{$address_info['pick_up_id'] ? $address_info['pick_up_id'] : 0}"/>
+<input type="hidden" id="pickuphave" value="1"/>
+<input type="hidden" id="shipping_type" value="1"/>
+
+
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script src="WAP_JS/address.js"></script>
+{/block}

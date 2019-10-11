@@ -1,0 +1,4 @@
+.payment{overflow: hidden; line-height: 50px; padding-left: 15px; background: #fff;}
+.payment>span{width: 28%;float: left;}
+.payment input{width:70%;height: 35px; border: none; display: inline-block;}
+button{position: fixed; bottom: 0; z-index: 5; width: 100%; height: 50px; border: 0; line-height: 50px; text-align: center; font-size: 16px; color: #FFF;}

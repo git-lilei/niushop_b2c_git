@@ -1,0 +1,355 @@
+{extend name="$base" /}
+{block name="resources"}
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" charset="utf-8" src="ADMIN_JS/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="ADMIN_JS/ueditor/ueditor.all.common.js"></script>
+<style>
+.js-song-goods{display: none;}
+.set-style dl dd p{line-height: 30px;height: 30px;margin-bottom: 5px;}
+.table th{font-weight: normal;}
+#editor{width: 100%;}
+</style>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<h4>专题活动信息</h4>
+	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;专题名称：</dt>
+		<dd>
+			<input type="text" id="topic_name" class="input-common long"  />
+			<p class="error">请输入专题名称</p>
+
+		</dd>
+	</dl>
+	<dl>
+		<dt>关键字：</dt>
+		<dd>
+			<input type="text" id="keyword" maxlength="500" class="input-common"/>
+			<p class="error">请输入关键字</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>描述：</dt>
+		<dd>
+			<textarea name="store_zy" rows="2" id="desc" class="textarea-common"></textarea>
+			<p class="error">请输入专题描述</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;图像：</dt>
+		<dd>
+			<div class="upload-btn-common">
+				<div>
+					<input class="input-file" name="file_upload" id="uploadpicture" type="file" onchange="imgUpload(this);" title="上传">
+					<input type="hidden" id="picture_img" value="">
+				</div>
+				
+				<input type="text" id="text_picture_img" class="input-common" readonly="readonly" value="">
+				<em>上传</em>
+				<img id="preview_picture_img" src="__STATIC__/blue/img/upload-common-select.png" data-src="" data-html="true" data-container="body" data-placement="top" data-trigger="manual" data-original-title="" title="">
+			</div>
+			<p class="error">请上传图像图片</p>
+			<p class="hint">专题活动列表中单独专题背景,<i class="important-note">建议使用宽580像素-高300像素</i></p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;条幅：</dt>
+		<dd>
+			<div class="upload-btn-common">
+				<div>
+					<input class="input-file" name="file_upload" id="uploadscroll" type="file" onchange="imgUpload(this);" title="上传">
+					<input type="hidden" id="scroll_img" value="">
+				</div>
+				
+				<input type="text" id="text_scroll_img" class="input-common" readonly="readonly" value="">
+				<em>上传</em>
+				<img id="preview_scroll_img" src="__STATIC__/blue/img/upload-common-select.png" data-src="" data-html="true" data-container="body" data-placement="top" data-trigger="manual" data-original-title="" title="">
+			</div>
+			<p class="error">请上传条幅图片</p>
+			<p class="hint">专题商品列表中的头部展示<i class="important-note"></i></p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>背景图：</dt>
+		<dd>
+			<div class="upload-btn-common">
+				<div>
+					<input class="input-file" name="file_upload" id="uploadbackground" type="file" onchange="imgUpload(this);" title="上传">
+					<input type="hidden" id="background_img" value="">
+				</div>
+				
+				<input type="text" id="text_background_img" class="input-common" readonly="readonly" value="">
+				<em>上传</em>
+				<img id="preview_background_img" src="__STATIC__/blue/img/upload-common-select.png" data-src="" data-html="true" data-container="body" data-placement="top" data-trigger="manual" data-original-title="" title="">
+			</div>
+			<p class="error">请上传图片</p>
+			<p class="hint">专题商品列表中背景图<i class="important-note"></i></p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>背景色：</dt>
+		<dd>
+			<input type="color" id="background_color" maxlength="10" class="input-common-color"/>
+			<p class="error">请输入专题名称</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;有效时间：</dt>
+		<dd>
+			<input class="input-medium input-common harf" type="text" id="start_time" style="width:250px;"onclick="WdatePicker({skin:'twoer',dateFmt:'yyyy-MM-dd HH:mm:ss'})" />
+			<span class="mlr5">至</span>
+			<input class="input-medium input-common harf" size="15" type="text" id="end_time" style="width:250px;"onclick="WdatePicker({skin:'twoer',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+			<p class="error">请输入活动有效期</p>
+			<p class="error">活动结束时间不能小于当前时间</p>
+			<p class="error">活动结束时间不能小于开始时间</p>
+		</dd>
+	</dl>
+	
+	<h4>高级设置</h4>
+	<dl>
+		<dt>专题介绍：</dt>
+		<dd>
+			<script id="editor" type="text/plain"></script>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否显示头部：</dt>
+		<dd><input id="is_head" type="checkbox" class="checkbox" checked="checked" /></dd>
+	</dl>
+	<dl>
+	<dt>是否显示底部：</dt>
+		<dd><input id="is_foot" type="checkbox" class="checkbox" checked="checked" /></dd>
+	</dl>
+	<h4>选择活动商品：</h4>
+	<!-- ******************************************* start 选择商品 start ******************************************* -->
+	<!-- 
+		is_limit_sku 是否限制只查询单规格商品 1限制 0不限制
+		is_many_select 是否可多选 1可多选 0只能单选
+		is_limit_skock 是否只查询有库存的商品 1只查询有库存商品 0不限制
+		is_limit_state 是否只查询已上架商品 1只查询上架商品 0不限制
+		is_limit_goods_type 是否限制只查询实物商品 1限制 0不限制
+	 -->
+	<input type="hidden" id="range_type" value="0">
+	<input type="hidden" id="is_show_select" value="0">
+	<input type="hidden" id="goods_id_array" value="">
+	<input type="hidden" id="select-goods-limit" value='{"is_limit_sku" : 0, "is_many_select" : 1, "is_limit_skock" : 1, "is_limit_state" : 1, "is_limit_goods_type" : 0}'>
+	{include file="admin/Promotion/goodsSelectDialog"/}
+	<!-- ******************************************* end 选择商品 end ******************************************* -->
+	<h4>模板设置</h4>
+	<dl>
+			<dt><span style="color:red;">*</span>&nbsp;&nbsp;电脑端：</dt>
+			<dd>
+				{$template_url['pc_template_url']}&nbsp;<input type="text" class="input-common" name="" id="pc_topic_template" value="{$template_url['pc_file']}" style="width: 80px;" onkeyup="value=value.replace(/[^\w\.\/]/ig,'')">&nbsp;.html
+				<p class="hint">用户自定义模板必须存放在{$template_url['pc_template_url']}下，模板名只能由英文组成</p>
+				<p class="error">电脑端模板不能为空</p>
+			</dd>
+		</dl>
+		<dl>
+			<dt><span style="color:red;">*</span>&nbsp;&nbsp;手机端：</dt>
+			<dd>
+				{$template_url['wap_template_url']}&nbsp;<input type="text" class="input-common" name="" id="wap_topic_template" value="{$template_url['wap_file']}" style="width: 80px;" onkeyup="value=value.replace(/[^\w\.\/]/ig,'')">&nbsp;.html
+				<p class="hint">用户自定义模板必须存放在{$template_url['wap_template_url']}下，模板名只能由英文组成</p>
+				<p class="error">手机端模板不能为空</p>
+			</dd>
+		</dl>
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="addTopic();">保存</button>
+			<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);">返回</button>
+		</dd>
+	</dl>
+</div>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script>
+var ue = UE.getEditor('editor', {"initialFrameHeight" : 450});
+
+$(function(){
+	UE.getEditor('editor').addListener( 'ready', function() {
+		if($("#content").val()){
+			UE.getEditor('editor').setContent($("#content").val());
+		}
+	} );
+});
+
+function imgUpload(event) {
+	var fileid = $(event).attr("id");
+	var data = {};
+	var id = $(event).next().attr("id");
+	var only_type = $(event).attr('only-type');
+	var url = "";
+	if(!only_type){
+		data.file_path = "promotion_topic_img";
+		url = __URL(ADMINMAIN + '/promotion/uploadimage');
+	}else{
+		data.file_path = "promotion_topic__file";
+		url = __URL(ADMINMAIN + '/promotion/uploadcompressedfile');
+	}
+	uploadFile({
+		url: url,
+		fileId: fileid,
+		data : data,
+		callBack: function (res) {
+			if(res.code){
+				$("#" + id).val(res.data.path);
+				$("#text_" + id).val(res.data.path);
+				$("#preview_"+ id).attr("data-src",__IMG(res.data.path));
+				showTip(res.message,"success");
+			}else{
+				showTip(res.message,"error");
+			}
+		}
+	});
+	
+}
+
+var flag = false;//防止重复提交
+
+//保存
+function addTopic(){
+	var topic_name = $("#topic_name").val();
+	var keyword = $("#keyword").val();
+	var desc = $("#desc").val();
+	var picture_img = $("#picture_img").val();
+	var scroll_img = $("#scroll_img").val();
+	var background_img = $("#background_img").val();
+	var background_color = $("#background_color").val();
+	var start_time = $("#start_time").val();
+	var end_time = $("#end_time").val();
+	var pc_topic_template = $("#pc_topic_template").val();
+	var wap_topic_template = $("#wap_topic_template").val();
+	var content = UE.getEditor('editor').getContent();
+	var range_type = 0;
+	if(content.length>30000){
+		showTip("文章内容太长","warning");
+		return;
+	}
+	var is_head = $("#is_head:checked").val() ? 1 : 0;
+	var is_foot = $("#is_foot:checked").val() ? 1 : 0;
+	if(!verify(topic_name, picture_img, scroll_img, start_time, end_time, pc_topic_template, wap_topic_template)){
+		return false;
+	}
+	
+	var goods_id_array = $("#goods_id_array").val();
+	if(range_type == 0 && BatchSend.length == 0){
+		$(".js-select-goods").find(".error").html('请选择参加活动的商品').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(flag){
+		return;
+	}
+
+	flag = true;
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/promotion/addTopic')}",
+		data : {
+			"topic_name" : topic_name,
+			"keyword" :  keyword,
+			"desc" : desc,
+			"picture_img" : picture_img,
+			"scroll_img" : scroll_img,
+			"background_img" :  background_img,
+			"background_color" : background_color,
+			"start_time" : start_time,
+			"end_time" : end_time,
+			"content" : content,
+			"range_type" : range_type,
+			"goods_id_array" : goods_id_array,
+			"is_head" : is_head,
+			'is_foot' : is_foot,
+			'pc_topic_template' : pc_topic_template,
+			'wap_topic_template' : wap_topic_template,
+ 		},
+		success : function(data) {
+			if (data["code"] > 0) {
+				showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/promotion/TopicList')}");
+			}else{
+				showMessage('error', data["message"]);
+				flag = false;
+			}
+		}
+	});
+}
+
+function verify(topic_name, picture_img, scroll_img, start_time, end_time, pc_topic_template, wap_topic_template){
+	if(topic_name == ''){
+		$("#topic_name").parent().find('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(picture_img == ''){
+		$("#picture_img").parent().parent().parent().find('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(scroll_img == ''){
+		$("#scroll_img").parent().parent().parent().find('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(start_time == '' || end_time == ''){
+		$("#start_time").parent().find('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(start_time == '' || end_time == ''){
+		$("#start_time").parent().find('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	var dataTime = nowDate();
+	var now = new Date(dataTime.replace("-", "/").replace("-", "/"));
+	var end = new Date(end_time.replace("-", "/").replace("-", "/"));
+	var start = new Date(start_time.replace("-", "/").replace("-", "/"));
+	if(end < now){
+		$("#end_time").next().next('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(end < start){
+		$("#end_time").next().next().next('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	
+	if(pc_topic_template == ''){
+		$("#pc_topic_template").parent().find('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(wap_topic_template == ''){
+		$("#wap_topic_template").parent().find('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	return true;
+}
+function nowDate(){
+	var myDate = new Date();
+	//获取当前年
+	var year=myDate.getFullYear();
+	//获取当前月
+	var month=myDate.getMonth()+1;
+	//获取当前日
+	var date=myDate.getDate(); 
+	var h=myDate.getHours();//获取当前小时数(0-23)
+	var m=myDate.getMinutes();//获取当前分钟数(0-59)
+	var s=myDate.getSeconds();
+	var now=year+'-'+month+"-"+date+" "+h+':'+m+":"+s;
+	return now;
+}
+</script>
+{/block}

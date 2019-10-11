@@ -1,0 +1,78 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/verification_share.css">
+{/block}
+{block name="main"}
+{php}
+$vg_id = request()->get('vg_id', '');
+$info = api("System.Order.getWapVirtualGoodsShare",['vg_id'=>$vg_id]);
+$info = $info['data'];
+
+if($vg_id) {
+	$list = api("System.Order.virtualGoodsVerificationList",['vg_id'=>$vg_id]);
+	$list = $list['data'];
+}
+{/php}
+<div class="share-box">
+	<div class="share-box-top">请将二维码出示给核销员</div>
+	<div class="share-box-middle">
+		<div class="share-box-middle-qrcode">
+ 			<img src="{:__IMG($info['path'])}"/>
+		</div>
+	</div>
+	<div class="share-box-bottom">
+		<span class="ns-bg-color-gray-fadeout-60">{$info.virtual_code}</span>
+	</div>
+</div>
+<div class="share-info">
+	<div class="share-info-nav ns-border-color-gray">
+		<div class="share-info-nav-top ns-border-color">核销详情</div>
+	</div>
+	<div class="share-info-content ns-border-color-gray">
+		<div class="share-info-content-box">
+			<span class="share-info-title">核销总次数：</span>
+			<span class="share-info-text">
+            {if $info.confine_use_number > 0}
+                {$info.confine_use_number}
+            {else/}
+               	 不限次数   
+            {/if}         
+            </span>
+		</div>
+        {if $info.confine_use_number > 0 && $info.confine_use_number - $info.use_number > 0}
+		<div class="share-info-content-box">
+			<span class="share-info-title">剩余次数：</span>
+			<span class="share-info-text">{$info.confine_use_number - $info.use_number}</span>
+		</div>
+        {/if}
+		<div class="share-info-content-box">
+			<span class="share-info-title">有效日期：</span>
+			<span class="share-info-text">{if condition="$info.end_time != 0"}到{$info.end_time|date='Y-m-d',###}之前有效{else/}不限制{/if}</span>
+		</div>
+	</div>
+</div>	
+{notempty name="$list"}
+ <div class="share-info">
+	<div class="share-info-nav ns-border-color-gray">
+		<div class="share-info-nav-top ns-border-color">核销记录</div>
+	</div>
+    {foreach name="$list" item="vo"}
+	<div class="share-info-content ns-border-color-gray">
+		<div class="share-info-content-box">
+			<span class="share-info-title">核销员：</span>
+			<span class="share-info-text">{$vo.verification_name}</span>
+		</div>
+		<div class="share-info-content-box">
+			<span class="share-info-title">核销次数：</span>
+			<span class="share-info-text">{$vo.num}</span>
+		</div>
+		<div class="share-info-content-box">
+			<span class="share-info-title">核销日期：</span>
+			<span class="share-info-text">{$vo.create_time|date="Y-m-d",###}日</span>
+		</div>
+	</div>
+    {/foreach}
+</div>
+{/notempty}
+{/block}
+{block name="footer"}{/block}

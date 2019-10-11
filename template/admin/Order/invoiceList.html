@@ -1,0 +1,103 @@
+{extend name="$base" /}
+{block name="resources"}
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+<style>
+.right-indent:after{
+	content:'';
+	display:inline-block;
+	width:40%;
+}
+</style>
+{/block}
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<th width="100%">
+			<span>下单时间：</span>
+			<input type="text" id="startDate" class="input-common middle" placeholder="请选择开始日期" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" />
+			&nbsp;-&nbsp;
+			<input type="text" id="endDate" placeholder="请选择结束日期" class="input-common middle" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" />
+			<span>订单编号：</span>
+			<input type="text" id ="order_no" placeholder="订单编号" class="input-common middle"/>
+			<button class="btn-common" onclick="LoadingInfo(1)">搜索</button>
+		</th>
+	</tr>
+</table>
+<table class="table-class">
+	<colgroup>
+		<col style="width: 1%;">
+		<col style="width: 15%;">
+		<col style="width: 14%;">
+		<col style="width: 12%;">
+		<col style="width: 15%;">
+		<col style="width: 15%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+	</colgroup>
+	<thead>
+		<tr>
+			<th align="center">
+				<!-- <i class="checkbox-common"><input type="checkbox"  id="check"></i> -->
+			</th>
+			<th align="left">订单编号</th>
+			<th align="left">用户名</th>
+			<th align="right" class="right-indent">开票金额</th>
+			<th align="left">抬头</th>
+			<th align="left">发票内容</th>
+			<th align="left">纳税人识别号</th>
+			<th align="center">创建时间</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+//加载数据
+function LoadingInfo(page_index) {
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/Order/invoiceList')}",
+		data : {
+			"page_index" : page_index,
+			"page_size" : $("#showNumber").val(),
+			"start_date" : $("#startDate").val(),
+			"end_date" : $("#endDate").val(),
+			"order_no" : $("#order_no").val()
+		},
+		success : function(data) {
+			if (data["data"].length > 0) {
+				$(".table-class tbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					html += '<tr align="center">';
+						// <i class="checkbox-common"><input type="checkbox" value="'+ data["data"][i]["order_id"] +'"></i>
+						html += '<td></td>';
+						html += '<td align="left"><a href="'+__URL('ADMIN_MAIN/order/orderdetail?order_id=' + data["data"][i]["order_id"] )+'">' + data["data"][i]["order_no"] + '</a></td>';
+						html += '<td align="left">' + data["data"][i]["user_name"] + '</td>';
+						html += '<td align="right" class="right-indent">' + data["data"][i]["pay_money"] + '</td>';
+						html += '<td align="left">' + data["data"][i]["invoice"][0] + '</td>';
+						html += '<td align="left">' + data["data"][i]["invoice"][1] + '</td>';
+						html += '<td align="left">' + data["data"][i]["invoice"][2] + '</td>';
+						
+						html += '<td >' + timeStampTurnTime(data["data"][i]["create_time"]) + '</td>';
+						html += '<td>';
+							//html += '<a href="###">查看</a>';
+						html += '</td>';
+					html += '</tr>';
+					$(".table-class tbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="9">暂无符合条件的数据记录</td></tr>';
+				$(".table-class tbody").html(html);
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+</script>
+{/block}

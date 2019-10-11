@@ -1,0 +1,105 @@
+<style>
+.product-category-pop-up .layui-layer-content{overflow: initial;}
+.product-category-pop-up .layui-form{padding: 10px;}
+.product-category-pop-up .selected-category{padding: 10px;border: 1px solid #0d73f9;display: none;}
+.product-category-pop-up .selected-category h4{margin:0 0 10px;}
+.product-category-pop-up .selected-category ul{display: block;overflow: hidden;clear: both;}
+.product-category-pop-up .selected-category li{float: left;margin: 0 5px 10px 0;padding: 0 15px 0 10px;color: #636363;line-height: 28px;border: 1px solid #ccc;font-size: 12px;cursor: pointer;position: relative;}
+.product-category-pop-up .selected-category li:hover{color: #126AE4;border-color: #0059d6;background-color: #eff7fe;}
+.product-category-pop-up .selected-category li i{position: absolute;top: 0;right: 0;width: 14px;height: 14px;line-height: 14px;text-align: center;font-style: normal;background-color: #eee;z-index: 2;font-size: 12px;display: none;}
+.product-category-pop-up .selected-category li:hover i{display: block}
+</style>
+<div class="layui-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label sm">产品分类</label>
+        <div class="layui-input-block">
+            <select name="select_category" lay-filter="select_category" lay-search>
+                <option value="">请选择</option>
+                {foreach name="$product_category_list" item="vo"}
+                <option value="{$vo['category_id']}">{$vo['category_name']}</option>
+                    {notempty name="$vo['child_list']"}
+	                    {foreach name="$vo['child_list']" item="child_second"}
+	                    <option value="{$child_second['category_id']}">　{$child_second['category_name']}</option>
+	                        {notempty name="$child_second['child_list']"}
+	                        {foreach name="$child_second['child_list']" item="child_third"}
+	                        <option value="{$child_third['category_id']}">　　{$child_third['category_name']}</option>
+	                        {/foreach}
+	                        {/notempty}
+	                    {/foreach}
+                    {/notempty}
+                {/foreach}
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item selected-category">
+        <label class="layui-form-label">已选产品分类</label>
+        <ul></ul>
+    </div>
+
+    <div class="layui-form-item" style="margin-bottom: 0;">
+        <label class="layui-form-label sm"></label>
+        <div class="layui-input-block">
+            <input type="hidden" value="{$data}" id="hidden_product_category_id">
+            <button class="layui-btn" lay-submit lay-filter="product_category_save">确定</button>
+        </div>
+    </div>
+</div>
+<script>
+var selected_category_data = {};
+layui.use('form', function() {
+    var form = layui.form;
+    form.render();
+
+    var product_category_id_arr = $("#hidden_product_category_id").val().split(",");
+    for (var i=0;i<product_category_id_arr.length;i++){
+        var id = product_category_id_arr[i];
+        selected_category_data[id] = $.trim($("select[name='select_category'] option[value='" + id + "']").text());
+    }
+    renderSelectedCategory();
+
+    form.on('select(select_category)', function(data){
+        if(data.value){
+            var value = $.trim($('select[name="select_category"]').next().find('.layui-select-title input').val());
+            selected_category_data[data.value] = value;
+            $('select[name="select_category"]').next().find('.layui-select-title input').val(value);
+            renderSelectedCategory();
+        }
+    });
+
+    //监听提交
+    form.on('submit(product_category_save)', function(data){
+        var id_arr = new Array();
+        for (d in selected_category_data) id_arr.push(d);
+
+        if(id_arr.length>0) {
+            block.setData(id_arr.toString());
+            layer.close(block.layer_open_index);
+        }else{
+            layer.msg("请选择产品分类");
+        }
+        return false;
+    });
+
+});
+
+function renderSelectedCategory(){
+    var h = '';
+    for (d in selected_category_data){
+        if(selected_category_data[d]) {
+            h += '<li>';
+            h += '<span>' + selected_category_data[d] + '</span>';
+            h += '<i data-id="' + d + '">x</i>';
+            h += '</li>';
+        }
+    }
+    if(h) $(".product-category-pop-up .selected-category ul").html(h).parent().show();
+    else $(".product-category-pop-up .selected-category").hide();
+}
+
+//删除已选产品分类
+$("body").on("click",".product-category-pop-up .selected-category ul i",function () {
+    delete selected_category_data[$(this).attr("data-id")];
+    renderSelectedCategory();
+});
+</script>

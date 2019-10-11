@@ -1,0 +1,97 @@
+{extend name="$base" /}
+{block name="resources"}
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+{/block}
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<th width="100%">
+			<span>下单时间：</span>
+			<input type="text" id="startDate" class="input-common middle" placeholder="请选择开始日期" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" />
+			&nbsp;-&nbsp;
+			<input type="text" id="endDate" placeholder="请选择结束日期" class="input-common middle" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" />
+			<span>订单编号：</span>
+			<input type="text" id ="out_trade_no" placeholder="交易号" class="input-common middle"/>
+			<span>充值用户：</span>
+			<input type="text" id ="user_name" placeholder="用户" class="input-common middle"/>
+			<button class="btn-common" onclick="LoadingInfo(1)">搜索</button>
+		</th>
+	</tr>
+</table>
+<table class="table-class">
+	<colgroup>
+		<col style="width: 1%;">
+
+		<col style="width: 25%;">
+		<col style="width: 14%;">
+
+		<col style="width: 15%;">
+		<col style="width: 15%;">
+		<!-- <col style="width: 12%;"> -->
+		<col style="width: 21%;">
+	</colgroup>
+	<thead>
+		<tr>
+			<th align="center">
+				<!-- <i class="checkbox-common"><input type="checkbox"  id="check"></i> -->
+			</th>
+			<th align="left">充值支付交易号</th>
+			<th align="left">用户名</th>
+			<th align="left">充值金额</th>
+			<th align="left">是否支付</th>
+			<!-- <th align="left">状态</th> -->
+			<th align="center">创建时间</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+//加载数据
+function LoadingInfo(page_index) {
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/Order/rechargeOrderList')}",
+		data : {
+			"page_index" : page_index,
+			"page_size" : $("#showNumber").val(),
+			"start_date" : $("#startDate").val(),
+			"end_date" : $("#endDate").val(),
+			"out_trade_no" : $("#out_trade_no").val(),
+			"user_name" : $("#user_name").val()
+		},
+		success : function(data) {
+			if (data["data"].length > 0) {
+				$(".table-class tbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					html += '<tr align="center">';
+						html += '<td></td>';
+
+						var is_pay_str = data["data"][i]["is_pay"] == 1 ? "已支付" : "待支付";
+						var status_str = "";
+						var user_name_str = data["data"][i]["user_name"] == null ? '' : data["data"][i]["user_name"]
+						html += '<td align="left">' + data["data"][i]["out_trade_no"] + '</td>';
+						html += '<td align="left">' + user_name_str + '</td>';
+						html += '<td align="left" >' + data["data"][i]["recharge_money"] + '</td>';
+						html += '<td align="left">' + is_pay_str + '</td>';
+						// html += '<td align="left">' + status_str + '</td>';
+						
+						html += '<td align="center">' + timeStampTurnTime(data["data"][i]["create_time"]) + '</td>';
+
+					html += '</tr>';
+					$(".table-class tbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="6">暂无符合条件的数据记录</td></tr>';
+				$(".table-class tbody").html(html);
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+</script>
+{/block}

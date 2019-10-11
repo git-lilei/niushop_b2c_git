@@ -1,0 +1,100 @@
+@CHARSET "UTF-8";
+
+.pro-form .help-inline {
+	display: none;
+	color: red;
+}
+.add_ladder_preference{
+	width: 180px;
+	height: 30px;
+	border:1px solid #ddd;
+	text-align: center;
+	background: #f5f5f5;
+	color: #555;
+	margin-top: 10px;
+}
+.add_ladder_preference:hover{
+	cursor: pointer;
+}
+.ladder_preference_content .ladder_preference{
+	width: 230px;
+	margin-bottom: 8px;
+} 
+.ladder_preference_content .ladder_preference .input-common{
+	width: 60px;
+}
+.ladder_preference_content .ladder_preference .ladder{
+	margin-right: 34px!important;
+}
+.ladder_preference_content .ladder_preference .delete_preference{
+	margin-left: 10px;
+}
+.ladder_preference_content div .label-title{
+	display: inline-block;
+	width: 75px;
+	text-align: left;
+	color: #555;
+	height: 25px;
+}
+.ladder_preference_content .ladder_preference .input-error,.ladder_preference_content .ladder_preference .input-error:focus{
+	border: 1px solid rgba(234, 14, 14, 0.8)!important;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(232, 0, 0, 0.6);
+}
+.goods_type_select{
+	line-height:1!important;
+	padding-left: 60px!important;
+}
+.goods_type_select .goods_type_item{
+	display: inline-block;
+	width: 120px;
+	height: 40px;
+	border: 1px solid #ddd;
+	margin-right: 10px;
+	padding: 8px 0;
+	position: relative;
+	border-radius: 2px;
+}
+
+.goods_type_select .goods_type_item[disabled]:hover{
+	cursor: not-allowed;
+}
+.goods_type_select .goods_type_item .type_name{
+	font-size: 13px;
+	color: #5e6166;
+	text-align: center;
+	margin:0;
+	line-height: 20px;
+}
+.goods_type_select .goods_type_item .type_desc{
+	font-size: 12px;
+	color: #aaa;
+	text-align: center;
+	margin:0;
+	line-height: 20px;
+} 
+.goods_type_select .goods_type_item input[type='radio']{
+	opacity: 0;
+}
+.goods_type_select .goods_type_item:hover{
+	cursor: pointer;	
+}
+.goods_type_select .goods_type_item i.selected-icon{
+    position: absolute;
+    width: 26px;
+    height: 20px;
+    bottom: 0;
+    right: 0;
+    background: url(../../images/type_selected.png) no-repeat;
+    display: none;
+    background-size: 26px 20px;
+}
+.goods_type_select .goods_type_item.selected{
+	border-color:#00A0DE;
+}
+.goods_type_select .goods_type_item.selected .type_name{
+	color:#00A0DE;
+}
+.goods_type_select .goods_type_item.selected i.selected-icon{
+	display: inline-block;
+}
+

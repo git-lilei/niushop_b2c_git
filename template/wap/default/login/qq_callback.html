@@ -1,0 +1,52 @@
+{extend name="$base" /}
+{block name="resources"}
+<style type="text/css">
+.back-box{width: 80%;margin: 0 auto;}
+.box-middle{margin-top: 10px;}
+.box-middle ul li{width: 100%;border-bottom: 1px solid;height: 30px;line-height: 30px;}
+.box-middle ul li input{border: none;height: 20px;font-size: 15px;}
+.button-style{width: 100%;height: 40px;line-height: 40px;font-size: 16px;color: #FFF;text-align: center;border: none;margin-top: 10px;}
+</style>
+{/block}
+{block name="main"}
+<div class="back-box">
+	<div>
+		<img src="{$data.figureurl_qq_1}" />
+	</div>
+	<div>{$data.nickname}</div>
+	<div class="box-middle">
+		<ul>
+			<li class="ns-border-color-gray">
+				<span>昵称：</span>
+				<input type="text" value="{$data.nickname}" id="username" />
+			</li>
+			<li class="ns-border-color-gray">
+				<span>密码：</span>
+				<input type="password" id="password" />
+			</li>
+		</ul>
+		<input type="hidden" id="qq_info" value="{$qq_info}">
+		<input type="hidden" id="qq_openid" value="{$qq_openid}">
+	</div>
+	<button class="button-style ns-bg-color" onclick="addUser()">{:lang('binding')}</button>
+</div>
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script>
+function addUser() {
+	var username = $("#username").val();
+	var password = $("#password").val();
+	var qq_info = $("#qq_info").val();
+	var qq_openid = $("#qq_openid").val();
+	api("System.Login.addUserWap",{'username' : username,'password' : password,'qq_openid' : qq_openid,'qq_info' : qq_info},function(res){
+		 var data =res.data;
+		if (data['code'] > 0) {
+			location.href = __URL("ADMIN_MAIN");
+		} else {
+			toast(data['message']);
+		}
+	});
+}
+</script>
+{/block}

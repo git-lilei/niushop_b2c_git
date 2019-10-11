@@ -1,0 +1,118 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" href="WAP_CSS/game_smash_eggs.css">
+{/block}
+{block name="head"}{/block}
+{block name="main"}
+{if condition="$game_open"}
+	<div class="login-layer">
+		<div class="layer-curtain"></div>
+		<div class="layer-content">
+			<div class="layer-icon"><img src="WAP_IMG/game/member-icon.png"></div>
+			<div class="layer-text ns-text-color-black">您还未登录</div>
+			<div class="layer-desc ns-text-color-gray">（请先登录/注册在进行此操作）</div>
+			<a href="{:__URL('APP_MAIN/login')}">
+				<div class="layer-btn primary">登录</div>
+			</a>
+		</div>
+	</div>
+{/if}
+{if $game_info}
+	<!-- 砸金蛋游戏背景 -->
+	<div>
+		<img src="WAP_IMG/game/smash_eggs_bg.png" class="smash-eggs-bg" />
+	</div>
+	<div class="game-content">
+		<!-- 游戏互动区 -->
+		<div class="egg">
+			<ul class="egglist">
+				<p class="hammer" id="hammer">锤子</p>
+				<p class="resulttip ns-text-color" id="resultTip"><b id="result"></b></p>
+				<li><span>1</span><sup></sup></li>
+				<li><span>2</span><sup></sup></li>
+				<li><span>3</span><sup></sup></li>
+			</ul>
+		</div>
+		<!-- 活动规则 -->
+		<div>
+			<img src="WAP_IMG/game/active_rule_eggs.png" class="title" />
+			<ul class="rule-desc">
+				<li>
+					<div>【活动时间】</div>
+					<div>{$game_info.start_time|date="Y年m月d日",###}-{$game_info.end_time|date="Y年m月d日",###}</div>
+				</li>
+				<li>
+					<div>【活动奖品】</div>
+					<table border="1" class="rule-table">
+						<tr>
+							<th>奖品名称</th>
+							<th>份数</th>
+						</tr>
+						{foreach name="$game_info['rule']" item="vo"}
+						<tr>
+							<td>{$vo.rule_name}&nbsp;
+								{switch name="$vo['type']"}
+									{case value="1"}{$vo.points|round}积分{/case}
+									{case value="2"}{$vo.type_value}{/case}
+									{case value="3"}{$vo.hongbao}元余额红包{/case}
+									{case value="4"}{$vo.type_value}{/case}
+								{/switch}
+							</td>
+							<td>{$vo.rule_num}</td>
+						</tr>
+						{/foreach}
+					</table>
+				</li>
+				<li>
+					<div>【活动规则】</div>
+					<div>
+						{if $game_info['member_level'] == 0}
+						<p>1.本次活动所有会员都可以参与，{$game_info.points|round}积分一次</p>
+						{else/}
+						<p>1.本次活动仅{$game_info.level_name}可以参与，{$game_info.points|round}积分一次</p>
+						{/if}
+						<p>2.中奖积分与红包会自动发放到账户中,实物奖品需到我的奖品进行领取</p>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<!-- 中奖名单 -->
+		{notempty name="$winning_records"}
+		<div>
+			<img src="WAP_IMG/name-list-eggs.png" class="title" />
+			<div>
+				<ul >
+					{foreach name="$winning_records" item="vo"}
+					<li>
+						<span>{$vo.remark}</span>
+					</li>
+					{/foreach}
+				</ul>
+			</div>
+		</div>
+		{/notempty}
+	</div>
+	<input type="hidden" id="game_id" value='{$game_info.game_id}'/>
+	{notempty name="$participation_restriction"}
+	<div class="restriction">
+		<div class="tip-info-container">
+			<p class="tip-info ns-text-color-gray">{$participation_restriction}</p>
+			<button onclick="location.href=__URL('APP_MAIN')" class="ns-bg-color">知道了</button>
+		</div>
+	</div>
+	{/notempty}
+{/block}
+{block name="script"}
+<script type="text/javascript" src="WAP_JS/game_smash_eggs.js"></script>
+<script type="text/javascript" src="WAP_JS/my_scroll.js"></script>
+<script>
+$(function(){
+	$('.list-desc').myScroll({
+		speed: 40, //数值越大，速度越慢
+		rowHeight: 26 //li的高度
+	});
+});
+</script>
+{/if}
+{/block}
+{block name="footer"}{/block}

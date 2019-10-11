@@ -1,0 +1,100 @@
+{extend name="$base" /}
+{block name="resources"}
+<style>
+.is-enabled{display: block;width:15px;cursor: pointer;}
+.ns-main{margin-top:0px;}
+</style>
+{/block}
+{block name="main"}
+	<table class="mytable">
+		<tr>
+			<th width="30%" style="text-align: left;">
+			</th>
+			<th width="20%">
+				<input type="text" id='search_name' placeholder="输入虚拟商品名称" class="input-common"/>
+				<input type="button" onclick="LoadingInfo(1)" value="搜索" class="btn-common"/>
+			</th>
+		</tr>
+	</table>
+
+	<table class="table-class">
+		<colgroup>
+		<col style="width: 2%;">
+		<col style="width: 14%;">
+		<col style="width: 13%;">
+		<col style="width: 13%;">
+		<col style="width: 13%;">
+		<col style="width: 13%;">
+		<col style="width: 16%;">
+		<col style="width: 16%;">
+		</colgroup>
+		<thead>
+			<tr>
+				<th><i class="checkbox-common"><input type="checkbox"  /></i></th>
+				<th align="left">虚拟商品</th>
+				<th align="left">商品所有人</th>
+				<th align="left">核销员</th>
+				<th align="center">核销次数/次</th>
+				<th>核销状态</th>
+				<th align="left">备注</th>
+				<th>核销时间</th>
+			</tr>
+		</thead>
+		<tbody></tbody>
+	</table>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+//加载数据
+function LoadingInfo(page_index) {
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/Verification/virtualGoodsVerificationList')}",
+		data : {
+			"page_index" : page_index,
+			"page_size" : $("#showNumber").val(),
+			"search_name" : $("#search_name").val()
+		},
+		success : function(data) {
+			
+			if (data["data"].length > 0) {
+				$(".table-class tbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {	
+
+					var html = '';
+					html += '<tr align="center">';
+					html += '<td><i class="checkbox-common"><input name="sub" type="checkbox" value="'+ data["data"][i]["virtual_goods_id"] +'" ></i></td>';
+					if(data["data"][i]["goods_name"] != null){
+						html += '<td align="left">' + data["data"][i]["goods_name"] + '</td>';
+					}else{
+						html += '<td align="left"></td>';
+					}
+					html += '<td align="left">' + data["data"][i]["user_name"] + '</td>';
+					html += '<td align="left">' + data["data"][i]["verification_name"] + '</td>';
+					html += '<td align="center">'+data["data"][i]["num"]+'</td>';
+
+					if (data["data"][i]["status"] == - 1) {
+						var use_status = '已过期';
+					} else if (data["data"][i]["status"] == 0) {
+						var use_status = '未使用';
+					} else if (data["data"][i]["status"] == 1) {
+						var use_status = '已使用';
+					}
+					html += '<td>'+use_status+'</td>';
+					html += '<td align="left">'+data["data"][i]["action"]+'</td>';
+					html += '<td>'+timeStampTurnTime(data["data"][i]["create_time"])+'</td>';
+					html +='</tr>';
+					$(".table-class tbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="8">暂无符合条件的数据记录</td></tr>';
+				$(".table-class tbody").html(html);
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+</script>
+{/block}

@@ -1,0 +1,441 @@
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script type="text/javascript">
+var game_type = '{$game_type}';
+var set_game_rule = 0;
+var game_id = '{$game_id}';
+var last_active = 1; //步骤
+var step_verification = 0;
+$(function(){
+	
+	$("#rule_points").blur(function(){
+		var point = $(this).val();
+		$(this).val(parseInt(point));
+	});
+
+	// 创建活动信息验证
+	var create_promotion = function(){
+		var game_name = $("#game_name").val(),
+			start_time = $("#start_time").val(),
+			end_time = $("#end_time").val(),
+			points = $("#points").val();
+		var res = true;
+		if(game_name.length == 0){
+			$("#game_name").focus().parents("dl").find('.err-msg').text("活动名称不可为空").show();
+			res = false;
+			return res;
+		}else{ $("dl p.err-msg").hide(); }
+
+		if(!VerifyCharacters(game_name)){
+			$("#game_name").focus().parents("dl").find('.err-msg').text("活动名称不可超过8个汉字或16个字母").show();
+			res = false;
+			return res;
+		}else{ $("dl p.err-msg").hide(); }
+
+		if(start_time.length == 0){
+			$("#start_time").focus().parents("dl").find('.err-msg').text("请选择活动开始时间").show();
+			res = false;
+			return res;
+		}else{ $("dl p.err-msg").hide(); }
+
+		if(end_time.length == 0){
+			$("#end_time").focus().parents("dl").find('.err-msg').text("请选择活动结束时间").show();
+			res = false;
+			return res;
+		}else{ $("dl p.err-msg").hide(); }
+		
+		if(end_time < start_time){
+			$("#end_time").parents("dl").find('.err-msg').text("结束时间不能小于开始时间").show();
+			res = false;
+			return res;
+		}else{ $("dl p.err-msg").hide(); }
+
+		if(points.length == 0){
+			$("#points").focus().parents("dl").find('.err-msg').text("请设置参与一次所需积分").show();
+			res = false;
+			return res;
+		}else{ $("dl p.err-msg").hide(); }
+		return res;
+	};
+	
+	// 中奖设置信息验证
+	var winning_setting = function(){
+		var winning_rate = $("#winning_rate").val();
+		var res = true;
+		if(winning_rate.length == 0){
+			$("#winning_rate").focus().parents("dl").find('.err-msg').text("请设置中奖率").show();
+			res = false;
+			return res;
+		}else if(winning_rate < 1 || winning_rate > 100){
+			$("#winning_rate").focus().parents("dl").find('.err-msg').text("中奖概率只能在1-100之间取值").show();
+			res = false;
+			return res;
+		}else{ $("dl p.err-msg").hide(); }
+
+		return res;
+	};
+
+	//点击下一步
+	$(".next").click(function(){
+		var _index = $(".option-nav ul li.selected").index();
+		if(_index == 0){
+			var create_promotion_res = create_promotion();
+			if(!create_promotion_res) return;
+			$(".option-nav ul li").removeClass('selected').eq(1).addClass("selected");
+			$(".upper").show();
+		}else if(_index == 1){
+			var winning_setting_res = winning_setting();
+			if(!winning_setting_res) return;
+			$(".option-nav ul li").removeClass('selected').eq(2).addClass("selected");
+			$(".next").hide();
+			$(".complete").show();
+		}
+		var _option = $(".option-nav ul li.selected").attr("data-option");
+		$(".game-info div.info-content-height").not(".bottom_button").hide();
+		$("#"+_option).show();
+	});
+
+	//点击上一步
+	$(".upper").click(function(){
+		var _index = $(".option-nav ul li.selected").index();
+		_index -= 1;
+		if(_index >= 0){
+			$(".option-nav ul li").removeClass('selected').eq(_index).addClass("selected");
+			if(_index == 0) $(".upper").hide();
+		}
+		$(".next").show();
+		$(".complete").hide();
+		var _option = $(".option-nav ul li.selected").attr("data-option");
+		$(".game-info div.info-content-height").not(".bottom_button").hide();
+		$("#"+_option).show();
+	});
+
+	//添加奖励等级
+	$('.rule_a').click(function(){
+		var rule_type = $("input[name='rule_type']:checked").val();
+		var rule_type_name = $("input[name='rule_type']:checked").parent().next("span").text();
+		var rule_name = $('#rule_name').val();
+		var rule_num = $('#rule_num').val();
+		if(rule_type == 1){
+			rule_value = $('#rule_points').val();
+			rule_text = $('#rule_points').val()+"积分";
+		}else if(rule_type == 2){
+			rule_value = $('#coupon_type_id').val();
+			rule_text = $('#coupon_type_id option:checked').text();
+		}else if(rule_type == 3){
+			rule_value = $('#rule_hongbao').val();
+			rule_text = $('#rule_hongbao').val()+"余额红包";
+		}else if(rule_type == 4) {
+			rule_value = $('#gift_id').val();
+			rule_text = $('#gift_id option:checked').text();
+		}
+
+		var games_rule_verify_res = games_rule_verify(rule_type,rule_name,rule_num,rule_value);
+		if(!games_rule_verify_res){
+			return;
+		}
+
+		var add_type = $(this).attr("data-type");
+
+		if(add_type == 'add'){
+			var rule_html = $("#games_rule").html();
+			var sort = $("#games_rule tr").length;
+			rule_html += '<tr data-sort="'+sort+'">';
+				rule_html += '<td name="rule_name">'+rule_name+'</td>';
+				rule_html += '<td name="rule_type_name">'+rule_type_name+'<input type="hidden" name="rule_type" value="'+rule_type+'" /></td>';
+				rule_html += '<td name="rule_text"><input type="hidden" name="rule_value" value="'+rule_value+'" />'+rule_text+'</td>';
+				rule_html += '<td name="rule_num">'+rule_num+'</td>';
+				rule_html += '<td><a href="javascript:;" onclick="setRule(this)">编辑</a>&nbsp;&nbsp;&nbsp;<a href="javascript:;" onclick="delRule(this)">删除</a></td>';
+			rule_html += '</tr>';
+			$("#games_rule").html(rule_html);
+		}else if(add_type == 'up'){
+			var sort = $('.rule_a').attr("sort");
+			var rule_html = '<td name="rule_name">'+rule_name+'</td>';
+			 	rule_html += '<td name="rule_type_name">'+rule_type_name+'<input type="hidden" name="rule_type" value="'+rule_type+'" /></td>';
+				rule_html += '<td name="rule_text"><input type="hidden" name="rule_value" value="'+rule_value+'" />'+rule_text+'</td>';
+				rule_html += '<td name="rule_num">'+rule_num+'</td>';
+				rule_html += '<td><a href="javascript:;" onclick="setRule(this)">编辑</a>&nbsp;&nbsp;&nbsp;<a href="javascript:;" onclick="delRule(this)">删除</a></td>';
+			$("#games_rule tr").eq(sort).html(rule_html);
+			$('.rule_a').attr("data-type","add").text("添加奖励");
+		}
+		//添加完之后清空
+		$(".add_rule input.input-common").val("");
+	});
+	
+	//验证添加奖励规则
+	var games_rule_verify = function(rule_type,rule_name,rule_num,rule_value) {
+		var res = true;
+		if (rule_name.length == 0) {
+			$("#rule_name").focus().parents("dl").find('.err-msg').text("请填写奖励等级").show();
+			res = false;
+			return res;
+		} else {
+			$("dl p.err-msg").hide();
+		}
+		
+		switch (rule_type) {
+			case "1":
+				if (rule_value.length == 0) {
+					$("#rule_points").focus().parents("dl").find('.err-msg').text("请填写奖励积分数量").show();
+					res = false;
+					return res;
+				} else {
+					$("dl p.err-msg").hide();
+				}
+				break;
+			case "2":
+				if (rule_value == 0) {
+					$("#coupon_type_id").focus().parents("dl").find('.err-msg').text("请选择优惠券").show();
+					res = false;
+					return res;
+				} else {
+					$("dl p.err-msg").hide();
+				}
+				break;
+			case "3":
+				if (rule_value.length == 0) {
+					$("#rule_hongbao").focus().parents("dl").find('.err-msg').text("请填写红包金额").show();
+					res = false;
+					return res;
+				} else {
+					$("dl p.err-msg").hide();
+				}
+				break;
+			case "4":
+				if (rule_value.length == 0) {
+					$("#gift_id").focus().parents("dl").find('.err-msg').text("请选择赠品").show();
+					res = false;
+					return res;
+				} else {
+					$("dl p.err-msg").hide();
+				}
+				break;
+		}
+		
+		if (rule_num.length == 0) {
+			$("#rule_num").focus().parents("dl").find('.err-msg').text("请填写奖品数量").show();
+			res = false;
+			return res;
+		} else {
+			$("dl p.err-msg").hide();
+		}
+		
+		return res;
+	};
+
+	//添加奖品显示
+	$('.menu_content .add').click(function(){
+		set_game_rule = 0;
+		var rule_object = $(this).parents('.menu_content');
+		rule_object.find('.frm_control_group input[type="number"]').val('');
+		rule_object.find('.frm_control_group input[type="text"]').val('');
+		var fule_type_object = rule_object.find('.frm_control_group input[type="radio"][value="1"]');
+		fule_type_object.attr('checked',true);
+		fule_type_object.trigger('click');
+	});
+	
+	//时间值改变以后
+	$('#start_time,#end_time').change(function(){
+		
+		if($(this).attr('id') == 'start_time'){
+			
+			var value = $(this).val();
+			value = value == '' ? '未填' : value;
+			$('span[data-name="start_time"]').text(value);
+		}else if($(this).attr('id') == 'end_time'){
+			var value = $(this).val();
+			value = value == '' ? '未填' : value;
+			$('span[data-name="end_time"]').text(value);
+		}
+	});
+	
+	//活动名称改变
+	$('#game_name').change(function(){
+		var value = $(this).val();
+		value = value == '' ? '无' : value;
+		$('div[data-name="team_name"]').text(value);
+	});
+	
+	//活动名称改变
+	$('#remark').change(function(){
+		var value = $(this).val();
+		value = value == '' ? '无' : value;
+		$('div[data-name="notice"]').text(value);
+	});
+	
+	//完成
+	var flag = false;
+	$('.complete').click(function() {
+		var game_name = $('#game_name').val();
+		var start_time = $('#start_time').val();
+		var end_time = $('#end_time').val();
+		var remark = $('#remark').val();
+		if (remark == '') {
+			remark = $('#remark').attr('placeholder');
+		}
+		
+		var member_level = $('#member_level').val();
+		var points = $('#points').val();
+		var no_winning_des = $('#no_winning_des').val();
+		no_winning_des = no_winning_des.length == 0 ? '哎呀！真可惜没有中奖' : no_winning_des;
+		var winning_rate = $('#winning_rate').val();
+		
+		var join_type = $("input[name='join_type']:checked").val();
+		var join_frequency = parseInt($("#join_frequency").val());
+		join_frequency = join_frequency < 0 ? 0 : join_frequency;
+		var winning_type = $("input[name='winning_type']:checked").val();
+		var winning_max = parseInt($("#winning_max").val());
+		winning_max = winning_max < 0 ? 0 : winning_max;
+		
+		var winning_list_display = $("input[name='winning_list_display']:checked").val();
+		
+		var promotion_status = {notempty name="$info"}{$info.status}{else/}''{/notempty};
+		
+		var rule_array = new Array();
+		$('#games_rule tr').each(function () {
+			
+			var rule_item = new Object();
+			rule_item.rule_name = $(this).find('[name="rule_name"]').text();
+			rule_item.type = $(this).find('[name="rule_type"]').val();
+			rule_item.type_value = $(this).find('[name="rule_text"]').text();
+			var rule_value = $(this).find('[name="rule_value"]').val();
+			rule_item.rule_num = $(this).find('[name="rule_num"]').text();
+			
+			if (rule_item.type == 1) {
+				rule_item.points = rule_value;
+			} else {
+				rule_item.points = 0;
+			}
+			
+			if (rule_item.type == 2) {
+				rule_item.coupon_type_id = rule_value;
+			} else {
+				rule_item.coupon_type_id = 0;
+			}
+			
+			if (rule_item.type == 3) {
+				rule_item.hongbao = rule_value;
+			} else {
+				rule_item.hongbao = 0;
+			}
+			
+			if (rule_item.type == 4) {
+				rule_item.gift_id = rule_value;
+			} else {
+				rule_item.gift_id = 0;
+			}
+			rule_array.push(rule_item);
+		});
+		
+		if (rule_array.length == 0) {
+			showTip("奖励设置不能为空！", "warning");
+			return;
+		}
+		
+		if (flag) return;
+		flag = true;
+		
+		$.ajax({
+			type: "post",
+			url: "{:__URL('ADMIN_MAIN/promotion/addUpdatePromotionGame')}",
+			data: {
+				"game_id": game_id,
+				"game_name": game_name,
+				"game_type": game_type,
+				"start_time": start_time,
+				"end_time": end_time,
+				"remark": remark,
+				"member_level": member_level,
+				"points": points,
+				"winning_rate": winning_rate,
+				'no_winning_des': no_winning_des,
+				'rule_array': JSON.stringify(rule_array),
+				"activity_images": $("#logo").val(),
+				"join_type": join_type,
+				"join_frequency": join_frequency,
+				"winning_type": winning_type,
+				"winning_max": winning_max,
+				"winning_list_display": winning_list_display,
+				"promotion_status": promotion_status
+			},
+			success: function (data) {
+				if (data["code"] > 0) {
+					showMessage('success', data["message"]);
+					location.href = __URL("ADMIN_MAIN/promotion/promotionGamesList?type={$type}");
+				} else {
+					showMessage('error', data["message"]);
+					flag = false;
+				}
+			}
+		})
+	});
+
+	//切换奖励类型
+	$('.add_rule label.radio').click(function(){
+		var rule_type = $(this).find("input[type='radio'][name='rule_type']").val();
+		$(".add_rule dl[class^='rule_type']").hide();
+		$(".add_rule dl.rule_type"+rule_type).show();
+	})
+	
+});
+
+//编辑奖励等级
+function setRule(even){
+	set_game_rule = $(even).parents('tr');
+
+	var sort = set_game_rule.attr('data-sort');
+	$(".rule_a").attr({"data-type":"up","sort":sort}).text("保存");
+
+	$('#rule_name').val(set_game_rule.find('[name="rule_name"]').text());
+	$('#rule_num').val(set_game_rule.find('[name="rule_num"]').text());
+	
+	//根据类型显示不同的编辑内容
+	var rule_type = set_game_rule.find('[name="rule_type"]').val()
+	var rule_value = set_game_rule.find('[name="rule_value"]').val()
+
+	$(".add_rule dl input[type='radio']").prop("checked", false).parent().removeClass("selected");
+	$(".add_rule dl input[type='radio'][value='"+rule_type+"']").prop("checked", true).parent().addClass("selected");
+	$(".add_rule dl[class^='rule_type']").hide();
+
+	if(rule_type == 1){
+		$('#rule_points').val(rule_value).parents('dl').show();
+	}else if(rule_type == 2){
+		$('#coupon_type_id').val(rule_value).parents('dl').show();
+	}else if(rule_type == 3){
+		$('#rule_hongbao').val(rule_value).parents('dl').show();
+	}else if(rule_type == 4){
+		$('#gift_id').val(rule_value).parents('dl').show();
+	}
+	
+}
+//删除奖励等级
+function delRule(even){
+	$(even).parents('tr').remove();
+}
+
+//字数不超过8个汉字或16个字母
+function VerifyCharacters(str) {
+	return /^[a-zA-Z-0-9]{1,16}$/.test((str + '').replace(/[\u4e00-\u9fa5]/g, 'aa'));
+}
+
+function imgUpload(event) {
+	var fileid = $(event).attr("id");
+	var id = $(event).next().attr("id");
+	var data = { 'file_path' : "promotion" };
+	uploadFile({
+		url: __URL(ADMINMAIN + '/promotion/uploadimage'),
+		fileId: fileid,
+		data : data,
+		callBack: function (res) {
+			if(res.code){
+				$("#" + id).val(res.data.path);
+				$("#text_" + id).val(res.data.path);
+				$("#preview_"+ id).attr("data-src",__IMG(res.data.path));
+				showTip(res.message,"success");
+			}else{
+				showTip(res.message,"error");
+			}
+		}
+	});
+}
+</script>

@@ -1,0 +1,415 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" href="ADMIN_JS/timeInterval/dateRange.css">
+<link rel="stylesheet" href="ADMIN_JS/timeInterval/monthPicker.css">
+<link rel="stylesheet" href="ADMIN_CSS/analysis.css">
+<style  type="text/css">
+.goods{width: 100%;height: 450px; padding: 20px 0; }
+.goods-data{width: 50%;height: 450px;padding: 20px 0; margin: 0 auto}
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td {margin:0;padding:0;} 
+fieldset,img {border:0} 
+ol,ul {list-style:none;} 
+.clear:before,.clear:after{content: '';clear: both;}
+
+.member_farth{
+    width: 50%;
+    margin-top: 10px;
+    height: 525px;
+    border: 1px solid  #e6e9f0;
+    box-sizing: border-box ;
+    position: relative;
+    float: left;
+    max-width: calc(50% - 5px);
+}
+.member_farth .member_son{
+	width: 100%;
+    height: 6.5%;
+    line-height: 32px;
+    font-size: 13px;
+    border-bottom: 1px solid #e6e9f0;
+    background: #f5f7fa;
+    text-indent: 10px;
+}
+.goods_farth{
+    width: 50%;
+    margin-top: 10px;
+    height: 525px;
+    border: 1px solid  #e6e9f0;
+    box-sizing: border-box ;
+    float: right;
+    max-width: calc(50% - 5px);
+}
+.goods_farth .goods_son{
+	width: 100%;
+    height: 6.5%;
+    line-height: 32px;
+    font-size: 13px;
+    border-bottom: 1px solid #e6e9f0;
+    background: #f5f7fa;
+    text-indent: 10px;
+}
+.time-select-container{
+    position: absolute;
+    z-index: 10;
+    top: 53px;
+    right: 50px;
+}
+.time-select-container span.wrap{
+    margin-left: 10px;
+    float: left;
+    display: inline-block;
+}
+.time-select-container .time-type a{
+    margin: 0;
+    height: 26px;
+    line-height: 26px;
+    color: #666;
+    display: inline-block;
+    cursor: pointer;
+    border: 1px solid #d9d9d9;
+    border-left: 0;
+    background: #fff;
+    padding: 0 16px;
+    float: left;
+    font-size: 12px;
+    transition: all .3s;
+}
+.time-select-container .time-type a:first-child{
+    border: 1px solid #d9d9d9;
+    border-radius: 2px 0 0 2px;
+}
+.time-select-container .time-type a:last-child{
+    border-radius: 0 2px 2px 0;
+}
+.time-select-container .time-type a.active{
+    color: #00A0DE;
+    border-color: #00A0DE;
+}
+.time-select-container .time-type a:last-child.active{
+    box-shadow: -1px 0 0 0 #00A0DE;
+}
+.time-select-container .form{
+    position: relative;
+    padding: 4px 7px;
+    width: 320px;
+    height: 18px;
+    cursor: text;
+    font-size: 12px;
+    line-height: 1.5;
+    color: #666;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #d9d9d9;
+    border-radius: 2px;
+    transition: all .3s;
+}
+.time-select-container .form input{
+    border: none;
+    margin-bottom: 0;
+    height: 18px;
+    line-height: 18px;
+    outline: 0;
+    width: 45.5%;
+    text-align: center;
+    padding: 0;
+    box-shadow: none;
+    font-size: 12px;
+    color: #666;
+}
+.time-select-container .form:hover{
+    border-color: #00A0DE;
+}
+.time-select-container .form input:focus{
+    border: none !important;
+}
+.time-select-container .form .split{
+    color: #666;
+    display: inline-block;
+    width: 18px;
+}
+.goods-sale-rank{margin-top: 10px;}
+.rank-img {height: 34px;}
+.first{color: #F44336;font-weight: bold;font-size: 19px;}
+.second{color:#FF9800;font-weight: bold;font-size: 17px;}
+.third{color:#03A9F4;font-weight: bold;font-size: 15px;}
+</style>
+{/block}
+{block name="alert_info"}{/block}
+{block name="main"}
+<div class="basic_data_ons">
+	<div class="basic_data_ons_son">基本数据</div>
+	<ul class="basic_data_ons_son_list">
+        <li>
+            <div class="basic_data_ons_son_list_nvs">
+                <p>商品总数</p>
+				<cite>{$goods_count_data.goods_num}</cite>
+			</div>
+		</li>
+        <li>
+            <div class="basic_data_ons_son_list_nvs">
+                <p>在售商品数</p>
+                <cite>{$goods_count_data.in_sale_num}</cite>
+            </div>
+        </li>
+        <li>
+            <div class="basic_data_ons_son_list_nvs">
+                <p>仓库中商品数</p>
+                <cite>{$goods_count_data.in_warehouse_num}</cite>
+            </div>
+        </li>
+        {if isset($goods_count_data['fx_goods_num'])}
+        <li>
+            <div class="basic_data_ons_son_list_nvs">
+                <p>分销商品数</p>
+                <cite>{$goods_count_data.fx_goods_num}</cite>
+            </div>
+        </li>
+        {/if}
+	</ul>
+</div>
+
+<div class="member_farth">
+    <div class="member_son">商品售出分析</div>
+    <div id="goods_sale_data" class="goods"></div>
+
+    <div class="time-select-container clear">
+        <span class="time-type clear wrap">
+            <a href="javascript:;" class="active" data-type="day">按日</a>
+            <a href="javascript:;" data-type="month">按月</a>
+        </span>
+        <span class="form wrap clear" id="day">           
+            <input type="text" placeholder="开始时间" class="start_time">
+            <span class="split">-</span>
+            <input type="text" placeholder="结束时间" class="end_time">
+        </span>
+        <span class="form wrap clear" style="display: none;" id="month">          
+            <input type="text" placeholder="开始时间" class="start_time">
+            <span class="split">-</span>
+            <input type="text" placeholder="结束时间" class="end_time">
+        </span>
+    </div>
+</div>
+
+<div class="goods_farth">
+    <div class="goods_son">商品构成比率</div>
+    <div id="goods_num_data" class="goods-data"></div>
+</div>
+
+<div style="clear: both;"></div>
+
+<table class="table-class goods-sale-rank">
+    <colgroup>
+        <col style="width: 2%;">
+        <col style="width: 5%;">
+        <col style="width: 41%;">
+        <col style="width: 21%;">
+        <col style="width: 31%;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th></th>
+            <th align="left">排行</th>
+            <th align="left">商品名称</th>
+            <th align="right"></th>
+            <th style="text-align:center">销售量</th>
+        </tr>
+    </thead>
+    <tbody>
+    {foreach $goods_list as $k=>$goods_info}
+        <tr>
+            <td></td>
+            <td align="left">
+                {if condition="$k eq 0"}
+                <span class="first">{$k + 1}</span>
+                {elseif condition="$k eq 1"/}
+                <span class="second">{$k + 1}</span>
+                {elseif condition="$k eq 2"/}
+                <span class="third">{$k + 1}</span>
+                {else/}
+                <span>{$k + 1}</span>
+                {/if}
+            </td>
+            <td ><a href="" title="{$goods_info.goods_name}" style="margin-left:0px;">{$goods_info.goods_name}</a></td>
+            <td  align="right">
+                {if condition="$k eq 0"}
+                <img class="rank-img" src="ADMIN_IMG/firat_sale.png" />
+                {elseif condition="$k eq 1"/}
+                <img class="rank-img" src="ADMIN_IMG/second_sale.png" />
+                {elseif condition="$k eq 2"/}
+                <img class="rank-img" src="ADMIN_IMG/third_sale.png" />
+                {/if}
+            </td>
+            <td style="text-align:center">
+                {if condition="$k eq 0"}
+                <span class="first">{$goods_info.real_sales}</span>
+                {elseif condition="$k eq 1"/}
+                <span class="second">{$goods_info.real_sales}</span>
+                {elseif condition="$k eq 2"/}
+                <span class="third">{$goods_info.real_sales}</span>
+                {else/}
+                <span>{$goods_info.real_sales}</span>
+                {/if}
+            </td>
+        </tr>
+        {/foreach}
+    </tbody>
+</table>
+
+<script src="ADMIN_JS/echarts.js"></script>
+<script src="ADMIN_JS/timeInterval/dateRange.js" type="text/javascript"></script>
+<script src="ADMIN_JS/timeInterval/monthPicker.js" type="text/javascript"></script>
+<script type="text/javascript">
+var goods_num_obj= echarts.init(document.getElementById('goods_num_data'));
+var goods_num_option = {
+    title : {
+     
+        x:'center'
+    },
+    color : ['#c5de55', '#5491de'],
+    tooltip : {
+        trigger: 'item',
+        formatter: "{a} <br/>{b} : {c}件 ({d}%)"
+    },
+    legend: {
+        orient: 'vertical',
+        left: 'left',
+        data: [
+        	{foreach name="$goods_num_data" item="vo"}
+        		'{$vo.name}',
+        	{/foreach}
+        ]
+    },
+    series : [
+        {
+         
+            type: 'pie',
+            radius : '55%',
+            center: ['50%', '60%'],
+            data:[
+            	{foreach name="$goods_num_data" item="vo"}
+                	{value:{$vo.num}, name:'{$vo.name}'},
+            	{/foreach}
+            ],
+            itemStyle: {
+                emphasis: {
+                    shadowBlur: 10,
+                    shadowOffsetX: 0,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                }
+            }
+        }
+    ]
+};
+goods_num_obj.setOption(goods_num_option);
+
+var goods_sale_obj= echarts.init(document.getElementById('goods_sale_data'));
+var goods_sale_option = {
+    color : ['#2998FF'],
+    title: {
+        text: ''
+    },
+    tooltip: {
+        trigger: 'axis'
+    },
+    legend: {
+        data:[]
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },  
+    toolbox: {},
+    xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: []
+    },
+    yAxis: {
+        type: 'value',
+        minInterval : 1,
+        splitLine:{  
+            show:true  ,
+            lineStyle:{
+                color:'#ddd',
+                width: 1,
+                type : 'dashed'
+            }
+        },
+        axisLine : {
+            show : false,
+            lineStyle : {
+                color : '#777'
+            }
+        },
+        axisTick: {show: false},
+    },
+    series: [
+        {
+            name:'商品售出数',
+            type:'line',
+            data:[],
+            smooth: true
+        }
+    ]
+};
+
+$(function(){
+	loadGoodsSaleData();
+
+    $('.time-select-container .time-type a').click(function() {
+        $(this).addClass('active').siblings('a').removeClass('active');
+        var type = $(this).attr('data-type');
+            loadGoodsSaleData();
+            $('#' + type).show().siblings('.form').hide();
+    });
+})
+
+function loadGoodsSaleData(){
+    var type = $('.time-select-container .time-type a.active').attr('data-type');
+	$.ajax({
+		type : "post",
+		url : "{:__URL('__URL__/NsAnalysis/ADMIN_MODULE/account/shopGoodsSalesList')}",
+		data: {
+            type : type, 
+            start_time : $('#' + type + ' .start_time').val(), 
+            end_time : end_time = $('#' + type + ' .end_time').val()
+        },
+		success : function(data) {
+			if(data.length > 0){
+                goods_sale_option.xAxis.data = [];
+                goods_sale_option.series[0].data = [];
+				data.forEach(function(val, key){
+					goods_sale_option.xAxis.data.push(val.time);
+					goods_sale_option.series[0].data.push(val.data.sale_num);
+				})
+				goods_sale_obj.setOption(goods_sale_option);
+			}
+		}
+	})
+}
+
+new pickerDateRange('day', {
+    isTodayValid : false,
+    theme : 'ta',
+    autoSubmit : true,
+    success : function(obj) {
+        $('#day .start_time').val(obj.startDate);
+        $('#day .end_time').val(obj.endDate);
+        loadGoodsSaleData()
+    }
+});
+
+
+monthPicker.create('month', {
+    period : true,
+    autoCommit : true,
+    callback : function(obj){
+        $('#month .start_time').val(obj.startDate);
+        $('#month .end_time').val(obj.endDate);
+        loadGoodsSaleData()
+    }
+});
+</script>
+{/block}

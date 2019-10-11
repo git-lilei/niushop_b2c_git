@@ -1,0 +1,137 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/product.css">
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<link href="__STATIC__/blue/css/goods/add_goods.css" rel="stylesheet" type="text/css">
+{/block}
+{block name="main"}
+<div class="space-10"></div>
+<div class="ncsc-form-goods">
+	{include file="admin/Express/expressTitle"}
+	<!-- 基础设置 -->
+	<div class="block-basic-setting">
+		
+		<h4>本地配送管理</h4>
+		<dl>
+			<dt><i class="required">*</i>商品名称：</dt>
+			<dd>
+				<input class="productname input-common" type="text" id="txtProductTitle" placeholder="请输入商品名称，不能超过60个字符" {if condition="$goods_info"}value="{$goods_info.goods_name}"{/if} oninput='if(value.length>60){value=value.slice(0,60);$(this).next().text("商品名称不能超过60个字符").show();}else{$(this).next().hide();}'/>
+				<span class="help-inline">请填写商品名称</span>
+			</dd>
+		</dl>
+		<dl>
+			<dt><i class="required">*</i>商品分类：</dt>
+			{if condition="$goods_info"}
+			<dd id="tbcNameCategory" data-flag="category" cid="{$goods_info.category_id}" data-attr-id="{$goods_info.goods_attribute_id}" cname="{$goods_info.category_name}" data-goods-id="{$goodsid}">
+				<span class="category-text">{$goods_info.category_name}</span>
+			{else/}
+			<dd id="tbcNameCategory" data-flag="category" data-goods-id="0" cid="" data-attr-id="" cname="">
+				<span class="category-text"></span>
+			{/if}
+				<button class="category-button">选择</button>
+				<span><label class="error"><i class="icon-exclamation-sign"></i>商品分类不能为空</label></span>
+				<span class="help-inline">请选择商品分类</span>
+			</dd>
+		</dl>
+		<dl>
+			<dt>扩展分类：</dt>
+			<dd id ="extend_name_category_box">
+				{if condition="$goods_info"}
+					<div class="extend-name-category-box">
+					{if condition ="!empty($goods_info['extend_category'])"}
+					{foreach $goods_info["extend_category"] as $k=>$vo}
+						<div class="extend-name-category" id="extend_name_category{$k}" data-flag="extend_category" data-goods-id="{$goodsid}" cid="{$vo.extend_category_id}" data-attr-id="{$goods_info.goods_attribute_id}" cname="{$vo.extend_category_name}">
+							<span class="category-text" onclick="editCategory(this);">{$vo.extend_category_name}</span>
+							&nbsp;&nbsp;<span class="do-style" onclick="editCategory(this);"><i class="fa fa-edit"></i>&nbsp;编辑</span>&nbsp;&nbsp;
+							<span class="do-style" onclick="removeParentBox(this);"><i class="fa fa-trash-o"></i>&nbsp;删除</span>
+							<span class="help-inline" style="vertical-align: top;">已添加的商品扩展分类不能为空</span>
+						</div>
+					{/foreach}
+					{/if}
+					</div>
+				{else/}
+					<div class="extend-name-category-box"></div>
+				{/if}
+				<div class="clear">
+					<button class="select-button" onclick="addExtentCategoryBox();"><i class="fa fa-plus-square"></i>&nbsp;添加</button>
+				</div>
+			</dd>
+		</dl>
+		<dl>
+			<dt>商品类型：</dt>
+			<dd>
+				<select id="goodsType" class="select-common">
+					<option value="0">请选择商品类型</option>
+					{foreach name="goods_attribute_list" item="attribute"}
+					{if condition="$goods_info"}
+						{if condition="$goods_info.goods_attribute_id == $attribute.attr_id"}
+						<option value="{$attribute.attr_id}" selected="selected">{$attribute.attr_name}</option>
+						{else/}
+						<option value="{$attribute.attr_id}">{$attribute.attr_name}</option>
+						{/if}
+					{else/}
+						{if condition="$goods_attr_id == $attribute.attr_id"}
+						<option value="{$attribute.attr_id}" selected="selected">{$attribute.attr_name}</option>
+						{else/}
+						<option value="{$attribute.attr_id}">{$attribute.attr_name}</option>
+						{/if}
+					{/if}
+					{/foreach}
+				</select>
+				<span class="help-inline">请选择商品类型</span>
+			</dd>
+		</dl>
+		<dl>
+			<dt>实物类型：</dt>
+			<dd>
+				{if condition="$goods_info"}
+					{if condition="$goods_info.goods_type == 1"}
+					<label class="radio inline normal">
+						<i class="radio-common selected">
+							<input type="radio" name="goods_type" value="1" checked="checked" disabled="disabled">
+						</i>
+						<span>实物商品</span>
+					</label>
+					<label class="radio inline normal">
+						<i class="radio-common">
+							<input type="radio" name="goods_type" value="0" disabled="disabled">
+						</i>
+						<span>虚拟商品</span>
+					</label>
+					{else/}
+					<label class="radio inline normal">
+						<i class="radio-common">
+							<input type="radio" name="goods_type" value="1" disabled="disabled">
+						</i>
+						<span>实物商品</span>
+					</label>
+					<label class="radio inline normal">
+						<i class="radio-common selected">
+							<input type="radio" name="goods_type" value="0" checked="checked" disabled="disabled">
+						</i>
+						<span>虚拟商品</span>
+					</label>
+					{/if}
+				{else/}
+				<label class="radio inline normal">
+					<i class="radio-common selected"><input type="radio" name="goods_type" value="1" checked="checked"></i>
+					<span>实物商品</span>
+				</label>
+				<label class="radio inline normal">
+					<i class="radio-common"><input type="radio" name="goods_type" value="0"></i>
+					<span>虚拟商品</span>
+				</label>
+				{/if}
+			</dd>
+		</dl>
+		
+	</div>
+</div>
+<div class="point-card-inventory-management-popup">
+	<div class="point-card-inventory-management-body">
+	</div>
+	<footer></footer>
+</div>
+<div style="height: 50px;" class="h50"></div>
+{include file="admin/Goods/controlEditGoodsCommonScript"}
+{/block}

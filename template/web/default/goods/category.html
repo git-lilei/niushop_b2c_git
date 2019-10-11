@@ -1,0 +1,43 @@
+{extend name="$base" /}
+{block name="resources"}
+<link type="text/css" rel="stylesheet" href="WEB_CSS/goods_category.css">
+{/block}
+{block name="main"}
+<ol class="breadcrumb">
+	<li><a href="{:__URL('SHOP_MAIN')}">{:lang('home_page')}</a></li>
+	<li class="active">{:lang('all_goods_classification')}</li>
+</ol>
+{notempty name="$goods_category_one"}
+<div class="goods-category">
+	{foreach $goods_category_one as $vo}
+	<div class="item">
+		<a class="first-category" href="{:__URL('SHOP_MAIN/goods/lists','category_id='.$vo['category_id'])}" target="_blank">{$vo.category_name}</a>
+		{if condition="$vo['child_list'] neq null "}
+		{foreach $vo['child_list'] as $vo2}
+			{if condition="$vo2.pid eq $vo.category_id"}
+			<dl class="ns-bg-color-gray ns-border-color-gray">
+				<dt><a href="{:__URL('SHOP_MAIN/goods/lists','category_id='.$vo2['category_id'])}" target="_blank">{$vo2.category_name}</a></dt>
+				{if condition="$vo2['child_list'] neq null "}
+				<dd>
+					{foreach $vo2['child_list'] as $vo3}
+					{if condition="$vo3.pid eq $vo2.category_id"}
+					<a href="{:__URL('SHOP_MAIN/goods/lists','category_id='.$vo3['category_id'])}" target="_blank">{$vo3.category_name}</a>
+					{/if}
+					{/foreach}
+				</dd>
+				{/if}
+			</dl>
+			{/if}
+		{/foreach}
+		{/if}
+	</div>
+	{/foreach}
+</div>
+{else /}
+<div class="no-category">
+	<img src="WEB_IMG/goods/not_category.png">
+	<p>{:lang('no_goods_classification')}</p>
+</div>
+{/notempty}
+{/block}
+{block name="script"}{/block}

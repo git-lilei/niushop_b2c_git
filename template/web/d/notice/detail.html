@@ -1,0 +1,37 @@
+{extend name="$base" /}
+{block name="resources"}
+<link type="text/css" rel="stylesheet" href="WEB_CSS/article.css">
+{/block}
+{block name="seo"}
+<meta name="keywords" content="{$seo_config.seo_meta},{$web_info['title']}_商城公告" />
+<meta name="description" content="{$seo_config.seo_desc},{$info.notice_title}"/>
+{/block}
+{block name="main"}
+<div class="help">
+	<ol class="breadcrumb">
+	  <li><a href="{:__URL('SHOP_MAIN')}">{:lang('home_page')}</a></li>
+	  <li class="active"><a href="{:__URL('SHOP_MAIN/notice/lists')}">商城公告</a></li>
+	</ol>
+	<div class="category">
+		<h3 class="ns-bg-color">商城公告</h3>
+		<ul>
+			<li>
+				<div class="ns-bg-color-gray">
+					<a href="{:__URL('SHOP_MAIN/notice/lists')}" title="商城公告">商城公告</a>
+				</div>
+			</li>
+		</ul>
+	</div>
+	<div class="detail clearfix">
+		<h3 class="ns-border-color-gray">{$info['notice_title']}</h3>
+		<time>发布时间：{$info.create_time|date="Y-m-d H:i:s",###}</time>
+		<div class="content">{$info['notice_content']}</div>
+		{notempty name="prev_info"}
+		<a href="{:__URL('SHOP_MAIN/notice/detail', 'id='.$prev_info[0]['id'])}" class="pull-left text-over">上一篇：{$prev_info[0]['notice_title']}</a>
+		{/notempty}
+		{notempty name="next_info"}
+		<a href="{:__URL('SHOP_MAIN/notice/detail', 'id='.$next_info[0]['id'])}" class="pull-right text-over">下一篇：{$next_info[0]['notice_title']}</a>
+		{/notempty}
+	</div>
+</div>
+{/block}

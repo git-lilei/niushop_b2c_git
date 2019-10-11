@@ -1,0 +1,103 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" href="WAP_CSS/pay/get_pay_value.css"/>
+{/block}
+{block name="main"}
+{php}
+$pay_config = api("System.Pay.getPayConfig");// 支付方式配置
+$pay_config = $pay_config['data'];
+{/php}
+<div class="head-info">
+	<div class="head-pay">{:lang('支付金额')}</div>
+	<div class="head-pay-value">￥{$pay_value.pay_money}</div>
+</div>
+
+{notempty name="pay_config"}
+<div class="pay-type-item">
+	<div class="codes">
+		{foreach name="$pay_config" item="pay_item"}
+			{if $pay_item.is_use}
+			<div class="pay-type" data-url="{:__URL($pay_item['pay_url'], 'type='. $pay_item['addon_name'].'&no='.$pay_value['out_trade_no'])}">
+				<img src="WAP_IMG/pay/{$pay_item.h5_icon}" class="wchat-photo">
+				<span class="pay-title">{:lang($pay_item.lang)}</span>
+				<span class="pay-check"><img src="WAP_IMG/pay/hgou.png"></span>
+			</div>
+			{else/}
+				{php}$un_num += 1;{/php}
+			{/if}
+		{/foreach}
+	{else/}
+		<div class="not-pay-type">{:lang('商家未配置支付方式')}</div>
+		<input type="hidden" id="out_trade_no" value="{$pay_value.out_trade_no}">
+	</div>
+</div>
+{/notempty}
+
+{notempty name="pay_config"}
+	{if $un_num eq count($pay_config)}
+	<div class="pay-type-item">
+		<div class="codes">
+			<div class="not-pay-type">{:lang('商家未配置支付方式')}</div>
+		</div>
+	</div>
+	{else/}
+		<section class="s-btn">
+			<a class="alipay btn primary" onclick="calculate()">{:lang('confirm_payment')}</a>
+		</section>
+	{/if}
+{/notempty}
+
+<div class="ns-copyright">
+    {php}
+        $copyright = api('System.Config.copyRight');
+        $copyright = $copyright['data'];
+    {/php}
+	{if $copyright['is_load'] > 0}
+	{notempty name="$copyright['bottom_info']['copyright_logo']"}
+	<img src="{:__IMG($copyright['bottom_info']['copyright_logo'])}">
+	{else/}
+	<img src="WAP_IMG/logo_copy.png">
+	{/notempty}
+	{notempty name="$copyright['bottom_info']['copyright_companyname']"}
+	<a href="{$copyright['bottom_info']['copyright_link']}" target="_blank" class="ns-text-color-gray">{$copyright['bottom_info']['copyright_companyname']}</a>
+	{else/}
+	<a href="SHOP_MAIN" target="_blank" class="ns-text-color-gray">{:lang('山西牛酷信息科技有限公司&nbsp;提供技术支持')}</a>
+	{/notempty}
+	{else/}
+	<img src="WAP_IMG/logo_copy.png">
+	<a href="SHOP_MAIN" target="_blank" class="ns-text-color-gray">{:lang('山西牛酷信息科技有限公司&nbsp;提供技术支持')}</a>
+	{/if}
+</div>
+
+<script>
+$(function(){
+	$('.pay-type:eq(0)').addClass('active');
+	$('.pay-type:eq(0) .pay-check').html("<img src='" + WAPIMG + "/pay/segou.png'>");
+});
+
+var is_sub = false;
+function calculate() {
+	if(is_sub) return;
+	is_sub = true;
+	var out_trade_no = $("#out_trade_no").val();
+	var pay_url = $('.pay-type.active').attr('data-url');
+	if (pay_url != undefined) {
+		//微信支付
+		window.location.href = pay_url;
+	}else{
+		toast("{:lang('choose_payment_method')}");
+	}
+}
+
+$(".alipay").click(function(){
+	window.webkit.messageHandlers.calculate.postMessage(null);
+});
+
+$('.pay-type').click(function(){
+	$(this).addClass('active').siblings('.pay-type').removeClass('active');
+	$(this).find('.pay-check').html("<img src='" + WAPIMG + "/pay/segou.png'>");
+	$(this).siblings('.pay-type').find('.pay-check').html("<img src='" + WAPIMG + "/pay/hgou.png'>");
+});
+</script>
+{/block}
+{block name="footer"}{/block}

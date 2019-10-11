@@ -1,0 +1,14 @@
+.container{width: 100%; padding:0;}
+.container .winning-record-img{max-width: 100%;}
+.container .winning-record-list{margin: 10px 0; background: #fff;}
+.container .winning-record-list li{padding:8px; overflow:hidden; position: relative; border-bottom: 1px solid;}
+.container .winning-record-list li .winning-info{float: left; width: 80%;}
+.container .winning-record-list li .winning-info .promotion-name{line-height: 25px;}
+.container .winning-record-list li .winning-info .winning-content{line-height: 25px; font-size: 13px;white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+.container .winning-record-list li .winning-info .winning-content.integral{padding-left: 20px; background: url(../img/member/integral.png) no-repeat left; background-size: 16px;}
+.container .winning-record-list li .winning-info .winning-content.hongbao{padding-left: 20px; background: url(../img/member/hongbao.png) no-repeat left; background-size: 16px;}
+.container .winning-record-list li .winning-info .winning-content.gift{padding-left: 20px; background: url(../img/member/gift.png) no-repeat left; background-size: 16px;}
+.container .winning-record-list li .winning-info .winning-content.coupon{padding-left: 20px; background: url(../img/member/coupon.png) no-repeat left; background-size: 16px;}
+.container .winning-record-list li .winning-info .the-winning-time{font-size: 12px;}
+.container .winning-record-list li .receive{position: absolute; top: 50%; transform: translateY(-50%); right: 8px;}
+.container .record-empty{text-align: center; padding: 50px 0;}

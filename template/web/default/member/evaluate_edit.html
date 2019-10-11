@@ -1,0 +1,92 @@
+{extend name="$base" /}
+{block name="resources"}
+<link href="__STATIC__/webuploader/webuploader.css" rel="stylesheet">
+<link type="text/css" rel="stylesheet" href="WEB_CSS/member_evaluate_edit.css" />
+{/block}
+{block name="main"}
+{php}
+$order_id = request()->get('order_id', '');
+$again = request()->get('again', 0);
+if($again){
+	$type = 2;
+	$info = api("System.Order.reviewEvaluateDetail",["order_id"=>$order_id]);
+}else{
+	$type = 1;
+	$info = api("System.Order.evaluationDetail",["order_id"=>$order_id]);
+}
+$info = $info['data'];
+if(!empty($info)){
+	$order_no = $info['order_no'];
+	$list = $info['list'];
+}
+{/php}
+{notempty name="$list"}
+<div class="member-evaluate-edit">
+	<div>
+        <h2 class="text-center">{:lang("member_evaluate")}</h2>
+        <p class="text-muted text-center">快乐的你分享完美的使用心得~</p>
+    </div>
+	{foreach $list as $k => $vo}
+    <div class="evaluation-product-item" data-order-goods-id="{$vo.order_goods_id}" data-order-id="{$vo.order_id}">
+		<div class="evaluation-product-left">
+            <a class="center-block" href="{:__URL('SHOP_MAIN/goods/detail', 'goods_id='.$vo['goods_id'])}" target="_blank">
+                <img src="{:__IMG($vo['picture_info']['pic_cover_small'])}">
+            </a>
+            <a class="product-name" href="{:__URL('SHOP_MAIN/goods/detail', 'goods_id='.$vo['goods_id'])}" target="_blank">{$vo.goods_name}</a>
+            <span class="price">¥{$vo.price}</span>
+        </div>
+		<div class="evaluation-product-right">
+			{eq name="$again" value="0"}
+			<div class="level-block">
+				<div class="level-item">
+                   <label class="col-sm-1">整体评价</label>
+                   <ul class="star-class">
+               			<li class="fa fa-star fa-2x"></li>
+                       	<li class="fa fa-star-o fa-2x"></li>
+                       	<li class="fa fa-star-o fa-2x"></li>
+                       	<li class="fa fa-star-o fa-2x"></li>
+                       	<li class="fa fa-star-o fa-2x"></li>
+                   </ul>
+               </div>
+			</div>
+			{/eq}
+			<div class="evaluation-content">
+				<div class="evaluation-tips">
+					<span>您没有填写评价内容</span>
+					{eq name="$again" value="0"}
+					<div class="checkbox">
+						<label><input type="checkbox"> 匿名评价</label>
+					</div>
+					{/eq}
+				</div>
+		        <div class="evaluation-msg">
+		           	<textarea cols="60" rows="4" class="evaluation-msg-val ns-border-color-gray-shade-10" placeholder="{:lang('member_content_evaluated')}"></textarea>
+		            <span class="evaluation-msg-tips">还可输入<span class="evaluation-msg-num">150</span>字</span>
+		       	</div>
+	   		</div>
+	   		<div class="evaluation-img">
+				<div class="tab-pane">
+					<div class="upload-item-list"></div>
+					<div class="head-img{$k}" >
+	              		<img id="headimg" class="upload-img">
+					</div>
+				</div>
+	   			<span>共<i class="ns-text-color updata-count">0</i>张，还能上传<i class="ns-text-color updata-surplus">5</i>张</span>
+	   		</div>
+		</div>
+    </div>
+	{/foreach}
+
+	<div class="evaluation-product-bottom">
+    	<button class="btn btn-primary" onclick="doSubmit({$type})" type="button">发表</button>
+    </div>
+</div>
+{/notempty}
+
+<input type="hidden" id="order_id" value="{$order_id}" />
+<input type="hidden" id="order_no" value="{$order_no}" />
+{/block}
+{block name="script"}
+<script type="text/javascript" src="__STATIC__/webuploader/webuploader.js"></script>
+<script src="WEB_JS/member_evaluate_edit.js" type="text/javascript"></script>
+{/block}

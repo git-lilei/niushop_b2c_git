@@ -1,0 +1,16 @@
+@charset "utf-8";
+
+body {background: #fff!important;}
+.set-style {padding: 15px;box-sizing: border-box;}
+.table-class {margin-top: 20px;}
+.table-class tr th,.table-class tr td{font-size: 12px;}
+.table-class .goods-info {position: relative;padding-left: 60px;height: 50px;}
+.table-class .goods-info img {width: 50px;height: 50px;position: absolute;left: 0px;top: 0px;}
+.table-class .goods-info .goods-name {table-layout:fixed;word-break:break-all;overflow:hidden;text-overflow: ellipsis;line-height: 1.3;margin-bottom: 5px;}
+.table-class .goods-info .goods-name a {margin-left: 0;}
+.table-class .goods-info .goods-price {color : orange;line-height: 1;margin-bottom: 0}
+.goods-category-container .input-common{width: 250px!important;}
+.align-center {text-align: center;}
+.align-left {text-align: left;}
+.align-right {text-align: right;}
+#turn-ul{padding: 20px 0 0 0; }

@@ -1,0 +1,164 @@
+{extend name="$base" /}
+{block name="alert_info"}
+<p class="function-prompts">
+	<ul>
+		<li>当前客服仅适用于以下三种链接</li>
+		<li>1.美洽
+			<br/>链接地址：<a href="http://www.meiqia.com"  target="_brank">www.meiqia.com</a>
+			使用教程：<a href="http://www.niushop.com.cn/document.html?class_id=20&dir_id=63&id=122" target="_blank">http://www.niushop.com.cn/document.html?class_id=20&dir_id=63&id=122</a>
+		</li>
+		<li>2.KF5
+			<br/>链接地址：<a href="http://www.kf5.com" target="_brank">www.kf5.com</a>
+			使用教程：<a href="http://www.niushop.com.cn/document.html?class_id=20&dir_id=63&id=123" target="_blank">http://www.niushop.com.cn/document.html?class_id=20&dir_id=63&id=123</a></li>
+		<li>3.QQ(qq客服需填写当前客服的qq号码)<br/><br/></li>
+	</ul>
+</p>
+{/block}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<script src="ADMIN_JS/material_managedialog.js"></script>
+<style>
+input[type='radio']{
+	display:none;
+}
+.set-style{min-height:400px;}
+</style>
+{/block}
+{block name="main"}
+<input type="hidden" id="withdraw_id" value="{$list['id']}">
+<div class="set-style">
+	<dl>
+		<dt>美洽客服链接：</dt>
+		<dd>
+			<input id="meiqia_service_addr" type="text" value="{notempty name="$list['value']"}{$list['value']['meiqia_service_addr']}{/notempty}" class="input-common" placeholder="请输入美洽客服链接" />
+			<input type="radio" name="service_addr" value="1" {if condition="$list['value'] && $list['value']['checked_num'] eq 1"}checked="checked"{/if}/>
+			{if condition="$list['value'] && $list['value']['checked_num'] eq 1"}
+			<td style="text-align: center;line-height:59px;">
+				<a href="javascript:;" class="pay-start" status =1 onclick="set_status(this)">
+					<img src="ADMIN_IMG/checked.png" alt="" width="18"/>
+				</a>
+			</td>
+			{else/}
+			<td style="text-align: center;line-height:59px;">
+				<a href="javascript:;" class="pay-close" status =0 onclick="set_status(this)">
+					<img src="ADMIN_IMG/un_checked.png" alt="" width="18"/>
+				</a>
+			</td>
+			{/if}
+		</dd>
+	</dl>
+	<dl>
+		<dt>kf5客服链接：</dt>
+		<dd>
+			<input id="kf_service_addr" type="text" value="{notempty name="$list['value']"}{$list['value']['kf_service_addr']}{/notempty}" class="input-common" placeholder="请输入kf5客服链接" />
+			<input type="radio" name="service_addr" value="2" {if condition="$list['value'] && $list['value']['checked_num'] eq 2"}checked="checked"{/if}/>
+			{if condition="$list['value'] && $list['value']['checked_num'] eq 2"}
+			<td style="text-align: center;line-height:59px;">
+				<a href="javascript:;" class="pay-start" status =1 onclick="set_status(this)">
+					<img src="ADMIN_IMG/checked.png" alt="" width="18"/>
+				</a>
+			</td>
+			{else/}
+			<td style="text-align: center;line-height:59px;">
+				<a href="javascript:;" class="pay-close" status =0 onclick="set_status(this)">
+					<img src="ADMIN_IMG/un_checked.png" alt="" width="18"/>
+				</a>
+			</td>
+			{/if}
+		</dd>
+	</dl>
+	<dl>
+		<dt>QQ客服：</dt>
+		<dd>
+			<input id="qq_service_addr" type="text" value="{notempty name="$list['value']"}{$list['value']['qq_service_addr']}{/notempty}" class="input-common" placeholder="请输入客服QQ账号" />
+			<input type="radio" name="service_addr" value="3" {if condition="$list['value'] && $list['value']['checked_num'] eq 3"}checked="checked"{/if}/>
+			{if condition="$list['value'] && $list['value']['checked_num'] eq 3"}
+			<td style="text-align: center;line-height:59px;">
+				<a href="javascript:;" class="pay-start" status =1 onclick="set_status(this)">
+					<img src="ADMIN_IMG/checked.png" alt="" width="18"/>
+				</a>
+			</td>
+			{else/}
+			<td style="text-align: center;line-height:59px;">
+				<a href="javascript:;" class="pay-close" status =0 onclick="set_status(this)">
+					<img src="ADMIN_IMG/un_checked.png" alt="" width="18"/>
+				</a>
+			</td>
+			{/if}
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="setMemberwithdrawAjax();">保存</button>
+		</dd>
+	</dl>
+	<!-- <dl>
+		<dt>提现手续费比例:</dt>
+		<dd>
+			<input id="poundage" type="number" min="0.00" step="0.01"  value="{notempty name="$list['value']"}{$list['value']['withdraw_poundage']}{/notempty}" />&nbsp;%<span class="withdraw_rule" id="verification_poundage">提现手续费不能为空</span>
+			<p class="hint">为0表示不收手续费</p>
+		</dd>
+	</dl> -->
+	
+<!-- 	<dl> -->
+<!-- 		<dt>是否启用</dt> -->
+<!-- 		<dd> -->
+<!-- 			<div class="controls"> -->
+<!-- 				<label class="radio inline"><input type="radio" name="enable" value="1" checked="checked" id="enableYes">启用</label>  -->
+<!-- 				<label class="radio inline"><input type="radio" name="enable" value="0" checked="checked" id="enableNo">禁用</label> -->
+<!-- 				<input type="hidden" id="is_open" value="{$list['is_use']}"> -->
+<!-- 			</div> -->
+<!-- 			<p class="hint">是否启用提现设置</p> -->
+<!-- 		</dd> -->
+<!-- 	</dl> -->
+</div>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script>
+function set_status(event){
+	$('.set-style').find('img').attr('src', 'ADMIN_IMG/un_checked.png');
+	$(event).find('img').attr('src', 'ADMIN_IMG/checked.png');
+	$("input[type='radio']").prop('checked',false);
+	$(event).parents('dd').find("input[type='radio']").prop('checked',true);
+}
+
+function setMemberwithdrawAjax() {
+	var meiqia_service_addr = $("#meiqia_service_addr").val();
+	var kf_service_addr = $("#kf_service_addr").val();
+	var qq_service_addr = $("#qq_service_addr").val();
+	var checked_num = $('input[name="service_addr"]:checked').val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/config/customservice')}",
+		data : {
+			'meiqia_service_addr' : meiqia_service_addr,
+			'kf_service_addr' : kf_service_addr,
+			'qq_service_addr' : qq_service_addr,
+			'checked_num':checked_num
+		},
+		success : function(data) {
+			if (data['code'] > 0) {
+				showTip('提交成功','success');
+			} else {
+				showTip('提交失败','error');
+			}
+		}
+	});
+}
+
+window.onload=function(){
+	var is_open = $("#is_open").val();
+	if(is_open == ''){
+		is_open = 0;
+	}
+	if(parseInt(is_open) == 0){
+		$("#enableNo").prop("checked","checked");
+	}else{
+		$("#enableYes").prop("checked","checked");
+	}
+}
+</script>
+{/block}

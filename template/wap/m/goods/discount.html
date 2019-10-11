@@ -1,0 +1,47 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" href="WAP_CSS/goods_discount.css"/>
+<link rel="stylesheet" href="WAP_PLUGIN/swiper/css/swiper.min.css"/>
+<script src="WAP_PLUGIN//swiper/js/swiper.min.js"></script>
+{/block}
+{block name="main"}
+{php}
+$discounts_adv = api('System.Shop.advDetail', ['ap_keyword' => 'WAP_DISCOUNT_SWIPER', 'export_type' => 'data']);
+{/php}
+<div class="custom-tag-list">
+    <div class="group-list-box">
+        {notempty name="$discounts_adv['data']"}           
+           <div class="swiper-container">
+                    <div class="swiper-wrapper">
+                    {foreach name="$discounts_adv['data']['advs']" item="vo"}
+                        <div class="swiper-slide">
+                            <a href="{:__URL('APP_MAIN' . $vo['adv_url'])}" style="height:{$discounts_adv['data']['ap_height']}px;line-height:{$discounts_adv['data']['ap_height']}px;">
+                                <img src="{:__IMG($vo.adv_image)}" alt="{:lang('carousel_figure')}" class="w100">
+                            </a>
+                        </div>
+                    {/foreach} 
+                    </div>
+                </div>
+        {/notempty}
+        <ul class="group-list"></ul>
+    </div>
+    <input type="hidden" id="page_count">
+    <input type="hidden" id="page" value="1">
+    <input type="hidden" id="ms_time" value="{$ms_time}"/>
+</div>
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script>
+var lang_discount = {
+	goods_no_goods_you_want : "{:lang('goods_no_goods_you_want')}",
+	element : "{:lang('element')}",
+	days : "{:lang('days')}",
+	hours : "{:lang('hours')}",
+	minutes : "{:lang('minutes')}",
+	second : "{:lang('second')}",
+	activity_over : "{:lang('activity_over')}"
+};
+</script>
+<script src="WAP_JS/goods_discount.js"></script>
+{/block}

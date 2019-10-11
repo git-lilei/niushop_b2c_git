@@ -1,0 +1,18 @@
+.custom-tag-list{margin-bottom: 10px; overflow: hidden; position: relative; z-index: 0;}
+.group-list-box{width: 100%;}
+.group-list-box .group-list .empty{text-align:center; padding: 10px 0;}
+.group-list-box .group-list .empty img{margin-bottom: 10px; width: 60px;}
+.group-list-box .group-list li{width: 49%; float: left; margin: 0 0 10px; position: relative; background: #fff; padding: 0 2.5%; border-top: 0.05rem solid; border-bottom: 0.05rem solid;}
+.group-list-box .group-list li:nth-child(even){float: right;}
+.group-list-box .group-list li .p-img{position: relative; width: 100%; min-height: 70px; overflow: hidden; margin: 0 auto; text-align: center; cursor: pointer;}
+.group-list-box .group-list li .p-img a{display: block; padding: 50% 0; height: 0; width: 100%;}
+.group-list-box .group-list li .p-img a img{width: 100%;height:100%; position: absolute; top: 0; left: 0;}
+.group-list-box .group-list li .p-img .brand-time{width: 100%; height: 35px; line-height: 35px; margin-top: 12px; font-size: 12px; position: absolute; left: 0; bottom: 0;text-align: left;}
+.group-list-box .group-list li .p-img .brand-time i{width: 23px; height: 23px; background: url(../img/goods/icon_timer.png) no-repeat 2px 2px/20px; vertical-align: middle; display: inline-block;}
+.group-list-box .group-list li .p-img .brand-time span{color: #fff; font-size: 0.6rem; vertical-align: middle;}
+.group-list-box .group-list{overflow: hidden;}
+.group-list-box .group-list li .brand-name{text-align: left; display: block; width: 100%; height: 1.5rem; line-height: 1.5rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis;font-size: 14px;}
+.brand-info .brand-info-left .b-price{font-weight: bold; font-size: 12px; line-height: 1.25rem; margin: 5px 0; float: left;}
+.brand-info .brand-info-left .buyer{font-size: 12px; float: right; line-height: 30px;}
+.w100{width:100%;}
+.swiper-container{margin-bottom:10px;}

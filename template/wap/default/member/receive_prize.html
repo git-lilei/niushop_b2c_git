@@ -1,0 +1,123 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/member_receive_prize.css">
+{/block}
+{block name="main"}
+{php}
+	$address_default = api('System.Member.defaultAddress');
+	$address_default = $address_default['data'];
+	$winning['gift_id'] = request()->get("gift_id", ""); // 赠品id
+	$winning['record_id'] = request()->get("record_id", ""); // 中奖记录id
+	
+	if (!empty($winning['gift_id'])) {
+		$_SESSION["winning"]["gift_id"] = $winning['gift_id'];
+		$_SESSION["winning"]["record_id"] = $winning['record_id'];
+	}
+	
+	if (empty($winning['gift_id']) && isset($_SESSION["winning"])) {
+		$winning['gift_id'] = $_SESSION["winning"]["gift_id"];
+		$winning['record_id'] = $_SESSION["winning"]["record_id"];
+	}
+	$gift_detail = api('System.Promotion.promotionGiftDetail', ['id' => $winning['gift_id']]);
+	$gift_detail = $gift_detail['data'];
+{/php}
+
+{notempty name="$gift_detail['gift_goods']"}
+	{if $gift_detail['gift_goods']['is_virtual'] neq 1}
+		{if condition="$address_default.id neq ''"}
+		<input type="hidden" id="address_id" value="{$address_default.id}" />
+		<div class="express-panel">
+			<a href="{:__URL('APP_MAIN/member/address?flag=2&gift_id='.$winning['gift_id'].'&record_id='.$winning['record_id'])}">
+				<span class="name">{:lang('member_consignee')}：{$address_default.consigner}</span>
+				<span class="tel">{$address_default.mobile}</span>
+			</a>
+			<a href="{:__URL('APP_MAIN/member/address?flag=2&gift_id='.$winning['gift_id'].'&record_id='.$winning['record_id'])}" class="info ns-text-color-gray">{:lang('member_delivery_address')}：{$address_default.address_info}-{$address_default.address}</a>
+		</div>
+		{else /}
+		<div class="empty-address">
+			<a href="{:__URL('APP_MAIN/member/address')}">{:lang('member_new_delivery_address')}</a>
+		</div>
+		{/if}
+	{/if}
+
+	<section class="order">
+		<!-- 赠品 -->
+		<div class="order-goods-item ns-bg-color-gray-fadeout-60">
+			<img src="WAP_IMG/member/gift.png" class="gift">
+			<a href="{:__URL('APP_MAIN/goods/detail?goods_id='.$gift_detail['gift_goods']['goods_id'])}" class="gift-img-block">
+				<img src="{:__IMG($gift_detail['gift_goods']['picture_info']['pic_cover_small'])}"  />
+			</a>
+			<div class="detail">
+				<div class="detail-row">
+					<div class="pull-right">￥<s>{$gift_detail.gift_goods.price}</s></div>
+					<span class="goods-name">{$gift_detail.gift_goods.goods_name}</span>
+				</div>
+				<div class="pull-right">×<span>1</span></div>
+			</div>
+		</div>
+		{if $gift_detail['gift_goods']['is_virtual'] eq 1}
+		<div class="item-options ns-border-color-gray">
+			<label for="mobile">手机号码</label>
+			<input type="text" id="mobile" placeholder="请输入手机号">
+		</div>
+		{/if}
+		<div class="item-options ns-border-color-gray buyer-message">
+			<label>{:lang('member_buyer_message')}</label>
+			<textarea id="leave_message" placeholder="{:lang('leave_a_message_for_the_seller')}" maxlength="100"></textarea>
+		</div>
+	</section>
+	<div class="line"></div>
+	<input type="hidden" id="hidden_record_id" value="{$winning['record_id']}">
+	<div class="bottom-fix">
+		<button class="btn primary" onclick="receive();">{:lang('immediately_receive')}</button>
+	</div>
+	<input type="hidden" id="is_virtual" value="{$gift_detail['gift_goods']['is_virtual']}">
+	{/notempty}
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script>
+//解决 在IOS手机中，点击左上角返回按钮不会刷新当前页面的问题 2018年1月27日17:45:40
+var isPageHide = false;
+window.addEventListener('pageshow', function () {
+	if (isPageHide) location.href= __URL(APPMAIN+"/member/receiveprize");
+});
+
+window.addEventListener('pagehide', function () {
+	isPageHide = true;
+});
+
+var is_sub = false;
+function receive(){
+	var is_virtual = $('#is_virtual').val();
+	if(is_virtual == undefined) return;
+
+	var data = {
+		"record_id" : $("#hidden_record_id").val(),
+		"buyer_message" : $("#leave_message").val()
+	};
+
+	if(is_virtual == 1){
+		data.mobile = $("#mobile").val();
+		if (data.mobile == '') { toast("请输入手机号"); return false; }
+		if (data.mobile.search(regex.mobile) == -1) { toast('请输入正确的手机号'); return false; }
+	}else if(is_virtual == 0){
+		if ($("#address_id").val() == undefined ||$("#address_id").val() == '' ) { toast("请先选择收货地址"); return false; }
+	}
+
+	if(is_sub) return;
+	is_sub = true;
+
+	api('System.Member.achieveGift', data, function(res){
+		var data = res.data;
+		if(data["code"] == 1){
+			toast(data["message"]);
+			window.location.href = __URL(APPMAIN+"/member/winning");
+		}else{
+			toast(data["message"]);
+			is_sub = false;
+		}
+	})
+}
+</script>
+{/block}

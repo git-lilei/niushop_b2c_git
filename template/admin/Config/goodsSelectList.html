@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	<meta name="renderer" content="webkit" />
+	<meta http-equiv="X-UA-COMPATIBLE" content="IE=edge,chrome=1"/>
+	{if $frist_menu.module_name=='首页'}
+	<title>{$title_name} - 商家管理</title>
+	{else /}
+		<title>{$title_name} - {$frist_menu.module_name}管理</title>
+	{/if}
+	<link rel="shortcut  icon" type="image/x-icon" href="ADMIN_IMG/admin_icon.ico" media="screen"/>
+	<link rel="stylesheet" type="text/css" href="__STATIC__/blue/bootstrap/css/bootstrap.css" />
+	<link rel="stylesheet" type="text/css" href="__STATIC__/blue/css/ns_blue_common.css" />
+	<link rel="stylesheet" type="text/css" href="__STATIC__/font-awesome/css/font-awesome.min.css" />
+	<script src="__STATIC__/js/jquery-1.8.1.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="__STATIC__/blue/css/ns_table_style.css">
+	<script src="__STATIC__/bootstrap/js/bootstrap.js"></script>
+	<script src="__STATIC__/bootstrap/js/bootstrapSwitch.js"></script>
+	<script src="ADMIN_JS/art_dialog.source.js"></script>
+	<script src="ADMIN_JS/iframe_tools.source.js"></script>
+	{include file="admin/controlCommonVariable" }
+	
+	<style>
+	.Switch_FlatRadius.On span.switch-open{background-color: #00A0DE;border-color: #00A0DE;}
+	#copyright_meta a{color:#333;}
+	.goodsCategory{width: 159px;height: 300px;border: 1px solid #CCCCCC;position: absolute;z-index: 100;background: #fff;left:0;display: none;overflow-y: auto;top: 31px;}
+	.goodsCategory::-webkit-scrollbar{width: 3px;}
+	.goodsCategory::-webkit-scrollbar-track{-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);border-radius: 10px;background-color: #fff;}
+	.goodsCategory::-webkit-scrollbar-thumb{height: 20px;border-radius: 10px;-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);background-color: #ccc;}
+	.goodsCategory ul{height: 280px;margin-top: -2px;margin-left: 0;}
+	.goodsCategory ul li{text-align: left;padding:0 10px;line-height: 30px;}
+	.goodsCategory ul li i{float: right;line-height: 30px;}
+	.goodsCategory ul li:hover{cursor: pointer;}
+	.goodsCategory ul li:hover,.goodsCategory ul li.selected{background: #0059d6;color: #fff;}
+	.goodsCategory ul li span{width: 120px;display: inline-block;white-space: nowrap;text-overflow: ellipsis;overflow: hidden;vertical-align: middle;font-size:12px;}
+	.two{left: 161px;border-left:0;}
+	.three{left: 322px;width: 159px;border-left:0;}
+	.selectGoodsCategory{width: 218px;height: 45px;border:1px solid #CCCCCC;position: absolute;z-index: 100;left: 0;margin-top: 299px;border-collapse: collapse;background: #fff;display: none;}
+	.selectGoodsCategory a{display: block;height: 30px;width: 100px;text-align: center;color: #fff;line-height: 30px;margin:8px;background: #00A0DE;text-decoration:none;}
+	.right-indent:after{content:'';display:inline-block;width:20%;}
+	</style>
+	</head>
+<body>
+{include file="admin/urlModel"}
+
+<table class="mytable">
+	<tr>
+<!-- 		<th width="20%" style="text-align:left;"><button class="btn-common btn-small" onclick="getSelectData()" style="margin:0 5px 0 0 !important;">确认选中</button></th> -->
+		<th width="80%">
+			<div style="display: inline-block;position: relative;">
+				<input type="text" placeholder="请选择商品分类" id="goodsCategoryOne" value="" is_show="false" class="input-common" >
+				<div class="goodsCategory one">
+					<ul>
+						{volist name="oneGoodsCategory" id="vo"}
+						<li class="js-category-one" category_id="{$vo.category_id}">
+							<span>{$vo.category_name}</span>
+							{if condition="$vo.is_parent eq 1"}
+								<i class="fa fa-angle-right fa-lg"></i>
+							{/if}
+						</li>
+						{/volist}
+					</ul>
+				</div>
+				<div class="goodsCategory two" style="border-left:0;">
+					<ul id="goodsCategoryTwo"></ul>
+				</div>
+				<div class="goodsCategory three">
+					<ul id="goodsCategoryThree"></ul>
+				</div>
+				<div class="selectGoodsCategory">
+					<a href="javascript:;" id="confirmSelect" style="float:right;">确认选择</a>
+				</div>
+				<input type="hidden" id="category_id_1">
+				<input type="hidden" id="category_id_2">
+				<input type="hidden" id="category_id_3">
+			</div>
+			<input type="text" id = 'search_text' placeholder="请输入商品名称" class="input-common" />
+			
+			<button class="btn-common-white more-search"><i class="fa fa-angle-down"></i></button>
+			<span class="interval"></span>
+			
+			<button class="btn-common" onclick="searchData()">搜索</button>
+			
+			<!-- 更多搜索 -->
+			<div class="more-search-container">
+				<dl>
+					<dt>商品编码：</dt>
+					<dd>
+						<input id="goods_code" class="input-medium input-common middle" type="text" placeholder="要搜索的商品编码"/>
+					</dd>
+				</dl>
+				<dl>
+					<dt>供货商：</dt>
+					<dd>
+						<select id="supplier_id" class="select-common middle">
+							<option value="">全部</option>
+							{notempty name="$supplier_list"}
+							{volist name="$supplier_list" id="vo"}
+							<option value="{$vo.supplier_id}">{$vo.supplier_name}</option>
+							{/volist}
+							{/notempty}
+						</select>
+					</dd>
+				</dl>
+				<dl>
+					<dt>商品类型：</dt>
+					<dd>
+						<select id="goods_type" class="select-common middle" >
+							<option value="all">全部</option>
+							<option value="1">实物商品</option>
+							<option value="0">虚拟商品</option>
+						</select>
+					</dd>
+				</dl>
+				<dl>
+					<dt>商品标签：</dt>
+					<dd>
+						<input type="text" placeholder="请选择商品标签" id="selectGoodsLabel"  onfocus="selectGoodsLabel();" is_show="false" data-html="true" class="input-common middle" title="<h6 class='edit-group-title'>选择商品标签</h6>" data-container="body" data-placement="bottom"  data-trigger="manual" data-content="<div class='edit-group' style='max-width:auto;'>
+							{foreach $goods_group as $vo}
+							<p>
+							<label class='checkbox-inline' style='display:inline-block;'>
+							<input type='checkbox' value='{$vo.group_id}' onchange='clickGoodsLabel(this);'><span>{$vo.group_name}</span>&nbsp;&nbsp;&nbsp;
+							</label>
+						{/foreach}
+						</div>
+						<button class='btn-common btn-small' onclick='confirm();'>确认</button>
+						<button class='btn btn-small' onclick='hideGroup()'>取消</button>
+						">
+					</dd>
+				</dl>
+				<dl>
+					<dt></dt>
+					<dd>
+						<a href="javascript:;" onclick="searchData()" class="btn-common">完成</a>
+					</dd>
+				</dl>
+			</div>
+		</th>
+	</tr>
+</table>
+<table class="table-class">
+	<colgroup>
+		<col style="width: 3%;">
+		<col style="width: 60%;">
+		<col style="width: 22%;">
+		<col style="width: 15%;">
+	</colgroup>
+	<thead>
+		<tr align="center">
+			<th align="center">
+				{if condition="$type == 2"}
+					<i class="checkbox-common"><input value="0" name="sub" type="checkbox"></i>
+				{/if}
+			</th>
+			<th align="left">商品名称</th>
+			<th align="right" class="right-indent">价格</th>
+			<th align="right" class="right-indent">库存</th>
+		</tr>
+	</thead>
+	<tbody ></tbody>
+</table>
+{include file="admin/pageCommon"}
+<input type="hidden" id="type" value="{$type}"/>
+<input type="hidden" id="data" value='{$data}'/>
+<input type="hidden" id="selectGoodsLabelId">
+<!-- 公共的操作提示弹出框 common-success：成功，common-warning：警告，common-error：错误，-->
+<div class="common-tip-message js-common-tip">
+	<div class="inner"></div>
+</div>
+
+{include file="admin/openDialog" /}
+<script>
+//存放商品id的对象
+var goods_id_array_str = parent.goods_id_array();
+var goods_id_obj = [];
+if(goods_id_array_str != ''){
+	var goods_id_array = goods_id_array_str.split(",");
+	for(i in goods_id_array){
+		goods_id_obj[goods_id_array[i]] = goods_id_array[i];
+	}
+}
+/*
+ * 载入数据
+ */
+function LoadingInfo(page_index){
+	var search_text = $("#search_text").val();
+	var goodsCategoryText = $.trim($("#goodsCategoryOne").val());
+	//商品分类id
+	var category_id_1 = $("#category_id_1").val() ? $("#category_id_1").val() : 0;
+	var category_id_2 = $("#category_id_2").val() ? $("#category_id_2").val() : 0;
+	var category_id_3 = $("#category_id_3").val() ? $("#category_id_3").val() : 0;
+	
+/* 	var category_ids = $(".goods-category-container .select-category").attr('data-value');
+	var	category_id_arr = category_ids != undefined && category_ids != '' ? category_ids.split(',') : [];
+	var category_id_1 = category_id_arr[0] != undefined ? category_id_arr[0] : 0;
+	var category_id_2 = category_id_arr[1] != undefined ? category_id_arr[1] : 0;
+	var category_id_3 = category_id_arr[2] != undefined ? category_id_arr[2] : 0; */
+	
+	var goods_code = $("#goods_code").val();//商品编码
+	var selectGoodsLabelId = $("#selectGoodsLabelId").val();//商品标签
+	var supplier_id = $("#supplier_id").val();//供货商
+	var goods_type = $("#goods_type").val();//商品类型
+	var data = 'stock:1,goods_type:1,is_have_sku:1,state:1';
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/config/goodsSelectList')}",
+		data : {
+			"page_index" : page_index,
+			"page_size" : 8,
+			"goods_name":search_text,
+			"type" : "select",
+			"category_id_1" : category_id_1,
+			"category_id_2" : category_id_2,
+			"category_id_3" : category_id_3,
+			"selectGoodsLabelId" : selectGoodsLabelId,
+			"supplier_id" : supplier_id,
+			"code":goods_code,
+			'goods_type' : goods_type,
+			"data" : data
+		},
+		success : function(data) {
+			if (data["data"].length > 0) {
+				$(".table-class tbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					//已经勾选过的要让一直保持选中状态
+					var selected = '',checked = '';
+					for(var key in goods_id_obj){
+						if(goods_id_obj[key] == data["data"][i]["goods_id"]){
+							selected = 'selected';
+							checked = 'checked';
+						}
+					}
+					html += '<tr align="center">';
+						html += '<td>';
+								html += '<i class="checkbox-common '+ selected +'"><input value="' + data["data"][i]["goods_id"] + '" name="sub" data-state="'+data["data"][i]["state"]+'" type="checkbox" '+ checked +'></i>';
+						html += '</td>';
+
+						html += '<td align="left">' + data["data"][i]["goods_name"] + '</td>';
+
+						html += '<td align="right" class="right-indent">' + data["data"][i]["price"] + '</td>';
+						
+						html += '<td align="right" class="right-indent">' + data["data"][i]["stock"]  + '</td>';
+
+					html += '</tr>';
+					$(".table-class tbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="4" style="text-align: center;font-weight: normal;color: #999;">暂无符合条件的数据记录</td></tr>';
+				$(".table-class tbody").html(html);
+			}
+			$("#showNumber").val('8').parent().hide();
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+function selectGoodsLabel(){
+	$("#selectGoodsLabel").popover("show");
+	$("#selectGoodsLabelId").val('');
+	$("#selectGoodsLabel").val('');
+}
+
+function hideGroup(){
+	$("#selectGoodsLabel").popover("hide");
+	$("#selectGoodsLabel").val('');
+}
+
+//点击显示更多搜索
+$(".more-search").click(function(){
+	$(".more-search-container").slideToggle();
+});
+
+function clickGoodsLabel(event){
+	var goods_label_id = $(event).val();
+	var goods_label_name = $(event).next("span").text();
+	var selectGoodsLabelVal = $("#selectGoodsLabel").val();
+	var selectGoodsLabelId = $("#selectGoodsLabelId").val();
+	
+	if($(event).is(":checked")){
+		$("#selectGoodsLabelId").val(selectGoodsLabelId+goods_label_id+',');
+		$("#selectGoodsLabel").val(selectGoodsLabelVal+goods_label_name+';');
+	}else{
+		selectGoodsLabelVal = selectGoodsLabelVal.replace(goods_label_name+';','');
+		selectGoodsLabelId = selectGoodsLabelId.replace(goods_label_id+',','');
+		$("#selectGoodsLabelId").val(selectGoodsLabelId);
+		$("#selectGoodsLabel").val(selectGoodsLabelVal);
+	}
+}
+
+function confirm(){
+	$("#selectGoodsLabel").popover("hide");
+}
+
+function searchData(){
+	$(".more-search-container").slideUp();
+	LoadingInfo(1);
+	$(".one").hide();
+	$(".two").hide();
+	$(".three").hide();
+	confirm();
+}
+
+/*
+ * 获取选择结果
+ */
+function getSelectData(){
+	var id_str = '';
+	var id_arr = [];
+	for(var prop in goods_id_obj){
+		if(goods_id_obj[prop] != ''){
+			id_arr.push(goods_id_obj[prop]);
+		}
+	}
+	id_str = id_arr.toString();
+	parent.GoodsCallBack(id_str);
+}
+
+/*
+ * 1.选择类型切换 如果type的值为1，则变多选为单选
+ * 2.组装商品id
+ */
+$(".table-class input[type='checkbox']").live('click',function(){
+	var type = $("#type").val();
+	var goods_id = $(this).val();
+	var value = $(this).val();
+	if(type == '1'){
+		$(".table-class input[type='checkbox']").prop('checked',false);
+		$(this).prop('checked',true);
+		goods_id_obj = {};
+		goods_id_obj[goods_id] = goods_id;
+	}else{
+		var checked = $(this).is(':checked');
+		if(value > 0){
+			if(checked){
+				goods_id_obj[goods_id] = goods_id;
+			}else{
+				var index = goods_id_obj.indexOf(goods_id);
+				if (index > -1) {
+				    goods_id_obj.splice(index, 1);
+				}
+			}
+		}else{
+			if(checked){
+				$(".table-class input[type='checkbox'][value!=0]").each(function(){
+					goods_id_obj[$(this).val()] = $(this).val();
+					$(this).prop("checked",true);
+					$(this).parent().addClass("selected");
+				});
+			}else{
+				$(".table-class input[type='checkbox'][value!=0]").each(function(){
+					var curr_id = $(this).val();
+					var index = goods_id_obj.indexOf(curr_id);
+					if (index > -1) {
+					    goods_id_obj.splice(index, 1);
+					}
+					$(this).prop("checked",false);
+					$(this).parent().removeClass("selected");
+				})
+			}
+			
+		}
+	}
+	getSelectData();
+});
+
+/*
+ * 商品分类选择
+ */
+$("#goodsCategoryOne").click(function(){
+	var isShow = $("#goodsCategoryOne").attr('is_show');
+	if(isShow == "false"){
+		$(".one").show();
+		$(".selectGoodsCategory").css({
+			'width' : 159,
+			'right' : 580
+		}).show();
+		$("#goodsCategoryOne").attr('is_show','true');
+		$(".js-mask-category").show();
+	}else{
+		$(".one").hide();
+		$(".two").hide();
+		$(".three").hide();
+		$(".selectGoodsCategory").css({
+			'width' : 159,
+			'right' : 580
+		}).hide();
+		$("#goodsCategoryOne").attr('is_show','false');
+	}
+});
+
+$(".js-mask-category").click(function(){
+	$(".one").hide();
+	$(".selectGoodsCategory").hide();
+	$(".two").hide();
+	$(".three").hide();
+	$("#goodsCategoryOne").attr('is_show', 'false');
+	$(this).hide();
+});
+
+$(".js-category-one").click(function(){
+	parentId = $(this).attr("category_id");
+	category_name = $(this).text();
+	$(".one ul li").not($(this)).removeClass("selected");
+	$(this).addClass("selected");
+	$("#goodsCategoryOne").val($.trim(category_name)+">");
+	$("#category_id_1").val(parentId);
+	$("#category_id_2").val('');
+	$("#category_id_3").val('');
+	$.ajax({
+		type : 'post',
+		url : "{:__URL('ADMIN_MAIN/goods/getcategorybyparentajax')}",
+		data : {"parentId":parentId},
+		success : function(data){
+			if(data.length>0){
+				var html = '';
+				for (var i = 0; i < data.length; i++) {
+					html += '<li class="js-category-two" category_id="'+data[i]['category_id']+'">'+data[i]['category_name'];
+					if(data[i]['is_parent'] == 1){
+						html += '<i class="fa fa-angle-right fa-lg"></i>';
+					}
+					html += '</li>';
+				}
+				$("#goodsCategoryTwo").html(html);
+				$(".two").show();
+				$(".selectGoodsCategory").css({
+					'width' : 319,
+					'right' : 361
+				});
+			}else{
+				$(".one").hide();
+				$(".two").hide();
+				$(".js-mask-category").hide();
+				$(".selectGoodsCategory").hide();
+				$("#goodsCategoryOne").attr('is_show', 'false');
+			}
+			$(".three").hide();
+		}
+	});
+	return false;
+});
+
+$(".js-category-two").live("click",function(event){
+	var parentId = $(this).attr("category_id");
+	var category_name = $(this).text();
+	$(".two ul li").not($(this)).removeClass("selected");
+	$(this).addClass("selected");
+	var goodsCategoryOne = $("#goodsCategoryOne").val();
+	$("#goodsCategoryOne").val(goodsCategoryOne+''+category_name+'>');
+		$("#category_id_2").val(parentId);
+	$("#category_id_3").val('');
+	$.ajax({
+		type : 'post',
+		url : "{:__URL('ADMIN_MAIN/goods/getcategorybyparentajax')}",
+		data : {"parentId":parentId},
+		success : function(data){
+			if(data.length>0){
+				var html = '';
+				for (var i = 0; i < data.length; i++) {
+					html += '<li onclick="goodsCategoryThree(this);" category_id="'+data[i]['category_id']+'">'+data[i]['category_name']+'<i class="fa fa-angle-right fa-lg"></i></li>';
+				}
+				$("#goodsCategoryThree").html(html);
+				$(".three").show();
+				$(".selectGoodsCategory").css({
+					'width' : 480,
+					'right' : 162
+				});
+			}else{
+				$(".one").hide();
+				$(".two").hide();
+				$(".three").hide();
+				$(".selectGoodsCategory").hide();
+				$(".js-mask-category").hide();
+				$("#goodsCategoryOne").attr('is_show', 'false');
+			}
+		}
+	});
+	event.stopPropagation();
+});
+
+function goodsCategoryThree(obj){
+	var parentId = $(obj).attr("category_id");
+	var category_name = $(obj).text();
+	$(".three ul li").not($(obj)).removeClass("selected");
+	$(obj).addClass("selected");
+	var goodsCategoryOne = $("#goodsCategoryOne").val();
+	$("#goodsCategoryOne").val(goodsCategoryOne+''+category_name).attr('is_show','false');
+		$("#category_id_3").val(parentId);
+	$(".one").hide();
+	$(".two").hide();
+	$(".three").hide();
+	$(".js-mask-category").hide();
+
+	$(".selectGoodsCategory").css({
+		'width' : 218,
+		'right' : 580
+	}).hide();
+}
+
+$("#confirmSelect").click(function(){
+	$(".one").hide();
+	$(".two").hide();
+	$(".three").hide();
+	$(".selectGoodsCategory").hide().css({
+		'width' : 218,
+		'right' : 580
+	});
+});
+
+$(".checkbox-common").live("click",function(){
+	var checkbox = $(this).children("input");
+	var type = $("#type").val();
+	var _this = $(this);
+	if(type == '1'){
+		$(".table-class input[type='checkbox']").prop('checked',false).parent().removeClass("selected");
+	 	checkbox.prop('checked',true).parent().addClass("selected");
+	}else{
+		if(checkbox.is(":checked")) _this.addClass("selected");
+		else _this.removeClass("selected");
+	}
+});
+</script>
+</body>
+</html>

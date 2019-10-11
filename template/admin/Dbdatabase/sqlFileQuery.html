@@ -1,0 +1,249 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<script src="ADMIN_JS/material_managedialog.js"></script>
+<style>
+.sql-title{
+	height:45px;
+	line-height:45px;
+	font-size:15px;
+}
+.sql-block{
+	display:block;
+	width:100%;
+    border-top:1px solid #e5e5e5;
+	border-bottom:1px solid #e5e5e5;
+	position:relative;
+}
+.width-block{
+	width:80% !important;
+	margin: 20px  auto;
+	height:250px !important;
+}
+.textarea {
+	display:block;
+	margin:0px; 
+	margin-bottom:-4px;
+	background-color: #fff; 
+	height: 300px; 
+	overflow: hidden; 
+	color: #555; 
+	font-size: 16px; 
+	width:100%;
+	border:none;
+	border-radius: unset;
+}
+
+.textarea:focus{
+	color:#555; 
+	outline: none;
+}
+
+.right-line{
+	position:absolute;
+	width:1px;
+	height:310px;
+	right:0px;
+	top:0px;
+	background-color:#e5e5e5;
+}
+
+.textarea-wrap{
+	border-right: 1px solid #ddd;
+    white-space: nowrap;
+}
+.sql-bottom-block{
+	width:96%;
+	overflow:hidden;
+	margin: 0  auto;
+	padding:2.0%;
+/* 	-webkit-border-radius: 0 0 4px 4px; */
+	color: #000;
+    background: #e1e7f1;
+	border-top: 0;
+	text-align:right;
+}
+
+.alert{
+	margin-top:10px; 
+	height:auto;
+	border:none !important;
+}
+
+.h1-error h1 {
+    border-color: #ff0000;
+}
+.h1-error h1 {
+    //border-bottom: 2px solid;
+    font-weight: bold;
+    text-align: left;
+    margin: 0 0 .2em 0;
+	font-size: 18px;
+	color:black;
+}
+.h1-error h1 , .h1-error strong{
+	color:black;
+}
+.error {
+/* 	background: #ffefe1; */
+/*     border: 1px solid maroon !important; */
+/*     color: #000; */
+}
+.h1-error pre{
+	background: none;
+	border:none;
+}
+.h1-error code {
+    white-space: normal;
+	background: none;
+}
+.alert-danger{
+	background: #ffefe1;
+}
+.alert-success {
+    color: #3c763d;
+    background-color: #e1efff;
+    border-color: #d6e9c6;
+}
+.sql-file{
+	 opacity:0.0;
+	filter:Alpha(opacity=0); /* IE8 以及更早的浏览器 */ 
+	position:absolute;
+	display:block;
+	width:86px !important;
+	height:26px;
+	left:0;
+	top:0;
+}
+.b-f-l{
+	float:left;
+}
+.b-f-r{
+	float:right;
+}
+.button-div{
+	position:relative;
+}
+.import{
+	display:inline-block;
+	vertical-align:-1px;
+}
+.ns-main{
+	margin-top:0px;
+}
+.query{
+	margin-bottom:0px;
+}
+</style>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<table class="mytable">
+		<tr>
+			<th width="20%" style="text-align:left;">
+				<button class="btn-common" onclick="$('#text').val('');">清除</button>
+				<label class="btn-common import" for="sqlfile" >将sql导入</label>
+				<input class="sql-file" type="file"  name="file_upload_sql"id="sqlfile"value="" onchange="uploadSqlFile();"/>
+			</th>
+			<th width="10%">
+				<button class="btn-common b-f-r"  onclick="sqlQuery();">执行</button>
+			</th>
+		</tr>
+	</table>
+	<div class="sql-block">
+		<textarea id="text" class="textarea"></textarea>
+		<div class="right-line"></div>
+	</div>
+	<div class="alert hide" id="prompt"></div>
+</div>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="ADMIN_JS/auto-line-number.js"></script>
+<script>
+$("#text").setTextareaCount({
+	bgColor: "#fff",
+	color: "#555",
+	display: "inline-block"
+});
+
+var flag = false;
+function sqlQuery(){
+	$("#prompt").hide();
+	var sql = $("#text").val();
+	if($.trim(sql) == ""){
+		showMessage("表单中缺少值！");
+	}
+	if(!flag){
+		$.ajax({
+			type:"post",
+			url:"{:__URL('ADMIN_MAIN/dbdatabase/sqlfilequery')}",
+			data:{"sql_text":sql},
+			success: function (data) {
+				$("#prompt").show();
+				if(data.status == 1){
+					var html = '';
+					html += '<a class="close" data-dismiss="alert">×</a>';
+					html += '<span>'+data.message+ '</span>';
+					$("#prompt").html(html);
+					$("#prompt").removeClass("alert-danger");
+					$("#prompt").addClass("alert-success");
+				}else{
+					var html = '';
+					html += '<a class="close" data-dismiss="alert">×</a>';
+					html += '<div class="h1-error"><h1>错误</h1>';
+					html += '<p class="query"><strong>SQL 查询：</strong>';
+					html += '</p>';
+					html += '<pre><code class="sql">'+sql;
+					html += '</code></pre>';
+					html += '<p></p>';
+					html += '<p>';
+					html += '<strong>MySQL 返回： </strong>';
+					html += '</p>';
+					html += '<code>';
+					html += data.message;
+					html += '</code><br>';
+					html += '</div>';
+					$("#prompt").addClass("alert-danger").removeClass("alert-success").html(html);
+				}
+
+			}
+		});
+	}
+	
+}
+
+/* 上传文件
+*/
+function uploadSqlFile(){
+	var fileid = "sqlfile";
+	var dom = document.getElementById(fileid);
+	var file =  dom.files[0];//File对象;
+	var name = file.name;
+	if(name != ''){
+		name = name.split("").reverse().join("");
+		if(name.indexOf("lqs.") === 0){
+			if(file.type == ""){
+				$.ajaxFileUpload({
+					url : "{:__URL('APP_MAIN/upload/uploadSql')}", //用于文件上传的服务器端请求地址
+					secureuri : false, //一般设置为false
+					fileElementId : "sqlfile", //文件上传空间的id属性  <input type="file" id="file" name="file" />
+					dataType : 'json', //返回值类型 一般设置为json
+					async : false,
+					contentType : "text/json;charset=utf-8",
+					success : function(res){ //服务器成功响应处理函数
+						if(res.code > 0){
+							$("#text").val(res.sql_str+"\r\n").keydown();
+						}else{
+							show(res.message,'error');
+						}
+					}
+				});
+			}
+		}else{
+			showTip("必须是有效的sql文件！",'error');
+		}
+	}
+}
+</script>
+{/block}

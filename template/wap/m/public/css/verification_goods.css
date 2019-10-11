@@ -1,0 +1,16 @@
+img{max-height: 100%; max-width: 100%; width: 100%; height: 100%;}
+.verification-goods{padding: 0 10px; background: #fff;}
+.verification-goods h2{font-size: 14px;padding: 10px 0 10px 0; font-weight: normal; border-bottom: 1px solid;}
+.verification-goods .goods-info{width: 100%; padding: 10px 0; overflow: hidden;}
+.verification-goods .goods-info .goods-img{width: 30%; float: left;}
+.verification-goods .goods-info .goods-img a{display: block; width: 100%; padding: 50% 0; position: relative; line-height: 100%;}
+.verification-goods .goods-info .goods-img a img{max-width: 100%; max-height: 100%; position: absolute; left: 0; top: 0; vertical-align: middle;}
+.verification-goods .goods-info .data-goods-info{width: 65%; float: left; margin-left: 5%;}
+.verification-goods .goods-info .data-goods-info p.goods-name{max-height: 44px; overflow: hidden; text-overflow: ellipsis; -webkit-line-clamp: 2; -webkit-box-orient: vertical; display: -webkit-box;}
+.verification-goods .goods-info .data-goods-info p.sku-name{white-space: nowrap; overflow: hidden; text-overflow: ellipsis;font-size: 12px; margin-top: 5px;}
+.list-container{margin-top: 20px; background: #fff;}
+.list-container ul{padding: 0 15px;}
+.list-container ul li{list-style: none; min-height: 40px; line-height: 40px; border-bottom: 1px solid #eee; overflow: hidden;}
+.list-container ul li span.title{float: left;}
+.list-container ul li span.tip{float: right;font-size: 12px;}
+.btn-verrfication{width: 100%; height: 50px; color: #fff; text-align: center; line-height: 50px; position: fixed; bottom: 0;}

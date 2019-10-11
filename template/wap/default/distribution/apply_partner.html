@@ -1,0 +1,116 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/distribution_apply_status.css">
+{/block}
+{block name="main"}
+{php}
+	$info = api("System.Distribution.checkApplyPartner");
+	$info = $info['data'];
+	$shop_user_account = api("System.Distribution.userConsume");
+	$shop_user_account = $shop_user_account['data'];
+	$is_meet = 0;
+	if($shop_user_account >= $info['shop_sale_money']) {
+		$is_meet = 1;
+	}
+	$shop_config = api('System.Distribution.shopConfig');
+	$shop_config = $shop_config['data'];
+{/php}
+{if condition="$shop_config['is_partner_enable'] eq 0"} <!-- 股东功能未开启 -->
+	<div class="frog ns-text-color-gray"><img src="WAP_IMG/distribution/commend-type.png">{:lang('shareholder_unopened')}</div>
+{else /}
+{if condition = "$info['level_isexist']"}
+	<div class="step-process ns-border-color-gray">
+		<ul>
+			<li class="step01">
+				<p class="name ns-text-color">{:lang('application_for_shareholders')}</p>
+				<span class="number ns-bg-color">1</span>
+				<span class="line line-right ns-bg-color"></span>
+			</li>
+			{if condition="$info['agent_type'] eq 2"}  <!-- 待审核 -->
+			<li>
+				<p class="name ns-text-color-gray">{:lang('pending_review')}</p>
+				<span class="line line-left ns-bg-color-gray-shade-20"></span>
+				<span class="number ns-bg-color-gray-shade-20">2</span>
+				<span class="line line-right ns-bg-color-gray-shade-20"></span>
+			</li>
+			{else /}
+			<li>
+				<p class="name ns-text-color">{:lang('pending_review')}</p>
+				<span class="line line-left ns-bg-color"></span>
+				<span class="number ns-bg-color">2</span>
+				<span class="line line-right ns-bg-color"></span>
+			</li>
+			{/if}
+			{if condition="$info['agent_type'] eq 1"}  <!-- 已通过 -->
+			<li class="step03">
+				<p class="name ns-text-color">{:lang('successful_application')}</p>
+				<span class="line line-left ns-bg-color"></span>
+				<span class="number ns-bg-color">3</span>
+			</li>
+			{else /}
+			<li class="step03">
+				<p class="name ns-text-color-gray">{:lang('successful_application')}</p>
+				<span class="line line-left ns-bg-color-gray-shade-20"></span>
+				<span class="number ns-bg-color-gray-shade-20">3</span>
+			</li>
+			{/if}
+		</ul>
+	</div>
+	{if condition="$info['agent_type'] eq 2"}  <!-- 没申请过 -->
+	<div class="apply">
+		<h4>股东协议</h4>
+		<hr class="ns-border-color-gray">
+		<p>{:lang('shareholder_agreement_content')}</p>
+		<p class="ns-text-color"><i class="fa fa-info-circle">&nbsp;&nbsp;用户消费金额：<span>{$shop_user_account}元</span></i></p>
+		<p class="ns-text-color"><i class="fa fa-info-circle">&nbsp;&nbsp;最低消费<span>{$info['shop_sale_money']}</span>元，才能申请股东</i></p>
+	</div>
+	<input  type="hidden" id="hidden_is_meet" value="{$is_meet}" />
+	<a href="javascript:applySubmit();" class="a-button primary">申请</a>
+	{elseif condition="$info['agent_type'] eq -1"/}  <!-- 拒绝 -->
+	<div class="frog">
+	     <img src="WAP_IMG/distribution/agent_apply.png" class="w107">申请已被拒绝......
+	</div>
+	<a href="javascript:applySubmit();" class="a-button primary">重新申请</a>
+	<input  type="hidden" id="hidden_is_meet" value="{$is_meet}" />
+	{elseif condition="$info['agent_type'] eq 0"/}  <!-- 审核中 -->
+	<div class="frog"><img src="WAP_IMG/distribution/agent_apply.png" >申请正在审核中......</div>
+	<a href="{:__URL('APP_MAIN/distribution/index')}" class="a-button primary">返回推广中心</a>
+	{elseif condition="$info['agent_type'] eq 1"/} <!-- 已通过 -->
+	<script type="text/javascript">
+		location.href=__URL(APPMAIN+'/distribution/applyPromoter');
+	</script>
+	{/if}
+	{else/}
+	<div class="divShow w140" align="center">
+		<div class="frog"><img src="WAP_IMG/distribution/commend-type.png">暂未设置股东等级，请联系管理人员!</div><br>
+	</div>
+	{/if}
+{/if}
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script type="text/javascript">
+var is_repeat = true;
+function applySubmit(){
+	var hidden_is_meet = $("#hidden_is_meet").val();// 是否满足申请股东最低消费金额
+	if(parseInt(hidden_is_meet) ==1){
+		if(is_repeat){
+			is_repeat = false;
+			api("System.Distribution.applyPartner",{},function (res) {
+				if(res['data']>0){
+					toast('股东申请成功');
+					location.reload();
+				}else{
+					is_repeat = true;
+					toast('股东申请失败');
+				}
+			});
+		}else{
+			toast('正在申请中,不可重复提交!');
+		}
+	}else{
+		toast("当前您还不满足最低消费，无法申请股东");
+	}
+}
+</script>
+{/block}

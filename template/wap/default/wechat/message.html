@@ -1,0 +1,47 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="dns-prefetch" href="http://res.wx.qq.com/">
+<link rel="dns-prefetch" href="http://mmbiz.qpic.cn/">
+<link rel="stylesheet" type="text/css" href="WAP_CSS/wechat_message.css">
+{/block}
+{block name="head"}{/block}
+{block name="main"}
+<div id="activity-detail" class="mm-appmsg">
+	<div id="js_article" class="rich-media">
+		<div class="rich-media-inner">
+			<div id="page-content">
+				<div id="img-content" class="rich-media-area-primary">
+					<h2 class="rich-media-title ns-border-color-gray" id="activity-name">{$info["media_item"]["title"]}</h2>
+					<div class="rich-media-meta-list">
+						<em id="post-date" class="rich-media-meta rich-media-meta-text ns-text-color-gray">{$info["media_parent"]["create_time"] | getTimeStampTurnTime}</em>
+						<a class="rich-media-meta rich-media-meta-link rich-media-meta-nickname" href="javascript:void(0);" id="post-user">{$info["weixin_auth"]["nick_name"]}</a>
+						<span class="rich-media-meta rich-media-meta-text rich-media-meta-nickname">{$info["weixin_auth"]["nick_name"]}</span>
+					</div>
+					<div class="rich-media-content" id="js_content">
+						<p>{$info["media_item"]["content"]}</p>
+					</div>
+					<div class="rich-media-tool" id="js_toobar">
+						{if condition="$info['media_item']['content_source_url'] !=''"} <a class="media-tool-meta meta-primary" style="color: #8c8c8c;" id="js_view_source" href="{$info['media_item']['content_source_url']}">{:lang('read_the_text')}</a>{/if}
+						<div id="js_read_area" class="media-tool-meta tips-global ns-text-color-gray meta-primary">
+							{:lang('read')} <span id="readNum">{$info["media_item"]["hits"]}</span>
+						</div>
+						</span> <a id="js_report_article" class="media-tool-meta tips-global ns-text-color-gray meta-extra" href="javascript:void(0);">{:lang('report')}</a>
+					</div>
+				</div>
+			</div>
+			<div id="js_pc_qr_code" class="qr-code-pc-outer">
+				<div class="qr-code-pc-inner">
+					<div class="qr-code-pc ns-border-color-gray">
+						<img id="js_pc_qr_code_img" class="qr-code-pc-img" src="{:__IMG($web_info.web_qrcode)}">
+						<p class="ns-text-color-gray">{:lang('wechat_sweep')}<br>{:lang('pay_attention_to_the_public_number')}</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script src="WAP_JS/wechat_message.js"></script>
+{/block}

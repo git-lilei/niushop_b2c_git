@@ -1,0 +1,364 @@
+{extend name="$base" /}
+{block name="main"}
+<div class="space-10"></div>
+<div class="set-style">
+	
+	<div class="set-item {if $type != 1} hide {/if}">
+		<dl>
+			<dt>会员注册送积分：</dt>
+			<dd>
+				<p><input id="reg_member_self_point" type="number" min="0" value="{$res.reg_member_self_point}" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" class="input-common harf"><em class="unit">分</em></p>
+			</dd>
+		</dl>
+		<dl>
+		<dt></dt>
+			<dd>
+				<p>
+					<input id="register_open" type="checkbox" onchange="setIntegralAjax();" class="checkbox" {if condition="$integralConfig['register_integral'] eq 1"}checked="checked"{/if} class="input-common" 
+					/>
+				</p>
+				<p class="hint">是否启用会员注册送积分</p>
+			</dd>
+		</dl>
+	
+		<dl>
+			<dt>会员注册送优惠券：</dt>
+			<dd>
+				<select class="row-no-radius select-common" id="reg_coupon">
+					<option value="">请选择优惠券种类</option>
+					{foreach name="couponlist" item="v"}
+						{if condition="$v['coupon_type_id'] == $res['reg_coupon']"}
+						<option value="{$v.coupon_type_id}" selected="selected">{$v.coupon_name}</option>
+						{else/}
+						<option value="{$v.coupon_type_id}">{$v.coupon_name}</option>
+						{/if}
+					{/foreach}
+				</select>
+			</dd>
+		</dl>
+		<dl>
+		<dt></dt>
+			<dd>
+				<p>
+					<input id="reg_coupon_open" type="checkbox" onchange="setIntegralAjax();" class="checkbox" {if condition="$integralConfig['register_coupon'] eq 1"}checked="checked"{/if} class="input-common" >
+				</p>
+				<p class="hint">是否启用会员注册送优惠券</p>
+			</dd>
+		</dl>
+	</div>
+
+	<div class="set-item {if $type != 2} hide {/if}">
+		<dl>
+			<dt>签到送积分：</dt>
+			<dd>
+				<p><input id="sign_point" type="number" value="{$res.sign_point}"  min="0" onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" class="input-common harf" ><em class="unit">分</em></p>
+			</dd>
+		</dl>
+			<dl>
+			<dt></dt>
+			<dd>
+				<p>
+					<input id="sign_open" type="checkbox" onchange="setIntegralAjax();" class="checkbox" {if condition="$integralConfig['sign_integral'] eq 1"}checked="checked"{/if} class="input-common" >
+				</p>
+				<p class="hint">是否启用签到送积分</p>
+			</dd>
+		</dl>
+		<dl>
+			<dt>签到送优惠券：</dt>
+			<dd>
+				<select class="row-no-radius select-common" id="sign_coupon">
+					<option value="">请选择优惠券种类</option>
+					{foreach name="couponlist" item="v"}
+						{if condition="$v['coupon_type_id'] == $res['sign_coupon']"}
+						<option value="{$v.coupon_type_id}" selected="selected">{$v.coupon_name}</option>
+						{else/}
+						<option value="{$v.coupon_type_id}">{$v.coupon_name}</option>
+						{/if}
+					{/foreach}
+				</select>
+			</dd>
+		</dl>
+		<dl>
+			<dt></dt>
+			<dd>
+				<p>
+					<input id="sign_coupon_open" type="checkbox" onchange="setIntegralAjax();" class="checkbox" {if condition="$integralConfig['sign_coupon'] eq 1"}checked="checked"{/if} class="input-common" >
+				</p>
+				<p class="hint">是否启用签到送优惠券</p>
+			</dd>
+		</dl>
+	</div>
+
+	<div class="set-item {if $type != 3} hide {/if}">
+		<dl>
+			<dt>分享送积分：</dt>
+			<dd>
+				<p><input id="share_point" type="number" value="{$res.share_point}" min="0"  onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" class="input-common harf" ><em class="unit">分</em></p>
+			</dd>
+		</dl>
+		<dl>
+			<dt></dt>
+			<dd>
+				<p>
+					<input id="share_open" type="checkbox" onchange="setIntegralAjax();" class="checkbox" {if condition="$integralConfig['share_integral'] eq 1"}checked="checked"{/if} class="input-common" >
+				</p>
+				<p class="hint">是否启用分享送积分</p>
+			</dd>
+		</dl>
+	
+		<dl>
+			<dt>分享送优惠券：</dt>
+			<dd>
+				<select class="row-no-radius select-common" id="share_coupon">
+					<option value="">请选择优惠券种类</option>
+					{foreach name="couponlist" item="v"}
+						{if condition="$v['coupon_type_id'] == $res['share_coupon']"}
+						<option value="{$v.coupon_type_id}" selected="selected">{$v.coupon_name}</option>
+						{else/}
+						<option value="{$v.coupon_type_id}">{$v.coupon_name}</option>
+						{/if}
+					{/foreach}
+				</select>
+			</dd>
+		</dl>
+		<dl>
+		<dt></dt>
+			<dd>
+				<p>
+					<input id="share_coupon_open" type="checkbox" onchange="setIntegralAjax();" class="checkbox" {if condition="$integralConfig['share_coupon'] eq 1"}checked="checked"{/if} class="input-common" >
+				</p>
+				<p class="hint">是否启用分享送优惠券</p>
+			</dd>
+		</dl>
+	</div>
+
+	<div class="set-item {if $type != 4} hide {/if}">
+		<dl>
+			<dt>点赞送积分：</dt>
+			<dd>
+				<p><input id="click_point" type="number" value="{$res.click_point}" min="0"  onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" class="input-common harf" ><em class="unit">分</em></p>
+			</dd>
+		</dl>
+	
+		<dl>
+			<dt>点赞送优惠券：</dt>
+			<dd>
+				<select class="row-no-radius select-common" id="click_coupon">
+					<option value="">请选择优惠券种类</option>
+					{foreach name="couponlist" item="v"}
+						{if condition="$v['coupon_type_id'] == $res['click_coupon']"}
+						<option value="{$v.coupon_type_id}" selected="selected">{$v.coupon_name}</option>
+						{else/}
+						<option value="{$v.coupon_type_id}">{$v.coupon_name}</option>
+						{/if}
+					{/foreach}
+				</select>
+			</dd>
+		</dl>
+		<dl>
+		<dt></dt>
+			<dd>
+				<p>
+					<input id="click_coupon_open" type="checkbox" onchange="setIntegralAjax();" class="checkbox" {if condition="$integralConfig['click_coupon'] eq 1"}checked="checked"{/if} class="input-common" >
+				</p>
+				<p class="hint">是否启用点赞送优惠券</p>
+			</dd>
+		</dl>
+	</div>
+	
+	<div class="set-item {if $type != 5} hide {/if}">
+		<dl>
+			<dt>评论送积分：</dt>
+			<dd>
+				<p><input id="comment_point" type="number" value="{$res.comment_point}" min="0"  onkeyup="value=value.replace(/[^\d+(\.\d+)?]/g,'')" class="input-common harf" ><em class="unit">分</em></p>
+			</dd>
+		</dl>
+	
+		<dl>
+			<dt>评论送优惠券：</dt>
+			<dd>
+				<select class="row-no-radius select-common" id="comment_coupon">
+					<option value="">请选择优惠券种类</option>
+					{foreach name="couponlist" item="v"}
+						{if condition="$v['coupon_type_id'] == $res['comment_coupon']"}
+						<option value="{$v.coupon_type_id}" selected="selected">{$v.coupon_name}</option>
+						{else/}
+						<option value="{$v.coupon_type_id}">{$v.coupon_name}</option>
+						{/if}
+					{/foreach}
+				</select>
+			</dd>
+		</dl>
+		<dl>
+		<dt></dt>
+			<dd>
+				<p>
+					<input id="comment_coupon_open" type="checkbox" onchange="setIntegralAjax();" class="checkbox" {if condition="$integralConfig['comment_coupon'] eq 1"}checked="checked"{/if} class="input-common" >
+				</p>
+				<p class="hint">是否启用评论送优惠券</p>
+			</dd>
+		</dl>
+	</div>
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="setRewardRuleAjax();" style="margin:20px 0 20px 205px;">保存</button>
+		</dd>
+	</dl>
+</div>
+<script>
+function setIntegralAjax(){
+	if($("#register_open").prop("checked")){
+		var register = 1;
+	}else{
+		var register = 0;
+	}
+	if($("#sign_open").prop("checked")){
+		var sign = 1;
+	}else{
+		var sign = 0;
+	}
+	if($("#share_open").prop("checked")){
+		var share = 1;
+	}else{
+		var share = 0;
+	}
+
+	if($("#reg_coupon_open").prop("checked")){
+		var reg_coupon_open = 1;
+	}else{
+		var reg_coupon_open = 0;
+	}
+	if($("#sign_coupon_open").prop("checked")){
+		var sign_coupon_open = 1;
+	}else{
+		var sign_coupon_open = 0;
+	}
+	if($("#share_coupon_open").prop("checked")){
+		var share_coupon_open = 1;
+	}else{
+		var share_coupon_open = 0;
+	}
+	if($("#click_coupon_open").prop("checked")){
+		var click_coupon_open = 1;
+	}else{
+		var click_coupon_open = 0;
+	}
+	if($("#comment_coupon_open").prop("checked")){
+		var comment_coupon_open = 1;
+	}else{
+		var comment_coupon_open = 0;
+	}
+	$.ajax({
+		type : 'post',
+		url : "{:__URL('ADMIN_MAIN/promotion/setintegralajax')}",
+		data : {
+			'register':register,
+			'sign':sign,
+			'share':share,
+			'reg_coupon':reg_coupon_open,
+			'click_coupon':click_coupon_open,
+			'comment_coupon':comment_coupon_open,
+			'sign_coupon':sign_coupon_open,
+			'share_coupon':share_coupon_open
+		},
+		success : function(data){
+			//alert(JSON.stringify(data));
+		}
+	})
+}
+function setRewardRuleAjax(){
+	var sign_point = $("#sign_point").val();
+	var share_point = $("#share_point").val();
+	var reg_member_self_point = $("#reg_member_self_point").val();
+	var click_point = $("#click_point").val();
+	var comment_point = $("#comment_point").val();
+	var reg_coupon = $("#reg_coupon").val();
+	var click_coupon = $("#click_coupon").val();
+	var comment_coupon = $("#comment_coupon").val();
+	var sign_coupon = $("#sign_coupon").val();
+	var share_coupon = $("#share_coupon").val();
+	/*会员营销注册*/
+	if($("#reg_coupon_open").prop("checked")){
+		if(reg_coupon == ""){
+			showMessage("error","请选择优惠券种类");
+			return;
+		}
+	}
+	/*会员营销签到*/
+	{if $type == 2}
+		if($("#sign_coupon_open").prop("checked")){
+			if(sign_coupon == ""){
+				showMessage("error","请选择优惠券种类");
+				return;
+			}
+		}
+		if($("#sign_open").prop("checked")){
+			if(sign_point == 0){
+				showMessage("error","请设置签到积分");
+				return;
+			}
+		}
+	{/if}
+	
+	{if $type == 3}
+	/*会员营销分享*/
+	if($("#share_open").prop("checked")){
+		if(share_point == 0){
+			showMessage("error","请设置分享积分");
+			return;
+		}
+	}
+	if($("#share_coupon_open").prop("checked")){
+		if(share_coupon == ""){
+			showMessage("error","请选择优惠券种类");
+			return;
+		}
+	}
+	{/if}
+	
+	{if $type == 4}
+	/*会员营销点赞*/
+	if($("#click_coupon_open").prop("checked")){
+		if(click_coupon == ""){
+			showMessage("error","请选择优惠券种类");
+			return;
+		}
+	}
+	{/if}
+	
+	{if $type == 5}
+		/*会员营销评论*/
+		if($("#comment_coupon_open").prop("checked")){
+			if(comment_coupon == ""){
+				showMessage("error","请选择优惠券种类");
+				return;
+			}
+		}
+	{/if}
+	$.ajax({
+		type : 'post',
+		url : "{:__URL('ADMIN_MAIN/promotion/integral')}",
+		data : {
+			"sign_point" : sign_point,
+			"share_point" : share_point,
+			"reg_member_self_point" : reg_member_self_point,
+			"click_point" : click_point,
+			"comment_point" : comment_point,
+			'reg_coupon':reg_coupon,
+			'click_coupon':click_coupon,
+			'comment_coupon':comment_coupon,
+			'sign_coupon':sign_coupon,
+			'share_coupon':share_coupon
+		},
+		success : function(data){
+			if(data['code'] >=0){
+				showMessage("success", "设置成功！", "{:__URL('ADMIN_MAIN/promotion/memberpromotion')}");
+			}else{
+				showMessage("error", "设置失败");
+			}
+		}
+	})
+}
+</script>
+{/block}

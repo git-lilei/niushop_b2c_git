@@ -1,0 +1,51 @@
+{extend name="$base" /}
+{block name="resources"}
+<link type="text/css" rel="stylesheet" href="WEB_CSS/article.css">
+{/block}
+{block name="main"}
+{php}
+	$list = api("System.Shop.shopNoticeList", ["page_index"=>$page_index]);
+	$result = $list['data']['data'];
+	$total_count = $list['data']['total_count'];
+{/php}
+<div class="help">
+	<ol class="breadcrumb">
+	  <li><a href="{:__URL('SHOP_MAIN')}">{:lang('home_page')}</a></li>
+	  <li class="active">商城公告</li>
+	</ol>
+	<div class="category">
+		<h3 class="ns-bg-color">商城公告</h3>
+		<ul>
+			<li>
+				<div class="ns-bg-color-gray">
+					<a href="javascript:;" title="商城公告">商城公告</a>
+				</div>
+			</li>
+		</ul>
+	</div>
+	<div class="detail">
+		{if !empty($result)}
+		<ul>
+			{volist name="result" id="news"}
+			<li>
+				<a href="{:__URL('SHOP_MAIN/notice/detail', 'id='.$news.id)}" target="_self" title="{$news.notice_title}">{$news.notice_title}</a>
+				<span class="pull-right">{$news.create_time | getTimeStampTurnTime}</span>
+			</li>
+			{/volist}
+		</ul>
+		<ul class="pager" data-ride="pager" data-elements="prev,nav,next,total_page_text,goto" data-rec-per-page="{$page_size}" data-page="{$page_index}" data-rec-total="{$total_count}" id="myPager"></ul>
+		{else/}
+		<div>还没有公告</div>
+		{/if}
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+$('#myPager').pager({
+	linkCreator: function(page, pager) {
+		return __URL(SHOPMAIN+"/notice/lists?page="+page);
+	}
+});
+</script>
+{/block}

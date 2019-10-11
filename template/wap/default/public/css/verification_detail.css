@@ -1,0 +1,19 @@
+img{max-height: 100%; max-width: 100%; vertical-align: middle; width:100%; height:100%;}
+.verification-detail{padding: 0 0 20px 0; background: #fff; text-align: center;}
+.goods-info-wrap{width: 100%; height: 120px;padding-top: 30px;}
+.goods-info-wrap .goods-img{width: 50px; height: 50px; border-radius: 50%; text-align: center; line-height: 50px; overflow: hidden; margin: 0 auto;}
+.goods-info-wrap .goods-img img{max-height: 100%; max-width: 100%;}
+.goods-info-wrap .name, .goods-info-wrap .desc{padding: 0 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; line-height: 1.5;}
+.goods-info-wrap .name{margin-top: 10px;}
+.goods-info-wrap .desc{font-size: 12px;}
+.verification-detail .used{display: inline-block; padding: 6px 40px; border: 1px solid; border-radius: 3px; margin-top: 25px;}
+.list-container{margin-top: 20px; background-color: #fff;}
+.list-container ul{padding: 0 10px;}
+.list-container ul li{min-height: 40px; line-height: 40px;overflow: hidden;}
+.list-container ul li span.title{font-size: 12px; float: left;}
+.list-container ul li span.tip{float: right; font-size: 12px;}
+.virtual-line-block{font-size: 12px;margin-top:20px;background-color:#FFF;}
+.virtual-line-block ul{padding: 0 10px;}
+.virtual-line-block ul li{overflow:hidden;}
+.virtual-line-block .title{height: 35px; line-height: 35px; display: block; border-bottom: 1px solid; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+.virtual-line-block .tip{display: block;line-height: 2.5;}

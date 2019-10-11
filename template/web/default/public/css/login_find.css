@@ -1,0 +1,27 @@
+.header{margin-top: 15px;}
+.header div:first-child{float: left;}
+.head-block{height: 60px; line-height: 60px;}
+.self-adaption-block{display: inline-block; width: 160px; height: 60px; overflow: hidden; line-height: 60px;}
+.header div:first-child span{padding-left: 15px; font-size: 24px; vertical-align: text-bottom;}
+.header div:nth-child(2){width: 180px; padding-top: 40px; text-align: right; float: right; margin-bottom: 20px;}
+.find-process{clear: both; position: relative; min-height: 350px; border: solid 1px;}
+.find-process > ul{margin: 50px auto 0; width: 1032px; height: 51px;}
+.find-process > ul li{position: relative; float: left; width: 258px; height: 51px; text-align: center;}
+.find-process > ul li .line-1{position: absolute; left: 0; top: 14px; display: inline-block; width: 100px; border-top: solid 2px;}
+.find-process > ul li div p:first-child{display: inline-block; width: 28px; height: 28px; line-height: 28px; color: #fff; border-radius: 28px;}
+.find-process > ul li div p:nth-child(2){margin-top: 10px;}
+.find-process > ul li .line-2{position: absolute; right: 0; top: 14px; display: inline-block; width: 100px; border-top: solid 2px;}
+.find-process > ol{margin-top: 50px; z-index: 2; width: 1190px; overflow: hidden;}
+.find-process > ol li{float: left; width: 1200px;}
+.find-process .item{overflow: hidden; padding: 10px 0;}
+.find-process .form-control{width: 300px;}
+.find-process .item label{float: left; margin-right: 20px; width: 415px;text-align: right;height: 42px; line-height: 42px;}
+.find-process .item span{height: 42px; line-height: 42px; margin-left: 20px;}
+.find-process .item.captcha input{width: 190px; margin-right: 5px;}
+.find-process > ol .u-profile-row .profile-row-content{position: relative; float: left; width: 400px; height: 42px; line-height: 42px;}
+.find-process > ol button{display: inline-block; margin-left: 435px; width: 300px; height: 42px; font-size: 16px; text-align: center;}
+.find-process .get-sms-code{font-size: 12px; width: 104px; height: 28px; line-height: 28px; display: inline-block; text-align: center; background: #f0f0f0; margin-left: 10px;}
+.find-process > ol .verify-success{padding-top: 50px; text-align: center;}
+.find-process > ol .verify-success p{font-size: 22px; line-height: 32px;}
+.find-process > ol .verify-success .back-index{display: inline-block; margin-top: 25px; width: 114px; height: 34px; line-height: 34px; text-align: center; color: #fff !important;}
+.none{display: none;}

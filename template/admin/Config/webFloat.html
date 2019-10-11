@@ -1,0 +1,168 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/product.css">
+<style type="text/css">
+.ns-main{margin-top: 0;}
+.nav-icon{width: 100%;float: left;margin: 0px 10px 0px 0px;}
+</style>
+{/block}
+{block name="thirdmenu"}{/block}
+{block name="main"}
+
+<div class="options-btn">
+	<input type="hidden" id="nav_type" value="{$nav_type}">
+</div>
+<div class="set-style">
+	<dl>
+		<dt><span style="color:red;margin-right:10px;">*</span>浮窗名称：</dt>
+		<dd><input id="nav_title"   value="{$retval.nav_title}"   type="text" class="input-common" name="title"/></dd>
+	</dl>
+
+	<dl>
+		<dt><span style="color:red;margin-right:10px;">*</span>链接地址：</dt>
+		<dd>
+			<span style="display: block;" id="nav_url">
+				<input type="text" class="input-common" value="{$retval.nav_url}"   name="nav_url" />
+				<span style="line-height: 28px;color: #999;">如：http://www.niushop.com.cn/</span>
+			</span>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否显示：</dt>
+		<dd>
+			<p>
+				<input id="is_show" type="checkbox"  class="checkbox"  {if condition="$retval.is_show eq 1"}checked="checked"{/if}/>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;margin-right:10px;">*</span>浮窗图片：</dt>
+		<dd>
+			<div class="upload-btn-common">
+				<div>
+					<input class="input-file"   name="file_upload" id="uploadImg" type="file" onchange="imgUpload(this);">
+					<input type="hidden" id="logo"  value="{$retval.nav_icon}" />
+				</div>
+				<input type="text"  value="{$retval.nav_icon}"   id="text_logo" class="input-common" readonly="readonly" value="" />
+				<em>上传</em>
+			    <img id="preview_logo" src="__STATIC__/blue/img/upload-common-select.png" {if condition="$retval.nav_icon"}data-src="{:__IMG($retval.nav_icon)}"{/if} data-html="true" data-container="body" data-placement="top" data-trigger="manual"/>
+				<!-- <img id="preview_logo" src="{$retval.nav_icon}" data-src="" data-html="true" data-container="body" data-placement="top" data-trigger="manual" style=" width: 60px;"/> -->
+			</div>
+			<p class="hint">
+				<span>建议使用<i class="important-note">宽600</i>像素-<i class="important-note">高600</i>像素内的<i class="important-note">JPG</i>或<i class="important-note">PNG</i>正方形图片</span>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="save()">保存</button>
+			<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);" >返回</button>
+		</dd>
+	</dl>
+</div>
+{/block}
+
+{block name="script"}
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function(){
+	$("input[type='radio'][name='navigationtype']").click(function(){
+		var type = $(this).val();
+		var url_type = $("[name='url_type']:checked").val();	
+		if(url_type == 0){
+			switchUseType(type);
+		}
+	})
+});
+
+function save(){
+	var nav_title=$("#nav_title").val();
+	var type=$("#nav_type").val();
+	if(nav_title == ''){
+		showTip("浮窗名称不能为空","warning");
+		$("#nav_title").focus();
+		return false;
+	}
+    var nav_url=$("input[name=nav_url]").val();
+    var template_name = '';    
+	
+	if(nav_url == ''){
+		showTip("链接地址不能为空","warning");
+		return false;
+	}
+	
+	/*对链接地址进行正则判断以http 或https*/
+	var nav_url_Verification=/^https?:\/\//i;
+    if(nav_url_Verification.test(nav_url) == false){
+		showTip("必须以http,https开头,且需符合URL规范,检查格式是否正确","warning");
+		return false;
+	} 
+	
+     /*是否显示*/
+	var is_show = $("#is_show").prop('checked') ? 1 : 0 ;
+
+	/*浮窗图片*/
+	var nav_icon = $("#logo").val();
+
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/config/webFloat')}",
+		data: {
+			'nav_title': nav_title,
+			'nav_url': nav_url,
+			'type': type,
+			'template_name': template_name,
+			'nav_icon': nav_icon,
+			'is_show': is_show
+		},
+		
+		success:function(data){
+			if (data["code"] > 0) {		
+			    showTip(data["message"],'success');
+			    location.href=__URL("ADMIN_MAIN/config/webFloat");	
+			}else{
+				showTip(data["message"],'error');
+			}
+		}
+	});
+}
+
+function imgUpload(event) {
+	var fileid = $(event).attr("id");
+	var id = $(event).next().attr("id");
+	var data = { 'file_path' : "config" };
+	uploadFile({
+		url: __URL(ADMINMAIN + '/config/uploadimage'),
+		fileId: fileid,
+		data : data,
+		callBack: function (res) {
+			if(res.code){
+				$("#"+id).val(res.data.path);
+				$("#text_" + id).val(res.data.path);
+				$("#preview_" + id).attr("data-src",__IMG(res.data.path));
+				showTip(res.message,"success");
+			}else{
+				showTip(res.message,"error");
+			}
+		}
+	});
+}
+
+
+</script>
+{/block}
+
+<script type="text/javascript">
+
+
+//pc端与手机端的切换
+$("[data-nav-type]").click(function(){
+	$("#nav_type").val($(this).attr("data-nav-type"));
+	$("[data-nav-type]").removeClass("selected");
+	$(this).addClass("selected");
+	LoadingInfo(1);
+});
+</script>
+{/block}

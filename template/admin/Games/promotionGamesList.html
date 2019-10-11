@@ -1,0 +1,230 @@
+{extend name="$base" /}
+{block name="resources"}
+<style>
+.modal-infp-style{width:90%;margin:10px auto;}
+.modal-infp-style table{width:100%;}
+.modal-infp-style table tr td{border: 1px solid #e5e5e5;padding: 10px;}
+.table-class tbody td a{margin-right:8px;margin-left:0;}
+</style>
+{/block}
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<th width="20%" style="text-align:left;">
+			<button class="btn-common" onclick="location.href='{:__URL('ADMIN_MAIN/promotion/addPromotionGame?game_type='.$type)}';" style="margin:0 5px 0 0 !important;">添加活动</button>
+			<button class="btn-common-delete" onclick="batchDelete();">批量删除</button>
+		</th>
+		<th width="10%">
+			<input type="text" id = 'search_text' placeholder="请输入活动名称" class="input-common" />
+			<input type="button" onclick="searchData()" value="搜索" class="btn-common" />
+		</th>
+	</tr>
+</table>
+<table class="table-class">
+	<colgroup>
+	<col style="width: 2%;">
+	<col style="width: 28%;">
+	<col style="width: 8%;">
+	<col style="width: 8%;">
+	<col style="width: 10%;">
+	<col style="width: 8%;">
+	<col style="width: 20%;">
+	<col style="width: 16%;">
+	</colgroup>
+	<thead>
+		<tr align="center">
+			<th><i class="checkbox-common"><input type="checkbox" ></i></th>
+			<th align="left">活动名称</th>
+			<th align="left">游戏类型</th>
+			<th align="left">参与的会员</th>
+			<th align="right">参与扣除积分<span class="row-20"></th>
+			<th>活动状态</th>
+			<th>有效时间</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+<input type="hidden" value="{$type}" id="type">
+{/block}
+{block name="script"}
+<script type="text/javascript">
+function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	var type = $('#type').val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/promotion/promotionGamesList')}",
+		data : {
+			"type" : type, "page_index" : page_index, "page_size" : $("#showNumber").val(), "search_text" : search_text
+		},
+		success : function(data) {
+			if (data["data"].length > 0) {
+				$(".table-class tbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					html += '<tr align="center">';
+					if(data["data"][i]["status"] <= 0){
+						html += '<td><i class="checkbox-common"><input name="sub" type="checkbox" value="'+ data["data"][i]["game_id"]+'" ></i></td>';
+					}else{
+						html += '<td><i class="checkbox-common disabled"><input name="sub" type="checkbox" value="'+ data["data"][i]["game_id"]+'" disabled></i></td>';
+					}
+					if (data["data"][i]["name"] == null || "" == data["data"][i]["name"]) {
+						html += '<td align="left">--</td>';
+					} else {
+						html += '<td align="left">' + data["data"][i]["name"] + '</td>';
+					}
+					
+					html += '<td align="left">' + data["data"][i]["game_type_name"] + '</td>';
+					
+					html += '<td  align="left">' + data["data"][i]["level_name"] + '</td>';
+					html += '<td  align="right">' + data["data"][i]["points"] + '<span class="row-20"></td>';
+				
+					html += '<td>' + data["data"][i]["status_name"] + '</td>';
+					html += '<td>开始时间：' + timeStampTurnTime(data["data"][i]["start_time"]) + '<br/>结束时间：' + timeStampTurnTime(data["data"][i]["end_time"]) + '</td>';
+					
+					html += '<td align="center">';
+					if(data["data"][i]["status"] == 0){
+						html += '<a href="'+__URL('ADMIN_MAIN/Promotion/updatePromotionGame?game_id=' + data["data"][i]["game_id"]+'&game_type='+data["data"][i]["game_type"])+'">编辑</a>&nbsp;';
+					}
+					html += '<a href="'+__URL(ADMINMAIN+"/Promotion/promotionGamesAwardList?game_id="+data["data"][i]["game_id"])+'" target="_blank">奖项列表</a>';
+					html += '<br/>';
+					var opt_num = 2;
+					if(data["data"][i]["status"] <= 0){
+						html += '<a href="javascript:;" onclick="deleteGames('+data["data"][i]["game_id"]+');">删除</a>';
+						opt_num ++;if(opt_num%2==0)html += '<br/>';
+					}
+					if(data["data"][i]["status"]!=0){
+						html += '<a href="'+__URL(ADMINMAIN+"/Promotion/promotionGamesAccessRecords?game_id="+data["data"][i]["game_id"])+'" target="_blank">获奖记录</a>';
+						opt_num ++;if(opt_num%2==0)html += '<br/>';
+					}
+					if(data["data"][i]["status"] == 1){
+						html += '<a href="javascript:;" onclick="closeGame('+ data["data"][i]["game_id"] +')">关闭</a>';
+						opt_num ++;if(opt_num%2==0)html += '<br/>';
+						html += '<a href="'+__URL(APPMAIN+"/Game/index?gid="+data["data"][i]["game_id"])+'" target="_blank">推广链接</a>';
+						opt_num ++;if(opt_num%2==0)html += '<br/>';
+					}
+					
+					html += '</td>';
+					html += '</tr>';
+					$(".table-class tbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="9">暂无符合条件的数据记录</td></tr>';
+				$(".table-class tbody").html(html);
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+
+function searchData(){
+	LoadingInfo(1);
+}
+
+function couponTypeInfo(coupon_type_id){
+	$("#coupon_info").modal("show");
+	$.ajax({
+		type:"post",
+		url : "{:__URL('ADMIN_MAIN/promotion/getcoupontypeinfo')}",
+		data : { "coupon_type_id" : coupon_type_id },
+		success : function(data) {
+			$("#coupon_name").text(data["coupon_name"]);
+			$("#money").text(data["money"]+"元");
+			$("#count").text(data["count"]);
+			if(data["max_fetch"] == 0){
+				$("#max_fetch").text('不限');
+			}else{
+				$("#max_fetch").text(data["max_fetch"]+"次");
+			}
+			$("#at_least").text(data["at_least"]+"元");
+			$("#time").text(timeStampTurnTime(data["start_time"])+"到"+timeStampTurnTime(data["end_time"]));
+		}
+	});
+}
+
+function deleteGames(game_id){
+
+	$("#dialog").dialog({
+		buttons: {
+			"确定": function() {
+				$.ajax({
+					type:"post",
+					url : "{:__URL('ADMIN_MAIN/promotion/delPromotionGame')}",
+					data : { "game_id" : game_id.toString()},
+					dataType : "json",
+					success : function(data) {
+						if (data["code"] > 0) {
+							showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/promotion/promotionGamesList?type='.$type)}");
+						}else if(data["code"] == -1){
+							showMessage('error', '正在活动中的活动不可删除！');
+						}else{
+							showMessage('error', data['message']);
+						}
+					}
+				});
+				$(this).dialog('close');
+			},
+			"取消,#f5f5f5,#666": function() {
+				$(this).dialog('close');
+			},
+		},
+		contentText:"确定要删除吗？",
+	});
+}
+
+function closeGame(game_id){
+	$("#dialog").dialog({
+		buttons: {
+			"确定": function() {
+				$.ajax({
+					type:"post",
+					url : "{:__URL('ADMIN_MAIN/promotion/closePromotionGame')}",
+					data : { "game_id" : game_id},
+					dataType : "json",
+					success : function(data) {
+						if (data["code"] > 0) {
+							showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/promotion/promotionGamesList?type='.$type)}");
+						}else{
+							showMessage('error', data['message']);
+						}
+					}
+				});
+				$(this).dialog('close');
+			},
+			"取消,#f5f5f5,#666": function() {
+				$(this).dialog('close');
+			},
+		},
+		contentText:"确定要关闭该活动吗？",
+	});
+}
+
+/**
+* 批量删除
+*/
+function batchDelete(){
+	var ids= [];
+	$(".table-class tbody input[type = 'checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			ids.push($(this).val());
+		}
+	});
+	if(ids.length ==0){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#0059d6,#fff": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:"请选择需要操作的记录",
+			title:"消息提醒",
+		});
+		return false;
+	}
+	deleteGames(ids);
+}
+</script>
+{/block}

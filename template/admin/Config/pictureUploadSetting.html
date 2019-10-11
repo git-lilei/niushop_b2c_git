@@ -1,0 +1,487 @@
+{extend name="admin/base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<script src="ADMIN_JS/material_managedialog.js"></script>
+<style>
+.ns-main{margin-top:0;}
+.config-box,.qiniu-hint{display:none;}
+</style>
+{/block}
+{block name="main"}
+<div class="set-style" >
+	<!-- 附件上传 开始-->
+	<h4><span></span>上传方式设置</h4>
+	<dl>
+		<dt>保存方式：</dt>
+		<dd>
+			<select id="type" onchange="selectConfig();" class="select-common">
+				<option value="1">本地</option>
+				<option value="2">七牛云</option>
+			</select>
+			<p class="hint qiniu-hint" >七牛云构建了基于容器的计算平台，并基于容器平台构建了功能丰富且开放性的智能媒体云平台。</p>
+			<p class="hint qiniu-hint" >您只需考虑怎么处理数据，而无需考虑数据的规模和系统性能。</p>
+		</dd>
+	</dl>
+	<div class="config-box config-data2">
+		<dl>
+			<dt>Accesskey：</dt>
+			<dd>
+				<input id="Accesskey" type="text"  value="{$config_data['data']['qiniu']['Accesskey']}" class="input-common long" />
+				<p class="hint">用于签名的公钥</p>
+			</dd>
+		</dl>
+		<dl>
+			<dt>Secretkey：</dt>
+			<dd>
+				<input id="Secretkey" type="text" value="{$config_data['data']['qiniu']['Secretkey']}" class="input-common long" />
+				<p class="hint">用于签名的私钥</p>
+			</dd>
+		</dl>
+		<dl>
+			<dt>Bucket：</dt>
+			<dd>
+				<input id="Bucket" type="text"  value="{$config_data['data']['qiniu']['Bucket']}" class="input-common long" />
+				<p class="hint">请保证bucket为可公共读取的</p>
+			</dd>
+		</dl>
+		<dl>
+			<dt>Url：</dt>
+			<dd>
+				<input id="QiniuUrl" type="text"  value="{$config_data['data']['qiniu']['QiniuUrl']}" class="input-common long" />
+				<p class="hint">七牛支持用户自定义访问域名。注：url开头加<i class="important-note">http://</i>或<i class="important-note">https://</i>，结尾不加 ‘<i class="important-note">/</i>’，例：http://abc.com</p>
+			</dd>
+		</dl>
+	</div>
+	<!-- 附件上传 结束-->
+	<h4><span></span>默认图片设置</h4>
+	<dl>
+		<dt>默认商品图片：</dt>
+		<dd>
+			<div class="upload-btn-common">
+				<div>
+					<input class="input-file" name="file_upload" id="uploadDefault_goods_img" type="file" onchange="imgUpload(this);">
+					<input type="hidden" id="default_goods_img" value="{$info.value.default_goods_img}" />
+				</div>
+				<input type="text" id="text_default_goods_img" class="input-common" readonly="readonly" value="{if condition="$info.value.default_goods_img"}{$info.value.default_goods_img}{/if}" />
+				<em>上传</em>
+				
+				<img id="preview_default_goods_img" src="__STATIC__/blue/img/upload-common-select.png" {if condition="$info.value.default_goods_img"}data-src="{:__IMG($info.value.default_goods_img)}"{/if} data-html="true" data-container="body" data-placement="top" data-trigger="manual"/>
+
+			</div>
+
+			<p class="hint">
+				<span>建议使用<i class="important-note">宽360</i>像素-<i class="important-note">高360</i>像素内的<i class="important-note">GIF</i>或<i class="important-note">PNG</i>正方形图片</span>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>默认会员头像：</dt>
+		<dd>
+			<div class="upload-btn-common">
+				<div>
+					<input class="input-file" name="file_upload" id="uploadDefault_headimg" type="file" onchange="imgUpload(this);">
+					<input type="hidden" id="default_headimg" value="{$info.value.default_headimg}" />
+				</div>
+				<input type="text" id="text_default_headimg" class="input-common" readonly="readonly" value="{if condition="$info.value.default_headimg"}{$info.value.default_headimg}{/if}" />
+				<em>上传</em>
+				
+				<img id="preview_default_headimg" src="__STATIC__/blue/img/upload-common-select.png" {if condition="$info.value.default_headimg"}data-src="{:__IMG($info.value.default_headimg)}"{/if} data-html="true" data-container="body" data-placement="top" data-trigger="manual"/>
+
+			</div>
+
+			<p class="hint">
+				<span>建议使用<i class="important-note">宽120</i>像素-<i class="important-note">高120</i>像素内的<i class="important-note">JPG</i>或<i class="important-note">PNG</i>正方形图片</span>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>默认文章缩略图：</dt>
+		<dd>
+			<div class="upload-btn-common">
+				<div>
+					<input class="input-file" name="file_upload" id="uploadDefault_cms_thumbnail" type="file" onchange="imgUpload(this);">
+					<input type="hidden" id="default_cms_thumbnail" value="{$info.value.default_cms_thumbnail}" />
+				</div>
+				<input type="text" id="text_default_cms_thumbnail" class="input-common" readonly="readonly" value="{if condition="$info.value.default_cms_thumbnail"}{$info.value.default_cms_thumbnail}{/if}" />
+				<em>上传</em>
+				
+				<img id="preview_default_cms_thumbnail" src="__STATIC__/blue/img/upload-common-select.png" {if condition="$info.value.default_cms_thumbnail"}data-src="{:__IMG($info.value.default_cms_thumbnail)}"{/if} data-html="true" data-container="body" data-placement="top" data-trigger="manual"/>
+
+			</div>
+
+			<p class="hint">
+				<span>建议使用<i class="important-note">宽120</i>像素-<i class="important-note">高120</i>像素内的<i class="important-note">JPG</i>或<i class="important-note">PNG</i>正方形图片</span>
+			</p>
+		</dd>
+	</dl>
+	<h4><span></span>上传参数设置</h4>
+	<dl>
+		<dt>商品图片添加水印：</dt>
+		<dd>
+			<input id="watermark" type="checkbox" class="checkbox" {if condition="$water_info.watermark=='1'"}checked="checked"{/if}/>
+		</dd>
+	</dl>
+	<dl>
+		<dt>水印图片：</dt>
+		<dd>
+			<div class="upload-btn-common">
+				<div>
+					<input class="input-file" name="file_upload" id="uploadDefault_watermark" type="file" onchange="imgUpload(this);">
+					<input type="hidden" id="default_watermark" value="{$water_info.imgWatermark}" />
+				</div>
+				<input type="text" id="text_default_watermark" class="input-common" readonly="readonly" value="{if condition="$water_info.imgWatermark"}{$water_info.imgWatermark}{/if}" />
+				<em>上传</em>
+				
+				<img id="preview_default_watermark" src="__STATIC__/blue/img/upload-common-select.png" {if condition="$water_info.imgWatermark"}data-src="{:__IMG($water_info.imgWatermark)}"{/if} data-html="true" data-container="body" data-placement="top" data-trigger="manual"/>
+
+			</div>
+
+			<p class="hint">
+				<span>建议使用<i class="important-note">宽150</i>像素-<i class="important-note">高50</i>像素内的<i class="important-note">JPG</i>或<i class="important-note">PNG</i>图片</span>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>水印透明度：</dt>
+		<dd>
+			<input id="transparency" type="number" min="0" step="1" value="{$water_info.transparency}" class="input-common harf"/><em class="unit">%</em>
+			<p class="hint">水印的透明度，可选值为0-100。当设置为100时则为不透明。</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>水印位置：</dt>
+		<dd>
+			<div class="controls">
+			{if condition ="$water_info['waterPosition'] eq 1"}
+			<label class="radio inline normal">
+				<i class="checkbox-common selected">
+					<input type="checkbox" name="water_position" value="1" checked>
+				</i>
+				左上角
+			</label>
+			{else/}
+			<label class="radio inline normal">
+				<i class="checkbox-common">
+					<input type="checkbox" name="water_position" value="1">
+				</i>
+				左上角
+			</label>
+			{/if}
+			{if condition ="$water_info['waterPosition'] eq 3"}
+			<label class="radio inline normal">
+				<i class="checkbox-common selected">
+					<input type="checkbox" name="water_position" value="3" checked>
+				</i>
+				右上角
+			</label>
+			{else/}
+			<label class="radio inline normal">
+				<i class="checkbox-common ">
+					<input type="checkbox" name="water_position" value="3">
+				</i>
+				右上角
+			</label>
+			{/if}
+			{if condition ="$water_info['waterPosition'] eq 5"}
+			<label class="radio inline normal">
+				<i class="checkbox-common selected">
+					<input type="checkbox" name="water_position" value="5" checked>
+				</i>
+				居中
+			</label>
+			{else/}
+			<label class="radio inline normal">
+				<i class="checkbox-common">	
+					<input type="checkbox" name="water_position" value="5">
+				</i>
+				居中
+			</label>
+			{/if}
+				<br/>
+			{if condition ="$water_info['waterPosition'] eq 7"}
+			<label class="radio inline normal">
+				<i class="checkbox-common selected">
+					<input type="checkbox" name="water_position" value="7" checked>
+				</i>
+				左下角
+			</label>
+			{else/}
+			<label class="radio inline normal">
+				<i class="checkbox-common">
+					<input type="checkbox" name="water_position" value="7">
+				</i>
+				左下角
+			</label>
+			{/if}
+			{if condition ="$water_info['waterPosition'] eq 9"}
+			<label class="radio inline normal">
+				<i class="checkbox-common selected">
+					<input type="checkbox" name="water_position" value="9" checked>
+				</i>
+				右下角
+			</label>
+			{else/}
+			<label class="radio inline normal">
+				<i class="checkbox-common">
+					<input type="checkbox" name="water_position" value="9">
+				</i>
+				右下角
+			</label>
+			{/if}
+			</div>
+			<p class="hint">请选择水印位置</p>
+		</dd>
+	</dl>
+	
+	<dl style="display:none;">
+		<dt>支持格式后缀：</dt>
+		<dd>
+			<textarea rows="2" id="upload_ext" class="textarea input-common" maxlength="50">{$info["upload_ext"]}</textarea>
+			<p class="hint">支持上传文件格式后缀(后缀之间以,隔开)。</p>
+		</dd>
+	</dl>
+	<dl style="display:none;">
+		<dt>文件大小限制：</dt>
+		<dd>
+			<input id="upload_size" type="number" min="0" step="1" value="{$info['upload_size']}" class="input-common" />
+			<p class="hint">注意考虑php.ini的配置(0为不限制)</p>
+		</dd>
+	</dl>
+	<!-- 附近上传 开始 -->
+	<!-- 图片设置 开始 -->
+	<dl>
+		<dt>裁剪设置：</dt>
+		<dd>
+			<div class="controls">
+			<!-- {if condition ="$info['thumb_type'] eq 1"}
+			<label class="radio inline normal"><input type="checkbox" name="thumb_type" value="1" checked>等比例缩放</label>
+			{else/}
+			<label class="radio inline normal"><input type="checkbox" name="thumb_type" value="1">等比例缩放</label>
+			{/if} -->
+			{if condition ="$pic_info['thumb_type'] eq 2"}
+			<label class="radio inline normal">
+				<i class="checkbox-common selected">
+					<input type="checkbox" name="thumb_type" value="2" checked>
+				</i>
+				缩放后填充
+			</label>
+			{else/}
+			<label class="radio inline normal">
+				<i class="checkbox-common">
+					<input type="checkbox" name="thumb_type" value="2">
+				</i>
+				缩放后填充
+			</label>
+			{/if}
+			{if condition ="$pic_info['thumb_type'] eq 3"}
+			<label class="radio inline normal">
+				<i class="checkbox-common selected">
+					<input type="checkbox" name="thumb_type" value="3" checked>
+				</i>
+				居中裁剪
+			</label>
+			{else/}
+			<label class="radio inline normal">
+				<i class="checkbox-common">
+					<input type="checkbox" name="thumb_type" value="3">
+				</i>
+				居中裁剪
+			</label>
+			{/if}
+			{if condition ="$pic_info['thumb_type'] eq 4"}
+			<label class="radio inline normal">
+				<i class="checkbox-common selected">
+					<input type="checkbox" name="thumb_type" value="4" checked>
+				</i>
+				左上角裁剪
+			</label>
+			{else/}
+			<label class="radio inline normal">
+				<i class="checkbox-common">
+					<input type="checkbox" name="thumb_type" value="4">
+				</i>
+				左上角裁剪
+			</label>
+			{/if}
+				<br/>
+			{if condition ="$pic_info['thumb_type'] eq 5"}
+			<label class="radio inline normal">
+				<i class="checkbox-common selected">
+					<input type="checkbox" name="thumb_type" value="5" checked>
+				</i>
+				右下角裁剪
+			</label>
+			{else/}
+			<label class="radio inline normal">
+				<i class="checkbox-common">
+					<input type="checkbox" name="thumb_type" value="5">
+				</i>
+				右下角裁剪
+			</label>
+			{/if}
+			{if condition ="$pic_info['thumb_type'] eq 6"}
+			<label class="radio inline normal">
+				<i class="checkbox-common selected">
+					<input type="checkbox" name="thumb_type" value="6" checked>
+				</i>
+				固定尺寸缩放
+			</label>
+			{else/}
+			<label class="radio inline normal">
+				<i class="checkbox-common">
+					<input type="checkbox" name="thumb_type" value="6">
+				</i>
+				固定尺寸缩放
+			</label>
+			{/if}
+			</div>
+			<p class="hint">请选择图片裁剪类型。</p>
+		</dd>
+	</dl>
+	<!-- 图片设置 结束-->
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="setConfigAjax();">保存</button></dd>
+	</dl>
+</div>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function(){
+	$("input[name='thumb_type']").click(function(){
+		$("input[name='thumb_type']").prop("checked", false).parent("i").removeClass('selected');
+		$(this).prop("checked", true).addClass('selected');
+	});
+	
+	$("input[name='water_position']").click(function(){
+		$("input[name='water_position']").prop("checked", false).parent("i").removeClass('selected');
+		$(this).prop("checked", true).addClass('selected');
+	})
+	
+});
+
+//保存数据
+function setConfigAjax(){
+	var thumb_type = $("input[name='thumb_type']:checked").val();
+	var type = $("type").val();
+	var upload_size = $("#upload_size").val();
+	var upload_ext = $("#upload_ext").val();
+	
+	var default_goods_img = $("#default_goods_img").val();
+	var default_headimg = $("#default_headimg").val();
+	var default_cms_thumbnail = $("#default_cms_thumbnail").val();
+	
+	var Accesskey = $("#Accesskey").val();
+	var Secretkey = $("#Secretkey").val();
+	var Bucket = $("#Bucket").val();
+	var QiniuUrl = $("#QiniuUrl").val();
+	
+	var qiniUrlRex = /^(http:\/\/|https:\/\/)/;
+	var slashRex = /\/$/;
+	if(type == 2){
+		if(!qiniUrlRex.test($("#QiniuUrl").val()) || slashRex.test($("#QiniuUrl").val())){
+			showTip("url开头加http://或https://","warning");
+			$("#QiniuUrl").focus();
+			return;
+		}
+	}
+	var water_position = $("input[name='water_position']:checked").val();
+	var transparency = $("#transparency").val();
+	var watermark = 0;
+	if($("#watermark").is(":checked")){
+		watermark = 1;
+	}
+	var default_watermark = $("#default_watermark").val();
+	if(watermark == 1 && default_watermark.length == 0){
+		showTip("请选择水印文件","warning");
+		return;
+	}
+	$.ajax({
+		type:"post",
+		url : "{:__URL('ADMIN_MAIN/config/pictureSetting')}",
+		data : {
+			"thumb_type" : thumb_type,
+			"upload_size": upload_size,
+			"upload_ext" : upload_ext,
+			"default_goods_img" : default_goods_img,
+			"default_headimg" : default_headimg,
+			"default_cms_thumbnail" : default_cms_thumbnail,
+			"Accesskey" : Accesskey,
+			'Secretkey' : Secretkey,
+			"Bucket" : Bucket,
+			"QiniuUrl" : QiniuUrl,
+			'waterPosition' : water_position,
+			"transparency" : transparency,
+			"watermark" : watermark,
+			"default_watermark" : default_watermark
+		},
+		success : function(data){
+			if(data['code'] > 0){
+				showTip(data["message"],'success');
+				location.href="{:__URL('ADMIN_MAIN/config/pictureUploadSetting')}";
+			}else{
+				showTip(data["message"],'error');
+			}
+		}
+	});
+}
+
+//附件上传
+var flag = false;
+$(function(){
+	$("#type").val(parseInt("{$config_data['type']}"));
+	selectConfig();
+});
+
+function selectConfig(){
+	var type = $("#type").val();
+	$(".config-box").hide();
+	$(".config-data"+type).show();
+	if(type == '1'){
+		$(".qiniu-hint").hide();
+	}else{
+		$(".qiniu-hint").show();
+	}
+	if(flag){
+		$.ajax({
+			type:"post",
+			url : "{:__URL('ADMIN_MAIN/config/setUploadType')}",
+			data : { "type" : type },
+			success : function(data){
+				if(data['code'] > 0){
+					showTip(data.message,"success");
+				}else{
+					showTip(data.message,"error");
+				}
+			}
+		})
+	}else{
+		flag = true;
+	}
+}
+
+//图片上传
+function imgUpload(event) {
+	var fileid = $(event).attr("id");
+	var id = $(event).next().attr("id");
+	var data = { 'file_path' : "config" };
+	uploadFile({
+		url: __URL(ADMINMAIN + '/config/uploadimage'),
+		fileId: fileid,
+		data : data,
+		callBack: function (res) {
+			if(res.code){
+				$("#" + id).val(res.data.path);
+				$("#text_" + id).val(res.data.path);
+				$("#preview_"+ id).attr("data-src",__IMG(res.data.path));
+				showTip(res.message,"success");
+			}else{
+				showTip(res.message,"error");
+			}
+		}
+	});
+}
+</script>
+{/block}

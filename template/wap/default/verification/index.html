@@ -1,0 +1,45 @@
+{extend name="$base" /}
+{block name="resources"}
+ <link rel="stylesheet" type="text/css" href="WAP_CSS/verification_index.css">
+{/block}
+{block name="main"}
+{php}
+	$verification = api("System.Order.checkVerification");
+	$verification = $verification['data'];
+	if($verification) {
+		$member_info = api('System.Member.memberInfo');
+		$member_info = $member_info['data'];
+	}
+{/php}
+{notempty name="$verification"}
+<div class="com-content">
+	<ul>
+		<li class="verifcation-box">
+			<div class="goods-pic">
+				{if $member_info['user_info']['user_headimg']}
+				<img src="{:__IMG($member_info['user_info']['user_headimg'])}"/>
+				{else /}
+				<img src="{:__IMG($default_headimg)}"/>
+				{/if}
+			</div>
+			<div class="clearfix">
+				<p>{$member_info.user_info.nick_name}</p>
+				<p class="ns-text-color-gray">店铺核销员</p>
+			</div>
+		</li>
+		<li>
+			<h4 class="ns-border-color-gray">虚拟码</h4>
+			<div class="from">
+				<input type="text" id="virtual_code"  placeholder="请输入虚拟码">
+				<button onclick="chcek_virtual_code();" class="ns-bg-color ns-border-color">核 销</button>
+			</div>
+		</li>
+		<li class="prompt ns-text-color-gray">或者扫描买家的虚拟二维码 !</li>
+	</ul>
+</div>
+<script type="text/javascript" src="WAP_JS/verification_index.js"></script>
+{else/}
+<script>location.href = __URL(APPMAIN + "/member/index");</script>
+{/notempty}
+{/block}
+{block name="footer"}{/block}

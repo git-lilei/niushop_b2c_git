@@ -1,0 +1,267 @@
+{extend name="admin/base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/promotion_block.css">
+{/block}
+{block name="main"}
+<div class="set-style">
+	<h4 class="first"><span></span>店铺营销</h4>
+	<div class="flex-wrap">
+		<a class="block-diy" title="优惠券" href = '{:__URL('ADMIN_MAIN/promotion/coupontypelist')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/icon-promotion-coupon.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">优惠券</p>
+					<p class="diy-desc">设置商城优惠券</p>
+				</div>
+			</div>
+		</a>
+		<a class="block-diy" title="积分抵现" href = '{:__URL('ADMIN_MAIN/promotion/pointconfig')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/icon-promotion-point.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">积分抵现</p>
+					<p class="diy-desc">设置积分抵现相关</p>
+				</div>
+			</div>
+		</a>
+		<a class="block-diy" title="赠品" href = '{:__URL('ADMIN_MAIN/promotion/giftlist')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/icon-promotion-gift.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">赠品</p>
+					<p class="diy-desc">设置购买商品赠品</p>
+				</div>
+			</div>
+		</a>
+		<a class="block-diy" title="满减送" href = '{:__URL('ADMIN_MAIN/promotion/mansonglist')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/icon-promotion-manjian.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">满减送</p>
+					<p class="diy-desc">设置满减送优惠</p>
+				</div>
+			</div>
+		</a>
+		<a class="block-diy" title="限时折扣" href = '{:__URL('ADMIN_MAIN/promotion/getdiscountlist')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/icon-promotion-discount.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">限时折扣</p>
+					<p class="diy-desc">设置商品限时折扣</p>
+				</div>
+			</div>
+		</a>
+		{if addon_is_exit('NsCombopackage')}
+		<a class="block-diy" title="组合套餐" href = '{:__URL('__URL__/NsCombopackage/ADMIN_MODULE/Promotion/comboPackagePromotionList')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/icon-promotion-package.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">组合套餐</p>
+					<p class="diy-desc">设置商品套餐</p>
+				</div>
+			</div>
+		</a>
+		{/if}
+		<a class="block-diy" title="满额包邮" href = '{:__URL('ADMIN_MAIN/promotion/fullshipping')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/icon-promotion-shipping.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">满额包邮</p>
+					<p class="diy-desc">设置满额包邮</p>
+				</div>
+			</div>
+		</a>
+		{if addon_is_exit('NsPintuan')}
+		<a class="block-diy" title="拼团" href = '{:__URL('__URL__/NsPintuan/ADMIN_MODULE/tuangou/pintuanlist')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/icon-promotion-pintuan.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">拼团</p>
+					<p class="diy-desc">设置拼团活动相关</p>
+				</div>
+			</div>
+		</a>
+		{/if}
+		{if addon_is_exit('NsBargain')}
+		<a class="block-diy" title="砍价" href = '{:__URL('__URL__/NsBargain/ADMIN_MODULE/bargain/index')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/icon-promotion-bargain.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">砍价</p>
+					<p class="diy-desc">设置砍价活动相关</p>
+				</div>
+			</div>
+		</a>
+		{/if}
+		{if addon_is_exit('NsPresell')}
+		<a class="block-diy" title="预售" href = '{:__URL('ADMIN_MAIN/order/orderlist?order_type=6')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/icon-promotion-presale.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">预售</p>
+					<p class="diy-desc">设置商品预售</p>
+				</div>
+			</div>
+		</a>
+		{/if}
+		<a class="block-diy" title="专题活动" href = '{:__URL('ADMIN_MAIN/promotion/topiclist')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/icon-promotion-topic.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">专题活动</p>
+					<p class="diy-desc">设置商城专题活动</p>
+				</div>
+			</div>
+		</a>
+		{if addon_is_exit('NsGroupBuy')}
+		<a class="block-diy" title="团购" href = '{:__URL('__URL__/NsGroupBuy/ADMIN_MODULE/promotion/groupBuyList')}'>
+			<div class="diy-content"> 
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/icon-promotion-tuangou.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">团购</p>
+					<p class="diy-desc">设置商城团购活动</p>
+				</div>
+			</div>
+		</a>
+		{/if}
+		<a class="block-diy" title="商品海报" href = '{:__URL('ADMIN_MAIN/promotion/postersetting')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/icon-promotion-topic.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">商品海报</p>
+					<p class="diy-desc">设置商品海报</p>
+				</div>
+			</div>
+		</a>
+	</div>
+	
+	{notempty name="$member_action_config"}
+	<h4><span></span>会员营销</h4>
+	<div class="flex-wrap">
+		{foreach name="$member_action_config" item="action"}
+		<a class="block-diy" title="{$action['title']}" href = '{:__URL('__URL__/'.$action["name"].'/ADMIN_MODULE/'.$action["index"])}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="__ROOT__/{$action['ico']}" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">{$action['title']}</p>
+					<p class="diy-desc">{$action['description']}</p>
+				</div>
+			</div>
+		</a>
+		{/foreach}
+	</div>
+	{/notempty}
+	
+	<h4><span></span>互动游戏</h4>
+	<div class="flex-wrap">
+		<a class="block-diy" title="互动游戏" href = '{:__URL('ADMIN_MAIN/promotion/promotiongameslist?type=8')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/icon-promotion-turntable.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">大转盘</p>
+					<p class="diy-desc">设置大转盘活动</p>
+				</div>
+			</div>
+		</a>
+		<a class="block-diy" title="互动游戏" href = '{:__URL('ADMIN_MAIN/promotion/promotiongameslist?type=3')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/icon-promotion-scratch.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">刮刮乐</p>
+					<p class="diy-desc">设置刮刮乐活动</p>
+				</div>
+			</div>
+		</a>
+		<a class="block-diy" title="互动游戏" href = '{:__URL('ADMIN_MAIN/promotion/promotiongameslist?type=7')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/icon-promotion-golden-egg.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">砸金蛋</p>
+					<p class="diy-desc">设置砸金蛋活动</p>
+				</div>
+			</div>
+		</a>
+	</div>
+
+	<h4><span></span>渠道营销</h4>
+	<div class="flex-wrap">
+		<a class="block-diy" title="公众号设置" href = '{:__URL('ADMIN_MAIN/wchat/config')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/wchat-icon-wchat.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">公众号设置</p>
+					<p class="diy-desc">设置公众号快捷键</p>
+				</div>
+			</div>
+		</a>
+		<a class="block-diy" title="小程序设置" href = '{:__URL('ADMIN_MAIN/wchat/appletConfig')}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="ADMIN_IMG/wchat-icon-wchatapp.png" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">小程序设置</p>
+					<p class="diy-desc">设置小程序快捷键</p>
+				</div>
+			</div>
+		</a>
+	</div>
+
+	{notempty name="app_recommend"}
+	<div class="set-style">
+	<h4 class="first"><span></span>应用推荐</h4>
+	<div class="flex-wrap">
+		{foreach name="app_recommend" item="item"}
+		<a class="block-diy" title="{$item['title']}" href = '{:__URL('__URL__/'.$item["name"].'/ADMIN_MODULE/'.$item["index"])}'>
+			<div class="diy-content">
+				<div class="diy-icon">
+					<img src="__ROOT__/{$item['ico']}" alt="" />
+				</div>
+				<div class="diy-info">
+					<p class="diy-title">{$item['title']}</p>
+					<p class="diy-desc">{$item['description']}</p>
+				</div>
+			</div>
+		</a>
+		{/foreach}
+	</div>
+	{/notempty}
+</div>
+</div>
+{/block}

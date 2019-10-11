@@ -1,0 +1,107 @@
+{extend name="$base" /} 
+{block name="resources"}
+<link rel="stylesheet" href="WAP_CSS/goods_point.css">
+<link rel="stylesheet" href="WAP_PLUGIN/swiper/css/swiper.min.css"/>
+<script src="WAP_PLUGIN//swiper/js/swiper.min.js"></script>
+{/block}
+
+{block name="main"}
+<div class="point-center mescroll" id="point-scroll">
+    {php}
+        $point_adv = api('System.Shop.advDetail', ['ap_keyword' => 'WAP_POINT_SWIPER', 'export_type' => 'data']);
+
+        $member_account = api("System.Member.memberAccount");
+        $member_account = $member_account['data'];
+    {/php}
+    {notempty name="$point_adv['data']"}           
+       <div class="swiper-container">
+            <div class="swiper-wrapper">
+            {foreach name="$point_adv['data']['advs']" item="vo"}
+                <div class="swiper-slide">
+                    <a href="{:__URL('APP_MAIN' . $vo['adv_url'])}" style="height:{$point_adv['data']['ap_height']}px;line-height:{$point_adv['data']['ap_height']}px;">
+                        <img src="{:__IMG($vo.adv_image)}" alt="{:lang('carousel_figure')}" class="w100">
+                    </a>
+                </div>
+            {/foreach}
+            </div>
+        </div>
+    {/notempty}
+    
+    <div class="member-point-container">
+        <div class="member-info">
+            {notempty name="$uid"}
+                <div class="member-face">
+                    {if condition="$member_detail['user_info']['user_headimg'] eq ''"}
+                        <img src="{:__IMG($default_headimg)}"/>
+                    {else/}
+                        <img src="{:__IMG($member_detail['user_info']['user_headimg'])}"/>
+                    {/if}
+                </div>
+                <span class="nick-name">{$member_detail['user_info']['nick_name']}</span>
+                <div class="point">
+                    <span class="ns-text-color-gray">{:lang('积分：')}</span>
+                    <em class="ns-text-color">{$member_account['point']}</em>
+                </div>
+            {else/}
+                <div class="member-face">
+                    <img src="{:__IMG($default_headimg)}"/>
+                </div>
+                <span class="no-login ns-text-color ns-border-color">{:lang('未登录')}</span>
+                <div class="point empty ns-text-color-gray">--</div>
+            {/notempty}
+        </div> 
+        <div class="explain">
+            <span class="title ns-text-color-gray">{:lang('积分说明')}</span>
+            <span class="right">
+                <img src="WAP_IMG/goods/bargain_right_icon.png">
+            </span>
+        </div>
+    </div>
+
+    <section class="goods-container">
+        <div class="space"></div>
+        <div class="head">
+            <div class="list-title">
+                <div class="title-left">
+                    <div class="title-left-first ns-border-color-gray-shade-20"></div>
+                    <div class="title-left-second ns-border-color-gray-shade-20"></div>
+                </div>
+                <span class="left-nav">{:lang('积分兑换')}</span>
+                <div class="title-right">
+                    <div class="title-left-first ns-border-color-gray-shade-20"></div>
+                    <div class="title-left-second ns-border-color-gray-shade-20"></div>
+                </div>
+            </div>
+        </div>
+        <ul id="goods_list_mescroll">
+            
+        </ul>
+    </section>
+</div>
+
+<div class="mask-layer-bg"></div>
+<div class="tips-layer">
+    <div class="head">
+        <div class="title">{:lang('积分说明')}</div>
+    </div>
+    <div class="body">
+        <div class="detail">
+            <h4 class="tit">{:lang('积分的获取')}</h4>
+            <p>{:lang('1、积分可在注册、签到、分享、点赞、评论时获得。')}</p>
+            <p>{:lang('2、在购买部分商品时可获得积分。')}</p>
+            <h4 class="tit">{:lang('积分的使用')}</h4>
+            <p>{:lang('1、积分可用于兑换积分中心的商品。')}</p>
+            <p>{:lang('2、积分可在购买商品时抵扣部分现金。')}</p>
+            <p>{:lang('3、积分可在参与某些活动时使用。')}</p>
+            <p>{:lang('4、积分不得转让，出售，不设有效期。')}</p>
+            <h4 class="tit">{:lang('积分的查询')}</h4>
+            <p>{:lang('1、积分可在会员中心中查询具体数额以及明细。')}</p>
+        </div>
+    </div>
+</div>
+
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script src="WAP_JS/goods_point.js"></script>
+{/block}

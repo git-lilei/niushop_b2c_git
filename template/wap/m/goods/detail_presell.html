@@ -1,0 +1,99 @@
+{extend name="$goods_detail_base" /}
+{block name="goods_data"}
+<input type="hidden" id="hidden_order_type" value="6">
+{if condition="$goods_detail['point_exchange_type'] == 1 || ($goods_detail['point_exchange_type'] == 2 && $from == 'point')|| $goods_detail['point_exchange_type'] == 3"}
+<input type="hidden" id="hidden_promotion_type" value="4" />
+{else/}
+<input type="hidden" id="hidden_promotion_type" value="0" />
+{/if}
+{/block}
+{block name="goods_promotion"}{/block}
+{block name="goods_price"}
+<div class="product-price">
+	<div class="real-price ns-text-color">
+		<!--预售-->
+		<span class="price">
+			{:lang('goods_deposit')}{:bl_cf($goods_detail.presell_price)}
+			{assign name="show_price" value="$goods_detail.presell_price"}
+			{if condition="$goods_detail.point_exchange_type==1 && $goods_detail.point_exchange>0"}
+				+{$goods_detail.point_exchange}{:lang('goods_integral')}
+			{/if}
+		</span>
+	</div>
+	
+	<!-- 原价大于输出价 -->
+	{if $show_price < $goods_detail['price']}
+	<div class="original-price ns-text-color-gray">
+		<label>{:lang('原价:')}</label>
+		<span>{:bl_cf($goods_detail['price'])}</span>
+	</div>
+	{/if}
+
+</div>
+
+<div class="blank-line ns-bg-color-gray"></div>
+
+<div class="product-presell-delivery-time ns-text-color-gray">
+	<span>{:lang('goods_delivery_time')}</span>
+	{if condition ="$goods_detail.presell_delivery_type eq 1"}
+	<span>{:getTimeStampTurnTime($goods_detail.presell_time)}{:lang('发货')}</span>
+	{else/}
+	<span>{:lang('付款')}{$goods_detail.presell_day}{:lang('天后发货')}</span>
+	{/if}
+</div>
+<div class="line ns-border-color-gray"></div>
+{/block}
+
+{block name="goods_action"}
+{if condition="$goods_detail['state'] == 1"}
+<div class="left-operation">
+	<a href="{:__URL('APP_MAIN')}">
+		<img src="WAP_IMG/goods/go_home.png"/>
+		<span>{:lang("home_page")}</span>
+	</a>
+	<a href="{$custom_service['value']['service_addr']}">
+		<img src="WAP_IMG/goods/kefux.png"/>
+		<span>{:lang('united_states_customer_service')}</span>
+	</a>
+	<a href="{:__URL('APP_MAIN/goods/cart')}">
+		<img src="WAP_IMG/goods/goods_cart.png"/>
+		<span class="ns-text-color-black">{:lang('goods_cart')}</span>
+		{if condition="$cart_count>0"}
+		<i class="have-cart-count ns-bg-color label badge circle">{$cart_count}</i>
+		{/if}
+	</a>
+</div>
+
+<div class="right-operation">
+	<!--预售-->
+	<a href="javascript:;" class="buy-now" data-tag="buy_now">{:lang('goods_immediate_reservation')}</a>
+</div>
+
+{else/}
+<div class="product-sold-out ns-bg-color-gray-shade-50">{:lang('goods_laid_off')}</div>
+{/if}
+
+</div>
+{/block}
+
+{block name="goods_current_info"}
+<div class="widgets-cover">
+	<div class="cover-content">
+		<div class="sku-wrap">
+			<div class="header">
+				<div class="img-wrap">
+					<img src="{:__IMG($goods_detail['img_list'][0]['pic_cover_small'])}"  alt="{:lang('选中的产品图')}" class="js-thumbnail">
+				</div>
+				<div class="main">
+					<div class="price-wrap">
+						<!--预售-->
+						<span class="price ns-text-color">{:lang('goods_deposit')}{:bl_cf($goods_detail.presell_price)}</span>
+					</div>
+					{if condition="$goods_detail.is_stock_visible == 1"}
+					<div class="stock">{:lang('goods_stock')}{$goods_detail.stock}{if condition ="empty($goods_detail['goods_unit'])"}{:lang('goods_piece')}{else/}{$goods_detail['goods_unit']}{/if}</div>
+					{/if}
+					<div class="sku-info">{:lang('请选择：')}<span>-</span></div>
+				</div>
+				<a class="sku-close"><img src="WAP_IMG/goods/close.png"/></a>
+			</div>
+{/block}

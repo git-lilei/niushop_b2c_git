@@ -1,0 +1,18 @@
+.member-main{margin-top: 20px; width: 985px;}
+.member-main .box{background-color: #fff; width: 985px; min-height: 720px;}
+.member-main .tabmenu{margin-bottom: 15px;}
+.member-main .tabmenu .tab{display: inline-block;}
+.member-main .tabmenu .tab li.active{border-bottom: 2px solid; padding: 10px 19px 8px 19px;}
+.member-main .box .package-info{margin: 0 15px 15px 15px; border: 1px solid;}
+.package-info .tit-wrap{padding: 10px 20px;cursor: pointer;}
+.package-info .tit-wrap ul.package{overflow: hidden;}
+.package-info .tit-wrap .package .sepa{width: 1.5px; height: 15px;display: inline-block; float: left; margin: 4px 20px;}
+.package-info .logistics-trace{margin: 15px; border: 1px solid; padding: 20px; overflow: hidden;}
+.member-main .box ul li{float: left; width: auto; line-height: 2em; overflow: hidden;}
+.package-info .logistics-trace ul li{position: relative; overflow: visible; padding: 0px 0 0 15px; border-left: 1px solid; clear: both; margin-bottom: 0 !important; overflow: inherit !important;}
+.package-info .logistics-trace ul li i{display: block; position: absolute; top: 0px; left: -6px; width: 12px; height: 12px; overflow: hidden; background: url(../img/member/logistics_icon.png) no-repeat; vertical-align: middle;}
+.member-main .box .order-info{margin: 0 15px 15px 15px; border: 1px solid; overflow: hidden;}
+.order-info .left-container{width: 446px; padding: 15px; float: left; display: table-cell; min-height: 150px;}
+.order-info .left-container dl dt, .order-info .left-container dl dd{display: inline-block; line-height: 25px; font-weight: normal;}
+.order-info .right-container{width: 446px; padding: 15px; border-left: 1px solid; float: right; display: table-cell; min-height: 150px;}
+.order-info .right-container p{line-height: 25px;}

@@ -1,0 +1,339 @@
+<!-- 功能说明：批量处理弹出框 -->
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/plugin/jquery.searchableSelect.css"/>
+<style type="text/css">
+	.modal{
+		border-radius: 0;
+		width: 700px;
+	}
+	#batch_processing .modal .modal-body{
+		padding: 15px 10px!important;
+		height:400px;
+		overflow-y: visible;
+	}
+	#batch_processing .modal-header h3 {
+	    font-size: 16px;
+	}
+	#batch_processing .tip_info{
+		padding: 5px;
+	    color: #3a87ad;
+		background-color: #d9edf7;
+    	border: 1px solid #bce8f1;
+	}
+	#batch_processing .tip_info p{
+		margin:0;
+		line-height: 1.5;
+		font-size: 13px;
+	}
+	#batch_processing .setting-item{
+		margin: 10px 0;
+		width: 100%;
+	}
+	#batch_processing .setting-item dl{
+		width: 100%;
+	    margin: 0;
+	}
+	#batch_processing .setting-item dl dt,#batch_processing .setting-item dl dd{
+	    line-height: 45px;
+	    display: inline-block;
+	    float: left;
+	    margin: 0;
+	    text-align: left;
+	    font-weight: normal;
+	    font-size: 13px;
+	}
+	#batch_processing .setting-item dl dt{
+		width: 20%;
+	}
+	#batch_processing .setting-item dl dd{
+	    width: 80%;
+	}
+	#batch_processing .setting-item dl dd label{
+		display: inline-block;
+		margin-right: 20px;
+	}
+	#batch_processing .setting-item dl dd .num{
+		width: 60px;
+		border-radius: 0;
+		margin-bottom: 0;
+	}
+	#batch_processing .setting-item dl dd .info{
+		color: #BBB;
+	}
+	#batch_processing .setting-item dl dd .select{
+	    border-radius: 0;
+	    width: 30%;
+	    margin-right: 4%;
+	    margin-bottom: 0;
+	    outline: none;
+	}
+	#batch_processing .setting-item dl dd .select:last-child{
+		margin-right: 0;
+	}
+	.searchable-select-holder{
+		border-radius: 0;
+		padding: 4px 20px 4px 6px;
+	}
+</style>
+<div class="modal fade hide" id="batch_processing" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>批量处理</h3>
+			</div>
+			<div class="modal-body">
+				<div class="tip_info">
+					<p>1、如果未设置任何选择，则商品保持原状不变。</p>
+					<p>2、设置商品库存，将作用于所选商品的所有规格项。</p>
+				</div>
+				<div class="setting-item">
+					<dl>
+						<dt>商品分类</dt>
+						<dd id="Js_goods_category">
+							<select class="select-common middle" id="batch_catrgory_one">
+								<option value="0">请选择一级分类</option>
+								{volist name="oneGoodsCategory" id="vo"}
+									<option value="{$vo.category_id}">{$vo.category_name}</option>
+								{/volist}
+							</select>
+							<select class="select-common middle" id="batch_catrgory_two">
+								<option value="0">请选择二级分类</option>
+							</select>
+							<select class="select-common middle" style="width: 150px;" id="batch_catrgory_three">
+								<option value="0">请选择三级分类</option>
+							</select>
+						</dd>
+					</dl>
+					<dl>
+						<dt>销售价:</dt>
+						<dd id="price">
+							<label>
+								<i class="radio-common selected">
+									<input type="radio" checked name="price" value="1">
+								</i>
+								<span>增加</span>
+							</label>
+							<label>
+								<i class="radio-common">
+									<input type="radio" name="price" value="0">
+								</i>
+								<span>减少</span>
+							</label>
+							<input type="number" name="" value="0" class="num input-common short" min='0' max="9999.99">
+							<span class="info">销售价增加N元或减少N元</span>
+						</dd>
+					</dl>
+					<dl>
+						<dt>市场价:</dt>
+						<dd id="market_price">
+							<label>
+								<i class="radio-common selected">
+									<input type="radio" checked name="market_price" value="1">
+								</i>
+								<span>增加</span>
+							</label>
+							<label>
+								<i class="radio-common">
+									<input type="radio" name="market_price" value="0">
+								</i>
+								<span>减少</span>
+							</label>
+							<input type="number" name="" value="0" class="num input-common short" min='0' max="9999.99">
+							<span class="info">市场价增加N元或减少N元</span>
+						</dd>
+					</dl>
+					<dl>
+						<dt>成本价:</dt>
+						<dd id="cost_price">
+							<label>
+								<i class="radio-common selected">
+									<input type="radio" checked name="cost_price" value="1">
+								</i>
+								<span>增加</span>
+							</label>
+							<label>
+								<i class="radio-common">
+									<input type="radio" name="cost_price" value="0">
+								</i>
+								<span>减少</span>
+							</label>
+							<input type="number" name="" value="0" class="num input-common short" min='0' max="9999.99"/>
+							<span class="info">成本价增加N元或减少N元</span>
+						</dd>
+					</dl>
+					<dl>
+						<dt>库存:</dt>
+						<dd id="stock">
+							<label>
+								<i class="radio-common selected">
+									<input type="radio" checked name="stock" value="1">
+								</i>
+								<span>增加</span>
+							</label>
+							<label>
+								<i class="radio-common">
+									<input type="radio" name="stock" value="0">
+								</i>
+								<span>减少</span>
+							</label>
+							<input type="number" name="" value="0" class="num input-common short" min='0' max="99999">
+							<span class="info">库存增加N件或减少N件</span>
+						</dd>
+					</dl>
+					<dl>
+						<dt>商品品牌:</dt>
+						<dd id="stock" class="js-brand-block">
+							<div>
+							<select id="brand_id" style="display: none;" class="middle"></select>
+							</div>
+						</dd>
+					</dl>
+				</div>
+			</div>
+			
+			<div class="modal-footer">
+				<button class="btn-common btn-big" onclick="save();">保存</button>
+				<button class="btn-common-cancle btn-big" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+	
+</div>
+<script src="ADMIN_JS/plugin/jquery.searchableSelect.js"></script>
+<script type="text/javascript">
+var curr_searchable_select = null;
+$(function(){
+	//可搜索的商品品牌下拉选项框
+	curr_searchable_select = $('#brand_id').searchableSelect();
+	getGoodsBrandList();
+
+	$(".searchable-select-input").live("keyup",function(){
+		if($(this).val().length>100){
+			showTip("查询限制在100个字符以内","warning");
+			return;
+		}
+		if($(this).attr("data-value") != $(this).val()){
+			$(this).attr("data-value",$(this).val());
+			getGoodsBrandList($(".searchable-select-holder").text(),$(this).val());
+		}
+	});
+});
+
+//查询商品品牌列表
+function getGoodsBrandList(brand_name,search_name){
+	var page_index = 1;
+	var page_size = 20;
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/goods/getGoodsBrandList')}",
+		data : { "page_index" : page_index, "page_size" : page_size, "brand_name" : brand_name, "search_name" : search_name, "brand_id" : $("#hidden_goods_brand_id").val() },
+		success : function(res){
+			var html = '<option value="0">请选择商品品牌</option>';
+			if(res.total_count>0){
+				for(var i=0;i<res['data'].length;i++){
+					html += '<option value="' + res['data'][i].brand_id + '">' + res['data'][i].brand_name + '</option>';
+				}
+			}
+			$("#brand_id").html(html);
+			//更新搜索结果
+			$(".js-brand-block .searchable-select-items .searchable-select-item").remove();
+			curr_searchable_select.buildItems();
+		}
+	});
+}
+
+$("#Js_goods_category select").change(function(){
+	var parentId = $(this).val();
+	var _this = $(this);
+	$.ajax({
+		type : 'post',
+		url : "{:__URL('ADMIN_MAIN/goods/getcategorybyparentajax')}",
+		data : {"parentId":parentId},
+		success : function(data){
+			if(data.length>0){
+				var html = '';
+				for (var i = 0; i < data.length; i++) {
+					html += '<option value="'+ data[i]['category_id'] +'">' + data[i]['category_name'] + '</option>';
+				}
+				$(_this).parents(".selectric-wrapper").next(".selectric-wrapper").find("select").find("option[value !='0']").remove();
+				$(_this).parents(".selectric-wrapper").next(".selectric-wrapper").find("select").find("option:first-child").after(html);
+				$(_this).parents(".selectric-wrapper").next(".selectric-wrapper").find("select").selectric();
+			}
+		}
+	})
+});
+
+var is_click = false;
+function save(){
+	var price = 0,
+		market_price = 0,
+		cost_price  = 0,
+		stock = 0,
+		catrgory_one = $("#batch_catrgory_one").val(),
+		catrgory_two = $("#batch_catrgory_two").val(),
+		catrgory_three = $("#batch_catrgory_three").val(),
+		brand_id = $("#brand_id").val();
+	//销售价
+	if($("input[name='price']:checked").val() == 0){
+		price -= parseFloat(parseFloat($("#price .num").val()).toFixed(2));
+	}else{
+		price += parseFloat(parseFloat($("#price .num").val()).toFixed(2));
+	}
+	//市场价
+	if($("input[name='market_price']:checked").val() == 0){
+		market_price -= parseFloat(parseFloat($("#market_price .num").val()).toFixed(2));
+	}else{
+		market_price += parseFloat(parseFloat($("#market_price .num").val()).toFixed(2));
+	}
+	//成本价
+	if($("input[name='cost_price']:checked").val() == 0){
+		cost_price -= parseFloat(parseFloat($("#cost_price .num").val()).toFixed(2));
+	}else{
+		cost_price += parseFloat(parseFloat($("#cost_price .num").val()).toFixed(2));
+	}
+	//库存
+	if($("input[name='stock']:checked").val() == 0){
+		stock -= parseInt($("#stock .num").val());
+	}else{
+		stock += parseInt($("#stock .num").val());
+	}
+
+	var goods_ids= [];
+	$("#productTbody input[type='checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			goods_ids.push($(this).val());
+		}
+	});
+	
+	if(!is_click){
+		is_click = true;
+		$.ajax({
+			type : "post",
+			url : '{:__URL("ADMIN_MAIN/goods/batchProcessingGoods")}',
+			async : false,
+			data : {
+				"price" : price,
+				"market_price" : market_price,
+				"cost_price" : cost_price,
+				"stock" : stock,
+				"catrgory_one" : catrgory_one,
+				"catrgory_two" : catrgory_two,
+				"catrgory_three" : catrgory_three,
+				"brand_id" : brand_id,
+				"goods_ids" : goods_ids.toString()
+			},
+			success : function(data){
+				if(data["code"] > 0){
+					$("#batch_processing").modal("hide");
+					showMessage("success",data["message"],location.href);
+				}else{
+					is_click = false;
+					showMessage("error",data["message"]);
+				}
+			}
+		})
+	}
+	
+}
+</script>

@@ -1,0 +1,10 @@
+img{max-height: 100%; max-width: 100%;width:100%;height:100%;}
+.com-content li{width: 100%; float: left; margin-top: 10px; background-color: #fff; padding: 10px;}
+.com-content ul li .goods-pic{width: 18vw; height: 18vw; position: absolute; left: 3vw;}
+.com-content ul li p{float:left; margin-left:23vw; width: 85vw; height: 9vw; line-height: 9vw;}
+.com-content ul li p:last-child{font-size:3.5vw;}
+.com-content ul li h4{font-size: 4vw; line-height:10vw; border-bottom: 1px solid;}
+.com-content ul li .from{height: 40px;}
+.com-content ul li .from input{border: 0; height:40px;}
+.com-content ul li .from button{float: right; margin-top: 5px; border: 1px solid; color: #fff; border-radius: 2px; padding: 3px 10px; -webkit-tap-highlight-color: transparent;}
+.com-content ul .prompt{background-color: transparent;font-size: 12px;}

@@ -1,0 +1,112 @@
+{extend name="$base" /}
+{block name="resources"}
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>赠品名称：</dt>
+		<dd><input type="text" id="gift_name" maxlength="10" value="{$info['gift_name']}" class="input-common" ></dd>
+	</dl>
+	<dl>
+		<dt>赠品有效期：</dt>
+		<dd>
+			<input class="input-medium input-common harf" type="text" id="start_time" value="{$info['start_time'] | getTimeStampTurnTime}" style="width:250px;"onclick="WdatePicker({skin:'twoer',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+			<span class="mlr5">-</span> 
+			<input class="input-medium input-common harf" size="15"type="text" id="end_time" value="{$info['end_time'] | getTimeStampTurnTime}" style="width:250px;"onclick="WdatePicker({skin:'twoer',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+		</dd>
+	</dl>
+	<!-- ******************************************* start 选择商品 start ******************************************* -->
+	<!-- 
+		is_limit_sku 是否限制只查询单规格商品 1限制 0不限制
+		is_many_select 是否可多选 1可多选 0只能单选
+		is_limit_skock 是否只查询有库存的商品 1只查询有库存商品 0不限制
+		is_limit_state 是否只查询已上架商品 1只查询上架商品 0不限制
+		is_limit_goods_type 是否限制只查询实物商品 1限制 0不限制
+	 -->
+	<input type="hidden" id="range_type" value="0">
+	<input type="hidden" id="is_show_select" value="0">
+	<input type="hidden" id="goods_id_array" value="{$info.gift_goods.goods_id}">
+	<input type="hidden" id="select-goods-limit" value='{"is_limit_sku" : 1, "is_many_select" : 0, "is_limit_skock" : 1, "is_limit_state" : 1, "is_limit_goods_type" : 0}'>
+	{include file="admin/Promotion/goodsSelectDialog"/}
+	<!-- ******************************************* end 选择商品 end ******************************************* -->
+	<!-- <dl>
+		<dt>领取有效期:</dt>
+		<dd><input class="input-mini w70 input-common" type="text" id="days" value="{$info['days']}"><span class="help-inline">天</span></dd>
+	</dl>
+	<dl>
+		<dt>领取限制:</dt>
+		<dd>
+			<input class="input-mini w70 input-common" type="text" id="max_num" value="{$info['max_num']}"><span class="help-inline">次/人</span>
+			<p class="hint">（0表示不限领取次数）</p>
+		</dd>
+	</dl> -->
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="updateGift();">保存</button>
+			<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);">返回</button>
+		</dd>
+	</dl>
+</div>
+<input type="hidden" id="gift_id" value="{$info['gift_id']}">
+<script>
+//保存
+function updateGift(){
+	var gift_name = $("#gift_name").val();
+	var start_time = $("#start_time").val();
+	var end_time = $("#end_time").val();
+	var days = $("#days").val();
+	var max_num = $("#max_num").val();
+	var obj = $(".select-two table tr[id^='selected_']");
+	
+	var goods_id = $("#goods_id_array").val();
+	var gift_id = $("#gift_id").val();
+
+	if(vertify(gift_name, start_time, end_time, goods_id)){
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/promotion/updategift')}",
+			data : {
+				'gift_id' : gift_id,
+				'gift_name' : gift_name,
+				'start_time' : start_time,
+				'end_time' : end_time,
+				'days' : 0,
+				'max_num' : 0,
+				'goods_id' : goods_id
+			},
+			success : function(data) {
+				if (data["code"] > 0) {
+					showMessage('success', data["message"],"{:__URL('ADMIN_MAIN/promotion/giftlist')}");
+				}else{
+					showMessage('error', data["message"]);
+				}
+			}
+		});
+	}
+
+	function vertify(gift_name, start_time, end_time, goods_id){
+		if(gift_name == ''){
+			showTip("请输入赠品名称","warning");
+			$("#gift_name").focus();
+			return false;
+		}
+
+		if(start_time == '' || end_time == ''){
+			showTip("请输入活动有效期","warning");
+			return false;
+		}
+
+		if(BatchSend.length == 0){
+			$(".js-select-goods").find(".error").html('请选择一件商品作为赠品').show();
+			return false;
+		}else{
+			$(".error").hide();
+		}
+
+		return true;
+	}
+}
+</script>
+{/block}

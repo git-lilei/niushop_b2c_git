@@ -1,0 +1,103 @@
+{extend name="$base" /}
+{block name="alert_info"}
+<strong>提示：</strong>如果，请查看是否是由于以下原因造成：<br>
+1、是否添加了”模板消息“功能插件。添加方法：在微信公众平台的左侧菜单点击”添加功能插件“按钮，在右侧点击”模板消息“，再点击”申请“，填写”申请开通模板消息接口“表单，点击”提交“，等待审核通过即可。<br>
+2、在微信公众平台的“模板库”里点击“修改行业”，弹出层里面的“主营行业”全部选择“消费品”，”副营行业“全部选择”其它“;<br>
+3、在微信公众平台里”我的模板“最多添加15个，如果多于15个，请删除不用的模板。
+{/block}
+{block name="main"}
+	<div class="options-btn">
+		<button class="btn-common btn-big" onclick="getTemplateId()">获取</button>
+		<button class="btn-common btn-big" onclick="emptyTemplateId()">清空</button>
+	</div>
+	<div class="server-msg content">
+		<table class="table-class">
+			<colgroup>
+				<col style="width: 3%;">
+				<col style="width: 20%">
+				<col style="width: 20%">
+				<col style="width: 27%">
+				<col style="width: 20%">
+				<col style="width: 10%">
+			</colgroup>
+			<thead>
+				<tr>
+					<th><i class="checkbox-common"><input type="checkbox"  /></i></th>
+					<th align="left">编号</th>
+					<th align="left">标题</th>
+					<th align="left">内容示例</th>
+					<th>模板ID</th>
+					<th>是否启用</th>
+				</tr>
+			</thead>
+			<tbody id="grouplis">
+				{foreach name="list" item="info" }
+				<tr name="li">
+					<td align="center"><i class="checkbox-common"><input name="sub" type="checkbox" value="$info["template_id"]" ></i></td>
+					<td align="left">{$info['template_no']}</td>
+					<td align="left">{$info['title']}</td>
+					<td align="left">
+						<div class="example-txt">
+							{$info['headtext']}<br> 姓名：何某某<br>联系方式：187xxxxxxxx<br>
+							店铺类型：普通店铺 <br>{$info['bottomtext']}
+						</div>
+					</td>
+					<td>{$info['template_id']}</td>
+					<td><input type="checkbox" class="checkbox" onchange="changeIsEnable({$info['id']}, this)" {eq name="info['is_enable']" value="1"}checked{/eq}></td>
+				</tr>
+				{/foreach}
+			</tbody>
+		</table>
+	
+	<script>
+	function changeIsEnable(id, event){
+		if($(event).prop("checked")){
+			var is_enable = 1; 
+		}else{
+			var is_enable = 0;
+		}
+		$.ajax({
+			url : '{:__URL('__URL__/NsWxtemplatemsg/ADMIN_MODULE/TempMsg/changeIsEnable')}',
+			type : 'post',
+			data : {'id' : id, 'is_enable' : is_enable},
+			success : function (data){
+			}
+		})
+	}
+	function getTemplateId(){
+		$.ajax({
+			url : '{:__URL('__URL__/NsWxtemplatemsg/ADMIN_MODULE/TempMsg/getTemplateId')}',
+			type : 'get',
+			success : function (data){
+				if(data['code'] == 1){
+					showMessage('success', '获取成功');
+					location.reload();
+				}else{
+					showMessage('error', '获取失败');
+				}
+			}
+		})
+	}
+	function emptyTemplateId(){
+		$.ajax({
+			url : '{:__URL('__URL__/NsWxtemplatemsg/ADMIN_MODULE/TempMsg/emptyTemplateId')}',
+			type : 'get',
+			success : function (data){
+				if(data['code'] > 0){
+					showMessage('success', '清空成功');
+				}else{
+					showMessage('error', '清空失败');
+				}
+			}
+		})
+	}
+	
+	function CheckAll(event){
+		var checked = event.checked;
+		$("#productTbody input[type = 'checkbox']").prop("checked",checked);
+		if(checked) $(".table-class tbody input[type = 'checkbox']").parent().addClass("selected");
+		else $(".table-class tbody input[type = 'checkbox']").parent().removeClass("selected");
+	}
+	</script>
+</div>
+{/block}

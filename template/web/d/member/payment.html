@@ -1,0 +1,686 @@
+{extend name="$base"/}
+{block name="resources"}
+<link rel="stylesheet" href="WEB_CSS/member_payment.css">
+<script src="__STATIC__/js/vue.min.js"></script>
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1087048_ti88xqkwo0p.css">
+{/block}
+{block name="head"}
+<header class="payment-header w1200">
+    <a class="logo" href="{:__URL('SHOP_MAIN')}" target="_blank">
+        <img src="{:__IMG($web_info.logo)}">
+    </a>
+    <div class="header-right-container">
+    	<div class="stepflex ns-border-color-gray">
+	        <dl class="first done ns-border-color">
+	            <dt class="s-num ns-bg-color">1</dt>
+	            <dd class="s-text ns-text-color">1.我的购物车</dd>
+	        </dl>
+	        <dl class="normal doing ns-border-color">
+	            <dt class="s-num ns-bg-color">2</dt>
+	            <dd class="s-text ns-text-color">2.确认订单</dd>
+	        </dl>
+	        <dl class="normal last ns-border-color-gray">
+	            <dt class="s-num ns-bg-color-gray-shade-20">3</dt>
+	            <dd class="ns-text-color-gray">3.提交订单</dd>
+	        </dl>
+	    </div>
+    </div>
+</header>
+{/block}
+{block name="main"}
+
+{php}
+// 订单创建所需数据
+$params = [];
+$params['order_type'] = !empty($create_data['order_type']) ? $create_data['order_type'] : 0;
+$params['goods_sku_list'] = !empty($create_data['goods_sku_list']) ? $create_data['goods_sku_list'] : '';
+$params['promotion_type'] = !empty($create_data['promotion_type']) ? $create_data['promotion_type'] : 0;
+$params['promotion_info'] = !empty($create_data['promotion_info']) ? $create_data['promotion_info'] : [];
+
+$buyer_ip = request()->ip();
+// 收货地址列表
+$address_list = api("System.Member.memberAddressList",['page'=>1, 'page_size' => 0]);
+$address_list = $address_list['data'];
+
+$data = api("System.Order.orderDataCollation", ['data' => json_encode($params)]);
+$data = $data['data'];
+$is_virtual = $data['is_virtual']; // 是否是虚拟商品
+// 收货地址 
+$full_address = !empty($data["address"]) ? $data["address"]["address_info"] : '';
+{/php}
+
+{empty name="$data"}
+<script type="text/javascript">
+if(window.sessionStorage){
+	sessionStorage.setItem('errorMsg', JSON.stringify({title : '亲爱的用户，您刷新过于频繁，请稍后再试，您可以先去首页逛逛！', message : '未获取到创建订单所需数据。'}));
+}
+location.href = "{:__URL('SHOP_MAIN/index/errorTemplate')}";
+</script>
+{:exit()}
+{/empty}
+<div id="app" class="member-payment">
+	<span class="tit-txt">填写并核对订单信息</span>
+	<div class="payment-container w1200 ns-border-color-gray">
+
+		{neq name="$is_virtual" value="1"}
+		<!-- 收货地址信息 -->
+		<div class="step-tit">
+			<h3>收货人信息</h3>
+			<span class="operation"><a href="javascript:Address.addAddress();">新增收货地址</a></span>
+		</div>
+		<div class="step-cont ns-border-color-gray-fade-60">
+			{notempty name="$address_list['data']"}
+			<div class="address-cont">
+				<ul class="clearfix">
+					{foreach name="$address_list['data']" item="vo" key="k"}
+						<li class="address-item ns-bg-color-fadeout-90-hover clearfix {if $k eq 0}active{/if}" data-value="{$vo.id}">
+							<span class="addr-name ns-border-color-hover {if $k eq 0}ns-border-color{else/}ns-border-color-gray{/if}">
+								{$vo.consigner}
+								<i class="icon icon-check-sign ns-text-color"></i>
+							</span>
+							<span class="addr-detail" title="{$vo.address_info} {$vo.address}">{$vo.address_info} {$vo.address}</span>
+							<span class="addr-tel">{$vo.mobile|hideStr}</span>
+							{eq name="$vo['is_default']" value="1"}<span class="default-icon ns-bg-color">默认地址</span>{/eq}
+							<span class="option">
+								<a href="javascript:;" onclick="Address.editAddress(this)">编辑</a>
+								<a href="javascript:;" data-event="addr_del" onclick="Address.deleteAddr({$vo.id})">删除</a>
+							</span>
+							<input type="hidden" data-json='{"id" : "{$vo.id}", "consigner" : "{$vo.consigner}", "province" : "{$vo.province}", "city" : "{$vo.city}", "district" : "{$vo.district}", "address" : "{$vo.address}", "mobile" : "{$vo.mobile}", "phone" : "{$vo.phone}", "full_address" : "{$vo.address_info}&nbsp;{$vo.address}"}'>
+						</li>
+					{/foreach}
+				</ul>
+				{if !empty($address_list['data'])}<a href="javascript:;" class="more-addr">更多地址</a>{/if}
+			</div>
+			{else/}
+				<p class="empty ns-text-color-gray">目前还未设置收货地址，请先<a href="javascript:Address.addAddress();" class="common-text-color">设置收货地址</a></p>
+			{/notempty}
+		</div>
+
+		<!-- 配送方式 -->
+		<div class="step-tit">
+			<h3>配送方式</h3>
+		</div>
+		<div class="step-cont ns-border-color-gray-fade-60">
+			<div class="shipping-type-cont">
+				{notempty name="$data['express_type']"}
+					<ul>
+						{foreach name="$data['express_type']" item="vo" key="k"}
+						<li data-value="{$vo.type_id}" class="ns-border-color-hover {if $k eq 0}active ns-border-color{else/}ns-border-color-gray{/if}">{$vo.type_name}
+							<i class="icon icon-check-sign ns-text-color"></i>
+						</li>
+						{/foreach}
+					</ul>
+				{else/}
+					<p class="empty ns-text-color-gray">站点尚未配置配送方式！</p>
+				{/notempty}
+			</div>
+		</div>
+		
+		{notempty name="$data['express_type']"}
+
+			{notempty name="$data['express_company_list']"}
+			<!-- 物流公司 -->
+			<div class="express-company-cont ns-border-color-gray {if $data['express_type'][0]['type_id'] neq 1}hide{/if}">
+				<div class="info">
+					<mark class="ns-bg-color">物流公司选择</mark>
+				</div>
+				<ul class="clearfix">
+					{foreach name="$data['express_company_list']" item="vo" key="k"}
+						<li class="ns-border-color-hover {if $k eq 0}active ns-border-color{else/}ns-border-color-gray{/if}" data-value="{$vo.co_id}">{$vo.company_name}
+							<i class="icon icon-check-sign ns-text-color"></i>
+						</li>
+					{/foreach}
+				</ul>
+			</div>
+			{/notempty}
+
+			<!-- 自提点 -->
+			<div class="picksite-cont ns-border-color-gray {if $data['express_type'][0]['type_id'] neq 2}hide{/if}">
+				<div class="info">
+					<mark class="ns-bg-color">自提点自提</mark>
+					<span class="desc ns-text-color">{empty name="$data['pickup_point_list']"}该地址下没有可用的自提点{/empty}</span>
+				</div>
+				{notempty name="$data['pickup_point_list']"}
+				<ul class="clearfix">
+					{php}
+						$first_pickup_point = $data['pickup_point_list'][0];
+						// 如果默认是自提点配送
+						if($data['express_type'][0]['type_id'] == 2){
+							$full_address = $first_pickup_point['province_name'].'&nbsp;'.$first_pickup_point['city_name'].'&nbsp;'.$first_pickup_point['district_name'].'&nbsp;'.$first_pickup_point['address'].'&nbsp;'.$first_pickup_point['name'];
+						}
+					{/php}
+					<li class="address-item ns-bg-color-fadeout-90-hover clearfix active" data-value="{$first_pickup_point.id}">
+						<span class="addr-name ns-border-color" title="{$first_pickup_point.name}">{$first_pickup_point.name}</span>
+						<span class="addr-detail">{$first_pickup_point.province_name} {$first_pickup_point.city_name} {$first_pickup_point.district_name} {$first_pickup_point.address}</span>
+						<span class="addr-consignee-name">{$data.address.consigner}</span>
+						<span class="addr-tel">{$data.address.mobile|hideStr}</span>
+						<span class="option" style="display: inline-block;">
+							<a href="javascript:;" class="update">修改自提点</a>
+						</span>
+						<input type="hidden" data-json='{"full_address" : "{$first_pickup_point.province_name} {$first_pickup_point.city_name} {$first_pickup_point.district_name} {$first_pickup_point.address} {$first_pickup_point.name}"}'>
+					</li>
+				</ul>
+				{/notempty}
+			</div>
+		{/notempty}
+			
+		{else/}
+		
+		<!-- 账号信息 -->
+		<div class="step-tit">
+			<h3>账号信息</h3>
+		</div>
+		<div class="step-cont ns-border-color-gray-fade-60">
+			<div class="account-cont">
+				<div class="form-horizontal">
+					<div class="form-group">
+			    		<label class="col-sm-1"><span class="ns-text-color">*</span> 手机号：</label>
+					 	<div class="col-md-2 col-sm-2">
+			      			<input type="text" class="form-control ns-border-color-gray-shade-10" name="mobile" placeholder="请输入手机号" maxlength="11"><i></i>
+			    		</div>
+			  		</div>
+			  		<p class="tips ns-text-color-gray">注意：<span class="ns-text-color">虚拟商品订单凭虚拟码消费</span></p>
+			  		<p class="tips ns-text-color-gray">说明：<span class="ns-text-color">您本次购买的虚拟商品不需要收货地址，请填写手机号码，方便卖家与您联系</span></p>
+		  		</div>
+			</div>
+		</div>
+		{/neq}
+
+		<!-- 支付方式 -->
+		<div class="step-tit">
+			<h3>支付方式</h3>
+		</div>
+		<div class="step-cont ns-border-color-gray-fade-60">
+			<div class="payment-type-cont">
+				{notempty name="$data['pay_type']"}
+				<ul>
+					{foreach name="$data['pay_type']" item="vo" key="k"}
+					<li data-value="{$vo.type_id}" class="ns-border-color-hover {if $k eq 0}active ns-border-color{else/}ns-border-color-gray{/if}">
+						<span>{$vo.type_name}</span>
+						<i class="icon icon-check-sign ns-text-color"></i>
+					</li>
+					{/foreach}
+				</ul>
+				{else/}
+					<p class="empty ns-text-color-gray">商家尚未配置支付方式！</p>
+				{/notempty}
+			</div>
+		</div>
+		
+		{notempty name="$data['invoice_info']"}
+		<!-- 发票信息 -->
+		<div class="step-tit">
+			<h3>发票信息</h3>
+		</div>
+		<div class="step-cont ns-border-color-gray-fade-60">
+			<div class="invoice-cont">
+				<ul class="clearfix is-need-invoice">
+					<li class="active ns-border-color ns-border-color-hover" data-value="0">
+						<span>不需要发票</span>
+						<i class="icon icon-check-sign ns-text-color"></i>
+					</li>
+					<li class="ns-border-color-hover ns-border-color-gray" data-value="1" {if $data.invoice_info.order_invoice_tax > 0} data-toggle="tooltip" data-placement="right" title="需加收{$data['invoice_info']['order_invoice_tax']}%的税费"{/if}>
+						<span>需要发票</span>
+						<i class="icon icon-check-sign ns-text-color"></i>
+					</li>
+				</ul>
+				<div class="form-horizontal hide">
+					<div class="form-group">
+			    		<label class="col-sm-2"><span class="ns-text-color">*</span> 发票抬头</label>
+					 	<div class="col-md-3 col-sm-3">
+			      			<input type="text" class="form-control ns-border-color-gray-shade-10" name="invoice_title" placeholder="请输入发票抬头"><i></i>
+			    		</div>
+			  		</div>
+			  		<div class="form-group">
+			    		<label class="col-sm-2"><span class="ns-text-color">*</span> 纳税人识别号</label>
+					 	<div class="col-md-3 col-sm-3">
+			      			<input type="text" class="form-control ns-border-color-gray-shade-10" name="taxpayer_identification_number" placeholder="请输入纳税人识别号">
+			    		</div>
+			  		</div>
+			  		<div class="form-group">
+			    		<label class="col-sm-2"><span class="ns-text-color">*</span> 发票内容</label>
+					 	<div class="col-md-10 col-sm-10">
+			      			<ul class="clearfix">
+		                    {foreach name="$data['invoice_info']['order_invoice_content_list']" item="vo" key="k"}
+		                        <li class="ns-border-color-hover {if $k eq 0}active ns-border-color{else/}ns-border-color-gray{/if}">{$vo}</li>
+		                    {/foreach}
+			      			</ul>
+			    		</div>
+			  		</div>
+		  		</div>
+			</div>
+		</div>
+		{/notempty}
+
+		<!-- 商品清单 -->
+		<div class="step-tit">
+			<h3>商品清单</h3>
+			<span class="operation"><a href="{:__URL('SHOP_MAIN/goods/cart')}">返回购物车</a></span>
+		</div>		
+		<div class="step-cont ns-border-color-gray-fade-60">
+			<div class="shopping-list-cont clearfix">
+				<!-- 配送信息 -->
+				<div class="distribution-cont ns-bg-color-gray-fadeout-50">
+					<div class="item-tit"><h4>其他信息</h4></div>
+					{eq name="$is_virtual" value="0"}
+					<div class="distribution-time logistics {if $data['express_type'][0]['type_id'] neq 1}hide{/if}">
+						<span class="tit ns-text-color-gray">配送时间：</span>
+						<time data-time="0" data-time-slot="">工作日、双休日与节假日均可送货</time>
+						{if $data['order_config']['order_designated_delivery_time']}
+						<a href="javascript:;" class="update">修改</a>
+						{/if}
+					</div>
+					<div class="distribution-time o2o {if $data['express_type'][0]['type_id'] neq 3}hide{/if}">
+						<span class="tit ns-text-color-gray">配送时间：</span>
+						<time>{$data.distribution_time}</time>
+					</div>
+					{/eq}
+					<div class="user-message">
+						<span class="tit ns-text-color-gray">用户留言：</span>
+						<textarea class="ns-border-color-gray"></textarea>
+					</div>
+				</div>
+				
+				<!-- 商品列表 -->
+				<div class="product-cont">
+					<div class="item-tit"><h4>商家：{$data.shop_name}</h4></div>
+					<div class="product-list">
+						{if $data['order_type'] eq 6}
+							<!-- 预售订单 -->
+							{foreach name="$data['goods_sku_array']" item="product_item"}
+							<div class="product-item clearfix">
+								<div class="p-img ns-border-color-gray">
+									<a href="{:__URL('SHOP_MAIN/goods/detail?goods_id='.$product_item['goods_info']['goods_id'])}" target="_blank">
+										<img src="{:__IMG($product_item['goods_picture_info']['pic_cover_small'])}">
+									</a>
+								</div>
+								<div class="p-name">
+									<a href="{:__URL('SHOP_MAIN/goods/detail?goods_id='.$product_item['goods_info']['goods_id'])}" target="_blank">{$product_item.goods_info.goods_name}</a>
+									<p class="sku-name ns-text-color-gray">{$product_item.goods_sku_info.sku_name}</p>
+								</div>
+								<div class="unit-price">
+									<span class="price ns-text-color"><mark class="price-mark ns-bg-color">定金</mark>￥{$product_item.presell_price}</span><br>
+									<span class="tail-money">尾款 ￥{:sprintf("%.2f", ($product_item.sku_price - $product_item.presell_price))}</span>
+								</div>
+								<div class="p-num">x{$product_item.num}</div>
+								<div class="subtotal">
+									<span>有货</span>
+								</div>
+							</div>
+							{/foreach}
+						{elseif $data['promotion_type'] == 4}
+							<!-- 积分兑换 -->
+							{foreach name="$data['goods_sku_array']" item="product_item"}
+							<div class="product-item clearfix">
+								<div class="p-img ns-border-color-gray">
+									<a href="{:__URL('SHOP_MAIN/goods/detail?goods_id='.$product_item['goods_info']['goods_id'])}" target="_blank">
+										<img src="{:__IMG($product_item['goods_picture_info']['pic_cover_small'])}">
+									</a>
+								</div>
+								<div class="p-name">
+									<a href="{:__URL('SHOP_MAIN/goods/detail?goods_id='.$product_item['goods_info']['goods_id'])}" target="_blank">{$product_item.goods_info.goods_name}</a>
+									<p class="sku-name ns-text-color-gray">{$product_item.goods_sku_info.sku_name}</p>
+								</div>
+								{if $product_item.goods_info.point_exchange_type == 1}
+									<!-- 积分+现金 -->
+									<div class="unit-price">
+										<span class="price ns-text-color">￥{$product_item.sku_price} + {$product_item.goods_info.point_exchange}积分</span>
+									</div>
+									<div class="p-num">x{$product_item.num}</div>
+									<div class="subtotal">
+										<span class="price ns-text-color">￥{$product_item.total_price}+{$product_item.buy_point}积分</span>
+									</div>
+								{else/}
+									<!-- 积分 -->
+									<div class="unit-price">
+										<span class="price ns-text-color">{$product_item.goods_info.point_exchange}积分</span>
+									</div>
+									<div class="p-num">x{$product_item.num}</div>
+									<div class="subtotal">
+										<span class="price ns-text-color">{$product_item.buy_point}积分</span>
+									</div>
+								{/if}
+							</div>
+							{/foreach}
+						{else/}
+							<!-- 普通订单 -->
+							{foreach name="$data['goods_sku_array']" item="product_item"}
+							<div class="product-item clearfix">
+								<div class="p-img ns-border-color-gray">
+									<a href="{:__URL('SHOP_MAIN/goods/detail?goods_id='.$product_item['goods_info']['goods_id'])}" target="_blank">
+										<img src="{:__IMG($product_item['goods_picture_info']['pic_cover_small'])}">
+									</a>
+								</div>
+								<div class="p-name">
+									<a href="{:__URL('SHOP_MAIN/goods/detail?goods_id='.$product_item['goods_info']['goods_id'])}" target="_blank">{$product_item.goods_info.goods_name}</a>
+									<p class="sku-name ns-text-color-gray">{$product_item.goods_sku_info.sku_name}</p>
+								</div>
+								<div class="unit-price">
+									<span class="price ns-text-color">￥{$product_item.sku_price}</span>
+								</div>
+								<div class="p-num">x{$product_item.num}</div>
+								<div class="subtotal">
+									<span class="price ns-text-color">￥{$product_item.total_price}</span>
+								</div>
+							</div>
+							{/foreach}
+						{/if}
+			
+						{notempty name="$data['gift_array']"}
+							<!-- 赠品 -->
+							{foreach name="$data['gift_array']" item="product_item"}
+							<div class="product-item clearfix">
+								<div class="p-img ns-border-color-gray">
+									<a href="{:__URL('SHOP_MAIN/goods/detail?goods_id='.$product_item['goods_info']['goods_id'])}" target="_blank">
+										<img src="{:__IMG($product_item['goods_picture_info']['pic_cover_small'])}">
+									</a>
+								</div>
+								<div class="p-name">
+									<a href="{:__URL('SHOP_MAIN/goods/detail?goods_id='.$product_item['goods_info']['goods_id'])}" target="_blank">
+										<mark class="ns-bg-color">赠品</mark>
+										<span>{$product_item.goods_info.goods_name}</span>
+									</a>
+									<p class="sku-name ns-text-color-gray">{$product_item.goods_sku_info.sku_name}</p>
+								</div>
+								<div class="unit-price">
+									<span class="price ns-text-color">￥0.00</span>
+								</div>
+								<div class="p-num">x{$product_item.num}</div>
+								<div class="subtotal">
+									<span class="price ns-text-color">￥0.00</span>
+								</div>
+							</div>
+							{/foreach}
+						{/notempty}
+					</div>
+				</div>
+				<!-- end 商品列表 end -->
+			</div>
+		</div>
+		<!-- end 商品清单 end -->
+
+		{if !empty($data['coupon_list']) || !empty($data['max_use_point'])}
+		<!-- 使用优惠 -->
+		<div class="step-tit">
+			<h3>使用优惠</h3>
+		</div>
+		<div class="step-cont ns-border-color-gray-fade-60">
+			<div class="discount-cont ns-border-color-gray">
+				<ul class="nav nav-tabs ns-bg-color-gray-fadeout-50">
+					{notempty name="$data['coupon_list']"}<li><a data-tab href="#coupon">优惠券</a></li>{/notempty}
+					{if $data['max_use_point'] > 0}<li><a data-tab href="#point">积分</a></li>{/if}
+				</ul>
+				<div class="tab-content">
+					{notempty name="$data['coupon_list']"}
+					<div class="tab-pane active coupon" id="coupon">
+				    	<div class="coupon-list clearfix">
+				    		{foreach name="$data['coupon_list']" item="vo" key="k"}
+				    		<div class="coupon-item ns-border-color-hover {if $k eq 0}active ns-border-color-fade-40{else/}ns-border-color-gray{/if}" data-value="{$vo.coupon_id}">
+								<p class="c-price" data-value="{$vo.money}">¥&nbsp;{$vo.money}</p>
+								{if $vo.at_least > 0}
+								<p class="c-condition">满{$vo.at_least}元可用</p>
+								{else/}
+								<p class="c-condition">无门槛券</p>
+								{/if}
+								<p class="c-time">有效期至{$vo.end_time|date="Y-m-d",###}</p>
+							</div>
+				    		{/foreach}
+				    	</div>
+				  	</div>
+				  	{/notempty}
+					
+					{if $data['max_use_point'] > 0}
+				  	<!-- 积分-->
+				  	<div class="tab-pane point" id="point">
+				    	<span class="tit">账户可用积分<em>{$data['max_use_point']}</em>，本次使用</span>
+				    	<input type="number" class="use-point form-control ns-border-color-gray-shade-10" data-max-available="{$data['max_use_point']}">
+				    	<span class="tit">积分</span>
+				  	</div>
+				  	{/if}
+
+					<!-- 优惠信息 -->
+					<div class="discount-info ns-bg-color-gray-fadeout-50">
+						{notempty name="$data['coupon_list']"}
+						<div class="info coupon ns-text-color-gray">
+							<span class="tit ns-text-color-gray">金额抵用<em class="ns-text-color">￥<span v-text="couponMoney">0.00</span></em></span>
+							<span class="txt ns-text-color-gray">使用优惠券1张，优惠<span v-text="couponMoney">0.00</span>元</span>
+						</div>
+						{/notempty}
+						
+						{if $data['max_use_point'] > 0}
+						<div class="info integral ns-text-color-gray">
+							<span class="tit ns-text-color-gray">积分抵现<em class="ns-text-color">￥<span v-text="pointMoney">0.00</span></em></span>
+							<span class="txt">使用<span v-text="point">0</span>个积分，可抵现金<span v-text="pointMoney">0.00</span>元</span>
+						</div>
+						{/if}
+					</div>
+				</div>
+			</div>
+		</div>
+		{/if}
+
+	</div>
+
+	<div class="order-summary clearfix">
+		<div class="info">
+			{eq name="$data['order_type']" value="6"}
+			<div class="li">
+				<span class="tit ns-text-color-gray">付款：</span>
+				<span class="price presell-pay-type">
+					<label>
+						<input type="radio" name="is_full_payment" value="0" checked>
+						<span>定金</span>
+					</label>
+					<label>
+						<input type="radio" name="is_full_payment" value="1">
+						<span>全款</span>
+					</label>
+				</span>
+			</div>
+			{/eq}
+			<div class="li">
+				<span class="tit ns-text-color-gray">共<em class="ns-text-color">{$data['goods_sku_array']|count}</em> 件商品，商品总金额：</span>
+				<span class="price">￥<span v-text="goodsMoney">0.00</span></span>
+			</div>
+			{eq name="$is_virtual" value="0"}
+			<div class="li">
+				<span class="tit ns-text-color-gray">运费：</span>
+				<span class="price">￥<span v-text="shippingMoney">0.00</span></span>
+			</div>
+			{/eq}
+			<div class="li" v-show="isNeedInvoice">
+				<span class="tit ns-text-color-gray">税费：</span>
+				<span class="price">￥<span v-text="taxMoney">0.00</span></span>
+			</div>
+			<div class="li">
+				<span class="tit ns-text-color-gray">优惠金额：</span>
+				<span class="price">￥<span v-text="promotionMoney">0.00</span></span>
+			</div>
+			{eq name="$data['promotion_type']" value="4"}
+			<div class="li">
+				<span class="tit ns-text-color-gray">兑换所需积分：</span>
+				<span class="price ns-text-color">{$data.total_buy_point}积分</span>
+			</div>
+			{/eq}
+		</div>
+	</div>
+
+	<div class="order-foot ns-bg-color-gray-fadeout-50 ns-border-color-gray">
+		<p class="price-info"><span class="tit ns-text-color-gray">应付总额：</span><span class="real-money ns-text-color">￥<span v-text="payMoney">0.00</span></span></p>
+		{if $is_virtual eq 0 && !empty($data['address'])}
+		<p class="consignee-info">
+			<span class="sendAddr ns-text-color-gray">寄送至：<span v-html="fullAddress">{$full_address}</span></span>
+			<span class="sendMobile ns-text-color-gray">收货人：<span>{$data['address']['consigner']}</span><span>{$data['address']['mobile']|hideStr}</span></span>
+		</p>
+		{/if}
+	</div>
+
+	<div class="checkout-btn">
+		<a href="javascript:order.submit();" class="btn-primary order-submit">提交订单</a>
+	</div>
+</div>
+
+<!-- 收货地址弹框 -->
+<section name="receiving_address">
+	<div class="modal fade bs-example-modal-md" tabindex="-1" role="dialog" id="addressModal">
+		<div class="modal-dialog" role="document">
+	    	<div class="modal-content">
+	      		<div class="modal-header">
+	        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        		<h4 class="modal-title">新增收货地址</h4>
+	      		</div>
+				<div class="modal-body">
+					<div class="form-horizontal">
+						<div class="form-group">
+				    		<label class="col-sm-3"><span class="ns-text-color">*</span> {:lang('member_consignee_name')}</label>
+						 	<div class="col-md-6 col-sm-6">
+				      			<input type="text" class="form-control" name="consigner" placeholder="请输入收货人姓名">
+				    		</div>
+				  		</div>
+				  		<div class="form-group">
+				    		<label class="col-sm-3"><span class="ns-text-color">*</span> {:lang('member_distribution_area')}</label>
+						 	<div class="col-md-2 col-sm-2">
+						 		<select name="province" class="form-control">
+						 			<option value="0">请选择省</option>
+						 		</select>
+						 	</div>
+						 	<div class="col-md-2 col-sm-2">
+						 		<select name="city" class="form-control">
+						 			<option value="0">请选择市</option>
+						 		</select>
+						 	</div>
+						 	<div class="col-md-2 col-sm-2">
+						 		<select name="district" class="form-control">
+						 			<option value="0">请选择区/县</option>
+						 		</select>
+						 	</div>
+				  		</div>
+				  		<div class="form-group">
+				    		<label class="col-sm-3"><span class="ns-text-color">*</span> {:lang('member_detailed_address')}</label>
+						 	<div class="col-md-6 col-sm-6">
+				      			<input type="text" class="form-control" name="address" placeholder="请输入详细地址" >
+				    		</div>
+				  		</div>
+				  		<div class="form-group">
+				    		<label class="col-sm-3"><span class="ns-text-color">*</span> {:lang('member_phone')}</label>
+						 	<div class="col-md-6 col-sm-6">
+				      			<input type="text" class="form-control" name="mobile" placeholder="请输入联系方式" >
+				    		</div>
+				  		</div>
+				  		<div class="form-group">
+				    		<label class="col-sm-3">{:lang('member_fixed_telephone')}</label>
+						 	<div class="col-md-6 col-sm-6">
+				      			<input type="text" class="form-control" name="phone" placeholder="请输入固定电话" >
+				    		</div>
+				  		</div>	
+				  		<input type="hidden" name="id" value="0">
+			  		</div>
+				</div>
+	  			<div class="modal-footer">
+	        		<button type="button" class="btn btn-primary" onclick="Address.saveAddress();">保存</button>
+	      		</div>
+			</div>
+	  	</div>
+	</div>
+</section>
+
+<!-- 自提点弹框 -->
+<section name="receiving_address">
+	<div class="modal fade bs-example-modal-md" tabindex="-1" role="dialog" id="selfLiftingModal">
+		<div class="modal-dialog" role="document">
+	    	<div class="modal-content">
+	      		<div class="modal-header">
+	        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        		<h4 class="modal-title">选择自提点</h4>
+	      		</div>
+				<div class="modal-body">
+					<div class="self-lifting-cont">
+		      			<p class="tip ns-text-color ns-border-color ns-bg-color-fadeout-90">将根据您的收货地址显示其范围内的自提点，请确保您的收货地址填写正确</p>
+		      			<ul class="self-lifting-list ns-border-color-gray">
+		      				{notempty name="$data['pickup_point_list']"}
+								{foreach name="$data['pickup_point_list']" item="vo"}
+									<li class="ns-bg-color-fadeout-90-hover">
+										<div class="self-lifting-name">
+											<input type="radio" name="selffetch">
+											<span>{$vo.name}</span>
+										</div>
+										<div class="self-lifting-address ns-text-color-gray ns-border-color-gray">
+											<span>{$vo.province_name} {$vo.city_name} {$vo.district_name} {$vo.address}</span>
+										</div>
+										<input type="hidden" data-json='{"id" : "{$vo.id}", "full_address" : "{$vo.province_name} {$vo.city_name} {$vo.district_name} {$vo.address}", "name" : "{$vo.name}"}'>
+									</li>
+								{/foreach}
+		      				{/notempty}
+		      			</ul>
+		      		</div>
+				</div>
+	  			<div class="modal-footer">
+	        		<button type="button" class="btn btn-primary" onclick="">保存</button>
+	      		</div>
+			</div>
+	  	</div>
+	</div>
+</section>
+
+<!-- 物流配送时间选择弹框 -->
+<section name="distribution_time">
+	<div class="modal fade bs-example-modal-md" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" id="distributionTimeMoadl">
+	  	<div class="modal-dialog modal-md" role="document">
+	    	<div class="modal-content">
+	     		<div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			        <h4 class="modal-title">选择配送时间</h4>
+		      	</div>
+		      	<div class="modal-body">
+		      		<div class="distribution-time-cont">
+		      			{php}
+		      				$week_array = ['周日','周一','周二','周三','周四','周五','周六'];
+		      				$time_slot = !empty($data['time_slot']) ? $data['time_slot'] : ['全天'];
+		      			{/php}
+		      			<table class="table table-bordered order-table">
+		      				<thead>
+		      					<tr>
+			      					<th><span>时间段</span></th>
+			      					{for start="3" end="10"}
+			      						<th><span>{:date('m-d', strtotime($i." day"))}<br>{$week_array[date('w', strtotime($i." day"))]}</span></th>
+			      					{/for}
+		      					</tr>
+		      				</thead>
+		      				<tbody>
+		      					{foreach name="$time_slot" item="vo" key="k"}
+		      						<tr>
+		      							<td><span>{$vo}</span></td>
+		      							{for start="3" end="10"}
+		      							<td class="select ns-bg-color-fadeout-90-hover {if $i eq 3 && $k eq 0}active ns-bg-color{else/}ns-text-color{/if}" data-value="{:date('m-d', strtotime($i." day"))} [ {$week_array[date('w', strtotime($i." day"))]} ] {$vo}" data-time="{php}echo strtotime($i." day");{/php}" data-time-slot="{$vo}"><span>可选</span></td>
+			      						{/for}
+		      						</tr>
+		      					{/foreach}
+		      				</tbody>
+		      			</table>
+		      			<p class="tip ns-text-color-gray">温馨提示：我们会努力按照您指定的时间配送，但因天气、交通等各类因素影响，可能会有延误现象</p>
+		      		</div>
+		      	</div>
+		      	<div class="modal-footer">
+		        	<button type="button" class="btn btn-primary">确认</button>
+		      	</div>
+	      	</div>
+      	</div>
+  	</div>
+</section>
+{/block}
+{block name="sidebar"}{/block}
+{block name="script"}
+<script>
+var _params = {
+	'order_type' : {$params.order_type},
+	'goods_sku_list' : '{$params.goods_sku_list}',
+	'is_virtual' : {$is_virtual},
+	'buyer_ip' : '{$buyer_ip}',
+	'full_address' : "{$full_address}",
+	'promotion_type' : "{$params.promotion_type}",
+	'promotion_info' : '{$params.promotion_info|json_encode}'
+};
+</script>
+<script src="WEB_JS/member_payment_address.js"></script>
+<script src="WEB_JS/member_payment.js"></script>
+{/block}

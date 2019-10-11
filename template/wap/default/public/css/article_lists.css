@@ -1,0 +1,24 @@
+body {background-color: #fff;}
+/*文章分类*/
+.article-container{overflow:hidden;padding: 0 10px;}
+.article-container .article-class{overflow-x: scroll;height: 32px;white-space: nowrap;margin-top: 5px;border-bottom: 1px solid;}
+.article-container .article-class::-webkit-scrollbar{display: none;}
+.article-container .article-class li{display: inline-block;line-height: 30px;padding: 0 5px;}
+.article-container .article-class li a{display: block;}
+.article-container .article-class li.active a{border-bottom: 2px solid;}
+.article-container .article-list-content{margin-top: 10px;}
+/* 文章列表 */
+.article-container .article-list-container{width: 100%;}
+.article-container .article-list-container .article-item{margin-top: 15px;position: relative;}
+.article-container .article-list-container a:first-child .article-item{margin-top: 0;}
+.article-container .article-list-container a:last-child .article-item{margin-bottom: 15px;}
+.article-container .article-list-container .article-item .item-thumbnail{width: 67px;height: 67px;line-height: 67px;border-radius: 5px;position: absolute;left: 0;top: 0;overflow:hidden;text-align: center;}
+.article-container .article-list-container .article-item .item-thumbnail img{max-height: 100%;vertical-align: middle;display: block;}
+.article-container .article-list-container .article-item .item-container{padding:0 0 0 80px;height: 67px;}
+.article-container .article-list-container .article-item .item-container .item-title{white-space: nowrap;overflow:hidden;text-overflow: ellipsis;font-size: 15px;}
+.article-container .article-list-container .article-item .item-container .item-respondent{font-size: 13px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;margin-bottom: 3px;line-height: 20px;}
+.article-container .article-list-container .article-item .item-container div span.speech-item-tag{padding:1px 8px;border-radius: 10px;border: 1px solid;font-size: 12px;}
+.article-container .article-list-container .article-item .item-container div span.participation{line-height: 20px;font-size: 12px;margin-left: 5px;}
+/* 无文章的显示样式 */
+.no-article{text-align:center;margin-top:100px;}
+.no-article > img{margin-bottom:20px;}

@@ -1,0 +1,38 @@
+{extend name="$base" /}
+{block name="resources"}
+<style>
+.table-logo{display:inline-block;width:75px;float:left;}
+.table-pay{display:inline-block;width:120px;overflow:hidden;margin-top: 7px;}
+.table-desc{display:inline-block;}
+.pay-start,.pay-close{margin-left:0px!important;}
+</style>
+{/block}
+{block name="main"}
+<table class="table-class">
+	<colgroup>
+		<col width="83%">
+		<col width="17%">
+	</colgroup>
+	<thead>
+		<tr class="table-title" style="background: white;z-index: 10;border: 1px solid #E3E3E3;">
+			<th style="text-align: left;">短信配置</th>
+			<th style="text-align: center;">操作</th>
+		</tr>
+	</thead>
+	<tbody>
+		{volist name="sms_list" id="sms"}
+		<tr>
+			<td>
+				<div class="table-logo"><img src="__ROOT__/{$sms.logo}"></div>
+				<span class="table-pay">{$sms.pay_name}</span><br/>
+				<span class="table-desc">{$sms.desc}
+				</span>
+			</td>
+			<td style="text-align: center;">
+				<a href="{$sms.url}">配置</a>
+			</td>
+		</tr>
+		{/volist}
+	</tbody>
+</table>
+{/block}

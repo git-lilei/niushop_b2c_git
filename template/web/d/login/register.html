@@ -1,0 +1,220 @@
+{extend name="$base"}
+{block name="resources"}
+<link type="text/css" rel="stylesheet" href="WEB_CSS/login_register.css"/>
+{/block}
+{block name="head"}
+<div class="header w1200">
+	<a href="{:__URL('SHOP_MAIN')}">
+		<img class="self-adaption-img" alt="logo" src="{:__IMG($web_info['logo'])}"/>
+	</a>
+</div>
+{/block}
+{block name="main"}
+{php}
+//广告图
+$register_adv = api('System.Shop.advDetail', ['ap_keyword' => "PC_REGISTER", 'export_type' => 'data']);
+$register_adv = $register_adv['data'];
+
+//验证配置
+$login_verify_code = api("System.Config.loginVerifyCode");
+$login_verify_code = $login_verify_code['data'];
+$login_verify_code = $login_verify_code['value'];
+
+//消息通知配置
+$notice = api("System.Config.noticeConfig");
+$notice = $notice['data'];
+{/php}
+<p class="login-info">
+	<span>{:lang('i_have_registered_now')}</span>
+	<a href="{:__URL('SHOP_MAIN/login/index')}" title="{:lang('log_in')}" class="ns-text-color">{:lang('login')}</a>
+</p>
+<ul class="nav nav-tabs">
+  	{if condition = "strpos($reg_config['register_info'],'plain') !== false"}
+  	<li data-type="general" class="active"><a data-tab href="#tab1">{:lang('general_registration')}</a></li>
+	{/if}
+	{if condition = "strpos($reg_config['register_info'],'mobile') !== false"}
+	<li data-type="mobile"><a data-tab href="#tab1">{:lang('mobile_registration')}</a></li>
+	{/if}
+	{if condition = "strpos($reg_config['register_info'],'email') !== false"}
+ 	<li data-type="email"><a data-tab href="#tab1">{:lang('mailbox_registration')}</a></li>
+ 	{/if}
+</ul>
+
+{notempty name="$register_adv"}
+<div class="tab-content ns-border-color-gray ns-text-color-gray" style="background: {$register_adv['advs'][0]['background']} url({:__IMG($register_adv['advs'][0]['adv_image'])}) no-repeat 80% 130px;">
+{else/}
+<div class="tab-content ns-border-color-gray ns-text-color-gray" style="background: url(WEB_IMG/login/register_adv.png) no-repeat 80% 130px;">
+{/notempty}
+
+  <div class="tab-pane active" id="tab1">
+	<div class="form-group">
+		<label>
+			<span class="ns-text-color">*</span>
+			<span class="js-label">{:lang('user_name')}：</span>
+		</label>
+		<input id="account" class="ns-border-color-gray-shade-10" type="text" placeholder="{:lang('please_enter_your_user_name')}" />
+		<span id="account_verify" class="ns-text-color"></span>
+	</div>
+	<div class="form-group">
+		<label>
+			<span class="ns-text-color">*</span>
+			<span>{:lang('password')}：</span>
+		</label>
+		<input type="password" class="ns-border-color-gray-shade-10" id="password" placeholder="{:lang('please_input_password')}" />
+		<span id="password_verify" class="ns-text-color"></span>
+	</div>
+	<div class="form-group">
+		<label>
+			<span class="ns-text-color">*</span>
+			<span>{:lang('member_confirm_password')}：</span>
+		</label>
+		<input id="repassword" class="ns-border-color-gray-shade-10" type="password" placeholder="{:lang('please_enter_confirmation_password')}"/>
+		<span id="repassword_verify" class="ns-text-color"></span>
+	</div>
+	
+	<input type="hidden" id="type_code" value="{$login_verify_code.pc}"/>
+	{if condition = "$login_verify_code['pc'] == 1"}
+	<div class="form-group">
+		<label>
+			<span class="ns-text-color">*</span>
+			<span>验证码：</span>
+		</label>
+		<input id="verify_code" type="text" placeholder="{:lang('please_enter_verification_code')}" class="form-item ns-border-color-gray-shade-10" maxlength="4" />
+		<label class="img">
+			<img class="verifyimg" src="{:__URL('SHOP_MAIN/captcha')}" onclick="this.src='{:__URL('SHOP_MAIN/captcha?tag=1')}'+'&send='+Math.random()" alt="captcha" />
+		</label>
+		<span id="code_error" class="ns-text-color"></span>
+	</div>
+	{/if}
+	
+	<!-- 动态校验码 -->
+	{if condition="$notice['noticeMobile'] neq 0"}
+	<div class="form-group check-code mobile">
+		<label>
+			<span class="ns-text-color">*</span>
+			<span class="check-code-name">{:lang('sms_check_code')}：</span>
+		</label>
+		<input type="text" id="mobile_code" class="form-item ns-border-color-gray-shade-10" />
+		<button class="btn check-code-btn sendOutCode" type="button">{:lang('get_sms_check_code')}</button>
+	</div>
+	{/if}
+
+	{if condition="$notice['noticeEmail'] neq 0"}
+	<div class="form-group check-code email">
+		<label>
+			<span class="ns-text-color">*</span>
+			<span class="check-code-name">{:lang('mailbox_check_code')}：</span>
+		</label>
+		<input type="text" id="email_code" class="form-item ns-border-color-gray-shade-10" />
+		<button class="btn check-code-btn sendOutCode" type="button">{:lang('get_mailbox_check_code')}</button>
+	</div>
+	{/if}
+
+    <!-- 动态校验码 -->
+	<!-- {if condition="$notice['noticeEmail'] neq 0 && $notice['noticeMobile'] neq 0"}
+	<div class="form-group check-code">
+		<label>
+			<span class="ns-text-color">*</span>
+			<span class="check-code-name">{:lang('mailbox_check_code')}：</span>
+		</label>
+		<input type="text" id="code" class="form-item ns-border-color-gray-shade-10" />
+		<button class="btn check-code-btn" type="button" id="sendOutCode">{:lang('get_mailbox_check_code')} {:lang('get_sms_check_code')}</button>
+	</div>
+	{/if} -->
+	
+	<div class="form-group">
+		<label></label>
+		<input type="checkbox" id="remember" class="form-checkbox ns-border-color-gray-shade-10" />
+		<span class="form-text"><label for="remember">{:lang('read_and_agreed')}</label><a href="javascript:agreementShow()" class="ns-text-color" target="_blank">《{:lang('user_registration_protocol')}》</a></span>
+	</div>
+	<div class="form-btn">
+		<button id="btn_submit" class="btn btn-primary" type="button" title="{:lang('fill_in_accordance_requirements')}" >{:lang('agreement_and_registrationr')}</button>
+	</div>
+  </div>
+
+</div>
+
+<!-- 注册协议 -->
+{php}
+	$info = api('System.Login.registerAgreement');
+	$info = $info['data'];
+{/php}
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">关闭</span></button>
+        <h4 class="modal-title">{$info['title']}</h4>
+      </div>
+      <div class="modal-body">
+        <p>{$info['content']}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<input type="hidden" value="{$login_verify_code['pc']}" id="hidden_verify_pc"/>
+<input type="hidden" value="{$reg_config['pwd_len']}" id="hidden_pwd_len" />
+<input type="hidden" value="{$reg_config['name_keyword']}" id="hidden_name_keyword"/>
+<input type="hidden" value="{$reg_config['pwd_complexity']}" id="hidden_pwd_complexity"/>
+<input type="hidden" value="{$notice['noticeMobile']}" id="hidden_notice_mobile">
+<input type="hidden" value="{$notice['noticeEmail']}" id="hidden_notice_email">
+{/block}
+{block name="footer"}
+<div class="ns-copyright" id="copyright-main">
+	<p id="copyright_desc"></p>
+	<p>
+		<a id="copyright_companyname" href="javascript:;" target="_blank"></a>
+		<span id="copyright_meta"></span>
+	</p>
+	<p id="web_gov_record_wap">
+		<a href="javascript:;" target="_blank">
+			<img src="__STATIC__/images/gov_record.png" alt="公安备案">
+			<span></span>
+		</a>
+	</p>
+	{$web_info.third_count}
+</div>
+{/block}
+{block name="sidebar"}{/block}
+{block name="script"}
+<script>
+var lang_register = {
+	user_name_already_exists : '{:lang("user_name_already_exists")}',
+	mailbox : '{:lang("mailbox")}',
+	get_mailbox_check_code : '{:lang("get_mailbox_check_code")}',
+	mailbox_check_code : '{:lang("mailbox_check_code")}',
+	member_enter_email_address : '{:lang("member_enter_email_address")}',
+	get_sms_check_code : '{:lang("get_sms_check_code")}',
+	sms_check_code : '{:lang("sms_check_code")}',
+	member_phone_number : '{:lang("member_phone_number")}',
+	member_enter_your_phone_number : '{:lang("member_enter_your_phone_number")}',
+	please_enter_your_user_name : '{:lang("please_enter_your_user_name")}',
+	password_must_contain_symbols : '{:lang("password_must_contain_symbols")}',
+	password_must_contain_numbers : '{:lang("password_must_contain_numbers")}',
+	password_must_have_lowercase_letters : '{:lang("password_must_have_lowercase_letters")}',
+	password_must_have_uppercase_letters : '{:lang("password_must_have_uppercase_letters")}',
+	user_name_length : '{:lang("user_name_length")}',
+	minimum_password_length : '{:lang("minimum_password_length")}',
+	password_cannot_empty : '{:lang("password_cannot_empty")}',
+	two_password_not_same : '{:lang("two_password_not_same")}',
+	have_not_agreed_registration_agreement : '{:lang("have_not_agreed_registration_agreement")}',
+	username_cannot_includ_chinese_characters : '{:lang("username_cannot_includ_chinese_characters")}',
+	user_name : '{:lang("user_name")}',
+	such_characters : '{:lang("such_characters")}',
+	phone_has_been_registered : '{:lang("phone_has_been_registered")}',
+	mailbox_has_been_registered : '{:lang("mailbox_has_been_registered")}',
+	member_enter_correct_phone_format : '{:lang("member_enter_correct_phone_format")}',
+	member_enter_correct_email_format : '{:lang("member_enter_correct_email_format")}',
+	send_successfully : '{:lang("send_successfully")}',
+	get_validation_code : '{:lang("get_validation_code")}',
+	sms_verification_code_error : '{:lang("sms_verification_code_error")}',
+	mailbox_checksum_error : '{:lang("mailbox_checksum_error")}',
+	post_resend : '{:lang("post_resend")}',
+};
+</script>
+<script src="WEB_JS/login_register.js"></script>
+{/block}

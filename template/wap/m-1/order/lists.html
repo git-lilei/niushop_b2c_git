@@ -1,0 +1,184 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/order_list.css">
+{/block}
+{block name="head_href"}{:__URL('APP_MAIN/member/index')}{/block}
+{block name="main"}
+{php}
+	$status = request()->get('status', 'all');
+	$order_type = request()->get('order_type', 'all');
+	$order_status = api('System.Order.orderStatus', ['order_type' => $order_type]);
+	$order_status = $order_status['data'];
+{/php}
+<div class="order-list">
+	<nav class="ns-border-color-gray">
+		<ul>
+            <li class="ns-border-color-hover ns-text-color-black ns-text-color-hover" data-status-id="all"><a href="javascript:GetDataList('all',1);">{:lang('whole')}</a></li>
+            {foreach name="$order_status" item="vo"}
+	            <li class="ns-border-color-hover ns-text-color-hover ns-text-color-black" data-status-id="{$vo['status_id']}"><a href="javascript:GetDataList('{$vo['status_id']}');" >{:lang($vo.status_name)}</a></li>
+            {/foreach}
+        </ul>
+	</nav>
+	<div class="tabs-content" id="list_content"></div>
+    <input type="hidden" id="hidden_status" value="{$status}"/>
+	<input type="hidden" id="page_count">
+	<input type="hidden" id="page" value="1">
+	<input type="hidden" id="status" value="all">
+</div>
+{/block}
+{block name="script"}
+<script src="WAP_JS/order.js"></script>
+<script>
+$(function(){
+	$('.order-list nav ul li').click(function(){
+		$('.order-list nav ul li').removeClass('selected');
+		$(this).addClass('selected');
+		$('#hidden_status').val($(this).attr('data-status-id'));
+	});
+	
+	var status=$('#hidden_status').val();
+	GetDataList(status,1);
+	$('.order-list nav ul li').each(function(){
+		if($(this).attr("data-status-id") == status){
+			$(this).addClass('selected');
+		}
+	});
+
+	//滑动到底部加载
+	$(window).scroll(function(){
+		var totalheight = parseFloat($(window).height()) + parseFloat($(window).scrollTop());
+		var content_box_height = parseFloat($("#list_content").height());
+		if(totalheight - content_box_height >= 80){
+			if(!is_load){
+				var page = parseInt($("#page").val()) + 1;//页数
+				var total_page_count = $("#page_count").val(); // 总页数
+				var status = $('#status').val();
+				if(page > total_page_count){
+					return false;
+				}else{
+					GetDataList(status,page);
+				}
+			}
+		}
+	});
+});
+
+var is_load = false;//防止重复加载
+function GetDataList(status,page){
+	var order_type = '{$order_type}';
+	if(page == undefined || page == "") page = 1;
+	$("#page").val(page);//设置当前页
+	$("#status").val(status);//保存当前状态
+	if(is_load) return;
+	is_load = true;
+	api("System.Order.order",{'order_type' : order_type, 'status':status,"page":page },function (res) {
+		var data = res.data;
+		$("#page_count").val(data['page_count']);//总页数
+		if(page == 1){
+			var h = "";
+		}else if(page > 1){
+			var h = $('#list_content').html();
+		}
+		if(data['data'].length==0){
+			h +='<div class="empty">';
+				h += '<i class="icon-none"></i>';
+				h += '<span class="text16 ns-text-color-gray">{:lang("member_no_order_yet")}</span>';
+				h += '<span class="text12 ns-text-color-gray">{:lang("member_go_and_see")}</span>';
+				h += '<a href="{:__URL('APP_MAIN/goods/lists')}" class="btn gray">{:lang("member_look_around")}</a>';
+			h += '</div>';
+		}else{
+			for(var i=0;i<data['data'].length;i++){
+				var item=data['data'][i];
+				h += '<div class="item ns-border-color-gray">';
+					h += '<div class="title ns-border-color-gray">';
+						h += '<span class="pull-left ns-text-color-black">'+item['order_no']+'</span>';
+						h += '<span class="pull-right ns-text-color-gray">'+timeStampTurnTime(item['create_time'])+'</span>';
+					h += '</div>';
+				h+='<ul>';
+				for(var j=0;j<item['order_item_list'].length;j++){
+					var goodsitem = item['order_item_list'][j];
+					var gift_flag = item['order_item_list'][j]['gift_flag'];
+					h += '<li class="ns-border-color-gray">';
+						h += '<a href="'+__URL('APP_MAIN/order/detail?order_id='+goodsitem['order_id'])+'">';
+							h += '<span class="pic"><img src="'+__IMG(goodsitem['picture']['pic_cover_small'])+'"></span>';
+							h += '<div class="text">';
+								h += '<span class="goods-name text12 ns-text-color-black">'+goodsitem['goods_name']+'</span>';
+								h += '<div>';
+									h += '<span class="text12 ns-text-color-gray">{:lang("goods_price")}:</span>';
+									h += '<span class="text12 ns-text-color-black">'+goodsitem['display_price']+'</span>';
+									if(gift_flag > 0){
+										h += '<i class="ns-bg-color gift-mark">{:lang('赠品')}</i>';
+									}
+								h += '</div>';
+								h += '<div>';
+									h += '<span class="text12 ns-text-color-gray">{:lang("specifications")}:</span>';
+									h += '<span class="text12 ns-text-color-black">'+goodsitem['sku_name']+'</span>';
+								h += '</div>';
+								h += '<div>';
+									h += '<span class="text12 ns-text-color-gray">{:lang("goods_number")}:</span>';
+									h += '<span class="text12 ns-text-color-black">'+goodsitem['num']+'{:lang("goods_piece")}</span>';
+								h += '</div>';
+							h +='</div>';
+						h += '</a>';
+						h += '<div class="order-operating ns-text-color-gray">';
+							if(goodsitem['shipping_status']!=0){
+								h += '<div class="order-operating-left">{:lang("consign")}</div>';
+							}
+							h += '<div class="order-operating-right">';
+								//非赠品才允许退款操作
+								if(gift_flag == 0){
+									if(item['payment_type']==4){
+										if(item['order_money'] >0 && item['is_refund']==1 && goodsitem['refund_status']==0 && item['order_status']==2){
+											h += '<input type="button" onclick="window.location.href=\''+__URL('APP_MAIN/Order/refundDetail?order_goods_id='+goodsitem['order_goods_id'])+'\'" class="order-operating-name ns-border-color-gray ns-text-color-black" value="{:lang("list_of_refund_return")}" />&nbsp;&nbsp;';
+										}
+									}else{
+										if(item['order_money'] >0 && item['is_refund']==1 && goodsitem['refund_status']==0){
+											h += '<input type="button" onclick="window.location.href=\''+__URL('APP_MAIN/Order/refundDetail?order_goods_id='+goodsitem['order_goods_id'])+'\'" class="order-operating-name ns-border-color-gray ns-text-color-black" value="{:lang("list_of_refund_return")}" />&nbsp;&nbsp;';
+										}else if(goodsitem['refund_status'] != 0) {
+											if(goodsitem['refund_status'] != 5 && goodsitem['refund_status'] != -1 && goodsitem['refund_status'] != -2 && item["order_status"] != 4 && item["order_status"] != 5 ){
+												h += '<input type="button" onclick="cancelRefund('+item['order_id']+', '+ goodsitem['order_goods_id']+');" class="order-operating-name ns-border-color-gray ns-text-color-black" value="{:lang('取消退款')}">&nbsp;&nbsp;';
+											}
+										}
+									}
+								}
+								if(item['order_money'] >0 && item['order_status'] == 4  && goodsitem['customer_info'] == null){
+									h += '<a href=\''+__URL('APP_MAIN/order/aftersale?order_goods_id='+goodsitem['order_goods_id'])+'\'"><span class="order-operating-item ns-text-color-black ns-border-color-gray">{:lang('申请售后')}</span></a>&nbsp;&nbsp;';
+								}else if(item['order_money'] >0 && item['order_status'] == 4 && goodsitem['customer_info'] != null){
+									h += '<a href=\''+__URL('APP_MAIN/order/aftersale?order_goods_id='+goodsitem['order_goods_id'])+'\'"><span class="order-operating-item ns-text-color-black ns-border-color-gray">{:lang('查看售后')}</span></a>&nbsp;&nbsp;';
+								}
+								if(item['order_money'] >0 && goodsitem['refund_status']!=0){
+									h += '<input type="button" onclick="window.location.href=\''+__URL('APP_MAIN/Order/refundDetail?order_goods_id='+goodsitem['order_goods_id'])+'\'" class="order-operating-name ns-border-color-gray ns-text-color-black" value="'+goodsitem['status_name']+'" />&nbsp;&nbsp;';
+								}
+							h += '</div>';
+						h += '</div>';
+					h += '</li>';
+				}
+				h += '</ul>';
+				h += '<div class="total">';
+					h += '<span class="status ns-text-color">'+item['order_type_name']+'&nbsp;&nbsp;&nbsp;</span>';
+					h += '<span class="status ns-text-color-gray">'+item['status_name']+'</span>';
+					h += '<span class="order-money ns-text-color">'+item['display_order_money']+'</span>';
+					h += '<span class="total-price ns-text-color-gray">{:lang("total_price")}</span>';
+				h += '</div>';
+
+				var operation_html = "";
+
+				if(item['order_status'] == 3 || item['order_status'] == 4){
+					if(item['is_evaluate'] == 0){
+						operation_html += '<a href="'+ __URL(APPMAIN + '/order/evaluate?order_id='+ item['order_id']) +'" class="button ns-bg-color">{:lang('member_i_want_evaluate')}</a>';
+					}else if(item['is_evaluate'] == 1){
+						operation_html += '<a href="'+ __URL(APPMAIN + '/order/evaluate?order_id='+ item['order_id']+'&again=1') +'" class="button ns-bg-color">{:lang('goods_additional_evaluation')}</a>';
+					}
+				}
+				if(operation_html) h += '<div class="div-button">' + operation_html + '</div>';
+
+				h += '</div>';
+			}
+		}
+		is_load = false;
+		$('#list_content').html(h);
+	});
+}
+</script>
+{/block}
+{block name="footer"}{/block}

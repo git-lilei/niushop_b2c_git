@@ -1,0 +1,192 @@
+{extend name="$base" /}
+{block name="resources"}
+<link type="text/css" rel="stylesheet" href="WAP_CSS/distribution_index.css">
+{/block}
+{block name="head_href"}{:__URL('APP_MAIN/member/index')}{/block}
+{block name="main"}
+{php}
+	$promoter_info = api("System.Distribution.promoterDetail");
+	$promoter_info = $promoter_info['data'];
+	
+	$member_info = api('System.Member.memberInfo');
+	$member_info = $member_info['data'];
+	
+	$shop_config = api('System.Distribution.shopConfig');
+	$shop_config = $shop_config['data'];
+	
+	if (!empty($member_info['user_info']['user_headimg'])) {
+		$member_img = $member_info['user_info']['user_headimg'];
+	} else {
+		$member_img = '0';
+	}
+	
+	//分销商品列表
+	if($promoter_info) {
+		$goods_list = api('System.Distribution.distributionGoodsList', ['page' => 1, 'page_size' => 4, 'uid' => $uid, 'type' => 'selected']);
+		$goods_list = $goods_list['data'];
+	}
+{/php}
+{notempty name="$promoter_info"}
+<div class="panel distribution-index">
+	<div class="member-head">
+		<a href="{:__URL('APP_MAIN/Distribution/account')}">
+			<div class="face-img">
+			{eq name="$member_img" value="0"}
+				<img src="{:__IMG($default_headimg)}" />
+			{else/}
+				<img src="{:__IMG($member_img)}" />
+			{/eq}
+			</div>
+			<div class="user-info">
+				<div class="promoter-shop-name">{$promoter_info["promoter_shop_name"]}的店铺</div>
+				<div class="level-name">
+					<div><img src="WAP_IMG/distribution/distribution_logo.png" /></div>
+					<span>{$promoter_info['promoter_level_info']['level_name']}</span>
+				</div>
+			</div>
+		 </a>
+		<div class="qrcode">
+			<a href="{:__URL('APP_MAIN/DistributionShop/userShopQrcode?source_uid='.$uid)}"><img src="WAP_IMG/member/member-icon-qrcode.png" /></a>
+		</div>
+
+	</div>
+	<div class="member-foot">
+		<p>
+			<a href="{:__URL('APP_MAIN/distribution/team?promoter_id=' . $promoter_info['promoter_id'])}">
+				<span class="first-span">{$promoter_info.team_count}</span>
+			</a>
+			<a href="{:__URL('APP_MAIN/distribution/commissionShop')}">
+				<span class="first-span">{$promoter_info["commission"]['commission_cash']}</span>
+				<span class="first-span">{$promoter_info["commission"]['commission']}</span>
+			</a>
+		</p>
+		<p>
+			<span class="second-span ns-text-color-gray text12">我的团队</span>
+			<span class="second-span ns-text-color-gray text12">可提现佣金</span>
+			<span class="second-span ns-text-color-gray text12">累计佣金</span>
+		</p>
+	</div>
+</div>
+
+<div class="distribution-goods">
+	<div class="distribution-goods-title">
+		<div class="pull-left">分销商品</div>
+		<a href="{:__URL('APP_MAIN/distribution/goods')}" class="pull-right ns-text-color-gray">
+			<span>添加分销商品</span>
+			<i class="fa fa-angle-right ns-text-color-gray"></i>
+		</a>
+	</div>
+	{if !empty($goods_list['data'])}
+	<ul>
+		{foreach $goods_list['data'] as $k => $v}
+		<li class="ns-bg-color-gray-fadeout-60">
+			<a href="{:__URL('APP_MAIN/goods/detail?goods_id=' . $v['goods_id'])}">
+				<img src="{:__IMG($v['pic_cover_small'])}" />
+			</a>
+		</li>
+		{/foreach}
+	</ul>
+	{/if}
+</div>
+
+<div class="personal-menu">
+	<ul>
+		<li>
+			<a href="{:__URL('APP_MAIN/distribution/team?promoter_id=' . $promoter_info['promoter_id'])}">
+				<img src="WAP_IMG/distribution/store_my_team.png"/>
+				<h5>我的团队</h5>
+				<span class="ns-text-color-gray text12">{$promoter_info.team_count}个</span>
+			</a>
+		</li>
+		
+		<li>
+			<a href="{:__URL('APP_MAIN/distribution/commissionshop')}">
+				<img src="WAP_IMG/distribution/store_my_commission.png"/>
+				<h5>我的佣金</h5>
+				<span class="ns-text-color-gray text12">{$promoter_info["commission"]['commission']}</span>
+			</a>
+		</li>
+		
+		<li>
+			<a href="{:__URL('APP_MAIN/distribution/commissionrecording')}">
+				<img src="WAP_IMG/distribution/store_my_processing.png"/>
+				<h5>进行中佣金</h5>
+				<span class="ns-text-color-gray text12">佣金查看</span>
+			</a>
+		</li>
+		
+		<li>
+			<a href="{:__URL('APP_MAIN/distribution/shopedit?promoter_id=' . $promoter_info['promoter_id'])}">
+				<img src="WAP_IMG/distribution/store_my_shopset.png"/>
+				<h5>店铺设置</h5>
+				<span class="ns-text-color-gray text12">店铺管理</span>
+			</a>
+		</li>
+		
+		<li>
+			<a href="{:__URL('APP_MAIN/DistributionShop/usershopgoods?uid=' . $uid)}">
+				<img src="WAP_IMG/distribution/store_my_shop.png"/>
+				<h5>我的店铺</h5>
+				<span class="ns-text-color-gray text12">店铺数据管理</span>
+			</a>
+		</li>
+		
+		<li>
+			<a href="{:__URL('APP_MAIN/DistributionShop/usershopqrcode?source_uid='.$uid)}">
+				<img src="WAP_IMG/distribution/store_my_share.png"/>
+				<h5>店铺推广</h5>
+				<span class="ns-text-color-gray text12">推广二维码</span>
+			</a>
+		</li>
+		<li>
+			<a href="{:__URL('APP_MAIN/distribution/goodsuser')}">
+				<img src="WAP_IMG/distribution/store_my_goodsfx.png"/>
+				<h5>分销商品</h5>
+				<span class="ns-text-color-gray text12">分销商品查看</span>
+			</a>
+		</li>
+		
+		{if $shop_config['is_partner_enable'] > 0}
+			{if $promoter_info["shop_user_info"]["is_partner"] != 0}
+			<li>
+				<a href="{:__URL('APP_MAIN/distribution/partner')}">
+					<img src="WAP_IMG/distribution/store_shareholders.png"/>
+					<h5>股东</h5>
+					<span class="ns-text-color-gray text12">股东资料</span>
+				</a>
+			</li>
+			{else /}
+			<li>
+				<a href="{:__URL('APP_MAIN/distribution/applypartner')}">
+					<img src="WAP_IMG/distribution/store_shareholders.png"/>
+					<h5>申请股东</h5>
+				</a>
+			</li>
+			{/if}
+		{/if}
+		{if $shop_config['is_regional_agent'] > 0}
+			{if $promoter_info["shop_user_info"]["region_center_id"] != 0}
+				<li>
+					<a href="{:__URL('APP_MAIN/distribution/region')}">
+						<img src="WAP_IMG/distribution/store_region_agent.png"/>
+						<h5>区域代理</h5>
+						<span class="ns-text-color-gray text12">区域代理资料</span>
+					</a>
+				</li>
+			{else /}
+				<li>
+					<a href="{:__URL('APP_MAIN/distribution/applyregion')}">
+						<img src="WAP_IMG/distribution/store_region_agent.png"/>
+						<h5>申请区域代理</h5>
+						<span class="ns-text-color-gray text12">区域代理资料</span>
+					</a>
+				</li>
+			{/if}
+		{/if}
+	</ul>
+</div>
+{else/}
+<script>location.href = __URL(APPMAIN + "/distribution/applyPromoter");</script>
+{/notempty}
+{/block}
+{block name="footer"}{/block}

@@ -1,0 +1,278 @@
+{extend name="$base" /}
+{block name="resources"}
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+<link href="__STATIC__/blue/css/order/ns_orderlist.css" rel="stylesheet" type="text/css" />
+<style>
+.mytable.select td{padding-bottom:0;}
+.mytable.select #more_search{display: block;}
+.table-class tbody td a {margin-left: 0;}
+.to-fixed{position: fixed;width: 85.5%;top: 50px;box-shadow: 0 2px 6px 0 rgba(0,0,0,.3);z-index: 5;}
+.mytable td{padding:10px 0;}
+.btn-common-white{line-height: 20px;outline: none;background: white}
+.ns-main{margin-top: 0;}
+</style>
+{/block}
+{block name="main"}
+<input type="hidden" id="order_id" />
+<input type="hidden" id="print_select_ids" />
+<div>
+	<table class="mytable select">
+		<tr>
+			<th align="left">
+				
+				<a class="btn-common-white" id="PrintOrder" href="javascript:;">
+					<i class="fa fa-print"></i>
+					<span>打印订单</span>
+				</a>
+			</th>
+			<th style="position: relative;">
+				<span>下单时间：</span>
+				<input type="text" id="startDate" class="input-common middle" placeholder="请选择开始日期" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" />
+				&nbsp;-&nbsp;
+				<input type="text" id="endDate" placeholder="请选择结束日期" class="input-common middle" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" />
+				<button onclick="searchData()" class="btn-common">搜索</button>
+				<button onclick="dataExcel()" class="btn-common">导出数据</button>
+			</th>
+		</tr>
+	</table>
+	
+	<table class="table-class" id="ajax-orderlist">
+		<colgroup>
+			<col width="2%">
+			<col width="34%">
+			<col width="14%">
+			<col width="10%">
+			<col width="10%">
+			<col width="10%">
+			<col width="10%">
+			<col width="10%">
+		</colgroup>
+		<thead>
+			<tr align="center">
+				<th>
+					<i class="checkbox-common">
+						<input type="checkbox"  id="check" />
+					</i>
+				</th>
+				<th>商品信息</th>
+				<th>商品清单</th>
+				<th>订单金额</th>
+				<th>收货信息</th>
+				<th>买家</th>
+				<th>交易状态</th>
+				<th>操作</th>
+			</tr>
+		</thead>
+		<tbody></tbody>
+	</table>
+</div>
+{/block}
+{block name="script"}
+
+{include file="admin/Order/orderCustomerAction"/}
+<!-- 订单打印 -->
+{include file="admin/Order/orderPrintAction"/}
+<script type="text/javascript">
+$(window).scroll(function(){
+	var scrollTop = $(window).scrollTop();
+	if(scrollTop > 140){
+		$("nav.order-nav").addClass("to-fixed").css("width",$(".ns-main").width()-2);
+	}else{
+		$("nav.order-nav").removeClass("to-fixed").css("width","");
+	}
+});
+
+$(function () { 
+	$("[data-toggle='popover']").popover();
+});
+function searchData(){
+	$(".more-search-container").slideUp();
+	LoadingInfo(1);
+}
+
+function LoadingInfo(page_index) {
+	var start_date = $("#startDate").val();
+	var end_date = $("#endDate").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/order/customerServiceList')}",
+		data : {
+			"page_index" : page_index,
+			"page_size" : $("#showNumber").val(),
+			"start_date" : start_date,
+			"end_date" : end_date
+		},
+		success : function(data) {
+		//	alert(JSON.stringify(data["data"][0]));
+			if (data["data"].length > 0) {
+				$("#ajax-orderlist tbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					var out_trade_no = data["data"][i]["out_trade_no"];//交易号
+					var id = data["data"][i]["id"];//id
+					var order_id = data["data"][i]["order_id"];//订单id
+					var order_no = data["data"][i]["order_no"];//订单编号
+					var create_time = timeStampTurnTime(data["data"][i]["create_time"]);//下单时间
+					var pic_cover_micro = data["data"][i]["picture"]['pic_cover_micro'];//商品图
+					var goods_id = data["data"][i]["goods_id"];//商品id
+					var goods_name = data["data"][i]["goods_name"];
+					var sku_name = data["data"][i]["sku_name"];//商品sku
+					var price = data["data"][i]["price"];//商品价格
+					var num = data["data"][i]["num"];//购买数量
+					var goods_money = data["data"][i]["goods_money"];//订单金额
+					var shipping_money = data["data"][i]["shipping_money"];//运费
+					var seller_memo = data["data"][i]["refund_reason"];//订单备注
+					var goods_code = data["data"][i]["code"];
+					var gift_flag = data['data'][i]['gift_flag'];//赠品标识，0：不是赠品，1：是赠品
+			
+					var row=1;//订单数量，用于设置跨行
+					if(data["data"][i].length!=null){
+						row=data["data"][i].length;
+					}
+
+					html += '<tr>';
+					
+					html += '<td rowspan="'+row+'"><i class="checkbox-common"><input id="'+out_trade_no+'" type="checkbox"  value="'+order_id+'" name="sub"></i></td>';
+					
+					html += '<td>';
+					
+					html += '<div style="font-size: 12px;color: #00A0DE;margin-bottom:5px;">';
+
+					html +='<span>订单编号：'+order_no+'</span>&nbsp;<span>下单时间：'+create_time+'</span>';
+					if(seller_memo.length > 0){
+						//html += '&nbsp;<span title="查看备注"><i class="fa fa-flag" aria-hidden="true" style="color:red;" title="查看备注" onclick="operation(\'seller_memo\','+data["data"][i]["order_id"]+')"></i></span>';
+					}
+					html += '</div>';
+					
+					html += '<div class="product-img"><img src="'+__IMG(pic_cover_micro)+'"></div>';
+					html += '<div class="product-infor">';
+					html += '<a href="'+__URL('SHOP_MAIN/goods/detail?goods_id='+goods_id)+'" target="_blank" style="color:#333;">'+goods_name+'</a>';
+					if(sku_name != null && sku_name != ""){
+						html += '<p class="specification" style="margin-bottom: 0px;"><span style="color:#8e8c8c;font-size:12px;">'+sku_name+'</span></p>';
+					}
+					if(goods_code != null && goods_code != ""){
+						html += '<p class="specification"><span style="color:#8e8c8c;font-size:12px;">编码&nbsp;&nbsp;'+goods_code+'</span></p></div>';
+					}
+					
+					html += '</div>';
+					
+					html += '<p>售后原因：'+seller_memo+'</p>';
+					html += '</td>';
+					
+					//订单数量大于1个，调整样式
+					html += '<td>';
+						html += '<div class="cell" style="display: inline-block;"><span>'+price+'元</span></div>';
+						html += '<div class="cell" style="display: inline-block;float:right;">'+num+'件</div>';
+					
+					if(	data["data"][i]['audit_status'] != 0){
+						//退款
+						var order_goods_id = data["data"][i]["order_goods_id"];//订单项id
+						var status_name = data["data"][i]["status_name"];//状态
+
+						//订单数量大于1个，调整样式
+						if(data["data"][i].length>1){
+							html +='<a href="'+__URL('ADMIN_MAIN/order/ordercustomerdetail?id='+id+'&itemid='+order_goods_id)+'" style="margin:5px 0 10px 0;display:block;text-align:center;">'+status_name+'</a>';
+						}else{
+							html +='<a href="'+__URL('ADMIN_MAIN/order/ordercustomerdetail?id='+id+'&itemid='+order_goods_id)+'" style="margin:5px 0 10px 0;display:block;">'+status_name+'</a>';
+						}
+						for(var m = 0; m < data["data"][i]["refund_operation"].length; m++){
+							var operation_type = data["data"][i]["refund_operation"][m]['no'];//选项类型
+							var color = data["data"][i]["refund_operation"][m]['color'];
+							var order_goods_id = data["data"][i]['order_goods_id'];//订单项id
+							var refund_money = data["data"][i]["refund_money"];//退款金额
+							var name = data["data"][i]["refund_operation"][m]['name'];//退款状态
+							html += '<a style="display:block;margin-bottom:5px;color:'+color+';text-align:center;" href="javascript:refundOperation(\''+operation_type+'\','+id+','+order_id+','+order_goods_id+','+refund_money+')">'+name+'</a>';
+						}
+					}
+					html += '</td>';
+					
+					html += '<td rowspan="'+row+'" style="text-align:center">';
+					html += '<div class="cell"><b class="netprice" style="color: #FF6600;font-size: 14px;font-weight: normal;">'+goods_money+'</b><br/>';
+				
+					html += '<span class="expressfee">'+data["data"][i]["pay_type_name"]+'</span></div></td>';
+					
+					html += '<td rowspan="'+row+'" style="text-align:center">';
+					
+					//地址
+					var address = data["data"][i]["receiver_address"];
+					html += '<div style="text-align:left;"><span class="expressfee">'+data["data"][i]["receiver_name"]+'</span><br/><span class="expressfee">'+data["data"][i]["receiver_mobile"]+'</span>';
+					if(data["data"][i]["fixed_telephone"] != ""){
+						html += '<br><span>'+data["data"][i]["fixed_telephone"]+'</span>';
+					}
+					html += '<br/><span class="expressfee">'+address+'</span>';
+					html += '</div></td>';
+					
+					html += '<td rowspan="'+row+'" style="text-align:center"><div class="cell">'+data["data"][i]["user_name"]+'<br/>';
+					html += '<i class="'+data["data"][i]["order_from_tag"]+'" style="color:#666;"><i></div></td>';
+					
+					html += '<td rowspan="'+row+'"><div class="business-status" style="text-align:center">'+data["data"][i]["status_name"]+'<br></div></td>';
+				
+					html += '<td rowspan="'+row+'" style="text-align:center;">';
+					html += '<a style="display:block;margin-bottom:5px;" href="'+__URL('ADMIN_MAIN/order/orderdetail?order_id='+order_id)+'">订单详情</a>';
+				
+					html +='</td></tr>';
+					$("#ajax-orderlist tbody").append(html);
+					
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="10">暂无符合条件的订单</td></tr>';
+				$("#ajax-orderlist tbody").html(html);
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+function addmemo(order_id,memo){
+	$("#order_id").val(order_id);
+	$("#memo").val(memo);
+	$("#Memobox").modal("show");
+}
+/**
+ * 订单数据导出
+ */
+function dataExcel(){
+	var start_date = $("#startDate").val();
+	var end_date = $("#endDate").val();
+	var order_ids= [];
+	$(".table-class tbody input[type = 'checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			order_ids.push($(this).val());
+		}
+	});
+	window.location.href=__URL("ADMIN_MAIN/order/orderDataExcel?start_date="+start_date+"&end_date="+end_date+"&order_ids="+order_ids.toString()); 	
+}
+
+/**
+* 批量删除已关闭订单
+*/
+function batchDelete(){
+	var order_ids= [];
+	$(".table-class tbody input[type = 'checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			order_ids.push($(this).val());
+		}
+	});
+	if(order_ids.length ==0){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#0059d6,#fff": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:"请选择需要操作的记录",
+			title:"消息提醒",
+		});
+		return false;
+	}
+	delete_order(order_ids);
+}
+
+// 点击显示更多搜索
+$(".more-search").click(function(){
+	$(".more-search-container").slideToggle();
+});
+
+</script>
+{/block}

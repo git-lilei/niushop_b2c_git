@@ -1,0 +1,167 @@
+{extend name="$base"/}
+{block name="resources"}
+<link type="text/css" rel="stylesheet" href="WEB_CSS/login.css"/>
+{/block}
+{block name="head"}
+<div class="user-head-bg w1200">
+    <div class="logo-box">
+        <a class="self-adaption-block"href="{:__URL('SHOP_MAIN')}">
+            <img class="self-adaption-img" src="{:__IMG($web_info['logo'])}">
+        </a>
+        <span>欢迎登录</span>
+    </div>
+    <div class="reg">
+        <span>{:lang('no_account')}？</span>
+        <a href="{:__URL('SHOP_MAIN/login/register')}" class="ns-text-color">{:lang('register_immediately')}</a>
+    </div>
+</div>
+{/block}
+{block name="main"}
+{php}
+    //轮播广告图
+    $banner_list = api("System.Shop.advDetail",['ap_keyword'=> 'PC_LOGIN_SWIPER']);
+    $banner_list = $banner_list['data'];
+    
+    //登录配置
+    $login_info = api("System.Login.loginConfig");
+    $login_info = $login_info['data'];
+    
+    //QQ配置
+    $qq_info = $login_info['login_config']['qq_login_config'];
+    
+    //微信配置
+    $wchat_info = $login_info['login_config']['wchat_login_config'];
+
+    //验证配置
+    $login_verify_code = $login_info['code_config']['value'];
+{/php}
+            
+{notempty name="$banner_list"}
+<!-- 轮播 -->
+<div class="carousel slide" data-ride="carousel">
+    <div class="carousel-inner">
+        {foreach name="$banner_list['advs']" item="vo" key="k"}
+        <div class="item {if condition="$k==0"}active{/if}" style="background-color:{$vo['background']};">
+            <img src="{:__IMG($vo['adv_image'])}">
+        </div>
+        {/foreach}
+    </div>
+</div>
+{/notempty}
+<div class="w1200">
+    
+    <div class="login-form">
+        <div class="form-head"> 
+            {if condition="$login_info['login_config']['mobile_config']['is_use'] eq 1"}
+                <div class="tit ns-text-color" data-type="mobile">{:lang('mobile_quick_login')}</div>
+                <div class="tit" data-type="account">{:lang('account_login')}</div>
+            {else/}
+                <div class="tit ns-text-color" data-type="account">{:lang('account_login')}</div>
+            {/if}
+        </div>
+        <div class="type-box active">
+            <div class="account login-type {if condition="$login_info['login_config']['mobile_config']['is_use'] eq 1"}hide{/if}">
+                <div class="input-control has-icon-left">
+                    <input id="user_name" type="text" class="form-control ns-border-color-gray-shade-10" placeholder="{:lang('cell_phone_number')}/{:lang('member_name')}/{:lang('mailbox')}">
+                    <label for="user_name" class="input-control-icon-left"><i class="icon icon-user"></i></label>
+                </div>
+                <div class="input-control has-icon-left">
+                    <input id="password" type="password" class="form-control ns-border-color-gray-shade-10" placeholder="{:lang('please_input_password')}">
+                    <label for="password" class="input-control-icon-left"><i class="icon icon-key"></i></label>
+                </div>
+                {if condition = "$login_verify_code['pc'] == 1"}
+                <div class="input-control has-icon-left">
+                    <input id="vertification" type="text" class="form-control ns-border-color-gray-shade-10 verification-code" placeholder="{:lang('please_enter_verification_code')}">
+                    <img class="input-control-label-right text-success verifyimg" src="{:__URL('SHOP_MAIN/captcha')}" alt="captcha" onclick="this.src='{:__URL('SHOP_MAIN/captcha?tag=1')}'+'&send='+Math.random()" />
+                </div>
+                {/if}
+            </div>
+            
+            {if condition="$login_info['login_config']['mobile_config']['is_use'] eq 1"}
+            <div class="mobile login-type">
+                <div class="input-control">
+                    <input name="mobile" type="text" class="form-control ns-border-color-gray-shade-10" placeholder="{:lang('cell_phone_number')}">
+                </div>
+                {if condition = "$login_verify_code['pc'] == 1"}
+                <div class="input-control has-icon-left">
+                    <input name="captcha" type="text" class="form-control ns-border-color-gray-shade-10 verification-code" placeholder="{:lang('please_enter_verification_code')}">
+                    <img class="input-control-label-right text-success verifyimg" src="{:__URL('SHOP_MAIN/captcha')}" alt="captcha" onclick="this.src='{:__URL('SHOP_MAIN/captcha?tag=1')}'+'&send='+Math.random()" />
+                </div>
+                {/if}
+                <div class="input-control send-code">
+                    <input name="dynamic_code" type="text" class="form-control ns-border-color-gray-shade-10" placeholder="短信校验码">
+                    <button class="btn check-code-btn ns-text-color-gray" type="button" id="sendOutCode">获取短信校验码</button>
+                </div>
+            </div>
+            {/if}
+            
+            <div class="forget-password">
+                <a href="{:__URL('SHOP_MAIN/login/find')}">{:lang('forgot_password')}?</a>
+            </div>
+            <button class="btn btn-primary" type="button" id="btn_login">{:lang('login')}</button>
+            {if condition="$qq_info['is_use'] neq 0 || $wchat_info['is_use'] neq 0"}
+             <div class="coagent ns-border-color-gray ns-bg-color-gray-fadeout-60">
+                <ul>
+                    <li class="extra-r">{:lang('use_cooperative_account')}<b></b></li>
+                    {if condition="$wchat_info['is_use'] eq 1"}
+                    <li>
+                        <a href="{:__URL('APP_MAIN/login/oauthlogin','type=WCHAT')}" title="{:lang('wechat_authorized_login')}">
+                            <span>微信</span>
+                            <b class="weixin-icon"></b>
+                        </a>
+                    </li>
+                    {/if}
+                    {if condition="$qq_info['is_use'] eq 1"}
+                    <li>
+                        <a href="{:__URL('APP_MAIN/login/oauthlogin','type=QQLOGIN')}" title="{:lang('qq_account_login')}">
+                            <span>QQ</span>
+                            <b></b>
+                        </a>
+                        <b></b>
+                        <span class="line">|</span>
+                    </li>
+                    {/if}
+                </ul>
+            </div>
+            {/if}
+        </div>
+    </div>
+</div>
+<input type="hidden" value="{$login_verify_code['pc']}" id="hidden_verify_pc">
+{/block}
+{block name="footer"}
+<div class="ns-copyright" id="copyright-main">
+    <p id="copyright_desc"></p>
+    <p>
+        <a id="copyright_companyname" href="javascript:;" target="_blank"></a>
+        <span id="copyright_meta"></span>
+    </p>
+    <p id="web_gov_record_wap">
+        <a href="javascript:;" target="_blank">
+            <img src="__STATIC__/images/gov_record.png" alt="公安备案">
+            <span></span>
+        </a>
+    </p>
+    {$web_info.third_count}
+</div>
+{/block}
+{block name="sidebar"}{/block}
+{block name="script"}
+<script>
+var login_pre_url = "{$login_pre_url}";
+var lang_login = {
+	enter_your_account_number : '{:lang("enter_your_account_number")}',
+	please_input_password : '{:lang("please_input_password")}',
+	please_enter_verification_code : '{:lang("please_enter_verification_code")}',
+    send_successfully : "{:lang('send_successfully')}",
+    dynamic_error_code : "{:lang('dynamic_error_code')}",
+    get_dynamic_code : "{:lang('get_dynamic_code')}",
+    post_resend : "{:lang('post_resend')}",
+    phone_number_cannot_empty : "{:lang('phone_number_cannot_empty')}",
+    dynamic_code_cannot_be_empty : "{:lang('dynamic_code_cannot_be_empty')}",
+    member_enter_correct_phone_format : "{:lang('member_enter_correct_phone_format')}",
+    verification_code_cannot_be_null : "{:lang('verification_code_cannot_be_null')}"
+};
+</script>
+<script type="text/javascript" src="WEB_JS/login.js"></script>
+{/block}

@@ -1,0 +1,57 @@
+{extend name="$member_base" /}
+{block name="right_main"}
+<link rel="stylesheet" href="WEB_CSS/member_address.css">
+{php}
+$list = api("System.Member.memberAddressList",['page_index'=>$page_index]);
+$list = $list['data'];
+$total_count = $list['total_count'];
+{/php}
+<div class="member-main">
+	
+    <a href="{:__URL('SHOP_MAIN/member/addressedit')}" class="address-add btn btn-primary">新增收货地址</a>
+	
+	{notempty name="list['data']"}
+	<div class="address-list">
+		<ul>
+			{volist name="list['data']" id="vo"}
+			<li class="item ns-border-color-gray">
+				<div class="title">
+					<label>{$vo.consigner}</label>
+					{if $vo.is_default}<span class="ns-bg-color">默认地址</span>{/if}
+				</div>
+				<div class="info">
+					<label class="ns-text-color-gray">收货人：</label>
+					<span>{$vo.consigner}</span>
+				</div>
+				<div class="info">
+					<label class="ns-text-color-gray">所在地址：</label>
+					<span>{$vo.address_info} {$vo.address}</span>
+				</div>
+				<div class="info">
+					<label class="ns-text-color-gray">手机：</label>
+					<span>{$vo.mobile}</span>
+				</div>
+				<div class="info">
+					<label class="ns-text-color-gray">固定电话：</label>
+					<span>{notempty name="$vo.phone"}{$vo.phone}{else/}尚未填写{/notempty}</span>
+				</div>
+				<div class="info">
+					<label class="ns-text-color-gray">邮编：</label>
+					<span>{notempty name="$vo.zip_code"}{$vo.zip_code}{else/}尚未填写{/notempty}</span>
+				</div>
+				<div class="address-tool">
+					{if !$vo.is_default}<a href="javascript:setDefault({$vo.id})">设为默认</a>{/if}
+					<a href="{:__URL('SHOP_MAIN/member/addressedit', 'address_id='.$vo['id'])}">编辑</a>
+					<a href="javascript:delAddress({$vo.id})">删除</a>
+				</div>
+			</li>
+			{/volist}
+		</ul>
+	</div>
+	<ul class="pager" data-ride="pager" data-elements="prev,nav,next,total_page_text,goto" data-rec-per-page="{$page_size}" data-page="{$page_index}" data-rec-total="{$total_count}" id="myPager"></ul>
+	{/notempty}
+</div>
+{/block}
+{block name="script"}
+<script src="WEB_JS/member_address.js"></script>
+{/block}

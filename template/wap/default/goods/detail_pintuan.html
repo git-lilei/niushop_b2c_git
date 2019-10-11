@@ -1,0 +1,163 @@
+{extend name="$goods_detail_base" /}
+{block name="goods_data"}
+<input type="hidden" id="hidden_order_type" value="4">
+<input type="hidden" id="hidden_promotion_type" value="0" />
+<input type="hidden" id="hidden_tuangou_group_id" value="{$group_id}">
+{/block}
+
+{block name="goods_promotion"}
+<!--拼团-->
+{assign name="show_price" value="$goods_detail['promotion_detail']['pintuan']['data']['tuangou_money']"}
+<div class="promotion-pintuan">
+	<div class="price-info ns-bg-color">
+		<div class="pintuan-money"><i class="yen">¥</i>{$goods_detail['promotion_detail']['pintuan']['data']['tuangou_money']}</div>
+		<div class="promotion-price">
+			{if $show_price < $goods_detail['price']}
+			<del>¥ {$goods_detail.price}</del>
+			{/if}
+			<span>{$goods_detail['sales']}{if condition ="empty($goods_detail['goods_unit'])"}{:lang('goods_piece')}{else/}{$goods_detail['goods_unit']}{/if}已售</span>
+		</div>
+	</div>
+	<div class="pintuan-type-name">{$goods_detail['promotion_detail']['pintuan']['data']['tuangou_type_info']['type_name']}</div>
+</div>
+{notempty name="$goods_detail['promotion_detail']['pintuan']['data']['tuangou_content_json']['colonel_content']"}
+<p class="pintuan-content ns-text-color">{$goods_detail['promotion_detail']['pintuan']['data']['tuangou_content_json']['colonel_content']}</p>
+{/notempty}
+<div class="blank-line ns-bg-color-gray"></div>
+{/block}
+
+{block name="goods_price"}
+<div class="blank-line ns-bg-color-gray"></div>
+{if condition="$goods_detail['promotion_detail'] && $goods_detail['promotion_detail']['pintuan'] && $goods_detail['promotion_detail']['pintuan']['data']['tuangou_group_count']==0"}
+
+<!--参与其他拼团-->
+{php}
+$pintuan_list = api('NsPintuan.Pintuan.pintuanList', ['page_index' => 1, 'page_size' => 0,'condition'=>"goods_id=$goods_id and status=1",'order' => 'create_time desc']);
+$pintuan_list = $pintuan_list['data'];
+{/php}
+{if condition="$pintuan_list['data']"}
+<div class="spelling-block">
+	<ul>
+		{foreach name="$pintuan_list['data']" item="vo" key="k"}
+		<li>
+			<div class="user-logo">
+				{if condition="$vo.group_user_head_img"}
+				<img src="{:__IMG($vo.group_user_head_img)}"/>
+				{else/}
+				<img src="{:__IMG($default_headimg)}"/>
+				{/if}
+			</div>
+			<span class="user-name">{$vo.group_name}</span>
+			<button class="ns-bg-color" data-group-id="{$vo.group_id}" data-poor-num="{$vo.poor_num}" data-end-time="{$vo.end_time}">去拼单</button>
+			<div class="info">
+				<span>还差<strong class="ns-text-color">{$vo.poor_num}人</strong>拼成</span>
+				<br/>
+				<input type="hidden" id="spelling_end_time{$k}" value="{$vo.end_time}"/>
+				<time id="remaining_time{$k}">剩余:00:00:00</time>
+			</div>
+		</li>
+		{/foreach}
+	</ul>
+</div>
+{/if}
+
+<div class="mask-layer-bg"></div>
+<div class="mask-layer-spelling">
+	<h3>参与<strong></strong>的拼单</h3>
+	<p>仅剩<strong class="ns-text-color">1</strong>个名额，<time>00:00:00后结束</time></p>
+	<img class="mask-layer-spelling-close" src="WAP_IMG/goods/mask_layer_spelling_close.png"/>
+	<div class="user-list">
+		<ul>
+			<li>
+				<span class="boss ns-bg-color">拼主</span>
+				<img src="WAP_IMG/member_default.png"/>
+			</li>
+			<li>
+				<img src="WAP_IMG/goods/spelling_who.png"/>
+			</li>
+		</ul>
+	</div>
+	<button class="ns-bg-color">参与拼单</button>
+</div>
+
+<div class="blank-line ns-bg-color-gray"></div>
+{/if}
+
+<div class="line ns-border-color-gray"></div>
+
+{/block}
+
+{block name="goods_action"}
+{if condition="$goods_detail['state'] == 1"}
+<div class="left-operation">
+	<a href="{:__URL('APP_MAIN')}">
+		<img src="WAP_IMG/goods/go_home.png"/>
+		<span>{:lang("home_page")}</span>
+	</a>
+	<a href="{$custom_service['value']['service_addr']}">
+		<img src="WAP_IMG/goods/kefux.png"/>
+		<span>{:lang('united_states_customer_service')}</span>
+	</a>
+	<a href="{:__URL('APP_MAIN/goods/cart')}">
+		<img src="WAP_IMG/goods/goods_cart.png"/>
+		<span class="ns-text-color-black">{:lang('goods_cart')}</span>
+		{if condition="$cart_count>0"}
+		<i class="have-cart-count ns-bg-color label badge circle">{$cart_count}</i>
+		{/if}
+	</a>
+</div>
+
+<div class="right-operation">
+	<!--拼团-->
+	{if condition="$goods_detail['promotion_detail']['pintuan']['data']['tuangou_group_count'] == 0"}
+	
+	<a href="javascript:;" class="add-to-cart pintuan" data-tag="buy_now" data-top-permissions="1" data-order-type="1">
+		<span class="goods-price">¥{if condition="$goods_detail.promotion_price < $goods_detail.member_price"}{$goods_detail.promotion_price}{else/}{$goods_detail.member_price}{/if}</span>
+		<br>
+		<span>{:lang('goods_alone_purchase')}</span>
+	</a>
+	<a href="javascript:;" class="buy-now pintuan" data-tag="buy_now" data-order-type="4">
+		<span class="goods-price">¥{$goods_detail['promotion_detail']['pintuan']['data']['tuangou_money']}</span>
+		<br>
+		<span class="click-font">{:lang('goods_start_share')}</span>
+	</a>
+	{else/}
+	
+	<a href="javascript:;" class="buy-now pintuan" data-tag="buy_now" data-order-type="4">
+		<span class="goods-price">¥{$goods_detail['promotion_detail']['pintuan']['data']['tuangou_money']}</span>
+		<br>
+		<span class="click-font">{:lang('join_together')}</span>
+	</a>
+	
+	{/if}
+
+</div>
+
+{else/}
+<div class="product-sold-out ns-bg-color-gray-shade-50">{:lang('goods_laid_off')}</div>
+{/if}
+
+</div>
+{/block}
+
+{block name="goods_current_info"}
+<div class="widgets-cover">
+	<div class="cover-content">
+		<div class="sku-wrap">
+			<div class="header">
+				<div class="img-wrap">
+					<img src="{:__IMG($goods_detail['img_list'][0]['pic_cover_small'])}"  alt="选中的产品图" class="js-thumbnail">
+				</div>
+				<div class="main">
+					<div class="price-wrap">
+						<!--拼团-->
+						<span class="price ns-text-color">¥{$goods_detail['promotion_detail']['pintuan']['data']['tuangou_money']}</span>
+					</div>
+					{if condition="$goods_detail.is_stock_visible == 1"}
+					<div class="stock">{:lang('goods_stock')}{$goods_detail.stock}{if condition ="empty($goods_detail['goods_unit'])"}{:lang('goods_piece')}{else/}{$goods_detail['goods_unit']}{/if}</div>
+					{/if}
+					<div class="sku-info">请选择：<span>-</span></div>
+				</div>
+				<a class="sku-close"><img src="WAP_IMG/goods/close.png"/></a>
+			</div>
+{/block}

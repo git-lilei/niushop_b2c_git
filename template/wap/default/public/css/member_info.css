@@ -1,0 +1,37 @@
+.personal-complete{background: #fff;}
+.button-submit{width:90%;margin:30px auto 0;}
+.buttons{display: none;}
+.button-submit button{font-size:15px;border:none;line-height:40px;height:40px;color: #fff;}
+.divInfo>.side-nav>li{margin:0 5px 0 10px;padding:0 0 0 5px;height: 50px;line-height: 50px;min-height: 35px;border-bottom: 1px solid;}
+.divInfo>.side-nav>li:first-child{padding:6px 0 8px;height: 60px;line-height: 60px;}
+.divInfo>.side-nav>li .title{display: inline-block;line-height: 34px;}
+.divInfo>.side-nav>li[isnew="False"] .cont-value{float: right;height: 34px;line-height: 34px;}
+.divInfo>.side-nav>li[isnew="False"] .cont-value .value{line-height: 50px;}
+.personal-center .side-nav{padding-top:7px;}
+.personal-center .value{font-size: 14px; float: right; margin-right: 10px; line-height: 48px;}
+.personal-center .value.tou-xiang{display: block;width: 40px;height: 40px;line-height: 37px;text-align: center;border-radius: 50%;border: 1px solid;overflow: hidden;float: left;}
+.personal-center .value img{max-width:100%;max-height:100%;height:auto;width:auto;vertical-align: middle; display: inline-block;}
+.mt-55.mlr-15 input{box-shadow: none;margin: 0;height:35px;line-height: 35px;border: none;max-width: 72%;min-width: 60%;display: inline-block;font-size: 14px;}
+.mt-55.mlr-15>div{min-height:52px;line-height:52px;padding-left:15px;overflow: hidden;background: #fff;}
+.mt-55.mlr-15>div:first-child{margin-top:-8px;}
+.mt-55.mlr-15>div>span{width: 28%;font-size: 14px;display: block;float:left;}
+.mt-55.mlr-15>div>span.left-img{width: 16%;}
+.mt-55.mlr-15>div>span>img{width: 26px;height:auto;float: left;margin-top: 16px;}
+.mt-55.mlr-15>div.three-bind{padding-left: 0;border-bottom: 1px solid;border-top: 1px solid;background-color: #fff; margin: 8px 0;height: initial;}
+.mt-55.mlr-15>div.three-bind ul{overflow: hidden;margin:0 0 0 0.5rem;}
+.mt-55.mlr-15>div.three-bind ul li{overflow: hidden;line-height: 35px;margin-bottom: 0;}
+.mt-55.mlr-15>div.three-bind ul li>img:first-child{float: left;margin-top: 12px;max-width: 26px;height: auto;}
+.mt-55.mlr-15>div.three-bind ul li>a{display: block;float: left;border-bottom: 1px solid;width: 91%;font-size: 14px;padding-left: 6px;height: 50px;line-height: 50px;}
+.mt-55.mlr-15>div.three-bind ul li>a:after{clear: both;}
+.mt-55.mlr-15>div.three-bind ul li:last-child>a{border-bottom:0;}
+.mt-55.mlr-15>div.three-bind ul li>a>div{float: right;}
+.mt-55.mlr-15>div.three-bind ul li>a>div span{margin-right: 10px;}
+.send-out-code{border: 1px solid !important;padding:0;width: 30px;border-radius: 4px;min-width: 25% !important; background:#fff; height: 25px;font-size: 12px;margin-left: 20px;}
+.imgs{margin-top: -28px;}
+button, .button{width:100%;height:50px;line-height:50px;padding:0;border-radius:3px;margin: 0 0 1.25rem;position: relative;display: inline-block;font-size: 1rem;}
+.mlr-15{display: none; width:100%;}
+.mlr-16{display: none;}
+.inputs{margin:0; height:50px; border-bottom:none;}
+.texts{box-shadow:none; margin:0; height:35px; border:none; width:auto; display:inline-block;}
+.mlr-18{display: none;margin: 8px 0 0;}
+.fa-angle-right{float: right;margin-top: 17px;font-size: 16px;margin-right: 10px;}

@@ -1,0 +1,6 @@
+.member-main{background: #fff; overflow: hidden; margin-top: 20px; padding: 20px;}
+.tab-pane{padding-top: 20px;}
+.tab-pane .btn-default{color: #fff; text-shadow: none;}
+.head-img{width: 120px; height: 120px; border: 1px solid; text-align: center; line-height: 100px; margin: 20px 0;}
+.head-img > div{width: 120px; height: 120px; margin: 0 auto; line-height: 120px;}
+.head-img > div img{max-height: 100%; padding: 5px;}

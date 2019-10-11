@@ -1,0 +1,54 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/member_recharge.css">
+{/block}
+{block name="main"}
+{php}
+$pay_no = api('System.Member.recharge');
+$pay_no = $pay_no['data'];
+{/php}
+<div class="detail-main">
+	<div class="payment">
+		<span>{:lang('member_amount_money')}</span>
+		<input id="pay_money" type="number" placeholder ="{:lang('member_input_balance')}"  onblur="check_pay_money(this)">
+	</div>
+	<input type="hidden" id="pay_no" value="{$pay_no}">
+	<button class="ns-bg-color" type="button" onclick="calculateRecharge()">{:lang('confirm_payment')}</button>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+var lang_member_recharge = {
+	member_amount_greater_zero : "{:lang('member_amount_greater_zero')}",
+	member_recharge_failed : "{:lang('member_recharge_failed')}"
+};
+function check_pay_money(event){
+	var pay_money = parseFloat($(event).val()).toFixed(2);
+	if(isNaN(pay_money)){
+		pay_money = 0.00; 
+	}
+	$(event).val(pay_money);
+}
+var is_submit = false;
+function calculateRecharge(){
+	var pay_no = $("#pay_no").val();
+	var pay_money = $("#pay_money").val();
+	if(pay_money < 0 || pay_money == '' || pay_money == 0){
+		$("#pay_money").val(0).focus();
+		toast(lang_member_recharge.member_amount_greater_zero);
+		return;
+	}
+	if(is_submit) return;
+	is_submit = true;
+	api('System.Member.createRechargeOrder', {"recharge_money": pay_money, "out_trade_no": pay_no}, function(res) {
+      	if(res.data>0){
+      		window.location.href = __URL(APPMAIN+"/pay/getpayvalue?out_trade_no="+pay_no);
+       	}else{
+			is_submit = false;
+       		toast(lang_member_recharge.member_recharge_failed);
+       	}
+	})
+}
+</script>
+{/block}
+{block name="footer"}{/block}

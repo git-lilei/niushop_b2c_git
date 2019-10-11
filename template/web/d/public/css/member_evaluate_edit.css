@@ -1,0 +1,31 @@
+body{background-color: #f0f3ef;}
+.member-evaluate-edit{margin-top: 30px;}
+.evaluation-product-item{overflow: hidden;margin-top: 30px;}
+.evaluation-product-left{float: left;width: 322px;height: 295px;padding: 55px 50px;background-color: #fff;text-align: center;}
+.center-block,.center-block img{display: inline-block;width: 100px;height: 100px;margin-top: 10px;}
+.product-name{overflow: hidden;display: inline-block; width: 150px; height: 20px; margin: 15px 0 5px; white-space: nowrap; text-overflow: ellipsis; font-size: 12px;}
+.price{overflow: hidden;display: inline-block;width: 150px;white-space: nowrap; text-overflow: ellipsis;}
+.evaluation-product-right{float: right;width: 878px;height: 295px;padding: 30px 40px 0;background-color: #fff;font-size: 12px;}
+.level-block{overflow: hidden;}
+.level-item{float: left;height: 30px;margin-right: 10px;line-height: 30px;}
+.col-sm-1{display:inline-block;width: 74px;height: 30px;padding: 0;}
+.star-class{overflow: hidden;display:inline-block;width: 175px;height: 30px;}
+.star-class > li{float: left;width: 25px;height: 30px;}
+.evaluation-tips{overflow: hidden;height: 35px;line-height: 35px;margin-bottom: 10px;}
+.tab-pane{overflow: hidden;display: inline-block;}
+.tab-pane > div{float:left;}
+.head-img{width: 50px;height: 50px;}
+.upload-item-list > div{float: left;margin-right: 6px;}
+.file-item{position: relative;}
+.file-item:hover .file-panel{display: block;}
+.file-panel{display: none;position: absolute; color: #fff; top: 0; text-align: center; width: 100%; background-color: rgba(0,0,0,.5);cursor: pointer;}
+.file-item > img{width: 50px;height: 50px;}
+.upload-img{display: inline-block;width: 50px;height: 50px;background-image: url("../img/evaluate/bg_upload.png");}
+.evaluation-tips .checkbox{float: right;margin: auto 20px auto auto;}
+.evaluation-tips .checkbox input{width: 15px; height: 15px; margin-top: 10px;}
+.evaluation-msg-val{width: 100%;height: 80px;padding: 10px;resize: none;}
+.evaluation-msg-tips{float: right;margin-top: 5px;}
+.evaluation-msg{overflow: hidden;}
+.evaluation-img > span{display: inline-block;height: 50px;line-height: 50px;vertical-align: top;}
+.evaluation-product-bottom{float: left;width: 100%;height: 100px;margin-top: 15px;background-color: #fff;line-height: 100px;text-align: center;margin-bottom: 20px;}
+.btn{width: 80px;height: 40px;}

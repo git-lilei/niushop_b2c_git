@@ -1,0 +1,242 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" href="WAP_CSS/goods_cart.css">
+<link rel="stylesheet" href="WAP_CSS/goods_recommend.css">
+{/block}
+{block name="main"}
+{php}
+	// 购物车数据
+	$cart_data = api('System.Goods.cartList');
+	// 商品推荐
+	$goods_recommend = api('System.Goods.guessMemberLikes');
+	$goods_recommend = $goods_recommend['data'];
+	// 底部导航配置
+	$data = api('System.Config.bottomNav');
+	$nav_list = $data['data'];
+	$nav_width = 100/count($nav_list['template_data']);
+	$this_url = strtolower(request()->controller().'/'.request()->action());
+{/php}
+{if $cart_data.code == 0}
+	{assign name="list" value="$cart_data.data.cart_list"}
+	{assign name="goods_ladder_preferential" value="$cart_data.data.goods_ladder_preferential"}
+
+	{notempty name="$list"}
+	<div class="cart-detail">
+		{assign name="title" value="$list[0]['shop_name']"}
+
+		<section class="cart-prolist">
+			<ul class="cart-prolist-ul">
+				<li>
+					<h2 class="title">
+						<div class="custom-store-img"></div>
+						{:lang('shop_name')}：{$title}
+						<div class="cart-ed" >
+							<a id="cart_edit" class="dis-b" onclick="cart_edit(this)">{:lang('edit')}</a>
+							<a id="edit_success" onclick="cart_succ(this)" class="dis-no">{:lang('member_complete')}</a>
+						</div>
+					</h2>
+				</li>
+				{foreach name="list" item="cart_item" key="k"}
+				<li class="cart-list-li">
+					<i class="checkbox fa fa-check-circle ns-text-color" is_check="yes" is_del='no'></i>
+					<div class="product">
+						<div class="pic ns-border-color-gray">
+							<a href="{:__URL('APP_MAIN/goods/detail?goods_id='.$cart_item['goods_id'])}">
+								{if condition="!empty($cart_item['picture_info'])"}
+								<img src="{:__IMG($cart_item['picture_info']['pic_cover_big'])}" alt="{:lang('goods_image')}">
+								{else/}
+								<img src="{:__IMG($default_goods_img)}" alt="{:lang('goods_image')}">
+								{/if}
+							</a>
+						</div>
+ 						<div class="info">
+							<p class="info-name">
+								<a href="{:__URL('APP_MAIN/goods/detail?goods_id='.$cart_item['goods_id'])}">{$cart_item.goods_name}<span class="ns-text-color-gray"><br />
+								{notempty name="$cart_item['sku_name']"}
+								规格：{$cart_item.sku_name}
+								{/notempty}</span>
+								</a>
+							</p>
+							<input type="hidden" name="sku_id" value="{$cart_item.sku_id}">
+							<div class="number ns-text-color">
+								¥<span name="goods_price" data-promotion-price="{$cart_item['promotion_price']}">{$cart_item.price}</span>
+								{if condition="$cart_item.point_exchange_type==1 "}
+								<span name="goods_integral" data-point="{$cart_item.point_exchange}">
+									{if condition=" $cart_item.point_exchange>0"}
+										+{$cart_item.point_exchange}{:lang('goods_integral')}
+									{/if}
+								</span>
+								{/if}
+								<div class="num-change">
+									<span class="ui-number">
+										<button type="button" class="decrease ns-border-color-gray-shade-20 ns-bg-color-gray-fadeout-60" onclick="Cart.changeBar(&#39;-&#39;,{$cart_item.cart_id},this,{$cart_item.goods_id})" title="{:lang('member_reduce')}">-</button>
+										<input class="num ns-border-color-gray-shade-20" name="quantity" autocomplete="off" data-default-num="{$cart_item.num}" value="{$cart_item.num}" min="1" max="{$cart_item.stock}" min_buy="{$cart_item.min_buy}" max_buy="{$cart_item.max_buy}" data-cartid="{$cart_item.cart_id}">
+										<button type="button" class="increase ns-border-color-gray-shade-20 ns-bg-color-gray-fadeout-60" onclick="Cart.changeBar(&#39;+&#39;,{$cart_item.cart_id},this,{$cart_item.goods_id})" title="{:lang('plus')}">+</button>
+									</span>
+									<span name="succ_amount" class="dis-no">{$cart_item.num}</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</li>
+				{/foreach}
+				<li class="cart-list-foot"></li>
+			</ul>
+		</section>
+	</div>
+	<section class="cart-none dis-no" id="cart_none">
+		<i class="cart-big"></i>
+		<p class="text">{:lang('your_shopping_cart_is_not_available_yet')}！</p>
+		<a href="{:__URL('APP_MAIN')}" class="btn primary">{:lang('go_for_a_stroll')}</a>
+	</section>
+	{else/}
+		<section class="cart-none" id="cart_none">
+			<i class="cart-big"></i>
+			<p class="text">{:lang('your_shopping_cart_is_not_available_yet')}！</p>
+			<a href="{:__URL('APP_MAIN')}" class="btn primary">{:lang('go_for_a_stroll')}</a>
+		</section>
+
+		{notempty name="$goods_recommend['data']"}
+		<!-- start 商品推荐 start -->
+		<div class="space"></div>
+		<div class="recommend-container">
+			<div class="head">
+				<div class="list-title">
+					<div class="title-left">
+						<div class="title-left-first"></div>
+						<div class="title-left-second"></div>
+					</div>
+					<span class="left-nav ns-text-color-black">为您推荐</span>
+					<div class="title-right">
+						<div class="title-left-first"></div>
+						<div class="title-left-second"></div>
+					</div>
+				</div>
+			</div>
+			<ul class="goods-list clearfix">
+				{foreach name="$goods_recommend['data']" item="vo"}
+				<li class="goods-item">
+					<div class="imgs">
+						<a href="{:__URL('APP_MAIN/goods/detail?goods_id='.$vo['goods_id'])}">
+							<img src="{:__IMG($vo['pic_cover_mid'])}">
+						</a>
+					</div>
+					<div class="info">
+						<p class="goods-title">
+							<a class="ns-text-color-black" href="{:__URL('APP_MAIN/goods/detail?goods_id='.$vo['goods_id'])}">{$vo.goods_name}</a>
+						</p>
+						<div class="goods-info">
+							<span class="goods_price ns-text-color">
+								<em>￥{$vo.price}</em>
+							</span>
+						</div>
+					</div>
+				</li>
+				{/foreach}
+			</ul>
+		</div>
+		<!-- end 商品推荐 end -->
+		{/notempty}
+
+	{/notempty}
+	<input type="hidden" id="countlist" value="{$countlist}">
+	<input type="hidden" id="goods_ladder_preferential" value='{$goods_ladder_preferential}'>
+{/block}
+
+{block name="footer"}
+	{notempty name="list"}
+	<div class="btn-wrap btn-wrap-static">
+		<div class="btn" id="div_selected">
+			<div class="all-election">
+				<i class="fa fa-check-circle ns-text-color" is_check="yes" is_del='no' id="select_all"></i>
+			</div>
+			<span id="sel_text" class="ns-text-color-black">{:lang('goods_select_all')}</span>
+		</div>
+		<div id="price_info" class="ns-text-color">
+			{:lang('summation')}： ¥<span id="orderprice" class="price"></span>
+			<br/>
+		</div>
+		<button class="btn btn-buy ns-bg-color" onclick="settlement()">
+			<span id="settlement">{:lang('settle_accounts')}()</span>
+		</button>
+	</div>
+	{else/}
+		{if strpos($nav_list['showPage'], $this_url) !== false}
+		<div class="bottom-menu">
+			<ul>
+				{foreach $nav_list['template_data'] as $k => $v}
+				<li class="selected" style="width:{$nav_width}%">
+			 	    <a href="{:__URL($v['href'])}">
+					{if strpos(__URL($v['href']), $this_url) !== false && $this_url != ''}
+						<div id="bottom_home">
+							<img src="{:__IMG($v['img_src_hover'])}" data-hover-src="{:__IMG($v['img_src'])}">
+						</div>
+				        <!--style="color:{$v['color_hover']}"-->
+						<span data-hover-color="{$v['color']}" class="ns-text-color">{$v['menu_name']}</span>
+						{else /}
+						<div id="bottom_home">
+							<img src="{:__IMG($v['img_src'])}" data-hover-src="{:__IMG($v['img_src_hover'])}">
+						</div>
+				        <!--style="color:{$v['color']}"-->
+						<span data-hover-color="{$v['color_hover']}">{$v['menu_name']}</span>
+						{/if}
+					</a>
+				</li>
+				{/foreach}
+			</ul>
+		</div>
+		<div></div>
+		{/if}
+	{/notempty}
+{else/}
+	<section class="cart-none" id="cart-none">
+		<i class="cart-big"></i>
+		<p class="text ns-text-color-gray">您还没有登录，请先登录!</p>
+		<a href="{:__URL('APP_MAIN/login')}" class="btn primary">去登录</a>
+	</section>
+	{if strpos($nav_list['showPage'], $this_url) !== false}
+	<div class="bottom-menu">
+		<ul>
+			{foreach $nav_list['template_data'] as $k => $v}
+			<li class="selected" style="width:{$nav_width}%">
+		 	    <a href="{$v.href}">
+				{if strpos(__URL($v['href']), $this_url) !== false && $this_url != ''}
+					<div id="bottom_home">
+						<img src="{:__IMG($v['img_src_hover'])}" data-hover-src="{:__IMG($v['img_src'])}">
+					</div>
+					<span data-hover-color="{$v['color']}" class="ns-text-color">{$v['menu_name']}</span>
+					{else /}
+					<div id="bottom_home">
+						<img src="{:__IMG($v['img_src'])}" data-hover-src="{:__IMG($v['img_src_hover'])}">
+					</div>
+					<span data-hover-color="{$v['color_hover']}">{$v['menu_name']}</span>
+					{/if}
+				</a>
+			</li>
+			{/foreach}
+		</ul>
+	</div>
+	<div></div>
+	{/if}
+{/if}
+{/block}
+{block name="script"}
+<script type="text/javascript">
+//解决 在IOS手机中，点击左上角返回按钮不会刷新当前页面的问题 2018年1月27日17:45:40
+var isPageHide = false;
+window.addEventListener('pageshow', function () {
+	if (isPageHide) location.href=__URL(APPMAIN+"/goods/cart");
+});
+window.addEventListener('pagehide', function () {
+	isPageHide = true;
+});
+//页面加载触发事件
+$(function () {
+	if(parseInt($("#countlist").val()) == 0){
+		$(".cart-prolist").hide();
+		$("#cart_none").show();
+	}
+});
+</script>
+<script src="WAP_JS/goods_cart.js" type="text/javascript"></script>
+{/block}

@@ -1,0 +1,100 @@
+{extend name="$base" /}
+{block name="resources"}{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt><span class="required">*</span>物流公司名称：</dt>
+		<dd>
+			<p>
+				<input id="company_name" type="text" class="input-common">
+			</p>
+			<p class="error">请输入物流公司名称</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span class="required">*</span>物流公司编码：</dt>
+		<dd>
+			<p><input id="express_no" type="text" class='input-common'></p>
+			<p class="error">请输入物流公司编码</p>
+			<p class="hint">
+				请注意输入对应快递查询的物流公司编码，例如快递鸟，快递100
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>联系电话：</dt>
+		<dd>
+			<p><input id="phone" type="text" class="input-common"></p>
+			<p class="error">联系电话格式不正确</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>物流公司logo：</dt>
+		<dd>
+			<div class="upload-btn-common">
+				<div>
+					<input class="input-file" name="file_upload" id="uploadLogo" type="file" onchange="imgUpload(this);" title="上传">
+					<input type="hidden" id="logo" value="">
+				</div>
+				
+				<input type="text" id="text_logo" class="input-common" readonly="readonly" value="">
+				<em>上传</em>								
+				<img id="preview_logo" src="__STATIC__/blue/img/upload-common-select.png" data-src="" data-html="true" data-container="body" data-placement="top" data-trigger="manual" data-original-title="" title="">
+			</div>
+			<p class="hint">
+				建议使用<i class="important-note">宽100</i>像素-<i class="important-note">高100</i>像素内的<i class="important-note">GIF</i>或<i class="important-note">PNG</i>透明图片；点击下方"保存"按钮后生效。
+			</p>
+			<p class="error">请上传图片</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>排序：</dt>
+		<dd>
+			<p><input id="orders" type="number" class="input-common harf"></p>
+			<p class="error">请输入排列序号</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否启用物流：</dt>
+		<dd><input id="is_enabled" type="checkbox" class="checkbox" checked="checked" /></dd>
+	</dl>
+	
+	<dl>
+		<dt>是否设置为默认：</dt>
+		<dd><input id="is_default" type="checkbox" class="checkbox"/></dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="addExpressCompanyAjax();">保存</button>
+			<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);" >返回</button>
+		</dd>
+	</dl>
+</div>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script src="ADMIN_JS/express/add_express_company.js"></script>
+<script>
+//图片上传
+function imgUpload(event) {
+	var fileid = $(event).attr("id");
+	var id = $(event).next().attr("id");
+	var data = { 'file_path' : "express" };
+	uploadFile({
+		url: __URL(ADMINMAIN + '/express/uploadimage'),
+		fileId: fileid,
+		data : data,
+		callBack: function (res) {
+			if(res.code){
+				$("#" + id).val(res.data.path);
+				$("#text_" + id).val(res.data.path);
+				$("#preview_"+ id).attr("data-src",__IMG(res.data.path));
+				showTip(res.message,"success");
+			}else{
+				showTip(res.message,"error");
+			}
+		}
+	});
+}
+</script>
+{/block}

@@ -1,0 +1,28 @@
+{extend name="$member_base" /}
+{block name="right_main"}
+<style>
+.member-main{background: #fff;overflow: hidden;margin-top: 20px;padding: 20px;}
+.member-main .info{text-align: center;}
+</style>
+{php}
+$res = api("System.Member.pointExchangeBalance",['amount'=>$amount]);
+$res = $res['data'];
+{/php}
+<div class="member-main">
+	<div class="main-top">
+		<div class="title">{:lang('member_exchange_points')}</div>
+	</div>
+	<p class="ns-text-color text20 info">{:lang('member_successful_exchange')}</p>
+</div>
+{/block}
+{block name="script"}
+<script>
+$(function(){
+	{if $res['data'] == 1}
+	setTimeout(function(){
+		window.location = __URL("SHOP_MAIN/member/point");
+	},1000);
+	{/if}
+});
+</script>
+{/block}

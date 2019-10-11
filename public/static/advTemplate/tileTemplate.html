@@ -1,0 +1,212 @@
+<style type="text/css">
+	.{$rand_str}-item{ width: 100%;height: 100%;flex: 1; }
+	.{$rand_str}-item a{ display: block; width: 100%;height: 100%; }
+	.{$rand_str}-item a img{ display: block;width: 100%;height: 100%; }
+	div[class^='layout']{ width: 100%;height:100%;display: flex; }
+	/* 一行一个  一行两个  一行三个  一行四个*/
+	.layout-zero .{$rand_str}-item,.layout-one .{$rand_str}-item,.layout-two .{$rand_str}-item,.layout-three .{$rand_str}-item{ flex: 1; }
+	/* 两左两右 */
+	.layout-four{ flex-wrap: wrap; }
+	.layout-four .{$rand_str}-item{ flex-basis: 50%;height: 50%; }
+	/* 一左两右 */
+	.layout-five .{$rand_str}-right .{$rand_str}-item{ height: 50%; }
+	/* 一上两下 */
+	.layout-six{ flex-wrap: wrap; }
+	.layout-six .{$rand_str}-top,.layout-six .{$rand_str}-buttom{width: 100%;height: 50%;}
+	.layout-six .{$rand_str}-buttom{ display: flex; }
+	/* 一左三右 */
+	.layout-seven .left,.layout-seven .{$rand_str}-right{width: 50%;}
+	.layout-seven .{$rand_str}-right .{$rand_str}-top,.layout-seven .{$rand_str}-right .{$rand_str}-buttom{width: 100%;height: 50%;}
+	.layout-seven .{$rand_str}-right .{$rand_str}-buttom{flex-wrap: nowrap;}
+	.layout-seven .{$rand_str}-right .{$rand_str}-buttom .{$rand_str}-item{width: 50%;float: left;}
+
+	{if $info.type eq 1}
+	.adv-container-{$rand_str}{display: inline-block;width: {$info.ap_width}px;height: {$info.ap_height}px;}
+	{else/}
+	.adv-container-{$rand_str}{width: 100%;position: relative;}
+	.adv-container-{$rand_str}:before{content: '';padding-top: 50%;display: block;}
+	.adv-container-{$rand_str} > div {position: absolute;width: 100%;height: 100%;top: 0;left: 0;}
+	{/if}
+</style>
+<div class="adv-container-{$rand_str}">
+	{switch name="$info['layout']"}
+		{case value="1"}
+			<!-- 一行一个 -->
+			<div class="layout-zero">
+				<div class="{$rand_str}-item" style="width: 100%;height: 100%;">
+					{if $info.type eq 1}
+					<a href="{:__URL('SHOP_MAIN'.$info['advs'][0]['adv_url'])}"  target="_blank">
+					{else/}
+					<a href="{:__URL('APP_MAIN'.$info['advs'][0]['adv_url'])}"  target="_blank">
+					{/if}
+						<img src="{:__IMG($info['advs'][0]['adv_image'])}">
+					</a>
+				</div>
+			</div>
+		{/case}
+		{case value="2"}
+			<!-- 一行两个 -->
+			<div class="layout-one">
+				{for start="0" end="2" }
+				<div class="{$rand_str}-item">
+					{if $info.type eq 1}
+					<a href="{:__URL('SHOP_MAIN'.$info['advs'][$i]['adv_url'])}"  target="_blank">
+					{else/}
+					<a href="{:__URL('APP_MAIN'.$info['advs'][$i]['adv_url'])}"  target="_blank">
+					{/if}
+						<img src="{:__IMG($info['advs'][$i]['adv_image'])}">
+					</a>
+				</div>
+				{/for}
+			</div>
+		{/case}
+		{case value="3"}
+			<!-- 一行三个 -->
+			<div class="layout-two">
+				{for start="0" end="3" }
+				<div class="{$rand_str}-item">
+					{if $info.type eq 1}
+					<a href="{:__URL('SHOP_MAIN'.$info['advs'][$i]['adv_url'])}"  target="_blank">
+					{else/}
+					<a href="{:__URL('APP_MAIN'.$info['advs'][$i]['adv_url'])}"  target="_blank">
+					{/if}
+						<img src="{:__IMG($info['advs'][$i]['adv_image'])}">
+					</a>
+				</div>
+				{/for}
+			</div>
+		{/case}
+		{case value="4"}
+			<!-- 一行四个 -->
+			<div class="layout-three">
+				{for start="0" end="4" }
+				<div class="{$rand_str}-item">
+					{if $info.type eq 1}
+					<a href="{:__URL('SHOP_MAIN'.$info['advs'][$i]['adv_url'])}"  target="_blank">
+					{else/}
+					<a href="{:__URL('APP_MAIN'.$info['advs'][$i]['adv_url'])}"  target="_blank">
+					{/if}
+						<img src="{:__IMG($info['advs'][$i]['adv_image'])}">
+					</a>
+				</div>
+				{/for}
+			</div>
+		{/case}
+		{case value="5"}
+			<!-- 两左两右 -->
+			<div class="layout-four">
+				{foreach name="$info['advs']" item="vo"}
+				<div class="{$rand_str}-item">
+					{if $info.type eq 1}
+					<a href="{:__URL('SHOP_MAIN'.$vo['adv_url'])}"  target="_blank">
+					{else/}
+					<a href="{:__URL('APP_MAIN'.$vo['adv_url'])}"  target="_blank">
+					{/if}
+						<img src="{:__IMG($vo['adv_image'])}">
+					</a>
+				</div>
+				{/foreach}
+			</div>
+		{/case}
+		{case value="6"}
+			<!-- 一左两右 -->
+			<div class="layout-five">
+				<div class="left">
+					<div class="{$rand_str}-item">
+						{if $info.type eq 1}
+						<a href="{:__URL('SHOP_MAIN'.$info['advs'][0]['adv_url'])}"  target="_blank">
+						{else/}
+						<a href="{:__URL('APP_MAIN'.$info['advs'][0]['adv_url'])}"  target="_blank">
+						{/if}
+							<img src="{:__IMG($info['advs'][0]['adv_image'])}">
+						</a>
+					</div>
+				</div>
+				<div class="{$rand_str}-right">
+					{for start="1" end="3" }
+					<div class="{$rand_str}-item">
+						{if $info.type eq 1}
+						<a href="{:__URL('SHOP_MAIN'.$info['advs'][$i]['adv_url'])}"  target="_blank">
+						{else/}
+						<a href="{:__URL('APP_MAIN'.$info['advs'][$i]['adv_url'])}"  target="_blank">
+						{/if}
+							<img src="{:__IMG($info['advs'][$i]['adv_image'])}">
+						</a>
+					</div>
+					{/for}
+				</div>
+			</div>
+		{/case}
+		{case value="7"}
+			<!-- 一上两下 -->
+			<div class="layout-six">
+				<div class="{$rand_str}-top">
+					<div class="{$rand_str}-item">
+						{if $info.type eq 1}
+						<a href="{:__URL('SHOP_MAIN'.$info['advs'][0]['adv_url'])}"  target="_blank">
+						{else/}
+						<a href="{:__URL('APP_MAIN'.$info['advs'][0]['adv_url'])}"  target="_blank">
+						{/if}
+							<img src="{:__IMG($info['advs'][0]['adv_image'])}">
+						</a>
+					</div>
+				</div>
+				<div class="{$rand_str}-buttom">
+					{for start="1" end="3" }
+					<div class="{$rand_str}-item">
+						{if $info.type eq 1}
+						<a href="{:__URL('SHOP_MAIN'.$info['advs'][$i]['adv_url'])}"  target="_blank">
+						{else/}
+						<a href="{:__URL('APP_MAIN'.$info['advs'][$i]['adv_url'])}"  target="_blank">
+						{/if}
+							<img src="{:__IMG($info['advs'][$i]['adv_image'])}">
+						</a>
+					</div>
+					{/for}
+				</div>
+			</div>
+		{/case}
+		{case value="8"}
+			<!-- 一左三右 -->
+			<div class="layout-seven">
+				<div class="left">
+					<div class="{$rand_str}-item">
+						{if $info.type eq 1}
+						<a href="{:__URL('SHOP_MAIN'.$info['advs'][0]['adv_url'])}"  target="_blank">
+						{else/}
+						<a href="{:__URL('APP_MAIN'.$info['advs'][0]['adv_url'])}"  target="_blank">
+						{/if}
+							<img src="{:__IMG($info['advs'][0]['adv_image'])}">
+						</a>
+					</div>
+				</div>
+				<div class="{$rand_str}-right">
+					<div class="{$rand_str}-top">
+						<div class="{$rand_str}-item">
+							{if $info.type eq 1}
+							<a href="{:__URL('SHOP_MAIN'.$info['advs'][1]['adv_url'])}"  target="_blank">
+							{else/}
+							<a href="{:__URL('APP_MAIN'.$info['advs'][1]['adv_url'])}"  target="_blank">
+							{/if}
+								<img src="{:__IMG($info['advs'][1]['adv_image'])}">
+							</a>
+						</div>
+					</div>
+					<div class="{$rand_str}-buttom">
+						{for start="2" end="4" }
+						<div class="{$rand_str}-item">
+							{if $info.type eq 1}
+							<a href="{:__URL('SHOP_MAIN'.$info['advs'][$i]['adv_url'])}"  target="_blank">
+							{else/}
+							<a href="{:__URL('APP_MAIN'.$info['advs'][$i]['adv_url'])}"  target="_blank">
+							{/if}
+								<img src="{:__IMG($info['advs'][$i]['adv_image'])}">
+							</a>
+						</div>
+						{/for}
+					</div>
+				</div>
+			</div>
+		{/case}
+	{/switch}
+</div>

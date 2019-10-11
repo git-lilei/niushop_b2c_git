@@ -1,0 +1,193 @@
+{extend name="$base" /}
+{block name="resources"}
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+<style  type="text/css">
+.help-inline{height: 30px;line-height: 30px;}
+input[type="radio"]{margin-top:6px;}
+</style>
+{/block}
+{block name="main"}
+<div class="space-10"></div>
+<div class="set-style">
+	<dl>
+		<dt>活动名称：</dt>
+		<dd><input type="text" id="bargain_name" maxlength="10" class="input-common"><p class="error">请输入活动名称</p></dd>
+	</dl>
+	<dl>
+		<dt>活动有效期：</dt>
+		<dd>
+			<input class="input-medium input-common harf" type="text" id="start_time" style="width:250px;"onclick="WdatePicker({skin:'twoer',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+			<span class="mlr5">-</span> 
+			<input class="input-medium input-common harf" size="15" type="text" id="end_time" style="width:250px;"onclick="WdatePicker({skin:'twoer',dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+			<p class="error">请输入活动有效期</p>
+			<p class="error">活动结束时间不能小于当前时间</p>
+			<p class="error">活动结束时间不能小于开始时间</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>首刀比例</dt>
+		<dd>
+			<input type="number" id = "one_min_rate" name = "one_min_rate" class="input-common harf"/>
+			<span class="mlr5">-</span>
+			<input type="number" id = "one_max_rate" name = "one_max_rate" class="input-common harf"/> 
+			<span class="mlr5">%</span>
+			<p class="error">请输入活动首刀比率</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>至少需要砍的次数</dt>
+		<dd>
+			<input type="number" id = "bargain_min_number" name = "bargain_min_number" class="input-common harf"/>
+			<span class="mlr5">次</span>	
+			<p class="error">请输入需要砍的次数</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>可砍到的最低比例</dt>
+		<dd>
+			<input type="number" id = "bargain_min_rate" name = "bargain_min_rate" class="input-common harf"/>
+			<span class="mlr5">%</span>	
+			<p class="error">请输入可砍刀的最低比例</p>
+		</dd>
+	</dl>
+	<!-- ******************************************* start 选择商品 start ******************************************* -->
+	<!-- 
+		is_limit_sku 是否限制只查询单规格商品 1限制 0不限制
+		is_many_select 是否可多选 1可多选 0只能单选
+		is_limit_skock 是否只查询有库存的商品 1只查询有库存商品 0不限制
+		is_limit_state 是否只查询已上架商品 1只查询上架商品 0不限制
+		is_limit_goods_type 是否限制只查询实物商品 1限制 0不限制
+	 -->
+	<input type="hidden" id="range_type" value="0">
+	<input type="hidden" id="is_show_select" value="0">
+	<input type="hidden" id="goods_id_array" value="">
+	<input type="hidden" id="select-goods-limit" value='{"is_limit_sku" : 0, "is_many_select" : 1, "is_limit_skock" : 1, "is_limit_state" : 1, "is_limit_goods_type" : 0}'>
+	{include file="admin/Promotion/goodsSelectDialog"/}
+	<!-- ******************************************* end 选择商品 end ******************************************* -->
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="addDiscount();">保存</button>
+			<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);">返回</button>
+		</dd>
+	</dl>
+</div>
+<script>
+var flag = false;//防止重复提交
+function addDiscount(){
+	var bargain_name = $("#bargain_name").val();
+	var start_time = $("#start_time").val();
+	var end_time = $("#end_time").val();
+	var bargain_min_rate = $('#bargain_min_rate').val();
+	var bargain_min_number = $('#bargain_min_number').val();
+	var one_min_rate = $('#one_min_rate').val();
+	var one_max_rate = $('#one_max_rate').val();
+	var goods_id_array = $("#goods_id_array").val();
+	if(verify(bargain_name, start_time, end_time, one_min_rate, one_max_rate, bargain_min_rate, bargain_min_number, goods_id_array)){
+		if(flag){
+			return;
+		}
+		$.ajax({
+			type : "post",
+			url : "{:__URL('__URL__/NsBargain/ADMIN_MODULE/bargain/ajaxAddEditBargain')}",
+			data : {
+				'bargain_name' : bargain_name,
+				'start_time' : start_time,
+				'end_time' : end_time,
+				'bargain_min_rate' : bargain_min_rate,
+				'bargain_min_number' : bargain_min_number,
+				'one_min_rate' : one_min_rate,
+				'one_max_rate' : one_max_rate,
+				'goods_id_array' : goods_id_array
+			},
+			success : function(data) {
+				if (data["code"] > 0) {
+					showMessage('success', data["message"],"{:__URL('__URL__/NsBargain/ADMIN_MODULE/bargain/index')}");
+				}else{
+					showMessage('error', data["message"]);
+					flag = false;
+				}
+			}
+		});
+	}
+}
+
+/**
+*模块输入信息验证
+*/
+function verify(bargain_name, start_time, end_time,  one_min_rate, one_max_rate, bargain_min_rate, bargain_min_number, goods_id_array){
+	if(bargain_name == ''){
+		$("#bargain_name").parent().find('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(start_time == '' || end_time == ''){
+		$("#end_time").next('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	var dataTime = nowDate();
+	var now = new Date(dataTime.replace("-", "/").replace("-", "/"));
+	var end = new Date(end_time.replace("-", "/").replace("-", "/"));
+	var start = new Date(start_time.replace("-", "/").replace("-", "/"));
+	if(end < now){
+		$("#end_time").next().next('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(end < start){
+		$("#end_time").next().next().next('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	
+	if(one_min_rate == '' || one_max_rate == ''){
+		$("#one_max_rate").next().next('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(bargain_min_number == ''){
+		$("#bargain_min_number").parent().find('.error').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(bargain_min_rate == ''){
+		$("#bargain_min_rate").parent().find('.error').show();
+		return false;
+	}else{
+		$('.error').hide();
+	}
+	
+	if(BatchSend.length == 0){
+		$(".js-select-goods").find(".error").html('请至少选择一件商品').show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	
+	return true;
+}
+
+function nowDate(){
+	var myDate = new Date();
+	//获取当前年
+	var year=myDate.getFullYear();
+	//获取当前月
+	var month=myDate.getMonth()+1;
+	//获取当前日
+	var date=myDate.getDate(); 
+	var h=myDate.getHours();//获取当前小时数(0-23)
+	var m=myDate.getMinutes();//获取当前分钟数(0-59)
+	var s=myDate.getSeconds();
+	var now=year+'-'+month+"-"+date+" "+h+':'+m+":"+s;
+	return now;
+}
+</script>
+{/block}

@@ -1,0 +1,147 @@
+{extend name="$member_base" /}
+{block name="right_main"}
+<link rel="stylesheet" href="WEB_CSS/member_balance_withdrawal.css">
+{php}
+// 提现账号
+$account_list = api("System.Member.accountQuery");
+$account_list = $account_list['data'];
+
+// 提现配置
+$withdraw_config = api("System.Config.balanceWithdraw");
+$withdraw_config = $withdraw_config['data'];
+$withdraw_account_type = $withdraw_config['value']['withdraw_account'];
+$cash = $balanceConfig['value']["withdraw_cash_min"];
+$poundage = $withdraw_config['value']["withdraw_multiple"];
+$withdraw_message = $withdraw_config['value']["withdraw_message"];
+// 会员账户信息
+$member_account = api("System.Member.memberAccount");
+$member_account = $member_account['data'];
+{/php}
+<div class="member-main">
+	<div class="main-top clearfix">
+		<h3 class="title pull-left">余额提现</h3>
+	</div>
+	{eq name="$withdraw_config['is_use']" value="1"}
+	<div class="form-horizontal">
+  		<div class="form-group">
+    		<label class="col-sm-2">可提现金额：</label>
+		 	<div class="col-md-6 col-sm-6">
+		 		<em class="balance">{$member_account['balance']}</em>
+    		</div>
+  		</div>
+  		<div class="form-group">
+    		<label class="col-sm-2">提现账号：</label>
+		 	<div class="col-md-10 col-sm-10">
+		 		<ul class="account-list clearfix">
+		 			{notempty name="$account_list"}
+		 				{foreach name="$account_list" item="vo" key="k"}
+				 			<li {if $k eq 0}class="active ns-border-color"{else/}class="ns-border-color-gray"{/if} data-id="{$vo.id}">
+				 				<div class="operation">
+				 					<i class="icon icon-edit ns-text-color-gray ns-text-color-hover" onclick="editAccount({$vo.id})"></i>
+				 					<i class="icon icon-times ns-text-color-gray ns-text-color-hover" onclick="delAccount({$vo.id})"></i>
+				 				</div>
+								<p class="text-ellipsis">真实姓名：{$vo.realname}</p>
+								<p class="text-ellipsis">账号类型：{$vo.account_type_name}</p>
+								{if $vo.account_type == 1}<p class="text-ellipsis">支行信息：{$vo.branch_bank_name}</p>{/if}
+								{if $vo.account_type == 1 || $vo.account_type == 3}<p class="text-ellipsis">提现账号：<span title="{$vo.account_number}">{$vo.account_number}</span></p>{/if}
+				 			</li>
+		 				{/foreach}
+		 			{/notempty}
+		 			<li class="add-account ns-border-color-gray">
+						<i class="icon icon-plus ns-text-color-gray"></i>
+		 			</li>
+		 		</ul>
+    		</div>
+  		</div>
+  		<div class="form-group">
+    		<label class="col-sm-2">提现金额：</label>
+		 	<div class="col-md-6 col-sm-6">
+      			<input type="number" class="form-control w150" name="cash" placeholder="请输入提现金额">
+				<div class="tip-text text12 ns-text-color-gray">
+					{notempty name="$cash"} <span> 提现金额不能低于{$cash}元</span> {/notempty}
+					{notempty name="$poundage"} <span> 提现金额必须是{$poundage}的整数倍</span> {/notempty}
+				</div>
+    		</div>
+  		</div>
+  		<div class="form-group">
+    		<label class="col-sm-2"></label>
+		 	<div class="col-md-6 col-sm-6">
+		 		<button type="button" class="btn btn-primary" onclick="withdraw();">提现</button>
+    		</div>
+  		</div>
+	</div>
+	{else/}
+	<div class="empty align-center">
+		<p>商家已禁止提现！</p>
+	</div>
+	{/eq}
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="myModal">
+	<div class="modal-dialog" role="document">
+    	<div class="modal-content">
+      		<div class="modal-header">
+        		<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        		<h4 class="modal-title">添加账户</h4>
+      		</div>
+			<div class="modal-body">
+				<div class="form-horizontal">
+					<div class="form-group">
+			    		<label class="col-sm-3">{:lang('member_real_name')}：</label>
+					 	<div class="col-md-6 col-sm-6">
+			      			<input type="text" class="form-control ns-border-color-gray-shade-10" name="realname" placeholder="">
+			    		</div>
+			  		</div>
+			  		<div class="form-group">
+			    		<label class="col-sm-3">{:lang('member_phone_number')}：</label>
+					 	<div class="col-md-6 col-sm-6">
+			      			<input type="text" class="form-control ns-border-color-gray-shade-10" name="mobile" placeholder="">
+			    		</div>
+			  		</div>
+			  		<div class="form-group">
+			    		<label class="col-sm-3">{:lang('member_account_type')}：</label>
+					 	<div class="col-md-6 col-sm-6">
+					 		<select class="form-control ns-border-color-gray-shade-10" name="account_type">
+								{foreach name="$withdraw_account_type" item="vo"}
+									{if condition="$vo.is_checked"}
+										{if $vo['id'] == 'wechat' && empty($member_detail['user_info']['wx_openid'])}
+										{else/}
+										<option value="{$vo.value}">{$vo.name}</option>
+										{/if}
+									{/if}
+								{/foreach}
+							</select>
+			    		</div>
+			  		</div>
+			  		<div class="form-group" data-flag="branch_bank_name">
+			    		<label class="col-sm-3">{:lang('member_sub_branch_information')}：</label>
+					 	<div class="col-md-6 col-sm-6">
+			      			<input type="text" class="form-control ns-border-color-gray-shade-10" name="branch_bank_name">
+			    		</div>
+			  		</div>
+			  		<div class="form-group" data-flag="account_number">
+			    		<label class="col-sm-3">{:lang('cash_account')}：</label>
+					 	<div class="col-md-6 col-sm-6">
+			      			<input type="text" class="form-control ns-border-color-gray-shade-10" name="account_number">
+			    		</div>
+			  		</div>
+			  		<input type="hidden" name="id" value="0">
+				</div>
+      		</div>
+  			<div class="modal-footer">
+        		<button type="button" class="btn btn-primary save">保存</button>
+      		</div>
+		</div>
+  	</div>
+</div>
+{/block}
+{block name="script"}
+<script>
+var withdraw_data = {
+	balance : {$member_account['balance']},
+	min_withdrawal : {notempty name="$cash"}{$cash}{else/}0{/notempty},
+	multiple : {notempty name="$poundage"}{$poundage}{else/}0{/notempty}
+}
+</script>
+<script src="WEB_JS/member_balance_withdrawal.js"></script>
+{/block}

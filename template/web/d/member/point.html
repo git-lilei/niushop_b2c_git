@@ -1,0 +1,61 @@
+{extend name="$member_base" /}
+{block name="right_main"}
+<link rel="stylesheet" href="WEB_CSS/member_point.css">
+{php}
+$point_list = api("System.Member.accountRecordsList",['page_index'=>$page_index, 'account_type' => 1]);
+$point_list = $point_list['data'];
+$total_count = $point_list['total_count'];
+
+// 会员账户信息
+$member_account = api("System.Member.memberAccount");
+$member_account = $member_account['data'];
+{/php}
+<div class="member-main">
+	<div class="point-info">
+		<div class="title ns-text-black-color">我的积分</div>
+        <div class="point ns-text-black-color"><em>{$member_account.point}</em></div>
+	</div>
+	<table class="table table-borderless">
+		<colgroup>
+            <col width="20%">
+            <col width="25%">
+            <col width="55%">
+        </colgroup>
+		<thead>
+			<tr>
+	            <th class="align-center">时间</th>
+	            <th class="align-right">收/支</th>
+	            <th class="align-center">详细说明</th>
+		    </tr>
+	    </thead>
+		<tbody>
+			{notempty name="$point_list['data']"}
+				{foreach $point_list['data'] as $point}
+				<tr>
+					<td class="align-center">{$point.create_time | getTimeStampTurnTime}</td>
+					<td class="align-right">{$point.number}</td>
+					<td class="align-center">{$point.text}</td>
+				</tr>
+				{/foreach}
+			{else/}
+				<tr>
+					<td colspan="3" class="align-center">您还没有与积分相关的数据！</td>
+				</tr>
+			{/notempty}
+		</tbody>
+	</table>
+</div>
+
+{if condition="$total_count>0"}
+<ul class="pager" data-ride="pager" data-elements="prev,nav,next,total_page_text,goto" data-rec-per-page="{$page_size}" data-page="{$page_index}" data-rec-total="{$total_count}" id="myPager"></ul>
+{/if}
+{/block}
+{block name="script"}
+<script>
+$('#myPager').pager({
+	linkCreator: function(page, pager) {
+		return __URL("SHOP_MAIN/member/point?page="+page);
+	}
+});
+</script>
+{/block}

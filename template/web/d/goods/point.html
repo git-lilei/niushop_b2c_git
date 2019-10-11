@@ -1,0 +1,142 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WEB_CSS/goods_point.css">
+{/block}
+{block name="lunbo"}
+{php}
+	$banner_list = api('System.Shop.advDetail', ['ap_keyword' => 'PC_POINT_SWIPER', 'export_type' => 'data']);
+{/php}
+<div class="banner-wrap">
+	{notempty name='$banner_list["data"]'}
+	<div id="banner" class="carousel slide" data-ride="carousel">
+		<ol class="carousel-indicators">
+			{foreach name="$banner_list['data']['advs']" item="vo" key="k"}
+			<li data-target="#banner" data-slide-to="{$k}" {if condition="$k==0"}class="active"{/if}></li>
+			{/foreach}
+		</ol>
+		<div class="carousel-inner">
+			{foreach name="$banner_list['data']['advs']" item="vo" key="k"}
+			<div class="item {if condition='$k==0'}active{/if}" style="background-color:{$vo['background']}">
+				{if $vo['adv_image'] == ''}
+				<a href="javascript:;"><img alt="轮播图" src="WEB_IMG/index/default_banner.png" ></a>
+				{else/}
+				<a href="{:__URL($vo['adv_url'])}" target="_blank" style="width: {$banner_list['data']['ap_width']}px;height: {$banner_list['data']['ap_height']}px;line-height: {$banner_list['data']['ap_height']}px;">
+					<img alt="轮播图" src="{:__IMG($vo['adv_image'])}"  onerror="this.src='WEB_IMG/index/default_banner.png'" >
+				</a>
+				{/if}
+			</div>
+			{/foreach}
+		</div>
+
+		<a class="left carousel-control" href="#banner" data-slide="prev">
+			<span class="icon icon-chevron-left"></span>
+		</a>
+		<a class="right carousel-control" href="#banner" data-slide="next">
+			<span class="icon icon-chevron-right"></span>
+		</a>
+	</div>
+	{/notempty}
+</div>
+{/block}
+{block name="main"}
+{php}
+$condition = array(
+	"ng.state" => 1,
+	"ng.point_exchange_type" => array(
+	'in',
+	'1,2,3'
+	)
+);
+
+if ($id) {
+	if ($id == 1) {
+		$order = "sales desc";
+	} elseif ($id == 2) {
+		$order = "collects desc";
+	} elseif ($id == 3) {
+		$order = "evaluates desc";
+	} elseif ($id == 4) {
+			$order = "shares desc";
+	} else {
+		$id = 0;
+		$order = "sort desc,goods_id desc";
+	}
+} else {
+	$id = 0;
+	$order = "sort desc,goods_id desc";
+}
+
+$page_index = request()->get('page', 1);
+
+$condition = array(
+	"ng.state" => 1,
+	"ng.point_exchange_type" => array(
+		'in',
+		'1,2,3'
+	)
+);
+$goods_list = api('System.Goods.goodsList', ['page_index' => $page_index, 'condition' => $condition, 'order'=>$order]);
+$goods_list = $goods_list['data'];
+$total_count = $goods_list['total_count'];
+{/php}
+{if condition="$total_count>0"}
+<div class="integral-content w1200">
+	<ul class="integral-list clearfix">
+		<li class="ns-text-color-gray">{:lang('goods_commodity_sorting')}:</li>
+		<li class="ns-text-color-gray"><a {if condition="$id eq 1"}class="integral-btn ns-text-color ns-border-color"{else/}class="integral-btn ns-border-color-gray-shade-10" href="{:__URL('SHOP_MAIN/goods/point','id=1&nav_id=20')}"{/if}>{:lang('goods_by_volume')}</a></li>
+		<li class="ns-text-color-gray"><a {if condition="$id eq 2"}class="integral-btn ns-text-color ns-border-color"{else/}class="integral-btn ns-border-color-gray-shade-10" href="{:__URL('SHOP_MAIN/goods/point','id=2&nav_id=20')}"{/if}>{:lang('goods_by_collection')}</a></li>
+		<li class="ns-text-color-gray"><a {if condition="$id eq 3"}class="integral-btn ns-text-color ns-border-color"{else/}class="integral-btn ns-border-color-gray-shade-10" href="{:__URL('SHOP_MAIN/goods/point','id=3&nav_id=20')}"{/if}>{:lang('goods_evaluation_quantity')}</a></li>
+		<li class="ns-text-color-gray"><a {if condition="$id eq 4"}class="integral-btn ns-text-color ns-border-color"{else/}class="integral-btn ns-border-color-gray-shade-10" href="{:__URL('SHOP_MAIN/goods/point','id=4&nav_id=20')}"{/if}>{:lang('goods_by_sharing')}</a></li>
+	</ul>
+	<ul class="exchange-list clearfix">
+		{foreach $goods_list.data as $goods}
+		<li>
+			{if condition="$goods['is_hot'] eq 1"}
+				<img src="WEB_IMG/goods/hot.png" class="recommend">
+			{/if}
+			{if condition="$goods['is_recommend'] eq 1"}
+				<img src="WEB_IMG/goods/recommend.png" class="recommend">
+			{/if}
+			{if condition="$goods['is_new'] eq 1"}
+				<img src="WEB_IMG/goods/new.png" class="recommend">
+			{/if}
+
+			{if $goods['point_exchange_type'] eq 2}
+			<a href="{:__URL('SHOP_MAIN/goods/detail','goods_id='.$goods['goods_id'].'&from=point')}" target="_blank" class="img">
+			{else/}
+				<a href="{:__URL('SHOP_MAIN/goods/detail','goods_id='.$goods['goods_id'])}" target="_blank" class="img">
+			{/if}
+			<img src="{:__IMG($goods.pic_cover_mid)}" />
+			</a>
+			<div class="clearfix">
+				<span class="ns-text-color">{$goods.display_price}</span>
+				<span>￥<i>{$goods.price}</i></span>
+			</div>
+			{if $goods['point_exchange_type'] eq 2}
+			<a href="{:__URL('SHOP_MAIN/goods/detail','goods_id='.$goods['goods_id'].'&from=point')}" target="_blank">
+			{else/}
+			<a href="{:__URL('SHOP_MAIN/goods/detail','goods_id='.$goods['goods_id'])}" target="_blank" class="exchange-text">
+			{/if}
+			{$goods.goods_name}</a>
+
+			{if $goods['point_exchange_type'] eq 2}
+			<a class="get-coupons btn btn-primary" href="{:__URL('SHOP_MAIN/goods/detail','goods_id='.$goods['goods_id'].'&from=point')}" target="_blank">立即兑换</a>
+			{else/}
+				<a class="get-coupons btn btn-primary" href="{:__URL('SHOP_MAIN/goods/detail','goods_id='.$goods['goods_id'])}" target="_blank">立即兑换</a>
+			{/if}
+		</li>
+		{/foreach}
+	</ul>
+	<ul class="pager" data-ride="pager" data-elements="prev,nav,next,total_page_text,goto" data-rec-per-page="{$page_size}" data-page="{$page_index}" data-rec-total="{$total_count}" id="my_pager"></ul>
+</div>
+{/if}
+{/block}
+{block name="script"}
+<script>
+$('#my_pager').pager({
+	linkCreator: function(page, pager) {
+		return __URL("SHOP_MAIN/goods/point?page="+page);
+	}
+});
+</script>
+{/block}

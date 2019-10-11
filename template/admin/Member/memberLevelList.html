@@ -1,0 +1,174 @@
+{extend name="$base" /}
+{block name="resources"}
+<style>
+.nav-config-block{
+	overflow:hidden;
+	box-sizing:border-box;
+	line-height:30px;
+}
+.nav-config-title{
+	float:left;
+	margin-right:10px;
+	padding:6px 6px;
+}
+.nav-config-content{
+	float:left;
+	margin-top:6px;
+}
+.nav-config-content label .radio-common{
+	margin-bottom: 4px;
+}
+.table-header{
+	width:100%;
+    border-top: 1px solid #e6e9f0;
+    border-bottom: 1px solid #e6e9f0;
+    background: #f5f7fa;
+    font-weight: normal;
+    font-size: 12px;
+	text-align:left;
+	box-sizing:border-box;
+	padding:6px 6px;
+}
+.border-line{
+	width:99.8%;
+    border: 1px solid #e6e9f0;
+	border-top:0;
+	margin-bottom:10px;
+}
+.dis-block{
+	display:block;
+}
+.dis-none{
+	display:none;
+}
+.danger{color:red;}
+</style>
+{/block}
+{block name="main"}
+<div class="options-btn">
+	<button class="btn-common btn-small" onclick="location.href='{:__URL('ADMIN_MAIN/member/addmemberlevel')}';">添加等级</button>
+</div>
+<div class="mytable select border-line">
+	<div class="table-header">升级规则</div>
+	<div>
+		<div class="nav-config-block">
+			<div class="nav-config-title">升级标准：</div>
+			<div class="nav-config-content">
+				<label for="level_type1" class="radio inline normal"><i class="radio-common {if condition='$config_info.type eq 1'}selected{/if}"><input type="radio" value="1" name="level_type" id="level_type1" {if condition="$config_info.type eq 1"}checked="checked"{/if}/></i>
+				累计积分</label>
+				<label for="level_type2" class="radio inline normal"><i class="radio-common {if condition='$config_info.type eq 2'}selected{/if}"><input type="radio" value="2" name="level_type" id="level_type2" {if condition="$config_info.type eq 2"}checked="checked"{/if}/></i>
+				累计消费</label>
+				<label for="level_type3" class="radio inline normal"><i class="radio-common {if condition='$config_info.type eq 3'}selected{/if}"><input type="radio" value="3" name="level_type" id="level_type3" {if condition="$config_info.type eq 3"}checked="checked"{/if}/></i>
+				购买次数</label>
+				<!-- <label for="level_type4" class="radio inline normal"><i class="radio-common {if condition='$config_info.type eq 4'}selected{/if}"><input type="radio" value="4" name="level_type" id="level_type4" {if condition="$config_info.type eq 4"}checked="checked"{/if}/></i>
+				购买商品</label> -->
+			</div>
+		</div>
+	</div>
+	<div>
+		<div class="nav-config-block">
+			<div class="nav-config-title ">说明：</div>
+			<div class="nav-config-content danger">会员等级按照升级规则的标准进行升级，请慎重选择升级规则。(切换升级方式可能会导致会员级别发生变化,请慎重！)</div>
+		</div>
+	</div>
+</div>
+
+<table class="table-class">
+	<colgroup>
+		<col style="width: 3%;">
+		<col style="width: 20%;">
+		<col style="width: 40%;">
+		<col style="width: 15%;">
+		<col style="width: 10%;">
+	</colgroup>
+	<thead>
+		<tr align="center">
+			<th align="left"></th>
+			<th align="left">等级名称</th>
+			<th align="left">升级条件</th>
+			<th align="left">折扣率（%）<span class="row-50"></span></th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody></tbody>
+</table>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+$(function(){
+	$("input[name='level_type']").change(function(){
+		var val = $("input[name='level_type']:checked").val();
+		$.ajax({
+			type : "post",
+			url : __URL("ADMIN_MAIN/member/setMemberLevelConfig"),
+			data : { "type" : val},
+			success : function(data) {
+				if (data["code"] > 0) {
+					location.reload();
+					showTip(data['message'],'success');
+				}else{
+					showTip(data['message'],'error');
+				}
+			}
+		})
+	})
+})
+
+
+function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	$.ajax({
+		type : "post",
+		url : __URL("ADMIN_MAIN/member/memberlevellist"),
+		data : { 
+			"page_index" : page_index, 
+			"page_size" :  $("#showNumber").val()
+		},
+		success : function(data) {
+			if (data["data"].length > 0) {
+				$(".table-class tbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					html += '<tr align="center">';
+					html += '<td align="center">'+ data['data'][i]['level'] +'</td>';
+					html += '<td align="left">'+ data["data"][i]["level_name"]+'</td>';
+					html += '<td align="left"><div class="{if condition='$config_info.type eq 1'}dis-block{else/}dis-none{/if}">累计积分满' + data['data'][i]['min_integral'] +'分</div>';
+					html += '<div class="{if condition='$config_info.type eq 2'}dis-block{else/}dis-none{/if}">消费额满' + data['data'][i]['quota'] +'元'+'</div>';
+					html += '<div class="{if condition='$config_info.type eq 3'}dis-block{else/}dis-none{/if}">购买量满' + data['data'][i]['order_num'] +'笔</div></td>';
+					
+					html += '<td align="left">' + data['data'][i]['goods_discount'] * 100 + '<span class="row-50"></span></td>';
+					if(data['data'][i]['is_default'] == 1){
+						html += '<td> <a href="'+__URL('ADMIN_MAIN/member/updatememberlevel?level_id='+ data['data'][i]['level_id'])+'">修改</a></td>';
+					}else{
+						html += '<td><a href="'+__URL('ADMIN_MAIN/member/updatememberlevel?level_id='+ data['data'][i]['level_id'])+'">修改</a>&nbsp;&nbsp;&nbsp;<a href="javascript:deleteMember('+data['data'][i]['level_id']+');">删除</a></td>';
+					}
+					html += '</tr>';
+					$(".table-class tbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="5">暂无符合条件的数据记录</td></tr>';
+				$(".table-class tbody").html(html);
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+function deleteMember(level_id){
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/member/deleteMemberLevel')}",
+		data : { 'level_id' : level_id },
+		success : function(data) {
+			if (data['code'] > 0) {
+				showTip(data['message'],'success');
+				location.href=__URL("ADMIN_MAIN/member/memberlevellist");
+			} else {
+				showTip(data['message'],'error');
+			}
+		}
+	});
+}
+</script>
+{/block}

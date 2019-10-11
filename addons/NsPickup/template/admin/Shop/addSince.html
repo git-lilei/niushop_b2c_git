@@ -1,0 +1,374 @@
+{extend name="$base" /}
+{block name="resources"}
+<style>
+.map-button{
+	line-height:26px;font-size:12px;margin-bottom: 0px;
+	color: #333;
+    vertical-align: middle;
+    cursor: pointer;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+	border-radius: 2px;
+}
+.map-block{
+	height:500px;
+	margin-top:10px;
+	border:1px solid #ddd; 
+}
+
+</style>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;门店名称：</dt>
+		<dd>
+			<p><input id="name" type="text" class="input-common"></p>
+			<p class="error">门店名称不能为空</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;门店地址：</dt>
+		<dd>
+			<p>
+				<select name="province" id="province" onchange="changeProvince();"  class="select-common" style="width:150px!important;">
+					<option value="">请选择省</option>
+				</select>
+				<select name="city" id="city" onchange="changeCity();"  class="select-common" style="width:150px!important;">
+					<option value="">请选择市</option>
+				</select>
+				<select name="district" id="district"  class="select-common" style="width:150px!important;">
+					<option value="-1">请选择区/县</option>
+				</select>
+			</p>
+			<p class="error">请选择门店完整地址</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;详细地址：</dt>
+		<dd>
+			<p>
+				<input id="address" class="input-common" value="">
+				<button onclick="mapChange();" class="map-button">搜索地图</button>
+				<div id="container" class="map-block"></div> 
+			</p>
+			<p class="error">详细地址不能为空</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>门店联系人：</dt>
+		<dd>
+			<p><input id="contact" type="text" class="input-common"></p>
+		</dd>
+	</dl>
+	<dl>
+		<dt><span style="color:red;">*</span>&nbsp;&nbsp;门店电话：</dt>
+		<dd>
+			<p><input id="phone" type="text" class="input-common"></p>
+			<p class="error">门店电话不能为空</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="addReturnAjax();" >保存</button>
+			<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);" >返回</button>
+		</dd>
+	</dl>
+</div>
+
+<input type="hidden" id="longitude" value=""/>
+<input type="hidden" id="latitude" value=""/>
+<script charset="utf-8" src="https://map.qq.com/api/js?v=2.exp&key=2UPBZ-QBK3J-G47FK-FZ4NU-7MPO2-3SFZU"></script>
+<script type="text/javascript">
+var map,geocoder;
+ var is_map_change = true;
+ var change_type = "map";
+function init() {
+
+    //div容器
+    var container = document.getElementById("container");
+
+	var map_width = $("#container").width();
+	var map_height = $("#container").height();
+
+    	var center = new qq.maps.LatLng(39.916527,116.397128);
+        map = new qq.maps.Map(document.getElementById('container'),{
+            center: center,
+            zoom: 13
+        });
+        //获取城市列表接口设置中心点
+        citylocation = new qq.maps.CityService({
+            complete : function(result){
+                map.setCenter(result.detail.latLng);
+            }
+        });
+        //调用searchLocalCity();方法    根据用户IP查询城市信息。
+        citylocation.searchLocalCity();
+
+    
+  //创建自定义控件
+   
+   var middleControl = document.createElement("div");
+    middleControl.style.left = (map_width - 21.36)/2+"px";
+    middleControl.style.top = (map_height - 30)/2+"px";
+	middleControl.style.position = "relative";
+	middleControl.style.width = "36px";
+    middleControl.style.height = "36px";
+	middleControl.style.zIndex = "100000";
+   middleControl.innerHTML = '<img style="height:30px;"src="__TEMP__/{$style}/public/images/location/marker.png" />';
+   document.getElementById("container").appendChild(middleControl);
+   
+ //地址和经纬度之间进行转换服务
+   geocoder = new qq.maps.Geocoder();
+   //设置服务请求成功的回调函数
+   geocoder.setComplete(function(result) {
+	   //change_type  为map  代表转化逆地址转化  为 select 代表 地址转换
+	   // console.log(result);
+	   if(change_type == "map"){
+		   //alert("调用这里获取中心点的位置："+result.detail.address );
+		   changeAreaSelect(result);
+	   }else if(change_type == "select"){
+		   //alert("调用这里获取中心点的位置坐标："+result.detail.location );
+		   map.panTo(result.detail.location);
+	   }
+       
+       
+
+   });
+   //若服务请求失败，则运行以下函数
+   geocoder.setError(function() {
+//        alert("出错了，请输入正确的经纬度！！！");
+   });
+   
+    //返回地图当前中心点地理坐标
+    //centerDiv.innerHTML = "latlng:" + map.getCenter();
+ 	//当地图中心属性更改时触发事件
+   qq.maps.event.addListener(map, 'center_changed', function() {
+	    if(change_type = "select"){
+	    	change_type = "select_ing";
+	    }else{
+	    	change_type = "map";
+	    }
+	   	
+	   	geocoder.getAddress(map.getCenter());
+       //centerDiv.innerHTML = "latlng:" + map.getCenter();
+   });
+ 	//窗口打开默认加载省	
+   getProvince();
+}
+
+
+//改变地图中心点
+function mapChange(){
+	var address = "";
+	var province_name = $("#province").val() > 0 ? $("#province option:selected").text() : '';
+	var city_name = $("#province").val() > 0 && $("#city").val() > 0 ? $("#city option:selected").text() : '';
+	var district_name = $("#province").val() > 0 && $("#city").val() > 0 && $("#district").val() > 0 ? $("#district option:selected").text() : '';
+	var detailed_address = $("#address").val();
+	if(province_name != ""){
+		address = province_name;
+	}else{
+		alert("必须填省市");
+		return;
+	}
+	if(city_name != ""){
+		address += ","+city_name;
+	}else{
+		alert("必须填省市");
+		return;
+	}
+	if(district_name != ""){
+		address += ","+district_name;
+	}
+	if(detailed_address != ""){
+		address += ","+detailed_address;
+	}
+	change_type = "select";
+	geocoder.getLocation(address);
+	
+// 	map.panTo(new qq.maps.LatLng(39.9, 116.4));
+}
+//改变地理位置下拉框
+function changeAreaSelect(area_obj){
+	var address_obj = area_obj.detail.addressComponents;
+	var lat = area_obj.detail.location.lat;
+	var lng = area_obj.detail.location.lng;
+	var province = address_obj.province;
+	var city = address_obj.city;
+	var district = address_obj.district;
+	
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/order/getGeographicId')}",
+		data : {
+			"province" : province,
+			"city" : city,
+			"district" : district,
+			"lat":lat,
+			"lng":lng
+		},
+		success : function(data) {
+			$("#province").val(data.province_id);
+			$("#province").change();
+			$("#city").val(data.city_id);
+			$("#city").change();
+			$("#district").val(data.district_id);
+			$("#longitude").val(data.lng);
+			$("#latitude").val(data.lat);
+			var detailed_address = address_obj.streetNumber != "" ? address_obj.streetNumber : address_obj.street;
+			$("#address").val(detailed_address);
+			// $("#province_name").val(province);
+			// $("#city_name").val(city);
+			// $("#district_name").val(district);
+			$('.select-common').selectric();
+		}
+	})
+}
+function getProvince(province_id){
+	$.ajax({
+		type : "post",
+		url :"{:__URL('ADMIN_MAIN/order/getProvince')}",
+		dataType : "json",
+		success : function(data) {
+			if (data != null && data.length > 0) {
+				var str = "";
+				for (var i = 0; i < data.length; i++) {
+					str += '<option value="'+data[i].province_id+'">'+data[i].province_name+'</option>';
+				}
+				$("#province").append(str);
+				$('.select-common').selectric();
+			}
+		}
+	});
+}
+//选择省份弹出市区
+function changeProvince(city_id) {
+	var id = $("#province").find("option:selected").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/order/getcity')}",
+		dataType : "json",
+		data : {
+			"province_id" : id
+		},
+		async:false, 
+		success : function(data) {
+			if (data != null && data.length > 0) {
+				var str = "<option value='-1'>请选择市</option>";
+				for (var i = 0; i < data.length; i++) {
+					if(city_id ==data[i].city_id){
+						str += '<option value="'+data[i].city_id+'" selected="selected">'+data[i].city_name+'</option>';
+					}else{
+						str += '<option value="'+data[i].city_id+'">'+data[i].city_name+'</option>';
+					}
+				}
+				$("#city").html(str);
+				$("#district").html('<option value="0" selected="selected">请选择区</option>');
+				$('.select-common').selectric();
+			}
+
+		}
+	});
+};
+
+//选择市区弹出区域
+function changeCity(district_id) {
+	var id = $("#city").find("option:selected").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/order/getdistrict')}",
+		dataType : "json",
+		data : {
+			"city_id" : id
+		},
+		async:false, 
+		success : function(data) {
+			if (data != null && data.length > 0) {
+				var str = "<option value='-1'>请选择区</option>";
+				for (var i = 0; i < data.length; i++) {
+					if(district_id == data[i].district_id){
+						str += '<option value="'+data[i].district_id+'" selected="selected">'+data[i].district_name+'</option>';
+					}else{
+						str += '<option value="'+data[i].district_id+'">'+data[i].district_name+'</option>';
+					}
+				}
+				$("#district").html(str);
+				$('.select-common').selectric();
+			}
+	
+		}
+	});
+}
+init();
+
+</script>
+<script>
+
+
+//添加自提点
+function addReturnAjax() {
+	var name = $("#name").val();
+	var address = $("#address").val();
+	var province = $("#province").val();
+	var city = $("#city").val();
+	var district = $("#district").val();
+	var contact = $("#contact").val();
+	var phone = $("#phone").val();
+	var longitude=$("#longitude").val();
+	var latitude=$("#latitude").val()
+
+
+
+	if (name == '') {
+		$("#name").parent().next().show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if(address == ''){
+		$("#address").parent().next().show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	if ($("#district").val() < 0 || $("#district").val() == "") {
+		// $("#district").parent().next().show();
+		$(".address_error").show();
+		return false;
+	}else{
+		$(".error").hide();
+	}
+	
+	if(phone.length == 0){
+		$("#phone").parent().next().show();
+		return false;
+	} else {
+		$(".error").hide();
+	}
+	$.ajax({
+		type : "post",
+		url : "{:__URL('nspickup/ADMIN_MODULE/shop/addpickuppoint')}",
+		data : {
+			'name' : name,
+			'address' : address,
+			'contact' : contact,
+			'phone' : phone,
+			'province_id' : province,
+			'city_id' : city,
+			'district_id' : district,
+			'longitude':longitude,
+			'latitude':latitude
+		},
+		success : function(data) {
+			if (data['code'] > 0) {
+				showTip(data["message"],'success');
+				location.href = __URL('nspickup/ADMIN_MODULE/shop/pickuppointlist');
+			} else {
+				showTip(data["message"],'error');
+			}
+		}
+	});
+}
+</script>
+{/block}

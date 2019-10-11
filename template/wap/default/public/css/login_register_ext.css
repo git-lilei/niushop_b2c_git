@@ -1,0 +1,12 @@
+body{background: #fff;}
+.reg-box{width: 90%; margin: 0 auto; position: relative;}
+.reg-box .reg-cont{position: relative; display: block; height: 45px; width: 100%; border-bottom: 1px solid;}
+.reg-box .reg-cont label{width: 80%;}
+.reg-box .reg-cont label input{height: 44px; font-size: 14px; border: none; padding: 5px 1px; width: 60%; margin: 0;}
+.reg-box .reg-cont label span, .reg-box .nk-cont label span{width: 70px; display: inline-block;}
+.tit-info{margin: 20px 10px;}
+.reg-box button{display: block; width: 80%; height: 35px; margin: 20px auto; border-radius: 18px;}
+.reg-box button:nth-of-type(1){border: none; color: #fff;}
+.reg-box button:nth-of-type(2){border: 1px solid; background-color: transparent;}
+.captcha{width: 40%;}
+.verifyimg{width: 75px; float: right; margin: 11px 4px;}

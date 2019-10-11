@@ -1,0 +1,11 @@
+.withdraw-record table{width: 100%; overflow: hidden;}
+.withdraw-record tr{border-bottom: 1px solid; float: left; width: 100%; background: #fff;}
+.withdraw-record tr td:last-child{width: 100%;}
+.withdraw-record tr td{padding: 0.5625rem 0.625rem ; font-size: 0.875rem; float: left;}
+.withdraw-record tr td:last-child p{line-height: 22px; width: 100%; font-size: 16px;}
+.withdraw-record tr td:last-child p:last-child{float: left;}
+.withdraw-record tr td:last-child .text-name{float: left; font-size: 14px;}
+.withdraw-record tr td:last-child .text-money{float: right; font-size: 14px;}
+.withdraw-record tr td:last-child .text-2{font-size: 14px;}
+.withdraw-record .nothing-data{margin-top: 150px; text-align: center;}
+.mescroll{top: 40px;}

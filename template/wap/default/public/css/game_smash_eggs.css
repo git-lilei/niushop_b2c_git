@@ -1,0 +1,24 @@
+.game-content{background-color: #ffe881; padding-bottom: 30px; padding-top: 1px;}
+.game-content .egg{width: 100%; margin: 30px auto 20px;}
+.egg .egglist{padding-top: 10px; position: relative; width: 100%;overflow: hidden;}
+.egg .egglist .hammer{background: url(../img/game/hammer.png) no-repeat; background-size: 100%; width: 14vw; height: 18vw; position: absolute; text-indent: -9999px; z-index: 6; left: 58%; top: 9%;}
+.egg .egglist .resulttip{position: absolute; background: #ffc; width: 30vw; padding: 6px; z-index: 500; top: 200px; left: 6px;text-align: center; overflow: hidden; display: none;}
+.egg .egglist .resulttip b{font-size: 12px; line-height: 24px;}
+.egg .egglist li{float: left; background: url(../img/game/egg_1.png) no-repeat bottom; background-size: 100%; width: 30vw; height: 40vw; position: relative; margin-left: 3vw; z-index: 5;}
+.egglist li span{position: absolute; display: inline-block; width: 30px; height: 60px; text-align: center; left: 50%; top: 50%; color: #ff0; font-size: 42px; font-weight: bold; transform: translateX(-50%) translateY(-50%);}
+.game-content .egg .egglist li.curr{background: url(../img/game/egg_2.png) no-repeat bottom; background-size: 100%; z-index: 300;}
+.game-content .egg .egglist li.curr sup{position: absolute; background: url(../img/game/egg_ben.png) no-repeat; background-size: 100%; width: 46vw; height: 181px; top: -3.5vw; left: -7.3vw; z-index: 800;}
+.rule-desc, .list-desc{background-color: #fefad7; border: 4px solid #f7d03f; width: 88%; margin: 0 auto; padding: 6px;}
+.rule-desc .rule-table{width: 100%; margin: 10px 0;}
+img.title{width: 68% !important; display: block; margin: 10px auto 0;}
+.restriction{width: 100%; height: 100%; position: fixed; top: 0; left: 0; background: rgba(0, 0, 0, 0.8); z-index: 10;}
+.restriction .tip-info-container{position: relative; top: 50%; transform: translateY(-50%); background: #fff; width: 220px; padding: 15px; margin: 0 auto; text-align: center; border-radius: 8px;}
+.restriction .tip-info-container .tip-info{margin: 10px 0 15px; font-size: 15px;}
+.restriction .tip-info-container button{border: none; color: #fff; padding: 0 15px; border-radius: 3px; height: 35px; line-height: 1;}
+.login-layer{position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 99;}
+.layer-curtain{width: 100%; height: 100%; background: rgba(0, 0, 0, .5); position: absolute;}
+.layer-content{width: 70%; background: #fff; position: relative; margin: 20vh auto; border-radius: 3px; text-align: center; padding: 45px 20px;}
+.layer-icon{width: 45px; margin: 0 auto;}
+.layer-text{font-size: 16px; margin: 10px 0;}
+.layer-desc{font-size: 12px;}
+.layer-btn{height: 30px; line-height: 30px; margin-top: 20px;}

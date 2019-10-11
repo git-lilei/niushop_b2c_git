@@ -1,0 +1,23 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/verification_code.css">
+{/block}
+{block name="main"}
+<div class="cf-container ns-border-color-gray">
+	<ul class="cf-content">
+		<li class="cf-tab-item selected ns-border-color ns-text-color"><a href="javascript:getMemberVirtualList(0);">{:lang('unused')}</a></li>
+		<li class="cf-tab-item ns-text-color-gray"><a href="javascript:getMemberVirtualList(1);">{:lang('used')}</a></li>
+		<li class="cf-tab-item ns-text-color-gray"><a href="javascript:getMemberVirtualList(-1);">{:lang('expire')}</a></li>
+	</ul>
+</div>
+<div class="com-content"></div>
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script>
+var lang_code = {
+	you_do_not_have_any_virtual_code_yet : "{:lang('you_do_not_have_any_virtual_code_yet')}"
+};
+</script>
+<script src="WAP_JS/verification_code.js"></script>
+{/block} 

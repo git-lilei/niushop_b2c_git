@@ -1,0 +1,32 @@
+.flex-wrap{    width: 100%;display: flex;flex-wrap: wrap;margin: -5px auto -9px;}
+.block-diy{width: 20%;box-sizing: border-box;padding: 0 7.5px;margin-top: 15px;position: relative;z-index: 1;}
+.block-diy  .diy-content{padding: 15px 10px 15px 15px;margin-bottom: 0;color: #5e6166;font-size: 12px;background-color: #f5f7fa;overflow: hidden;z-index: 1;display: flex;cursor: pointer;}
+.block-diy  .diy-content .diy-icon{flex: none;height: 40px; width: 40px;line-height: 46px;border-radius: 5px;position: relative;}
+.block-diy  .diy-content .diy-info{margin-left:10px;max-width: calc(100% - 50px);white-space: nowrap;}
+.block-diy  .diy-content .diy-info .diy-title{line-height:25px;margin:0;font-size: 14px;font-weight: bold;}
+.block-diy  .diy-content .diy-info .diy-desc{color: #aaa;font-size: 12px;font-weight: 400;margin:0 ;height:23px;line-height:16px;overflow: hidden;text-overflow: ellipsis;}
+.block-diy .diy-content{transition: all .3s;}
+.block-diy .diy-content:hover{box-shadow: 0 2px 5px 0 rgba(2,31,65,.1)}
+.diy-icon img {width: 100%;}
+.set-style h4{background: #fff;}
+.set-style h4.first {
+    margin: 5px 0px 0px 0px;
+}
+
+.set-style.wechat .block-diy .diy-content {
+	background: #fff;
+    border: 1px solid #e1e7f1;
+	border-radius: 3px;
+}
+.set-style.wechat .block-diy .diy-content:hover{
+	box-shadow: unset;
+    border: 1px solid #00A0DE;
+}
+.set-style.wechat .block-diy .diy-content .diy-icon {
+    margin-top: -2px;
+}
+.set-style.wechat h4 span:FIRST-CHILD{
+	height: 19px;
+    margin: 0px 8px 0px;
+}
+.flex-wrap .empty{padding: 10px;}

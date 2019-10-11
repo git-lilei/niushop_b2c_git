@@ -1,0 +1,88 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/member_apply_withdrawal.css">
+{/block} 
+{block name="main"}
+{php}
+	$balance_config = api("System.Config.balanceWithdraw");
+	$balance_config = $balance_config['data'];
+ 	$poundage = $balance_config['value']["withdraw_multiple"];
+	$cash = $balance_config['value']["withdraw_cash_min"];
+	$withdraw_message = $balance_config['value']["withdraw_message"];
+
+	$account = api('System.Member.memberBalance');
+	$account = $account['data'];
+	$account_list = api('System.Member.defaultAccount');
+	$account_list = $account_list['data'];
+{/php}
+{if $balance_config["is_use"] == 1 || $balance_config["value"]["withdraw_multiple"] > 0}
+<div class="panel">
+	<span>{:lang('member_cash_available')}：</span>
+	<span class="ns-text-color text18" id="Amount">¥{$account}</span>
+</div>
+
+<ul class="panel side-nav">
+	{if condition="count($account_list) eq 0"}
+	<li>
+		<a href="{:__URL('APP_MAIN/member/account')}">
+			<span >{:lang('please_add_a_cash_account')}</span>
+			<i class="fa fa-angle-right ns-text-color-gray"></i>
+		</a>
+	</li>
+	{else/}
+	<li>
+	{volist name="account_list" id="vo"}
+		{if condition="$vo.account_type == 1"}
+		<a href="{:__URL('APP_MAIN/member/account')}">
+			<span>{$vo.branch_bank_name}<br>{$vo.account_number}</span>
+			<i class="fa fa-angle-right ns-text-color-gray"></i>
+		</a>
+		{elseif condition="$vo.account_type == 2" /}
+		<a href="{:__URL('APP_MAIN/member/account')}">
+			<span>{$vo.account_type_name}</span>
+			<i class="fa fa-angle-right ns-text-color-gray"></i>
+		</a>
+		{elseif condition="$vo.account_type == 3" /}
+		<a href="{:__URL('APP_MAIN/member/account')}">
+			<span>{$vo.account_type_name}<br>{$vo.account_number}</span>
+			<i class="fa fa-angle-right ns-text-color-gray"></i>
+		</a>
+		{/if}
+		<input type="hidden" value="{$vo.id}" id="bank_account_id"/>
+	{/volist}
+	</li>
+	{/if}
+</ul>
+
+<input type="text" id="money" placeholder="{:lang('member_enter_amount')}">
+{if condition="$cash neq '' && $poundage neq ''"}
+<div class="tip-text ns-text-color">{:lang('member_minimum_withdrawal')}<span id="Minaamountcash">{$cash}</span>{:lang('element')}，{:lang('member_must_serve')}<span id="IntTimes">{$poundage}</span>{:lang('member_integral_multiple')}</div>
+{else/}
+<div class="tip-text">{:lang('member_minimum_withdrawal')}<span id="Minaamountcash">0</span>{:lang('element')} ，{:lang('member_must_serve')}<span id="IntTimes">1</span>{:lang('member_integral_multiple')}</div>
+{/if}
+<div class="btn-wrap">
+	<a href="javascript:;" onclick="btnSave()" class="button ns-bg-color">{:lang('member_apply_immediately')}</a>
+	{if condition="$withdraw_message neq ''"}
+	<div class="horn-text"> {:lang('member_notes')}:{$withdraw_message}</div>
+	{/if}
+</div>
+{else /}
+<script>location.href = __URL(APPMAIN + "/member/index");</script>
+{/if}
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script>
+var lang_member_apply_withdrawal = {
+	no_withdrawals_account_was_added : "{:lang('no_withdrawals_account_was_added')}",
+	member_submitted_for_review : "{:lang('member_submitted_for_review')}...",
+	member_withdrawals_must_be : "{:lang('member_withdrawals_must_be')}",
+	member_integral_multiple : "{:lang('member_integral_multiple')}",
+	member_withdrawals_must_greater : "{:lang('member_withdrawals_must_greater')}",
+	member_maximum_amount : "{:lang('member_maximum_amount')}",
+	member_not_present : "{:lang('member_not_present')}",
+	member_amount_not_legal : "{:lang('member_amount_not_legal')}"
+}
+</script>
+<script src="WAP_JS/member_apply_withdrawal.js"></script>
+{/block}

@@ -1,0 +1,42 @@
+{extend name="$base" /}
+{block name="resources"}
+<link type="text/css" rel="stylesheet" href="WAP_CSS/member_exchange.css">
+{/block}
+{block name="main"}
+{php}
+    $member_account = api("System.Member.memberAccount");
+    $conpon_sum = $member_account["data"]['balance'];
+    $convert_rate = api("System.Member.exchangeRate");
+    $accounts = $convert_rate["data"]['convert_rate'];
+{/php}
+ <div class="member-exchange">
+    <p class="ns-bg-color-fadeout-80 ns-text-color">* {:lang('member_exchange_rate')}{$accounts}{:lang('element')}</p>
+    <div class="prompt-style">
+        <div class="circle ns-border-color">
+	        <span class="ns-text-color">{:lang('goods_integral')}</span><br/>
+	        <span class="ns-text-color spans">{$conpon_sum}</span>
+	    </div>
+    </div>
+    <div class="content">
+        <p class="text">
+            <span>{:lang('member_exchange_points')}:</span>
+            <input type="text" max="100" min="0" class="ns-border-color-gray" id="amount" placeholder="{:lang('please_enter_the_integral_quantity')}"/>
+        </p>
+        <p class="text-p ns-text-color">{:lang('maximum_convertibility')}{$conpon_sum}{:lang('goods_integral')}</p>
+        <p class="bottom"><input type="button" id="exchange" class="ns-bg-color ns-border-color-gray" value="{:lang('member_exchange')}"/></p>
+    </div>
+ </div>
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script>
+var lang_member_exchange = {
+    the_points_need_to_be_redeemed_are_not_null : "{:lang('the_points_need_to_be_redeemed_are_not_null')}",
+    the_points_you_need_to_redeem_cannot_be_greater_than_the_points_you_have :"{:lang('the_points_you_need_to_redeem_cannot_be_greater_than_the_points_you_have')}",
+    the_points_required_to_be_redeemed_shall_not_be_less_than_0 :"{:lang('the_points_required_to_be_redeemed_shall_not_be_less_than_0')}",
+    redeem_successfully : "{:lang('redeem_successfully')}"
+};
+var conpon_sum='{$conpon_sum}';
+</script>
+<script src="WAP_JS/member_exchange.js"></script>
+{/block}

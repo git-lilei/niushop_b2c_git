@@ -1,0 +1,136 @@
+@charset "utf-8";
+/* promotion-game-main*/
+.promotion-game-main{
+    border: 1px solid #e5e5e5;
+    padding-bottom: 50px;
+}
+.promotion-game-main .option-nav{
+	background: #E1E6F0;
+    overflow: hidden;
+    padding-left: 5px;
+}
+.promotion-game-main .option-nav ul li{
+    float: left;
+    width: 85px;
+    text-align: center;
+    padding: 5px 2px 0 2px;
+    position: relative;
+    cursor: pointer;
+}
+.promotion-game-main .option-nav ul li a{
+    display: block;
+    color: #333;
+    height: 35px;
+    line-height: 35px;
+    padding: 0 8px;
+  	transition: all 0.3s;
+}
+.promotion-game-main .option-nav ul li.selected a,.promotion-game-main .option-nav ul li:hover a {
+    background: #fff;
+    color: #0059d6;
+}
+.promotion-game-main .game-container{
+	width: 920px;
+	margin: 10px 0 0 6px;
+	border: 1px solid #e5e5e5;
+	overflow: hidden;
+}
+.promotion-game-main .game-container .game-thumbnail{
+	width: 310px;
+	min-height: 680;
+	padding:15px 10px; 
+	display: inline-block;
+	float: left;
+	box-sizing: border-box;
+}
+.promotion-game-main .game-container .game-thumbnail img.game_img{
+    
+}
+/*活动信息信息*/
+.promotion-game-main .game-container .game-info{
+	padding: 15px 10px;
+    width: 590px;
+    min-height: 650px;
+    float: left;
+    background: #f4f5f9;
+}
+.promotion-game-main .game-container .game-info h4.option-title{
+	color: #666;
+    font-size: 14px;
+    padding-left: 5px;
+    margin: 0;
+    border-left: 2px solid #126AE4;
+}	
+.promotion-game-main .game-container .game-info dl{
+	width: 100%;
+	clear: both;
+    padding: 0;
+    margin: 0;
+}	
+.promotion-game-main .game-container .game-info dl dt{
+    font-size: 12px;
+    line-height: 32px;
+    vertical-align: top;
+    text-align: right;
+    display: inline-block;
+    width: 100px;
+    padding: 5px 0 5px 0;
+    font-weight: normal;
+}
+.promotion-game-main .game-container .game-info dl dd{
+	font-size: 12px;
+    line-height: 30px;
+    vertical-align: top;
+    letter-spacing: normal;
+    word-spacing: normal;
+    display: inline-block;
+    width: 75%;
+    padding: 5px 0 5px 0;
+    margin-left: 5px;
+}
+.promotion-game-main .game-container .game-info dl dt span.require{
+    color: red;
+    padding-right: 5px;
+}
+.promotion-game-main .game-container .game-info dl dd p.err-msg{
+    color: #126AE4;
+    line-height: 2;
+    margin-bottom: 0;
+    font-size: 12px;
+    display: none;
+}
+.promotion-game-main .game-container .game-info dl dd p.ini{
+    color: #999;
+    line-height: 2;
+    margin-bottom: 0;
+    font-size: 12px;
+}
+.promotion-game-main .game-container .game-info .create-promotio{
+	display: block;
+	background: green;
+}
+.promotion-game-main .game-container .game-info .info-content-height{
+    height: 570px;
+}
+.promotion-game-main .game-container .game-info p.info-tip{
+    margin:10px 0;
+    color: #999;
+}
+.promotion-game-main .game-container .game-info .award-container{
+    padding: 15px;
+    background: #fff;
+}
+.promotion-game-main .game-container .game-info .award-container .table-class tr td{
+    border-right: 1px solid #E1E6F0;
+    text-align: center;
+    padding:6px;
+}  
+.promotion-game-main .game-container .game-info .award-container dl dt{
+    width: 60px;
+} 
+.upload-btn-common>em{
+    margin-top: 1px;
+}
+.btn-common{
+    line-height: 20px;
+}

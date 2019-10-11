@@ -1,0 +1,43 @@
+{extend name="$base" /}
+
+{block name="main"}
+<div class="space-10"></div>
+<div class="set-style">
+	<div class="set-item">
+		<dl>
+			<dt>分享推广语：</dt>
+			<dd>
+				<p><input type="text" name="promotion_content" class="input-common" {notempty name="$info['value']['promotion_content']"} value="{$info['value']['promotion_content']}"{/notempty}></p>
+			</dd>
+		</dl>	
+		<dl>
+			<dt></dt>
+			<dd>
+				<button class="btn-common btn-big" onclick="save();" style="margin:20px 0 20px 205px;">保存</button>
+			</dd>
+		</dl>
+	</div>
+</div>
+
+<script>
+	function save(){
+		var value = {
+			promotion_content : $('[name="promotion_content"]').val()
+		};
+		$.ajax({
+			type : 'post',
+			url : "{:__URL('ADMIN_MAIN/promotion/postersetting')}",
+			data : {
+				value : JSON.stringify(value)
+			},
+			success : function(data){
+				if(data['code'] >=0){
+					showMessage("success", "设置成功！", "{:__URL('ADMIN_MAIN/promotion/postersetting')}");
+				}else{
+					showMessage("error", "设置失败");
+				}
+			}
+		})
+	}
+</script>
+{/block}

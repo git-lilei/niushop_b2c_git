@@ -1,0 +1,87 @@
+{extend name="$base" /}
+{block name="resources"}
+
+{/block}
+{block name="main"}
+
+{include file="admin/Express/expressTitle"}
+
+<!-- 搜索 -->
+<table class="mytable select">
+	<tr>
+		<td width="50%" style="text-align: left;">
+			<button class="btn-common-delete" onclick="batchDelete()">批量删除</button>
+			<button class="btn-common" onclick="location.href='{:__URL('ADMIN_MAIN/express/addexpresscompany')}'">添加物流公司</button>
+		</td>
+		<td width="20%">
+			
+		</td>
+	</tr>
+</table>
+
+
+<table class="table-class">
+	<colgroup>
+		<col style="width: 2%;">
+		<col style="width: 37%;">
+		<col style="width: 14%;">
+		<col style="width: 14%;">
+		<col style="width: 7%;">
+		<col style="width: 7%;">
+		<col style="width: 4%;">
+		<col style="width: 15%;">
+	</colgroup>
+	<thead>
+		<tr align="center">
+			<th><i class="checkbox-common"><input type="checkbox" ></i></th>
+			<th align="left">物流公司</th>
+			<th align="left">物流编号</th>
+			<th align="left">联系电话</th>
+			<th align="left">是否启用</th>
+			<th align="left">是否默认</th>
+			<th align="left">排序</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody>
+		{foreach $express_company_data as $key => $item}
+			<tr align="center">
+						<td><i class="checkbox-common"><input name="sub" type="checkbox" value="{$item['co_id']}" ></i></td>
+						
+
+					{if !empty($item['express_logo'])}
+						<td align="left" class="tal"><img src="{:__IMG($item['express_logo'])}" style="margin-right:10px;max-width:60px;max-height:60px;"/>{$item["company_name"]}</td>
+					{else/}
+						<td align="left" class="tal">{$item["company_name"]}</td>
+					{/if}
+					
+					<td align="left" class="tal">{$item["express_no"]}</td>
+					<td align="left" class="tal">{$item["phone"]}</td>
+					{if $item.is_enabled == 0}
+						<td style="color:red;" align="left">未启用</td>
+					{else/}
+						<td style="color:green;"align="left">启用</td>
+					{/if}
+					{if $item.is_default == 1}
+						<td class="tal" align="left">是</td>
+					{else/}
+						<td class="tal" align="left">否</td>
+					{/if}
+					
+					<td align="left">{$item["orders"]}</td>
+					<td>
+						<a href="{:__URL('ADMIN_MAIN/express/expresstemplate?co_id='.$item.co_id)}">打印模板</a>&nbsp;&nbsp;
+						<a href="{:__URL('ADMIN_MAIN/express/updateexpresscompany?co_id='.$item.co_id)}">修改</a><br/>
+						<a href="{:__URL('ADMIN_MAIN/express/freighttemplatelist?co_id='.$item.co_id)}">运费模板</a>&nbsp;&nbsp;
+						<a style="cursor: pointer;" onclick="DelExpressCompany('{$item.co_id}')">删除</a>
+					</td>
+			</tr>
+		{/foreach}
+	</tbody>
+</table>
+
+{/block}
+{block name="script"}
+<script src="ADMIN_JS/express/express_company.js?n=1"></script>
+
+{/block}

@@ -1,0 +1,278 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/member_info.css">
+{/block}
+{block name="head_href"}javascript:backPage();{/block}
+{block name="main"} 
+{php}
+	$member_info = api("System.Member.memberInfo");
+	$member_info = $member_info['data'];
+	$qq_openid   = $member_info['user_info']['qq_openid'];
+	if (!empty($member_info['user_info']['user_headimg'])) {
+		$member_img = $member_info['user_info']['user_headimg'];
+	} else {
+		$member_img = '0';
+	}
+
+	$is_weixin = api("System.Config.isWeixin");
+	$is_weixin = $is_weixin['data'];
+
+	$wchat_config = api("System.Config.wchatConfig");
+	$wchat_config = $wchat_config['data'];
+
+	//消息通知配置
+	$notice = api("System.Config.noticeConfig");
+	$notice = $notice['data'];
+
+	//验证码配置
+	$login_verify_code = api("System.Config.loginVerifyCode");
+	$login_verify_code = $login_verify_code['data'];
+	$login_verify_code = $login_verify_code['value'];
+{/php}
+<div class="personal-complete">
+	<div class="personal-center divInfo" id="divInfo">
+		<ul class="side-nav" id="list">
+			<li class="ns-border-color-gray">
+				<div class="cont-value">
+					<a href="{:__URL('APP_MAIN/member/modifyface')}">
+						{if condition="$member_img neq '' and $member_img neq '0'"}
+							<span class="value tou-xiang ns-border-color-gray val"><img src="{:__IMG($member_img)}" /></span>
+						{else /}
+							<span class="value tou-xiang ns-border-color-gray"><img src="{:__IMG($default_headimg)}" /></span>
+						{/if}
+					</a>
+				</div>
+			</li>
+			<li class="ns-border-color-gray" isnew="False">
+				<a href="javascript:void(0)">
+					<div class="title">
+						<i></i>
+						<span class="text">{:lang('account_number')}</span>
+					</div>
+					<div class="cont-value">
+						<i></i><span class="value value1 ns-text-color-gray">{$member_info.user_info.user_name}</span>
+					</div>
+				</a>
+			</li>
+			<li class="ns-border-color-gray" isnew="False">
+				<a href="javascript:void(0)">
+					<div class="title">
+						<i></i>
+						<span class="text" tage="nickname">{:lang('member_nickname')}</span>
+					</div>
+					<div class="cont-value">
+						<i class="fa fa-angle-right ns-text-color-gray"></i>
+						<span class="value value1 ns-text-color-gray"  id="nickname">{$member_info.user_info.nick_name}</span>
+					</div>
+				</a>
+			</li>
+			<li class="ns-border-color-gray" isnew="False">
+				<a href="javascript:void(0)">
+					<div class="title">
+						<i></i>
+						<span class="text" tage="password">{:lang('password')}</span>
+					</div>
+					<div class="cont-value">
+						<i class="fa fa-angle-right ns-text-color-gray"></i>
+						<span class="value set-a ns-text-color-gray"  id="password">{:lang('member_modify')}</span>
+					</div>
+				</a>
+			</li>
+			<li class="ns-border-color-gray" isnew="False">
+				<a href="javascript:void(0)">
+					<div class="title">
+						<i></i>
+						<span class="text" tage="mobilephone">{:lang('member_phone')}</span>
+					</div>
+					<div class="cont-value">
+						<i class="fa fa-angle-right ns-text-color-gray"></i>
+						{if condition="$member_info.user_info.user_tel neq ''"}
+							<span class="value" id="mobilephone">{$member_info.user_info.user_tel}&nbsp;</span>
+						{else/}
+							<span class="value set-a ns-text-color-gray" id="mobilephone">{:lang('bind_mobile_phone_number')}</span>
+						{/if}
+					</div>
+				</a>
+			</li>
+			<li class="ns-border-color-gray" isnew="False">
+				<a href="javascript:void(0)">
+					<div class="title">
+						<i></i>
+						<span class="text" tage="email">{:lang('mailbox')}</span>
+					</div>
+					<div class="cont-value">
+						<i class="fa fa-angle-right ns-text-color-gray"></i>
+						<span class="value" id="email_no">{$member_info.user_info.user_email}&nbsp;</span>
+						<input type="hidden" id="oldEmail" value="{$member_info.user_info.user_email}">
+					</div>
+				</a>
+			</li>
+			<li class="ns-border-color-gray" isnew="False">
+				<a href="javascript:void(0)">
+					<div class="title">
+						<i></i>
+						<span class="text" tage="qqno">{:lang('关联账号')}</span>
+					</div>
+					<div class="cont-value">
+						<i class="fa fa-angle-right ns-text-color-gray"></i>
+						<span class="value" id="qqno">&nbsp;</span>
+					</div>
+				</a>
+			</li>
+		</ul>
+	</div>
+	{if condition="$is_weixin == 0 || (empty($wchat_config['value']['appid']) && empty($wchat_config['value']['appsecret']))"}
+	<div class="button-submit" id="logoutBtn">
+		<a id="logout" href="javascript:void(0)"><button class="btn primary ns-bg-color" onclick="logout()" >{:lang('member_log_out')}</button></a>
+	</div>
+	{/if}
+</div>
+
+<!-- 第三方绑定 -->
+<form class="mt-55 mlr-15" id="edit">
+	<div class="three-bind ns-border-color-gray">
+		<ul>
+			{if condition="$is_weixin == 0 || (empty($wchat_config['value']['appid']) && empty($wchat_config['value']['appid']))"}
+			{notempty name="$member_info['user_info']['wx_openid']"}
+			<li>
+				<img src="WAP_IMG/member/wechat-icon.png" />
+				<a href="javascript:;" class="ns-border-color-gray">
+					<span>{:lang('微信')}</span>
+					<div><span class="wei-span ns-text-color-gray">{:lang('已绑定')}</span><i class="fa fa-angle-right ns-text-color-gray"></i></div>
+				</a>
+			</li>
+			{/notempty}
+			{/if}
+			{notempty name="$member_info['user_info']['qq_openid']"}
+			<li>
+				<img src="WAP_IMG/member/qq-icon.png" />
+				<a href="javascript:;" class="ns-border-color-gray">
+					<span>QQ</span>
+					<div><span class="wei-span ns-text-color">{:lang('已绑定')}</span><i class="fa fa-angle-right ns-text-color-gray"></i></div>
+				</a>
+			</li>
+			{else/}
+			<li>
+				<img src="WAP_IMG/member/qq-icon.png" />
+				<a href="{:__URL('APP_MAIN/login/oauthlogin?type=QQLOGIN')}" class="ns-border-color-gray">
+					<span>QQ</span>
+					<div><span class="wei-span ns-text-color">{:lang('member_no_bound')}</span><i class="fa fa-angle-right ns-text-color-gray"></i></div>
+				</a>
+			</li>
+			{/notempty}
+		</ul>
+	</div>
+</form>
+<!-- 密码修改 -->
+<form class="mt-55 mlr-15 mlr-16" id="editpassword">
+	<div><span>{:lang('current_password')}：</span>
+		<input type="text" id="oldpassword"  class="inputs" placeholder="{:lang('dreambox')}" onfocus="$(this).attr('type','password')">
+	</div>
+	<div><span>{:lang('member_new_password')}：</span>
+		<input type="text" id="newpassword" class="texts" placeholder="{:lang('member_new_password')}" onfocus="$(this).attr('type','password')"/>
+		<span>{:lang('confirm_new_password')}：</span><input type="text" id="newpassword2" placeholder="{:lang('confirm_new_password')}" onfocus="$(this).attr('type','password')">
+	</div>
+</form>
+<!-- 手机号绑定 -->
+<form class="mt-55 mlr-15 mlr-17" id="edit_mobile">
+	<div>
+		<span>{:lang('cell_phone_number')}</span>
+		<input type="text" id="mobile" placeholder="{:lang('please_enter_your_cell_phone_number')}" value='{$member_info.user_info.user_tel}'/>
+		<input type="hidden" id="oldMobile" value="{$member_info.user_info.user_tel}">
+	</div>
+	{if condition="$login_verify_code['pc'] eq 1"}
+	<div>
+		<span>{:lang('member_verification_code')}</span>
+		<input type="text" id="input_mobile_code" placeholder="{:lang('please_enter_verification_code')}" style="max-width: 32%;min-width: 30%;"/>
+		<img id="verify_img" src="{:__URL('SHOP_MAIN/captcha')}" alt="captcha" onclick="this.src='{:__URL('SHOP_MAIN/captcha?tag=1')}'+'&send='+Math.random()" />
+	</div>
+	{/if}
+	{if condition="$notice['noticeMobile'] eq 1"}
+	<div>
+		<span>{:lang('mobile_phone_dynamic_code')}</span>
+		<input type="text" id="mobile_code" placeholder="{:lang('please_enter_the_mobile_phone_dynamic_code')}" style="max-width: 32%;min-width: 30%;"/>
+		<input type="button" class="send-out-code ns-text-color ns-border-color" id="send_mobile" value="{:lang('get_dynamic_code')}" style="height: 30px;margin-left: 20px;line-height: 30px;">
+	</div>
+	{/if}
+</form>
+<!-- 修改昵称 -->
+<form class="mt-55 mlr-15 mlr-18" id="edit_nick_name">
+	<div><span>{:lang('member_nickname')}</span>
+		<input type="text" id="input_nick_name" placeholder="{:lang('please_enter_your_nickname')}" value='{$member_info.user_info.nick_name}'/>
+	</div>
+</form>
+<!-- 修改邮箱 -->
+<form class="mt-55 mlr-15" id="edit_email">
+	<div><span>{:lang('mailbox')}</span>
+		<input type="text" id="email" placeholder="{:lang('please_enter_the_mailbox')}" value='{$member_info.user_info.user_email}'/>
+	</div>
+	{if condition="$login_verify_code['pc'] eq 1"}
+	<div>
+		<span>{:lang('member_verification_code')}</span>
+		<input type="text" id="input_email_code" placeholder="{:lang('please_enter_verification_code')}" style="max-width: 32%;min-width: 30%;" />
+		<img id="verify_img" src="{:__URL('SHOP_MAIN/captcha')}" alt="captcha" onclick="this.src='{:__URL('SHOP_MAIN/captcha?tag=1')}'+'&send='+Math.random()" />
+	</div>
+	{/if}
+	{if condition="$notice['noticeEmail'] eq 1"}
+	<div>
+		<span>{:lang('member_mailbox_authentication_code')}</span>
+		<input type="text" id="email_code"  placeholder="{:lang('member_enter_mailbox_verification_code')}" style="max-width: 32%;min-width: 30%;" />
+		<input type="button" class="send-out-code ns-text-color ns-border-color" id="send_email" value="{:lang('get_validation_code')}" style="height: 30px;margin-left: 20px;line-height: 30px;">
+	</div>
+	{/if}
+</form>
+<div id="saveBtn" class="button-submit buttons">
+	<button class="ns-bg-color" onclick="save()">{:lang('member_preservation')}</button>
+</div>
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script>
+var lang_member_info = {
+	account_number : "{:lang('account_number')}",
+	password : "{:lang('password')}",
+	change_password : "{:lang('change_password')}",
+	member_phone : "{:lang('member_phone')}",
+	member_nickname : "{:lang('member_nickname')}",
+	mailbox : "{:lang('mailbox')}",
+	please_enter_the_mailbox : "{:lang('please_enter_the_mailbox')}!",
+	third_party_account_binding : "{:lang('third_party_account_binding')}",
+	member_real_name : "{:lang('member_real_name')}",
+	wechat : "{:lang('wechat')}",
+	member_personal_data : "{:lang('member_personal_data')}",
+	please_enter_the_original_password : "{:lang('please_enter_the_original_password')}",
+	please_enter_6_20_new_passwords : "{:lang('please_enter_6_20_new_passwords')}",
+	the_two_password_is_inconsistent : "{:lang('the_two_password_is_inconsistent')}",
+	original_password_error : "{:lang('original_password_error')}",
+	consistent_with_the_original_mobile_phone_number_without_modification : "{:lang('consistent_with_the_original_mobile_phone_number_without_modification')}",
+	mobile_phones_must_not_be_empty : "{:lang('mobile_phones_must_not_be_empty')}",
+	phone_is_not_right_format : "{:lang('phone_is_not_right_format')}",
+	please_enter_verification_code : "{:lang('please_enter_verification_code')}",
+	the_phone_number_already_exists : "{:lang('the_phone_number_already_exists')}",
+	member_enter_mobile_verification_code : "{:lang('member_enter_mobile_verification_code')}",
+	can_not_be_empty : "{:lang('can_not_be_empty')}",
+	consistent_with_the_original_mailbox_no_change_required : "{:lang('consistent_with_the_original_mailbox_no_change_required')}",
+	mailbox_cannot_be_empty : "{:lang('mailbox_cannot_be_empty')}",
+	mailbox_already_exists : "{:lang('mailbox_already_exists')}",
+	member_enter_mailbox_verification_code : "{:lang('member_enter_mailbox_verification_code')}",
+	unable_to_change : "{:lang('unable_to_change')}",
+	consistent_with_the_original_nickname_without_modification : "{:lang('consistent_with_the_original_nickname_without_modification')}",
+	member_nicknames_cannot_empty : "{:lang('member_nicknames_cannot_empty')}",
+	mailbox_format_is_incorrect : "{:lang('mailbox_format_is_incorrect')}",
+	get_validation_code : "{:lang('get_validation_code')}",
+	post_resend : "{:lang('post_resend')}",
+	please_enter_member_name : ":lang('please_enter_member_name')}",
+	please_enter_your_cell_phone_number : "{:lang('please_enter_your_cell_phone_number')}!",
+	please_enter_your_nickname : "{:lang('please_enter_your_nickname')}",
+	bind_mobile_phone_number : "{:lang('bind_mobile_phone_number')}",
+	modify_nickname : "{:lang('modify_nickname')}",
+	member_enter_your_real_name : "{:lang('member_enter_your_real_name')}!",
+	please_enter_qq_number : "{:lang('please_enter_qq_number')}",
+	please_enter_a_micro_signal : "{:lang('please_enter_a_micro_signal')}",
+};
+var notice_mobile = "{$notice['noticeMobile']}";
+var pc ="{$login_verify_code['pc']}";
+var notice_email ="{$notice['noticeEmail']}"
+</script>
+<script src="WAP_JS/member_info.js"></script>
+{/block}

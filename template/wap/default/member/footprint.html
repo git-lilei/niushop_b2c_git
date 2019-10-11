@@ -1,0 +1,89 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/member_footprint.css">
+{/block}
+{block name="main"}
+<div class="new-my-path">
+	<nav></nav>
+	<div class="list"></div>
+</div>
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script type="text/javascript">
+var category_id = '';
+$(function(){
+	LoadingInfo();
+});
+function LoadingInfo(){
+	api('System.Member.footprint', {"page_index" : 1, "page_size" : 0, 'category_id':category_id}, function(res) {
+		var data = res.data;
+		var list = data['data'];
+		var html = '';
+		var day = '';
+		var list_html = '';
+		list_html += '<ul>';
+		for(var i = 0;i < list.length;i++){
+			if(list[i]['goods_info']["goods_name"] != undefined){
+				list_html += '<li class="ns-border-color-gray">';
+					if(list[i]['day'] != day){
+						day = list[i]['day'];
+						list_html += '<div class="date">'+ list[i]['month'] +'月'+ list[i]['day'] +'日</div>';
+					}
+					list_html += '<div class="right ns-border-color-gray">';
+						list_html += '<div class="img-block" onclick="location.href=\''+ __URL(APPMAIN+'/goods/detail?goods_id=' + list[i]['goods_id']) +'\'">';
+							if(list[i]['goods_info']['picture_info'] != null){
+								list_html += '<img src="'+ __IMG(list[i]['goods_info']['picture_info']['pic_cover']) +'" class="lazy_load J_LazyLoad" >';
+							}else{
+								list_html += '<img src="{:__IMG($default_goods_img)}" class="lazy_load J_LazyLoad" >';
+							}
+						list_html += '</div>';
+						list_html += '<div class="content-block">';
+							list_html += '<a href="'+ __URL(APPMAIN+'/goods/detail?goods_id=' + list[i]['goods_id']) +'" class="goods-name">'+ list[i]['goods_info']['goods_name'] +'</a>';
+							if(list[i]['goods_info']['point_exchange_type'] == 0 || list[i]['goods_info']['point_exchange_type'] == 2){
+								list_html += '<span class="price">￥'+ list[i]['goods_info']['promotion_price'] +'</span>';
+							}else{
+								if(list[i]['goods_info']['point_exchange_type'] == 1 && list[i]['goods_info']['promotion_price'] > 0){
+									list_html += '<span class="price">￥'+ list[i]['goods_info']['promotion_price'] +'+'+ list[i]['goods_info']['point_exchange']+'积分</span>';
+								}else{
+									list_html += '<span class="price">'+ list[i]['goods_info']['point_exchange'] +'积分</span>';
+								}
+							}
+							list_html += '<a href="javascript:delMyPath('+ list[i]['browse_id'] +');" class="del ns-text-color">删除</a>';
+						list_html += '</div>';
+					list_html += '</div>';
+				list_html += '</li>';
+			}
+		}
+		list_html += '</ul>';
+		$(".new-my-path .list").html(list_html);
+		if(!category_id){
+			var cate = data['category_list'];
+			var html = '';
+			html += '<ul>';
+				html += '<li data-category-id="" class="ns-bg-color-fadeout-80 ns-text-color ns-border-color" onclick="select_cate(this)">全部宝贝</li>';
+				for(var i = 0;i < cate.length;i++){
+					html += '<li data-category-id="'+ cate[i]['category_id'] + '" onclick="select_cate(this)" class="ns-border-color-gray">' + cate[i]['category_name'] + '</li>';
+				}
+			html += '</ul>';
+			$(".new-my-path nav").html(html);
+		}
+	});
+}
+
+function delMyPath(id){
+	api('System.Member.deleteFootprint', {"type" : 'browse_id', "value" : id}, function(res) {
+		if(res.data > 0){
+			toast("删除成功");
+			LoadingInfo();
+		}
+	})
+}
+
+function select_cate(event){
+	$(event).addClass("ns-bg-color-fadeout-80 ns-border-color ns-text-color").removeClass("ns-border-color-gray").siblings().addClass("ns-border-color-gray").removeClass("ns-bg-color-fadeout-80 ns-border-color ns-text-color");
+	category_id = $(event).attr('data-category-id');
+	LoadingInfo();
+}
+</script>
+{/block}

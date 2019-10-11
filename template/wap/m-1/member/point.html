@@ -1,0 +1,40 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/member_point.css">
+{/block}
+{block name="main"} 
+{php}
+	$point_config = api("System.Promotion.pointConfig");
+	$point_config = $point_config['data'];
+
+	// 会员账户信息
+	$member_account = api("System.Member.memberAccount");
+	$member_account = $member_account['data'];
+{/php}
+<div class="member-point">
+	<div class="account-box ns-border-color">
+		<p class="balance">{$member_account.point}</p>
+		<p class="p-style">{:lang('goods_integral')}</p>
+	</div>
+	<div class="declaration-title ns-border-color-gray">{:lang('integral_declaration')}</div>
+	<div class="declaration-content ns-text-color-gray">{$point_config.desc}</div>
+	{php}
+		$member_point_list = api("System.Member.accountRecordsList", ['page_index'=>1, 'page_size' => 0, 'account_type' => 1]);
+		$member_point_list = $member_point_list['data'];
+	{/php}
+	{if condition="$member_point_list['total_count'] gt 0"}
+	<div class="ns-table">
+		{volist name="member_point_list['data']" id="vo"}
+		<div class="ns-table-wrap ns-border-color-gray">
+			<div class="table-wrap-title"><span class="pull-left">{$vo.type_name}</span><span class="ns-text-color pull-right">{$vo.number|ceil}</span></div>
+			<div class="table-wrap-time ns-text-color-gray">{$vo.create_time | getTimeStampTurnTime}</div>
+			<div class="table-wrap-text ns-text-color-gray">{$vo.text}</div>
+		</div>
+		{/volist}
+	</div>
+	{else/}
+    <div class="empty">{:lang('you_have_not_got_any_minutes_yet')}！</div>
+	{/if}
+</div>
+{/block}
+{block name="footer"}{/block}

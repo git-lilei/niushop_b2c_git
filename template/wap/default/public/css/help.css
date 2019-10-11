@@ -1,0 +1,23 @@
+.article-hide{display: none;height: 294px;}
+.custom-tag-list-menu-block .custom-tag-list-side-menu{position: relative;}
+.two-menu-item{display: none;}
+.custom-tag-list-goods p:nth-child(1){padding-left: 40%;}
+.custom-tag-list-goods p:nth-child(2){font-size:12px;}
+.custom-tag-list-side-menu li a.selected{border-left: 4px solid; padding-left: 11px;}
+.custom-tag-list{ overflow: hidden; position: relative; z-index: 0;}
+.custom-tag-list .custom-tag-list-goods{overflow: auto; float: left; width: 72%; height: 100%;}
+/* 侧面导航栏 */
+.custom-tag-list .custom-tag-list-menu-block{position: relative;z-index: 5; width: 27%; float: left; border-right: 1px solid;}
+.custom-tag-list .custom-tag-list-menu-block .custom-tag-list-side-menu{position: relative;}
+.custom-tag-list .custom-tag-list-menu-block li{background: #fff; border-bottom: 1px solid;}
+.custom-tag-list-side-menu li a.selected{border-left: 4px solid; padding-left: 11px;}
+.custom-tag-list .custom-tag-list-menu-block li a{display: block; width: 100%; padding: 13px 10px 13px 15px; font-size: 14px; line-height: 18px; -moz-box-sizing: border-box; box-sizing: border-box; -webkit-tap-highlight-color: transparent; word-wrap: break-word; text-align: center;}
+/* 侧边栏的二级菜单 */
+.two-list-menu{display: none; position: absolute;left: 27%; width: 100px;line-height: 17px; z-index: 6; background: #fff; overflow: hidden;}
+.two-list-menu ul{height: 100%; overflow: auto; display: block; width: 101px; z-index: 3; background-color: #fff;}
+.custom-tag-list .two-list-menu li{border-bottom: 1px solid; margin-top: -1px;}
+.custom-tag-list .two-list-menu li a{display: block; overflow: hidden; padding: 13px 10px 13px 15px; text-overflow: ellipsis; white-space: nowrap;}
+.custom-tag-list .mask{position: fixed; z-index: 1; width: 100%; height: 100%; top: 0; left: 0; background: rgba(0, 0, 0, 0.6); display: none;}
+/* 主要内容 */
+.custom-tag-list .custom-tag-list-goods>p{line-height: 32px; padding-left: 10px; background: #FFF;}
+.custom-tag-list-goods p:nth-child(1){padding-left: 40%;}

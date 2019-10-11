@@ -1,0 +1,449 @@
+{extend name="$member_base" /}
+{block name="left_main"}{/block}
+{block name="right_main"}
+<link rel="stylesheet" href="WEB_CSS/member_order_detail.css">
+{php}
+$order_id = input('order_id', '');
+$order_data = api('System.Order.orderDetail', ['order_id' => $order_id]);
+$order = $order_data['data']['order'];
+
+$order_close_config = api('System.Config.orderAutoCloseConfig');
+$order_close_config = $order_close_config['data'];
+$order_close_time = !empty($order_close_config['value']) ? $order_close_config['value'] * 60 : 3600;
+{/php}
+<div class="member-main">
+	<div class="order-state ns-border-color">
+	    <div class="state-left-col ns-border-color-gray">
+	        <div class="state-action">
+	            <div class="text-center state-left-col-top"><small>订单号：{$order.order_no}</small></div>
+	            <div class="text-center state-text ns-text-color">{$order.status_name}</div>
+		        {notempty name="$order['member_operation']"}
+	            <div class="text-center state-btn">
+                    {foreach name="$order['member_operation']" item="vo"}
+                    <button class="btn btn-block ns-border-color ns-text-color order-pay-btn center-block" type="button" onclick="operation('{$vo.no}', '{$order.order_id}')">{$vo.name}</button>
+                    {/foreach}
+	            </div>
+		        {/notempty}
+	            <!--<div class="state-left-col-bottom center-block">-->
+	                <!--<a href="javascript:void(0)">-->
+	                    <!--&lt;!&ndash; <i class="icon icon-print"></i>&nbsp;打印订单 &ndash;&gt;-->
+	                <!--</a>-->
+	            <!--</div>-->
+	        </div>
+	    </div>
+	    <div class="state-right-col">
+	    	{if $order['order_status'] eq 0}
+	        	<div class="state-right-col-top">该订单会为您保留{$order_close_time|timeString}（从下单之日算起），超出时间之后如果还未付款，系统将自动取消该订单。</div>
+	        {/if}
+       		<div class="order-state-step row">
+	            <div class="step-spot">
+	                <i class="fa fa-building fa-2x {if $order['order_status'] >= 0}ns-text-color{else/}ns-text-color-gray{/if}"></i>
+	                <ul>
+	                    <li>&nbsp;</li>
+	                    <li>提交订单</li>
+	                    <li>{if $order['order_status'] >= 0}{$order.create_time|date="Y-m-d H:i:s",###}{/if}</li>
+	                </ul>
+	            </div>
+	            <div class="step">
+	                <div class="step-line">
+	                    <div class="step-line-dotted step-line-dotted-left {if $order['order_status'] >= 0}ns-border-color{else/}ns-border-color-gray-shade-20{/if}"></div>
+	                    <div class="step-line-center {if $order['order_status'] >= 0}ns-border-color{else/}ns-border-color-gray-shade-20{/if}"></div>
+	                    <div class="step-line-dotted step-line-dotted-right {if $order['order_status'] >= 0}ns-border-color{else/}ns-border-color-gray-shade-20{/if}"></div>
+	                </div>
+	            </div>
+	            <div class="step-spot">
+	                <i class="fa fa-credit-card-alt fa-2x {if $order['pay_status'] > 0}ns-text-color{else/}ns-text-color-gray{/if}"></i>
+	                <ul>
+	                    <li>&nbsp;</li>
+	                    <li>付款成功</li>
+	                    <li>{if $order['pay_status'] > 0}{$order.pay_time|date="Y-m-d H:i:s",###}{/if}</li>
+	                </ul>
+	            </div>
+	            <div class="step">
+	                <div class="step-line">
+	                    <div class="step-line-dotted step-line-dotted-left {if $order['pay_status'] > 0}ns-border-color{else/}ns-border-color-gray-shade-20{/if}"></div>
+	                    <div class="step-line-center {if $order['pay_status'] > 0}ns-border-color{else/}ns-border-color-gray-shade-20{/if}"></div>
+	                    <div class="step-line-dotted step-line-dotted-right {if $order['pay_status'] > 0}ns-border-color{else/}ns-border-color-gray-shade-20{/if}"></div>
+	                </div>
+	            </div>
+	            <div class="step-spot">
+	                <i class="fa fa-archive fa-2x {if $order['consign_time'] > 0 || ($order['is_virtual'] == 1 && $order['finish_time'] > 0)}ns-text-color{else/}ns-text-color-gray{/if}"></i>
+	                <ul>
+	                    <li>&nbsp;</li>
+	                    <li>商品出库</li>
+	                    <li>{if $order['consign_time'] > 0 || ($order['is_virtual'] == 1 && $order['finish_time'] > 0)}{$order.consign_time|date="Y-m-d H:i:s",###}{/if}</li>
+	                </ul>
+	            </div>
+	            <div class="step">
+	                <div class="step-line">
+	                    <div class="step-line-dotted step-line-dotted-left {if $order['consign_time'] > 0 || ($order['is_virtual'] == 1 && $order['finish_time'] > 0)}ns-border-color{else/}ns-border-color-gray-shade-20{/if}"></div>
+	                    <div class="step-line-center {if $order['consign_time'] > 0 || ($order['is_virtual'] == 1 && $order['finish_time'] > 0)}ns-border-color{else/}ns-border-color-gray-shade-20{/if}"></div>
+	                    <div class="step-line-dotted step-line-dotted-right {if $order['consign_time'] > 0 || ($order['is_virtual'] == 1 && $order['finish_time'] > 0)}ns-border-color{else/}ns-border-color-gray-shade-20{/if}"></div>
+	                </div>
+	            </div>
+	            <div class="step-spot">
+	                <i class="fa fa-truck fa-2x {if $order['sign_time'] > 0 || ($order['is_virtual'] == 1 && $order['finish_time'] > 0)}ns-text-color{else/}ns-text-color-gray{/if}"></i>
+	                <ul>
+	                    <li>&nbsp;</li>
+	                    <li>等待收货</li>
+	                    <li>{if $order['sign_time'] > 0 || ($order['is_virtual'] == 1 && $order['finish_time'] > 0)}{$order.sign_time|date="Y-m-d H:i:s",###}{/if}</li>
+	                </ul>
+	            </div>
+	            <div class="step">
+	                <div class="step-line">
+	                    <div class="step-line-dotted step-line-dotted-left {if $order['sign_time'] > 0 || ($order['is_virtual'] == 1 && $order['finish_time'] > 0)}ns-border-color{else/}ns-border-color-gray-shade-20{/if}"></div>
+	                    <div class="step-line-center {if $order['sign_time'] > 0 || ($order['is_virtual'] == 1 && $order['finish_time'] > 0)}ns-border-color{else/}ns-border-color-gray-shade-20{/if}"></div>
+	                    <div class="step-line-dotted step-line-dotted-right {if $order['sign_time'] > 0 || ($order['is_virtual'] == 1 && $order['finish_time'] > 0)}ns-border-color{else/}ns-border-color-gray-shade-20{/if}"></div>
+	                </div>
+	            </div>
+	            
+	            <div class="step-spot">
+	                <i class="fa fa-check-circle fa-2x {if $order['finish_time'] > 0}ns-text-color{else/}ns-text-color-gray{/if}"></i>
+	                <ul>
+	                    <li>&nbsp;</li>
+	                    <li>完成</li>
+	                    <li>{if $order['finish_time'] > 0}{$order.finish_time|date="Y-m-d H:i:s",###}{/if}</li>
+	                </ul>
+	            </div>
+	        </div>
+	    </div>
+	</div>
+
+	<!-- 订单详情 -->
+	<div class="order-info ns-border-color-gray">
+	    <div class="order-info-block">
+	        <div class="ns-border-color-gray">
+	            <h4>收货人信息</h4>
+	            <form class="form-horizontal">
+		            {if $order['is_virtual'] == 0}
+	                <div class="form-group">
+	                    <label>收货人：</label>
+	                    <div><p class="form-control-static">{$order.receiver_name}</p></div>
+	                </div>
+	                <div class="form-group">
+	                    <label>地址：</label>
+	                    <div><p class="form-control-static">{$order.receiver_address}</p></div>
+	                </div>
+		            {/if}
+	                <div class="form-group">
+	                    <label>手机号码：</label>
+	                    <div><p class="form-control-static">{$order.receiver_mobile}</p></div>
+	                </div>
+	            </form>
+	        </div>
+	        <div class="ns-border-color-gray">
+	            <h4>配送信息</h4>
+	            <form class="form-horizontal">
+	            	
+	            	{notempty name="$order.shipping_type_name"}
+	                <div class="form-group">
+	                    <label>配送方式：</label>
+	                    <div><p class="form-control-static">{$order.shipping_type_name}</p></div>
+	                </div>
+	                {/notempty}
+	                
+	                {notempty name="$order.shipping_money"}
+	                <div class="form-group">
+	                    <label>运费：</label>
+	                    <div><p class="form-control-static">¥{$order.shipping_money}</p></div>
+	                </div>
+	                {/notempty}
+	                
+	                {if condition="$order.consign_time gt 0"}
+	                <div class="form-group">
+	                    <label>发货日期：</label>
+	                    <div><p class="form-control-static">{$order.consign_time|getTimeStampTurnTime}</p>
+	                    </div>
+	                </div>
+	                {/if}
+	                
+	                {if condition="$order.sign_time gt 0"}
+	                <div class="form-group">
+	                    <label>收货时间：</label>
+	                    <div><p class="form-control-static">{$order.sign_time|getTimeStampTurnTime}</p>
+	                    </div>
+	                </div>
+	                {/if}
+	                
+	                {if condition="!empty($order['order_pickup'])"}
+	                	{notempty name="$order['order_pickup']['address']"}
+		            	<div class="form-group">
+		                    <label>自提地址：</label>
+		                    <div>
+			                    <p class="form-control-static">{$order['order_pickup']['province_name']} {$order['order_pickup']['city_name']} {$order['order_pickup']['district_name']} {$order['order_pickup']['address']}</p>
+		                    </div>
+		                </div>
+		                {/notempty}
+		            	
+		            	{notempty name="$order['order_pickup']['picked_up_code']"}
+		            	<div class="form-group">
+		                    <label>自提码：</label>
+		                    <div><p class="form-control-static">{$order['order_pickup']['picked_up_code']}</p></div>
+		                </div>
+		                {/notempty}
+		                
+		                {notempty name="$order['order_pickup']['buyer_name']"}
+		            	<div class="form-group">
+		                    <label>联系人：</label>
+		                    <div><p class="form-control-static">{$order['order_pickup']['buyer_name']}</p></div>
+		                </div>
+		                {/notempty}
+						
+						{notempty name="$order['order_pickup']['buyer_mobile']"}
+		            	<div class="form-group">
+		                    <label>联系电话：</label>
+		                    <div><p class="form-control-static">{$order['order_pickup']['buyer_mobile']}</p></div>
+		                </div>
+		                {/notempty}
+	            	{/if}
+	            </form>
+	        </div>
+	        <div class="ns-border-color-gray">
+	            <h4>付款信息</h4>
+	            <form class="form-horizontal">
+	                <div class="form-group">
+	                    <label>付款方式：</label>
+	                    <div><p class="form-control-static">{$order.payment_type_name}</p></div>
+	                </div>
+	                <div class="form-group">
+	                    <label>商品总额：</label>
+	                    <div><p class="form-control-static">¥{$order.goods_money}</p></div>
+	                </div>
+	                <div class="form-group">
+	                    <label>运费金额：</label>
+	                    <div><p class="form-control-static">¥{$order.shipping_money}</p></div>
+	                </div>
+	                <div class="form-group">
+	                    <label>优惠金额：</label>
+	                    <div><p class="form-control-static">¥{$order.promotion_money}</p></div>
+	                </div>
+	                <div class="form-group">
+	                    <label>发票金额：</label>
+	                    <div><p class="form-control-static">¥{$order.tax_money}</p></div>
+	                </div>
+	                <div class="form-group">
+	                    <label>应支付金额：</label>
+	                    <div><p class="form-control-static">¥{$order.pay_money}</p></div>
+	                </div>
+	            </form>
+	        </div>
+	        {notempty name="$order['buyer_invoice_info']"}
+	        <div>
+	            <h4>发票信息</h4>
+	            <form class="form-horizontal">
+	                <div class="form-group">
+	                	<label>发票抬头：</label>
+	                	<div><p class="form-control-static">{$order['buyer_invoice_info'][0]}</p></div>
+	                </div>
+	                <div class="form-group">
+	                	<label>纳税人识别号：</label>
+	                	<div><p class="form-control-static">{$order['buyer_invoice_info'][2]}</p></div>
+	                </div>
+	                <div class="form-group">
+		                <label>发票内容：</label>
+		                <div><p class="form-control-static">{$order['buyer_invoice_info'][1]}</p></div>
+	                </div>
+	            </form>
+	        </div>
+	        {/notempty}
+	    </div>
+	</div>
+	
+	<div class="order-product ns-border-color-gray">
+	    <table class="table">
+		    <colgroup>
+			    <col width="60%" />
+			    <!--<col width="20%" />-->
+			    <col width="10%" />
+			    <col width="10%" />
+			    <col width="10%" />
+		    </colgroup>
+	        <thead>
+	            <tr>
+	                <th class="ns-bg-color-gray-fadeout-60 align-center">商品</th>
+	                <!--<th class="ns-bg-color-gray-fadeout-60">商品编号</th>-->
+	                <th class="ns-bg-color-gray-fadeout-60">商品单价</th>
+	                <th class="ns-bg-color-gray-fadeout-60">商品数量</th>
+	                <th class="ns-bg-color-gray-fadeout-60">操作</th>
+	            </tr>
+	        </thead>
+	        <tbody>
+	        	{foreach name="$order['order_goods']" item="vo"}
+	            <tr>
+	                <td class="ns-border-color-gray">
+	                    <div class="order-item">
+	                        <div class="order-item-img ns-border-color-gray"><img src="{:__IMG($vo['picture_info']['pic_cover_micro'])}" /></div>
+	                        <div class="order-item-info">
+	                        	{if $vo.gift_flag eq 1}<mark class="ns-bg-color gift-mark">赠品</mark>{/if}
+		                        <a href="{:__URL('SHOP_MAIN/goods/detail?goods_id='.$vo['goods_id'])}" target="_blank">{$vo.goods_name}</a>
+	                        </div>
+	                    </div>
+	                </td>
+	                <!--<td></td>-->
+	                <td class="ns-border-color-gray">¥{$vo.price}</td>
+	                <td class="ns-border-color-gray">{$vo.num}</td>
+	                <td class="ns-border-color-gray">{if $order['is_virtual'] == 1 && $order['pay_status'] && !empty($order['virtual_goods_list']) }<a href="javascript:virtualShow();">核销</a>{/if}</td>
+	            </tr>
+	            {/foreach}
+	        </tbody>
+	    </table>
+	    <div class="order-product-total">
+	        <ul>
+	            <li>
+	                <span class="order-product-total-label">商品总额：</span>
+	                <span class="order-product-total-text">¥{$order.goods_money}</span>
+                </li>
+	            <li>
+	                <span class="order-product-total-label">优　　惠：</span>
+	                <span class="order-product-total-text">-¥{$order.promotion_money}</span>
+                </li>
+                <li>
+	                <span class="order-product-total-label">发票金额：</span>
+	                <span class="order-product-total-text">-¥{$order.tax_money}</span>
+	            </li>
+	            <li>
+	                <span class="order-product-total-label">运　　费：</span>
+	                <span class="order-product-total-text">¥{$order.shipping_money}</span>
+                </li>
+                {if $order.coupon_money > 0}
+	                <li>
+		                <span class="order-product-total-label">优惠券抵扣总额：</span>
+		                <span class="order-product-total-text">¥{$order.coupon_money}</span>
+	                </li>
+                {/if}
+                {if $order.user_platform_money > 0}
+	                <li>
+		                <span class="order-product-total-label">余　　额：</span>
+		                <span class="order-product-total-text">¥{$order.user_platform_money}</span>
+	                </li>
+                {/if}
+                <li>
+	                <span class="order-product-total-label">抵扣金额：</span>
+	                <span class="order-product-total-text">¥{$order.point_money + $order.user_platform_money}</span>
+                </li>
+                <li>
+	                <span class="order-product-total-label">订单总额：</span>
+	                <span class="order-product-total-text">¥{$order.order_money}</span>
+                </li>
+	            <li class="ns-text-color">
+	                <span class="order-product-total-label">应付总额：</span>
+	                <span class="order-product-total-text count ns-text-color">¥{$order.pay_money}</span>
+                </li>
+	        </ul>
+	    </div>
+	</div>
+
+</div>
+
+{notempty name="$order['virtual_goods_list']"}
+<!-- 查看虚拟码弹框  start-->
+<div class="modal fade bs-example-modal-md" tabindex="-1" role="dialog" id="virtualBlock">
+	<div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">我的核销码</h4>
+            </div>
+			<div class="modal-body">
+				<div class="form-horizontal">
+					<div class="order-product virtual-product ns-border-color-gray">
+						<table class="table">
+							<colgroup>
+								<col width="60%"/>
+								<col width="25%"/>
+								<col width="15%"/>
+							</colgroup>
+							{if $order['order_goods'][0]["goods_type"] == 0}
+					        <thead>
+					            <tr>
+					                <th class="ns-bg-color-gray-fadeout-60">商品名称</th>
+					                <th class="ns-bg-color-gray-fadeout-60">虚拟码</th>
+					                <th class="ns-bg-color-gray-fadeout-60">有效期</th>
+					            </tr>
+					        </thead>
+					        <tbody>
+					            {foreach $order["virtual_goods_list"] as $k =>$v}
+					            <tr>
+					                <td class="ns-border-color-gray">{$v.virtual_goods_name}</td>
+					                <td class="ns-border-color-gray"><span class="virtual-code ns-text-color" data-toggle="tooltip" title = "<img src='{:__IMG($v.path)}'/>" data-html="true">{$v.virtual_code}</span></td>
+					                <td class="ns-border-color-gray">{if $v.validity_period == 0}不限制{else/}{$v.end_time|date="Y-m-d H:i:s",###}{/if}</td>
+					            </tr>
+					            {/foreach}
+					        </tbody>
+					        
+					        {elseif $order['order_goods'][0]["goods_type"] == 2/}
+					        <thead>
+					            <tr>
+					                <th class="ns-bg-color-gray-fadeout-60">商品名称</th>
+					                <th class="ns-bg-color-gray-fadeout-60">下载链接</th>
+					                <th class="ns-bg-color-gray-fadeout-60">有效期</th>
+					            </tr>
+					        </thead>
+					        <tbody>
+					            {foreach $order["virtual_goods_list"] as $k =>$v}
+					            <tr>
+					                <td class="ns-border-color-gray">{$v.virtual_goods_name}</td>
+					                <td class="ns-border-color-gray"><a class="ns-text-color" href="{:__URL('SHOP_MAIN/order/download','virtual_code='.$v['virtual_code'])}">附件下载</a></td>
+					                <td class="ns-border-color-gray">{if $v.validity_period == 0}不限制{else/}{$v.end_time|date="Y-m-d H:i:s",###}{/if}</td>
+					            </tr>
+					            {/foreach}
+					        </tbody>
+					      {elseif $order['order_goods'][0]["goods_type"] == 3/}
+							<thead>
+					            <tr>
+					                <th class="ns-bg-color-gray-fadeout-60">商品名称</th>
+					                <th class="ns-bg-color-gray-fadeout-60">网盘链接/提取码</th>
+					                <th class="ns-bg-color-gray-fadeout-60">有效期</th>
+					            </tr>
+							</thead>
+							<tbody>
+					            {foreach $order["virtual_goods_list"] as $k =>$v}
+					            <tr>
+					                <td class="ns-border-color-gray">{$v.virtual_goods_name}</td>
+					                <td class="ns-border-color-gray">{$v.remark}</td>
+					                <td class="ns-border-color-gray">{if $v.validity_period == 0}不限制{else/}{$v.end_time|date="Y-m-d H:i:s",###}{/if}</td>
+					            </tr>
+					            {/foreach}
+							</tbody>
+				            {elseif $order['order_goods'][0]["goods_type"] == 4}
+					        <thead>
+					            <tr>
+					                <th class="ns-bg-color-gray-fadeout-60">商品名称</th>
+					                <th class="ns-bg-color-gray-fadeout-60">卡号/密码</th>
+					                <th class="ns-bg-color-gray-fadeout-60">有效期</th>
+					            </tr>
+					        </thead>
+					        <tbody>
+					            {foreach $order["virtual_goods_list"] as $k =>$v}
+					            <tr>
+					                <td class="ns-border-color-gray">{$v.virtual_goods_name}</td>
+					                <td class="ns-border-color-gray">{$v.remark}</td>
+					                <td class="ns-border-color-gray">{if $v.validity_period == 0}不限制{else/}{$v.end_time|date="Y-m-d H:i:s",###}{/if}</td>
+					            </tr>
+					            {/foreach}
+					        </tbody>
+				            {/if}
+					    </table>
+				    </div>
+					
+		        </div>
+			</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">关闭</button>
+            </div>
+		</div>
+    </div>
+</div>
+<script>
+function virtualShow(){
+	$('#virtualBlock').modal();
+}
+$('[data-toggle="tooltip"]').tooltip({ placement: 'right' , tipClass: 'tooltip-danger'});
+//校正位置
+$('[data-toggle="tooltip"]').mouseover().mouseleave();
+</script>
+{/notempty}
+{/block}
+{block name="script"}
+<script src="WEB_JS/member_order_action.js"></script>
+{/block}

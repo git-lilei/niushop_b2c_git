@@ -1,0 +1,88 @@
+{extend name="$base" /}
+{block name="main"}
+<div class="space-10"></div>
+<div class="set-style">
+	<dl>
+		<dt>积分抵现比率：</dt>
+		<dd>
+			<input id="integrat_money" class="input-mini input-common harf" type="number" min="0.01" step="0.01" value="{$pointconfiginfo.convert_rate}"
+			/><em class="unit">元</em>
+			<span class="help-inline ml15" style="display: none;">请输入积分比</span>
+			<p class="hint">积分抵现比率 1积分可抵多少元现金</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否开启积分抵现：</dt>
+		<dd>
+			<p>
+				<input id="is_open" type="checkbox"  class="checkbox"   {if condition="$pointconfiginfo.is_open eq 1"}checked{/if}/>
+			</p>
+			<p class="hint">只有启用该选项，才可以使用积分抵现功能</p>
+		</dd>
+	</dl>
+		<dl>
+		<dt>积分说明：</dt>
+		<dd><textarea id="integrat_description" class="textarea-common" >{$pointconfiginfo.desc}</textarea></dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="SavepointConfig();">保存</button>
+			<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);">返回</button>
+		</dd>
+	</dl>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+var validation = true;//验证余额输入
+$("#integrat_money").live("keyup",function(){
+	var reg = /^\d+(.{0,1})(\d{0,2})$/;
+	if(!reg.test($(this).val())){
+		showTip("请输入大于0的数字，并且保留两位小数","warning");
+		validation = false;
+	}else{
+		validation = true;
+	}
+});
+
+function SavepointConfig(){
+	var convert_rate= $("#integrat_money").val();
+	var is_open = $('#is_open').prop('checked') ? 1 : 0 ;
+	var desc = $("#integrat_description").val();
+	if(!(convert_rate>0)){
+		showTip("请输入大于0的数字，并且保留两位小数","warning");
+		return false;
+	}
+	if(validation){
+		$.ajax({
+			type:"post",
+			url : "{:__URL('ADMIN_MAIN/promotion/pointconfig')}",
+			data : {
+				"convert_rate" : convert_rate,
+				"is_open" : is_open,
+				"desc" : desc
+			},
+			success : function(data){
+				if(data['code'] > 0){
+					showMessage('success', data["message"]);
+				}else{
+					showMessage('error', data["message"]);
+				}
+			}
+		});
+	}else{
+		showTip("请输入大于0的数字，并且保留两位小数","warning");
+	}
+}
+
+window.onload=function(){
+	var is_open = $("#is_open").val();
+	if(parseInt(is_open) == 0){
+		$("#manebaoyouResultNo").prop("checked",true).parent("i").addClass("selected");
+	}else{
+		$("#manebaoyouResultYes").prop("checked",true).parent("i").addClass("selected");
+	}
+};
+</script>
+{/block}

@@ -1,0 +1,83 @@
+<link rel="stylesheet" href="{$pc_path}/style_1.css"/>
+<div class="floor-one floor-item">
+    <i class="color-mark ns-bg-color-black"></i>
+    <div class="floor-name" data-block-type="text" data-block-name="left_title">
+        <div class="floor-title">
+            <span floor-block-name="text">{if condition="$data['text']['left_title']['value']"}{$data['text']['left_title']['value']}{else/}户外出行{/if}</span>
+            <div class="floor-sub-name"></div>
+        </div>
+    </div>
+    <div class="line-body">
+        <div class="hot-word-con" data-block-type="product_category" data-block-name="top_category">
+            {if condition="$data['product_category']['top_category']"}
+            {foreach name="$data['product_category']['top_category']" item="vo"}
+            <a class="hot-word ns-text-color-black" target="_blank" href="{:__URL('SHOP_MAIN/goods/lists?category_id='.$vo['category_id'])}">{$vo['category_name']}</a>
+            {/foreach}
+            {else/}
+            <!--<a class="hot-word" target="_blank" href="javascript:;">商品分类</a>-->
+            {/if}
+        </div>
+        
+        <div class="floor-main">
+            <div class="big-banner-con-2">
+                
+                <a data-block-type="adv" data-block-name="left_adv" data-width="235" data-height="615" target="_blank" href="{if condition="$data['adv']['left_adv']['link']!=''"}{:__URL($data['adv']['left_adv']['link'])}{else/}javascript:;{/if}">
+                
+                    {if condition="$data['adv']['left_adv']['img_src'] != ''"}
+                        <img src="{:__img($data['adv']['left_adv']['img_src'])}">
+                    {else/}
+                        <div class="img-skeleton-screen skeleton-screen"></div>
+                    {/if}
+                
+                    <div class="banner-detail">
+                        <div class="left-title-wrap ns-bg-color-black" data-block-type="text" data-block-name="sub_title">
+                            <span class="left-title">{if condition="$data['text']['sub_title']['value']"}{$data['text']['sub_title']['value']}{else/}运动户外{/if}</span>
+                        </div>
+                        <div class="right-title-wrap ">
+                            <div class="right-title-absolute">
+                                <span class="right-title" data-block-type="text" data-block-name="jieri">{if condition="$data['text']['jieri']['value']"}{$data['text']['jieri']['value']}{else/}双11狂欢{/if}</span>
+                                <span class="right-title" data-block-type="text" data-block-name="jianquan">{if condition="$data['text']['jianquan']['value']"}{$data['text']['jianquan']['value']}{else/}领券立减{/if}</span>
+                            </div>
+                        </div>
+                    </div>
+ 
+                </a>
+
+            </div>
+
+            <div class="middle-column-con" data-block-type="product" data-block-name="middle">
+                {if condition="$data['product']['middle']"}
+                {foreach name="$data['product']['middle']" item="product"}
+                <a class="grid one-grid-price" href="{:__URL('SHOP_MAIN/goods/detail?goods_id='.$product['goods_id'])}" target="_blank">
+                    <div class="floor-item-content-wrap border ns-border-color">
+                        {if condition="$product['pic_cover_small'] != '' "}
+                        <img class="floor-item-img" src="{:__img($product['pic_cover_small'])}">
+                        {else/}
+                        <img class="floor-item-img" src="WEB_IMG/discount_product_default.png">
+                        {/if}
+                        <div class="floor-item-title">{$product.goods_name}</div>
+                        {if condition="$product.point_exchange_type == 3"}
+                       	 	<div class="floor-price ns-text-color">{$product.point_exchange}积分</div>                       	 
+                        {else/}
+                        	<div class="floor-price ns-text-color">￥{$product.promotion_price}</div>
+                        {/if}                       
+                    </div>
+                </a>
+                {/foreach}
+
+                {else/}
+                {php}for($i=0;$i<8;$i++){ {/php}
+                <a class="grid one-grid-price" href="javascript:;">
+                    <div class="floor-item-content-wrap">
+                        <div class="floor-item-img skeleton-screen"></div>
+                        <div class="floor-item-title skeleton-screen"></div>
+                        <div class="floor-price ns-text-color skeleton-screen"></div>
+                    </div>
+                </a>
+                {php} }; {/php}
+                {/if}
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" name="floor_name" value="{$name}">

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="renderer" content="webkit" />
+    <meta http-equiv="X-UA-COMPATIBLE" content="IE=edge,chrome=1"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="renderer" content="webkit">
+    <title>{if condition="$title_before neq ''"}{$title_before}&nbsp;-&nbsp;{/if}{$title}{if condition="$seo_config.seo_title neq ''"}&nbsp;-&nbsp;{$seo_config.seo_title}{/if}</title>
+    {block name="seo"}
+    <meta name="keywords" content="{$seo_config.seo_meta}" />
+    <meta name="description" content="{$seo_config.seo_desc}"/>
+    {/block}
+    <link rel="shortcut icon" type="image/x-icon" href="__STATIC__/images/favicon.ico" media="screen"/>
+    <link type="text/css" rel="stylesheet" href="__STATIC__/font-awesome/css/font-awesome.css">
+    <link type="text/css" rel="stylesheet" href="WEB_PLUGIN/zui/css/zui.css">
+    <link type="text/css" rel="stylesheet" href="WEB_PLUGIN/zui/css/zui-theme.css">
+    <link type="text/css" rel="stylesheet" href="WEB_CSS/normalize.css">
+    <link type="text/css" rel="stylesheet" href="WEB_CSS/common.css">
+    <link type="text/css" rel="stylesheet" href="WEB_CSS/themes/{$theme_css}">
+    <script type="text/javascript" src="__STATIC__/js/jquery.min.js"></script>
+    <script type="text/javascript" src="WEB_PLUGIN/zui/js/zui.js"></script>
+    <script type="text/javascript" src="WEB_PLUGIN/zui/js/zui.lite.js"></script>
+    <script src="__STATIC__/js/jquery.cookie.js"></script>
+    <script src="__STATIC__/js/load_bottom.js" type="text/javascript"></script>
+    <script src="WEB_JS/common.js"></script>
+    <script type="text/javascript">
+        var SHOPMAIN = 'SHOP_MAIN';
+        var APPMAIN = 'APP_MAIN';
+        var UPLOAD = '__UPLOAD__';
+		var WEBIMG = "WEB_IMG";
+		var DEFAULT_GOODS_IMG = "{:__IMG($default_goods_img)}";
+		var uid = "{$uid}";
+		var STATIC = "__STATIC__";
+		var PAGE_SIZE = "{$page_size}";
+    </script>
+    {block name="resources"}{/block}
+</head>
+<body>
+{block name="head"}
+{php}
+
+//商品分类
+$goods_category_one = api("System.Goods.goodsCategoryTree");
+$goods_category_one = $goods_category_one['data'];
+
+//商品分类展示方式
+$web_category_display = api("System.Config.webCategoryDisplay");
+$web_category_display = $web_category_display['data'];
+if(!empty($web_category_display)){
+    $web_category_display = json_decode($web_category_display,true);
+}
+
+//logo右侧的广告图
+$logo_right_nav = api('System.Shop.advDetail', ['ap_keyword' => 'PC_INDEX_RIGHT_LOGO', 'export_type' => 'template']);
+$logo_right_nav = $logo_right_nav['data'];
+
+//导航
+$navigation_list = api("System.Shop.shopNavigationList", ["page_index"=>1, "page_size"=>10, "type"=>1]);
+$navigation_list = $navigation_list['data'];
+
+//热门关键词搜索
+$hot_keys = api("System.Config.hotSearch");
+$hot_keys = $hot_keys['data'];
+
+//默认关键词搜索
+$default_keywords = api("System.Shop.defaultKeyWords");
+$default_keywords = $default_keywords['data'];
+
+{/php}
+<header class="ns-header">
+    <div class="top-bar ns-border-color-gray">
+        <div class="w1200 clearfix">
+            <div class="pull-left">
+                {if condition="$member_detail"}
+                <a href="{:__URL('SHOP_MAIN/member/index')}" class="ns-text-color">{$member_detail['user_info']['nick_name']}</a>
+                <a href="javascript:logout();">退出</a>
+                {else/}
+                <a href="{:__URL('SHOP_MAIN/login/index')}" class="ns-text-color">登录</a>
+                <a href="{:__URL('SHOP_MAIN/login/register')}">注册</a>
+                {/if}
+            </div>
+            <ul class="pull-right">
+                <li><a target="_blank" href="{:__URL('SHOP_MAIN/member/index')}">{:lang('member_center')}</a></li>
+                <li><a target="_blank" href="{:__URL('SHOP_MAIN/member/order')}">我的订单</a></li>
+                <li><a target="_blank" href="{:__URL('SHOP_MAIN/member/footprint')}">我的浏览</a></li>
+                <li><a target="_blank" href="{:__URL('SHOP_MAIN/member/collection')}">{:lang('member_baby_collection')}</a></li>
+                <li><a target="_blank" href="{:__URL('SHOP_MAIN/help/index')}">{:lang('shop_help_center')}</a></li>
+                <li><a href="{:__URL('APP_MAIN')}" class="menu-hd wap-nav">{:lang('mobile_terminal')}</a></li>
+                <li class="focus">
+                    <a href="javascript:;" target="_blank">{:lang('attention_mall')}</a>
+                    <div class="ns-border-color-gray">
+                        <span></span>
+                        <a target="_top"><img src="{:__IMG($web_info['web_qrcode'])}" alt="{:lang('official_wechat')}"></a>
+                        <p>{:lang('concerned_official_wechat')}</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="w1200 middle">
+        <a class="ns-logo" href="{:__URL('SHOP_MAIN')}">
+            <img class="self-adaption-img" src="{:__IMG($web_info['logo'])}"/>
+        </a>
+
+        <div class="ns-logo-right">
+            {notempty name="$logo_right_nav"}
+            {$logo_right_nav}
+            {/notempty}
+        </div>
+
+        <div class="ns-search">
+            <div class="clearfix">
+                <input class="ns-border-color ns-text-color-black" type="text" id="keyword" value="{$keyword}" placeholder="{$default_keywords}" data-search-words="{$default_keywords}">
+                <button class="btn btn-primary" type="button">{:lang('search')}</button>
+            </div>
+            {notempty name="$hot_keys"}
+            <div class="keyword">
+                {volist name="$hot_keys" id="hot_key"}
+                <a href="{:__URL('SHOP_MAIN/goods/lists','keyword='.$hot_key)}" title="{$hot_key}">{$hot_key}</a>
+                {/volist}
+            </div>
+            {/notempty}
+        </div>
+
+        <div class="ns-cart ns-border-color-gray">
+            <div class="cart common-text-color">
+                <i class="icon icon-shopping-cart"></i>
+                <span>我的购物车</span>
+                <em class="shopping-amount common-bg-color">0</em>
+            </div>
+            <div class="list ns-border-color-gray"></div>
+        </div>
+    </div>
+
+    <nav class="w1200 clearfix">
+        <div class="category">
+            <div class="all ns-bg-color">
+                <a href="{:__URL('SHOP_MAIN/goods/category')}" title="查看全部商品分类"><i class="icon icon-list-ul"></i>全部商品分类</a>
+            </div>
+            <ul>
+                {foreach $goods_category_one as $k=>$vo}
+                {if condition="$k lt 11"}
+                <li>
+                    <div class="item-left">
+                        <a href="{:__URL('SHOP_MAIN/goods/lists','category_id='.$vo['category_id'])}" title="{$vo.category_name}">
+                            {if condition="$web_category_display['is_img'] == 1"}
+                            {notempty name="$vo['category_pic']"}
+                            <img src="{:__IMG($vo['category_pic'])}"/>
+                            {else/}
+                            <!--<img src="{:__IMG($default_goods_img)}"/>-->
+                            {/notempty}
+                            {/if}
+                            <span>{$vo.category_name}</span>
+                            {if condition="$web_category_display && $web_category_display['template']>1"}
+                            {if $vo['count'] >0}
+                            <i class="fa fa-angle-right"></i>
+                            {/if}
+                            {/if}
+                        </a>
+                    </div>
+                    {if condition="$web_category_display && $web_category_display['template']>1"}
+                    {notempty name="$vo['child_list']"}
+                        <ul class="second-child ns-border-color-gray clearfix {if condition="$web_category_display && $web_category_display['template']>2"}have-third-child{/if}">
+                        {foreach $vo['child_list'] as $vo2 }
+                            <li class="{if condition="$web_category_display && (($web_category_display['template']==2 && $web_category_display['is_img'] == 0) || ($web_category_display['template']==3))"}empty-img{/if}">
+                                <a href="{:__URL('SHOP_MAIN/goods/lists','category_id='.$vo2['category_id'])}" target="_blank" title="{$vo2.category_name}" {if condition="$web_category_display['is_img'] == 1"}style="float:none;"{/if}>
+                                    {if condition="$web_category_display['template']==2 && $web_category_display['is_img'] == 1"}
+                                    {notempty name="$vo2['category_pic']"}
+                                    <img src="{:__IMG($vo2['category_pic'])}"/>
+                                    {else/}
+                                    <img src="{:__IMG($default_goods_img)}"/>
+                                    {/notempty}
+                                    {/if}
+                                    <span>{$vo2.category_name}</span>
+                                    {if condition="$web_category_display['template']>2"}
+                                    <i class="fa fa-angle-right"></i>
+                                    {/if}
+                                </a>
+                                {if condition="$web_category_display['template']>2"}
+                                {notempty name="$vo2['child_list']"}
+                                <ul class="third-child {if condition="$web_category_display['is_img'] == 0"}empty-img ns-border-color-gray{/if}">
+                                    {foreach $vo2['child_list'] as $vo3}
+                                    <li>
+                                        <a href="{:__URL('SHOP_MAIN/goods/lists','category_id='.$vo3['category_id'])}" target="_blank" title="{$vo3.category_name}">
+                                            {if condition="$web_category_display['is_img'] == 1"}
+                                                {notempty name="$vo3['category_pic']"}
+                                                <img src="{:__IMG($vo3['category_pic'])}"/>
+                                                {else/}
+                                                <img src="{:__IMG($default_goods_img)}"/>
+                                                {/notempty}
+                                            {/if}
+                                            <span>{$vo3.category_name}</span>
+                                        </a>
+                                    </li>
+                                    {/foreach}
+                                </ul>
+                                {/notempty}
+                                {/if}
+                            </li>
+                        {/foreach}
+                        </ul>
+                    {/notempty}
+                    {/if}
+                </li>
+                {/if}
+                {/foreach}
+            </ul>
+        </div>
+        {notempty name="$navigation_list.data"}
+        <ul class="menu">
+            {foreach name="$navigation_list.data" item="nav" key="k"}
+            <li>
+                {if condition='$nav.nav_type eq 0'}
+                <a class="ns-border-color-hover ns-text-color-hover" {if condition='$nav.is_blank eq 1'}target="_blank"{/if} href="{:__URL('SHOP_MAIN'.$nav['nav_url'])}" title="{$nav.nav_title}">{$nav.nav_title}</a>
+                {else/}
+                <a class="ns-border-color-hover ns-text-color-hover" {if condition='$nav.is_blank eq 1'}target="_blank"{/if} href="{$nav['nav_url']}" title="{$nav.nav_title}">{$nav.nav_title}</a>
+                {/if}
+            </li>
+            {/foreach}
+        </ul>
+        {/notempty}
+    </nav>
+
+</header>
+{/block}
+{block name="lunbo"}{/block}
+<div class="ns-main w1200">
+    {block name="main"}
+        {block name="left_main"}{/block}
+        {block name="right_main"}{/block}
+    {/block}
+    
+    {block name="goods"}
+	
+        {block name="goods_data"}<!--所需数据-->{/block}
+    
+        {block name="goods_head"}<!--头部、面包屑-->{/block}
+    
+        {block name="goods_media"}<!--//受模板限时，当前模块引入整体头部，改变-->{/block}
+    
+        {block name="goods_share"}<!--商品分享收藏-->{/block}
+    
+        {block name="goods_title"}<!--商品标题、名称、描述-->{/block}
+    
+        {block name="goods_promotion"}<!--商品活动-->{/block}
+    
+        {block name="goods_price"}<!--价格-->{/block}
+        
+        {block name="goods_sales_evaluation"}<!--销量评价-->{/block}
+        
+        {block name="goods_promotion_detail"}<!--单品活动-->{/block}
+    
+        {block name="goods_express"}<!--物流配送-->{/block}
+    
+        {block name="goods_sku"}<!--商品规格-->{/block}
+    
+        {block name="goods_action"}<!--操作，立即购买/加入购物车-->{/block}
+    
+        {block name="goods_service"}<!--商家服务-->{/block}
+    
+        {block name="goods_panel_right"}<!--面板右侧，看了又看，推荐商品等-->{/block}
+    
+        {block name="goods_middle_left"}<!--中部左侧，推荐商品-->{/block}
+    
+        {block name="goods_middle"}<!--中部：组合套餐-->{/block}
+    
+        {block name="goods_description"}<!--商品详情、商品属性、评价、咨询-->{/block}
+    
+    {/block}
+    
+    <!--猜你喜欢/浏览历史-->
+    {block name="recommend"}{/block}
+    
+</div>
+{block name="footer"}
+<footer class="ns-footer">
+    <div class="w1200">
+        {php}
+
+        //商城服务
+        $merchant_service_list = api("System.Config.merchantService");
+        $merchant_service_list = $merchant_service_list['data'];
+
+        //帮助中心
+        $platform_help_class = api("System.Shop.helpClassList");
+        $platform_help_class = $platform_help_class['data'];
+
+        //帮助中心
+        $platform_help_document = api("System.Shop.helpInfo");
+        $platform_help_document = $platform_help_document['data'];
+
+        //友情链接
+        $link_list = api("System.Shop.shopLinkList");
+        $link_list = $link_list['data']['data'];
+
+        //客服链接配置
+        $custom_service = api("System.Config.customService");
+        $custom_service = $custom_service['data'];
+        {/php}
+        {notempty name="$merchant_service_list"}
+        <div class="service ns-border-color-gray">
+            <ul class="w1200 clearfix">
+                {foreach name="$merchant_service_list" item="vo" key="k"}
+                <li class="ns-border-color-gray" style="width: <?php echo 100/count($merchant_service_list)-1?>%">
+                    {if condition="$vo.pic eq ''"}
+                    <!--<i class="ico ico-service ns-bg-color-gray"></i>-->
+                    {else/}
+                    <i class="ico ico-service" style="background: url('{:__IMG($vo.pic)}') no-repeat center center;background-size:100%;"></i>
+                    {/if}
+                    <p>{$vo.title}</p>
+                </li>
+                {/foreach}
+            </ul>
+        </div>
+        {/notempty}
+        <div class="help w1200 clearfix">
+            <div class="pull-left list">
+                {notempty name="$platform_help_class.data"}
+                <div class="wrap">
+                    {foreach name="$platform_help_class.data" item="class_vo"}
+                    <dl>
+                        <dt>{$class_vo.class_name}</dt>
+                        {foreach name="platform_help_document.data" item="document_vo"}
+                        {if condition="$class_vo['class_id'] eq $document_vo['class_id']"}
+                        <dd><a href="{:__URL('SHOP_MAIN/help/index','id='.$document_vo['id'])}" title="{$document_vo.title}" target="_blank">{$document_vo.title}</a></dd>
+                        {/if}
+                        {/foreach}
+                    </dl>
+                    {/foreach}
+                </div>
+                {/notempty}
+                {notempty name="link_list"}
+                <div class="friendship-links clearfix">
+                    <span>{:lang('friendship_link')} : </span>
+                    <div class="links-wrap">
+                        {foreach name="link_list" item="vo"}
+                        <a href="{$vo.link_url}" title="{$vo.link_title}" {if condition="$vo['is_blank'] eq 1"}target="_blank_"{/if}>{$vo.link_title}</a>
+                        {/foreach}
+                    </div>
+                </div>
+                {/notempty}
+            </div>
+            <div class="contact-us">
+                <h3>{:lang('hotline')}</h3>
+                <span class="phone common-text-color">{$web_info['web_phone']}</span>
+               
+                {if $custom_service['value']['service_addr']}
+                <a href="{$custom_service['value']['service_addr']}" target="_blank" title="{:lang('contact_customer_service')}">{:lang('consulting_customer_service')}</a>
+            	{/if}
+            </div>
+        </div>
+        
+        <div class="ns-copyright" id="copyright-main">
+            <p id="copyright_desc"></p>
+            <p>
+                <a id="copyright_companyname" href="javascript:;" target="_blank"></a>
+                <span id="copyright_meta"></span>
+            </p>
+            <p id="web_gov_record_wap">
+                <a href="javascript:;" target="_blank">
+                    <img src="__STATIC__/images/gov_record.png" alt="公安备案">
+                    <span></span>
+                </a>
+            </p>
+            {$web_info.third_count}
+        </div>
+    </div>
+
+</footer>
+{/block}
+{if condition="$default_client"}
+<div class="go-mobile" onclick="locationWap()" id="go_mobile">
+    <img src="WEB_IMG/go_mobile.png"/>
+</div>
+{/if}
+{block name="sidebar"}
+<aside class="right-sidebar">
+    <div class="toolbar">
+        <div class='menu'>
+            <a href="{:__URL('SHOP_MAIN/member/index')}">
+                <div class="item-icon-box">
+                    <i class="icon icon-user"></i>
+                </div>
+                <div class="text ns-bg-color">会员中心</div>
+            </a>
+            <a href="{:__URL('SHOP_MAIN/goods/cart')}" class="js-sidebar-cart-trigger">
+                <div class="item-icon-box">
+                    <i class="icon icon-shopping-cart"></i>
+                    <span class="sidebar-num ns-bg-color">0</span>
+                </div>
+                <div class="text ns-bg-color">购物车</div>
+            </a>
+            <a href="{:__URL('SHOP_MAIN/member/collection')}">
+                <div class="item-icon-box">
+                    <i class="icon icon-heart-empty"></i>
+                </div>
+                <div class="text ns-bg-color">我的收藏</div>
+            </a>
+            <a href="{:__URL('SHOP_MAIN/member/footprint')}">
+                <div class="item-icon-box">
+                    <i class="icon icon-time "></i>
+                </div>
+                <div class="text ns-bg-color">我的足迹</div>
+            </a>
+            <a href="javascript:;">
+                <div class="item-icon-box">
+                    <i class="icon icon-qrcode"></i>
+                </div>
+                <div class="text ns-bg-color qrcode ns-border-color-gray">
+                    <img src="{:__IMG($web_info['web_qrcode'])}">
+                </div>
+            </a>
+        </div>
+        <div class="menu back-top">
+            <a href="javascript:;">
+                <div class="item-icon-box">
+                    <i class="icon icon-angle-up"></i>
+                </div>
+                <div class="text ns-bg-color">顶部</div>
+            </a>
+        </div>
+    </div>
+</aside>
+{/block}
+<input type="hidden" id="hidden_default_headimg" value="{:__IMG($default_headimg)}">
+<input type="hidden" id="niushop_rewrite_model" value="{:rewrite_model()}">
+<input type="hidden" id="niushop_url_model" value="{:url_model()}">
+<input type="hidden" id="hidden_default_client" value="{$default_client}">
+<input type="hidden" id="hidden_shop_name" value="{$web_info['title']}">
+<script>
+var lang_base = {
+	i_am : '{:lang("i_am")}',
+	safe_exit : '{:lang("safe_exit")}',
+	default_avatar : '{:lang("default_avatar")}',
+	login : '{:lang("login")}',
+	welcome_login : '{:lang("welcome_login")}',
+	register : '{:lang("register")}',
+	quit_successfully : '{:lang("quit_successfully")}',
+	recent_search : '{:lang("recent_search")}',
+	empty : '{:lang("empty")}',
+	please_input_keywords : '{:lang("please_input_keywords")}',
+	username_cannot_be_empty : '{:lang("username_cannot_be_empty")}',
+	password_must_not_be_empty : '{:lang("password_must_not_be_empty")}',
+	verification_code_must_not_be_null : '{:lang("verification_code_must_not_be_null")}',
+	login_successful : '{:lang("login_successful")}',
+};
+</script>
+{block name="script"}{/block}
+</body>
+</html>

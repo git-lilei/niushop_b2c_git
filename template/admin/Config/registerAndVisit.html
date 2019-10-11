@@ -1,0 +1,243 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="ADMIN_CSS/defau.css">
+<script src="ADMIN_JS/art_dialog.source.js"></script>
+<script src="ADMIN_JS/iframe_tools.source.js"></script>
+<script src="ADMIN_JS/material_managedialog.js"></script>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>是否允许注册会员：</dt>
+		<dd>
+			<div class="controls">
+				<p>
+					<input id="is_register" type="checkbox" {if condition="$register_and_visit['is_register'] eq 1"}checked{/if} class="checkbox"/>
+				</p>
+			</div>
+			<p class="hint">设置为不允许则游客无法注册成为站点会员</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>注册类型：</dt>
+		<dd>
+			<div class="controls">
+				<label class="radio inline normal">
+					<i class="checkbox-common">
+						<input type="checkbox" name="register_info_validate" value="plain">
+					</i>
+					<span>普通注册</span>
+				</label>
+				<label class="radio inline normal">
+					<i class="checkbox-common">
+						<input type="checkbox" name="register_info_validate" value="email">
+					</i>
+					<span>邮箱注册</span>
+				</label>
+				<label class="radio inline normal">
+					<i class="checkbox-common">
+						<input type="checkbox" name="register_info_validate" value="mobile">
+					</i>
+					<span>手机注册</span>
+				</label>
+			</div>
+			<p class="hint">如开启邮箱和手机注册，请在<a href="{:__URL('ADMIN_MAIN/config/notifyindex')}" target="_blank">通知系统</a>功能中进行邮箱与短信通知配置，游客在注册时通过验证后方能注册成功</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>后台验证码是否开启：</dt>
+		<dd>
+			<input id="adminCode" type="checkbox" class="checkbox" {if condition="$code_config.admin=='1'"}checked="checked"{/if}/>
+		</dd>
+	</dl>
+	<dl>
+		<dt>商城验证码是否开启：</dt>
+		<dd>
+			<input id="pcCode" type="checkbox" class="checkbox" {if condition="$code_config.pc=='1'"}checked="checked"{/if}/>
+		</dd>
+	</dl>
+	<dl>
+		<dt>错误多次后显示：</dt>
+		<dd>
+			<input type="number" class="input-common short" value="{$code_config.error_num}" id="error_num"><em class="unit">次</em>	
+			<p class="hint">配置该项后，开启验证码后验证码默认不显示，在登录错误次数达到设置值后才进行验证</p>
+			<p class="error"></p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>用户名保留关键字：</dt>
+		<dd>
+			
+			<textarea rows="2" id="name_keyword" class="textarea-common" maxlength="300">{$register_and_visit["name_keyword"]}</textarea>
+			<p class="hint">用户在注册用户名不可使用这些关键字。多个关键字之间以英文“,”分隔开，如“admin,username”</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>密码最小长度：</dt>
+		<dd>
+			<input id="pwd_len" type="number" min="0" step="1" value="{$register_and_visit['pwd_len']}" class="input-common harf"/>
+			<p class="hint">新用户注册时密码最小长度，0或不填为不限制</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>强制密码复杂度：</dt>
+		<dd>
+			<div class="controls">
+				<label class="radio inline normal">
+					<i class="checkbox-common">
+						<input type="checkbox" name="pwd_complexity" value="number">
+					</i>
+					<span>数字</span>
+				</label>
+				<label class="radio inline normal">
+					<i class="checkbox-common">
+						<input type="checkbox" name="pwd_complexity" value="letter">
+					</i>
+					<span>小写字母</span>
+				</label>
+				<label class="radio inline normal">
+					<i class="checkbox-common">
+						<input type="checkbox" name="pwd_complexity" value="upper_case">
+					</i>
+					<span>大写字母</span>
+				</label>
+				<label class="radio inline normal">
+					<i class="checkbox-common">
+						<input type="checkbox" name="pwd_complexity" value="symbol">
+					</i>
+					<span>符号</span>
+				</label>
+			</div>
+			<p class="hint">新用户注册时密码中必须存在所选字符类型，不选择为无限制</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>微信端会员注册方式：</dt>
+		<dd>
+			<div class="controls">
+				{if condition="$register_and_visit['is_requiretel'] eq 1"}
+					<label class="radio inline">
+						<i class="radio-common selected">
+							<input type="radio" name="is_requiretel" value="1" checked="checked">
+						</i>
+						<span>非自动</span>
+					</label>
+					<p class="hint">用户首次打开微信端商城,，不会自动注册为会员，需要进行普通会员注册或者登录会员账号与微信进行绑定，一般应用于电脑端与微信端会员账号统一管理。</p>
+					<label class="radio inline">
+						<i class="radio-common">
+							<input type="radio" name="is_requiretel" value="0">
+						</i>
+						<span>自动</span>
+					</label>
+					<p class="hint">用户首次打开微信端商城,，会自动注册为会员，本微信会员与电脑端会员是两个会员账号。好处是可以自动完成会员注册。一般应用于只在微信端运营的商家。</p>
+				{else /}
+					<label class="radio inline">
+						<i class="radio-common">
+							<input type="radio" name="is_requiretel" value="1">
+						</i>
+						<span>非自动</span>
+					</label>
+					<p class="hint">用户首次打开微信端商城,，不会自动注册为会员，需要进行普通会员注册或者登录会员账号与微信进行绑定，一般应用于电脑端与微信端会员账号统一管理。</p>
+					<label class="radio inline">
+						<i class="radio-common selected">
+							<input type="radio" name="is_requiretel" value="0" checked="checked">
+						</i>
+						<span>自动</span>
+					</label>
+					<p class="hint">用户首次打开微信端商城,，会自动注册为会员，本微信会员与电脑端会员是两个会员账号。好处是可以自动完成会员注册。一般应用于只在微信端运营的商家。</p>
+				{/if}
+			</div>
+			
+		</dd>
+	</dl>
+	<dl style="display:none;">
+		<dt>注册服务条款内容：</dt>
+		<dd>
+			<textarea rows="2" id="terms_of_service" class="textarea input-common" maxlength="50">{$register_and_visit["terms_of_service"]}</textarea>
+			<p class="hint">新用户注册时显示网站服务条款内容</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="setConfigAjax();">保存</button></dd>
+	</dl>
+</div>
+<script type="text/javascript">
+$(function(){
+	var register_info = "{$register_and_visit['register_info']}";
+	var pwd_complexity = "{$register_and_visit['pwd_complexity']}";
+	register_info = register_info.split(',');
+	pwd_complexity = pwd_complexity.split(',');
+	for(var i = 0; i < register_info.length;i++){
+		$('[name="register_info_validate"][value="'+register_info[i]+'"]').prop("checked", true).parent().addClass('selected');
+	}
+	for(var i = 0; i < pwd_complexity.length;i++){
+		$('[name="pwd_complexity"][value="'+pwd_complexity[i]+'"]').prop("checked", true).parent().addClass('selected');
+	}
+});
+
+function setConfigAjax(){
+	var is_register = $("#is_register").prop('checked') ? 1 : 0 ;
+	var is_requiretel = $('[name="is_requiretel"]:checked').val();
+	var register_info = '';
+	$('[name="register_info_validate"]:checked').each(function(){
+		register_info += $(this).val() + ',';
+	});
+	var name_keyword = $('#name_keyword').val();
+	name_keyword = name_keyword.replace('，',',').replace("\n",'').replace(',,',',');
+	
+	var pwd_len = $('#pwd_len').val();
+	
+	var pwd_complexity = '';
+	$('[name="pwd_complexity"]:checked').each(function(){
+		pwd_complexity += $(this).val() + ',';
+	});
+	var terms_of_service = $('#terms_of_service').val();
+	
+	var adminCode = 0;
+	var pcCode = 0;
+	if($("#adminCode").is(":checked")){
+		adminCode = 1;
+	}
+	if($("#pcCode").is(":checked")){
+		pcCode = 1;
+	}
+	var error_num = $("#error_num").val();
+	error_num = error_num == "" ? 0 : error_num;
+	if(error_num < 0){
+		$("#error_num").parents("dd").find(".error").text("错误次数不能为负数").show();
+		return false;
+	}else{
+		$(".error").hide();
+	} 
+	$.ajax({
+		type:"post",
+		url : "{:__URL('ADMIN_MAIN/config/registerandvisit')}",
+		data : {
+			"is_register" : is_register,
+			"register_info": register_info,
+			"name_keyword" : name_keyword,
+			"pwd_len" : pwd_len,
+			"pwd_complexity" : pwd_complexity,
+			'is_requiretel' : is_requiretel,
+			"terms_of_service" : terms_of_service,
+			'adminCode':adminCode,
+			'pcCode' : pcCode,
+			'error_num' : error_num
+		},
+		success : function(data){
+			if(data['code'] > 0){
+				showTip(data["message"],'success');
+				window.location.href = "{:__URL('ADMIN_MAIN/config/registerandvisit')}";
+			}else{
+				showTip(data["message"],'error');
+			}
+		}
+	});
+}
+</script>
+{/block}

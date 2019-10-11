@@ -1,0 +1,12 @@
+.new-my-path>nav{background: #fff; padding: 10px; overflow: scroll;}
+.new-my-path>nav::-webkit-scrollbar{display: none;}
+.new-my-path>nav ul{white-space: nowrap;}
+.new-my-path>nav ul li{padding: 0 10px; border-radius: 10px; border: 1px solid; margin: 0 5px; font-size: 13px; white-space: pre-line; display: inline-block;}
+.new-my-path>.list li .date{padding: 5px 5px 5px 20px;}
+.new-my-path>.list li .right{overflow: hidden; background: #fff; position: relative; border-bottom: 1px solid; padding: 5px;}
+.new-my-path>.list li .right .img-block{width: 30%; float: left;height:100px;}
+.new-my-path>.list li .right .img-block img{width: auto; height: auto; max-height: 100%; max-width: 100%;}
+.new-my-path>.list li .right .content-block{float: left; width: 68%; padding: 10px 0 0 5px;}
+.new-my-path>.list li .right .content-block .goods-name{display: block; padding-bottom: 25px;}
+.new-my-path>.list li .right .content-block .price{position: absolute; bottom: 5px; overflow: hidden; text-overflow: ellipsis; width: 50%;}
+.new-my-path>.list li .right .content-block .del{position: absolute; bottom: 5px; right: 15px;}

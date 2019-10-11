@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta name="renderer" content="webkit" />
+		<meta http-equiv="X-UA-COMPATIBLE" content="IE=edge,chrome=1"/>
+		<title>{$title_name} - 商家管理</title>
+		<link rel="shortcut icon" type="image/x-icon" href="__STATIC__/images/favicon.ico" media="screen"/>
+		<link rel="stylesheet" type="text/css" href="__STATIC__/blue/bootstrap/css/bootstrap.css" />
+		<link rel="stylesheet" type="text/css" href="__STATIC__/simple-switch/css/simple.switch.three.css" />
+		<link rel="stylesheet" type="text/css" href="__STATIC__/blue/css/ns_blue_common.css" />
+		<link rel="stylesheet" type="text/css" href="ADMIN_CSS/selectric.css" />
+		<link rel="stylesheet" type="text/css" href="__STATIC__/blue/css/ns_table_style.css">
+		<link rel="stylesheet" href="ADMIN_CSS/goods_select.css">
+		<script src="__STATIC__/js/jquery-1.8.1.min.js"></script>
+		<script src="__STATIC__/simple-switch/js/simple.switch.js"></script>
+		<script src="__STATIC__/js/common.js"></script>
+		<script src="ADMIN_JS/jquery.selectric.js"></script>
+	</head>
+	{include file="admin/controlCommonVariable" }
+	{include file="admin/urlModel"}
+	
+	<body>
+		<div class="set-style">
+			<dl>
+				<dt>商品来源：</dt>
+				<dd>
+					<label class="radio inline normal">
+						<i class="radio-common selected">
+							<input type="radio" name="from_type" value="search" checked="checked" />
+						</i>
+						<span>搜索</span>
+					</label>
+					<label class="radio inline normal">
+						<i class="radio-common">
+							<input type="radio" name="from_type" value="label" />
+						</i>
+						<span>标签</span>
+					</label>
+					<label class="radio inline normal">
+						<i class="radio-common">
+							<input type="radio" name="from_type" value="category" />
+						</i>
+						<span>分类</span>
+					</label>
+					<label class="radio inline normal">
+						<i class="radio-common">
+							<input type="radio" name="from_type" value="brand" />
+						</i>
+						<span>品牌</span>
+					</label>
+					<label class="radio inline normal">
+						<i class="radio-common">
+							<input type="radio" name="from_type" value="recommend" />
+						</i>
+						<span>推荐</span>
+					</label>
+					{if $limit.is_limit_goods_type neq 1}
+					<label class="radio inline normal">
+						<i class="radio-common">
+							<input type="radio" name="from_type" value="goods_type" />
+						</i>
+						<span>类型</span>
+					</label>
+					{/if}
+				</dd>
+			</dl>
+			<dl data-type="search">
+				<dt></dt>
+				<dd>
+					<input type="text" class="input-common" placeholder="请输入商品名称" name="search">
+				</dd>
+			</dl>
+			<dl data-type="label" class="hide">
+				<dt></dt>
+				<dd>
+					<select name="label" class="select-common">
+						{foreach $goods_group as $vo}
+							<option value="{$vo.group_id}">{$vo.group_name}</option>
+						{/foreach}
+					</select>
+				</dd>
+			</dl>
+			<dl data-type="category" class="hide">
+				<dt></dt>
+				<dd>
+					{include file='admin/Goods/goodsThreeCategory'/}
+				</dd>
+			</dl>
+			<dl data-type="goods_type" class="hide">
+				<dt></dt>
+				<dd>
+					<select name="goods_type" class="select-common">
+						{volist name = "goods_type_list" id = "vo"}
+							<option value="{$vo.id}">{$vo.title}</option>
+						{/volist}
+					</select>
+				</dd>
+			</dl>
+			<dl data-type="recommend" class="hide">
+				<dt></dt>
+				<dd>
+					<select name="recommend" class="select-common">
+						<option value="1">热卖</option>
+						<option value="2">精品</option>
+						<option value="3">新品</option>
+					</select>
+				</dd>
+			</dl>
+			<dl data-type="brand" class="hide">
+				<dt></dt>
+				<dd>
+					<select name="brand" class="select-common">
+						{foreach $brand_list as $k => $v}
+							<option value="{$v['brand_id']}" >{$v['brand_name']}</option>
+						{/foreach}
+					</select>
+				</dd>
+			</dl>
+			<dl>
+				<dt></dt>
+				<dd>
+					<button class="btn-common search-goods">查询商品</button>
+				</dd>
+			</dl>
+			<!-- 商品列表 -->
+			<table class="table-class">
+				<colgroup>
+					<col style="width: 5%;">
+					<col style="width: 50%;">
+					<col style="width: 15%;">
+					<col style="width: 15%;">
+					<col style="width: 15%;">
+				</colgroup>
+				<thead>
+					<tr>
+						<th align="center">
+							<label class="checkbox-common">
+								<input type="checkbox"/>
+							</label>
+						</th>
+						<th align="left">商品</th>
+						<th>商品库存</th>
+						<th>商品类型</th>
+						<th>状态</th>
+					</tr>
+				</thead>
+				<tbody>
+									
+				</tbody>
+			</table>
+			{include file="admin/pageCommon"}
+		</div>
+
+		<script src="ADMIN_JS/ns_common_base.js"></script>
+		<script src="__STATIC__/blue/js/ns_common_blue.js"></script>
+		<script src="ADMIN_JS/goods_select.js"></script>
+		<script>
+			var pageshow = {$pageshow},
+				goodsIdArray = [],
+				limit = {
+					is_limit_sku : {$limit.is_limit_sku},
+					is_many_select : {$limit.is_many_select},
+					is_limit_skock : {$limit.is_limit_skock},
+					is_limit_state : {$limit.is_limit_state},
+					is_limit_goods_type : {$limit.is_limit_goods_type}
+				};
+			{notempty name="$goods_id_array"} 
+				goodsIdStrArray = '{$goods_id_array}'.split(','); 
+				goodsIdStrArray.forEach(function(el){
+					goodsIdArray.push(parseInt(el));
+				});
+			{/notempty};
+		</script>
+	</body>
+</html>

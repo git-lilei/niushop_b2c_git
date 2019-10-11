@@ -1,0 +1,152 @@
+{extend name="$goods_detail_base" /}
+{block name="goods_data"}
+<input type="hidden" id="hidden_order_type" value="7">
+<input type="hidden" id="hidden_promotion_type" value="3" />
+<input type="hidden" id="hidden_bargain_id" value="{$bargain_id}">
+{/block}
+
+{block name="goods_promotion"}
+<!--砍价-->
+<div class="product-discount">
+	<div class="price-info ns-bg-color">
+		<div class="actprice bargain-price">
+			<i class="yen">¥</i>
+			<span>{$goods_detail.price}</span>
+			<span class="origprice">{$goods_detail['sales']}{if condition ="empty($goods_detail['goods_unit'])"}{:lang('goods_piece')}{else/}{$goods_detail['goods_unit']}{/if}已售</span>
+		</div>
+	</div>
+	
+	<div class="countdown">
+		<div class="txt" data-value="{$goods_detail['promotion_detail']['bargain']['data']['end_time']}">{:lang('distance_ends')}</div>
+		<div class="clockrun">
+			<span class="num" id="day">00</span><span class="dot ns-text-color-gray">:</span>
+			<span class="num" id="hour">00</span><span class="dot ns-text-color-gray">:</span>
+			<span class="num" id="min">00</span><span class="dot ns-text-color-gray">.</span>
+			<span class="num" id="second">00</span>
+		</div>
+	</div>
+</div>
+{/block}
+
+{block name="goods_price"}
+<div class="product-price">
+	{assign name="show_price" value="$goods_detail.price"}
+	{if condition="$goods_detail.market_price > $show_price"}
+	<div class="original-price ns-text-color-gray">
+		<label>市场价:</label>
+		<span>¥{$goods_detail.market_price}</span>
+	</div>
+	{/if}
+</div>
+<div class="blank-line ns-bg-color-gray"></div>
+{/block}
+{block name="goods_action"}
+{if condition="$goods_detail['state'] == 1"}
+<div class="left-operation">
+	<a href="{:__URL('APP_MAIN')}">
+		<img src="WAP_IMG/goods/go_home.png"/>
+		<span>{:lang("home_page")}</span>
+	</a>
+	<a href="{$custom_service['value']['service_addr']}">
+		<img src="WAP_IMG/goods/kefux.png"/>
+		<span>{:lang('united_states_customer_service')}</span>
+	</a>
+	<a href="{:__URL('APP_MAIN/goods/cart')}">
+		<img src="WAP_IMG/goods/goods_cart.png"/>
+		<span class="ns-text-color-black">{:lang('goods_cart')}</span>
+		{if condition="$cart_count>0"}
+		<i class="have-cart-count ns-bg-color label badge circle">{$cart_count}</i>
+		{/if}
+	</a>
+</div>
+
+<div class="right-operation">
+	<!--砍价-->
+	<a href="javascript:;" class="buy-now" data-tag="bargain">{:lang('goods_start_bargain')}</a>
+</div>
+{else/}
+<div class="product-sold-out ns-bg-color-gray-shade-50">{:lang('goods_laid_off')}</div>
+{/if}
+</div>
+{/block}
+
+{block name="goods_current_info"}
+<div class="widgets-cover">
+	<div class="cover-content">
+		<div class="sku-wrap">
+			<div class="header">
+				<div class="img-wrap">
+					<img src="{:__IMG($goods_detail['img_list'][0]['pic_cover_small'])}"  alt="选中的产品图" class="js-thumbnail">
+				</div>
+				<div class="main">
+					<div class="price-wrap">
+						<!--砍价-->
+						<span class="price ns-text-color">¥{$goods_detail['price']}</span>
+					</div>
+					{if condition="$goods_detail.is_stock_visible == 1"}
+					<div class="stock">{:lang('goods_stock')}{$goods_detail.stock}{if condition ="empty($goods_detail['goods_unit'])"}{:lang('goods_piece')}{else/}{$goods_detail['goods_unit']}{/if}</div>
+					{/if}
+					<div class="sku-info">请选择：<span>-</span></div>
+				</div>
+				<a class="sku-close"><img src="WAP_IMG/goods/close.png"/></a>
+			</div>
+{/block}
+
+{block name="goods_promotion_bottom"}
+	{if condition="$bargain_id && $goods_detail['promotion_detail'] && $goods_detail['promotion_detail']['bargain']"}
+	<!--砍价需要用到-->
+		{if condition="$goods_detail.is_virtual == 1"}
+		<div class="bargain-receiver-mobile">
+			<nav>
+				<ul>
+					<li class="selected ns-border-color-hover ns-text-color-hover" data-type="logistics">输入手机号</li>
+				</ul>
+			</nav>
+			<input type="tel" id="receiver_mobile" placeholder="请输入手机号" class="ns-border-color-gray">
+			<div class="footer ns-bg-color {if condition="$goods_detail['stock'] ==0"}disabled{/if}">确定</div>
+		</div>
+		{else/}
+		{php}
+		$address_list = api('System.Member.memberAddressList');
+		$address_list = $address_list['data'];
+		$pickup_list = api("System.Shop.pickupPointList");
+		$pickup_list= $pickup_list['data'];
+		{/php}
+		<div class="bargain-address">
+			<nav>
+				<ul>
+					<li class="selected ns-border-color-hover ns-text-color-hover" data-type="logistics">选择物流配送</li>
+					<li class="ns-border-color-gray-fadeout-50" data-type="pickup">选择自提配送</li>
+				</ul>
+			</nav>
+			<ul data-type="logistics">
+				{notempty name="$address_list['data']"}
+				{foreach name="$address_list['data']" item="vo" key="k"}
+				<li data-id="{$vo['id']}" class="ns-border-color-gray-fadeout-50">
+					<div>{:lang('member_consignee')}：{$vo['consigner']}&nbsp;{$vo['mobile']}</div>
+					<div>{:lang('member_delivery_address')}：{$vo.address_info}-{$vo.address}</div>
+				</li>
+				{/foreach}
+				{/notempty}
+				<li class="ns-border-color-gray-fadeout-50">
+					<a href="{:__URL('APP_MAIN/member/addressedit?flag=9&goods_id='.$goods_id.'&bargain_id='.$bargain_id)}">{:lang('member_new_delivery_address')}</a>
+				</li>
+			</ul>
+			<ul data-type="pickup" style="display: none;">
+				{if condition="$pickup_list['total_count']>0"}
+				{foreach name="$pickup_list['data']" item="vo"}
+				<li data-id="{$vo['id']}" class="ns-border-color-gray-fadeout-50">
+					<div>自提点：{$vo['name']}</div>
+					<div class="address-detail">提货地址：{$vo.province_name} {$vo.city_name} {$vo.district_name} {$vo.address}</div>
+				</li>
+				{/foreach}
+				{else/}
+				<li class="ns-border-color-gray-fadeout-50">
+					<div>商家未配置自提地址</div>
+				</li>
+				{/if}
+			</ul>
+		</div>
+		{/if}
+	{/if}
+{/block}

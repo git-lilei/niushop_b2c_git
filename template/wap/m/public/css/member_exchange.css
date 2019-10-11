@@ -1,0 +1,8 @@
+.member-exchange p{padding: 10px;}
+.prompt-style{margin-top: 16px;}
+.content .text{margin:15px 8px 7px;}
+.text-p{width: 74%; float: right; margin-top: -11px; margin-bottom: 20px; margin-right: 10px;}
+.content input{height: 30px; width: 72%; border:1px solid;margin: 0 5px;padding-left: 3px;box-shadow: none;}
+.content .bottom input[type='button']{display: block; width: 90%; margin: auto; color: #fff; height: 35px;border-radius: 6px; line-height: 21px;}
+.circle{width: 110px; height: 80px; border-radius: 50%; text-align: center; margin: 0 auto; padding:10px;}
+.spans{font-size:25px;}

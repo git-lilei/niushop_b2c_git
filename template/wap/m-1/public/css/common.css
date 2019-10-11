@@ -1,0 +1,30 @@
+body{font-size: 14px;}
+.text12{font-size: 12px;}
+.text14{font-size: 14px;}
+.text16{font-size: 16px;}
+.text18{font-size: 18px;}
+.text20{font-size: 20px;}
+.text22{font-size: 22px;}
+p, ul, ol, blockquote, pre, table, img, video, iframe, object, embed{padding: 0; margin: 0;}
+.state:active:after, a:active:after, .btn:active:after, .state.focus:after, a.focus:after, .state:focus:after, a:focus:after, .btn.focus:after, .btn:focus:after{background-color: inherit; box-shadow: none; transform: initial; opacity: 0;}
+.display-layer{z-index: 19961214 !important;}
+.display-layer .info{background: rgba(0, 0, 0, .6) !important; border-color: rgba(0, 0, 0, .6) !important; color: #fff;}
+.mask-layer-open{position: fixed; width: 100%;}
+.ns-header{position: fixed; top: 0; left: 0; right: 0; height: 44px; z-index: 1000; line-height: 44px; border-bottom: solid 1px #e2e2e2; background: #f7f7f7;}
+.ns-header > a{position: relative; z-index: 20;}
+.ns-header .go-back{float: left; padding: 0 17px;}
+.ns-header .go-back i{font-size: 28px; display: block;}
+.ns-header .ns-operation{float: right; padding: 0 8px;}
+.ns-header h1{height: 44px; line-height: 44px;font-size: 16px; text-align: center; font-weight: normal; overflow: hidden; margin: 0 44px; text-overflow: ellipsis; white-space: nowrap;}
+.ns-header + div{height: 44px;}
+.bottom-menu{position: fixed; bottom: 0; width: 100%; z-index: 998; background: #fff; /* border-top: 1px solid #DADADA; */ box-shadow: 1px 1px 3px rgba(0, 0, 0, .5);}
+.bottom-menu + div{height: 56px;}
+.bottom-menu ul{overflow: hidden;}
+.bottom-menu ul li{float: left; text-align: center; width: 25%;}
+.bottom-menu ul li a{display: block; height: 100%; width: 100%;}
+.bottom-menu ul li div{padding: 5px 0 0;}
+.bottom-menu ul li img{width: 23px; height: 23px;}
+.bottom-menu ul li span{text-overflow: ellipsis; white-space: nowrap; overflow: hidden; display: block; line-height: 20px; font-size: 12px;margin-bottom: 3px;}
+.ns-copyright{text-align: center; padding: 10px 0 10px; font-size: 12px;}
+.ns-copyright img{width: 90px; height: auto; display: block; margin: 0 auto; object-fit: cover; min-height: 15px;}
+.ns-copyright a{padding-top: 5px; display: block;}

@@ -1,0 +1,133 @@
+{extend name="$base" /}
+{block name="alert_info"}
+<p class="function-prompts">热门搜索在前台搜索框下面显示，前台点击直接作为关键字进行搜索，多个关键字之间用“,”隔开。</p>
+{/block}
+{block name="resources"}
+<style>
+.set-style{min-height:400px;}
+</style>
+{/block}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>停留时间：</dt>
+		<dd>
+			<input id="residence_time" type="number" min="0" step="1" onkeyup="value=value.replace(/[^\d+]/g,'')" value="{$info.residence_time}" class="input-common harf"><em class="unit">秒</em>
+			<p class="hint">欢迎页停留时间，单位为/秒<i class="important-note">(注：默认不填为5秒)</i></p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>跳转链接：</dt>
+		<dd>
+			<input id="jump_link" type="text" value="{$info.jump_link}" class="input-common" />
+			<p class="hint">链接地址必须是完整路径</p>
+		</dd>
+	</dl>
+	
+	<dl>
+		<dt>欢迎页图片：</dt>
+		<dd>
+			<div class="upload-btn-common">
+				<div>
+					<input class="input-file" name="file_upload" id="uploadImg" type="file" onchange="imgUpload(this);" title="上传">
+					<input type="hidden" id="welcome_page_picture" value="{if condition="$info.welcome_page_picture"}{$info.welcome_page_picture}{/if}" />
+				</div>
+				<input type="text" id="text_welcome_page_picture" class="input-common" readonly="readonly" value="{if condition="$info.welcome_page_picture"}{$info.welcome_page_picture}{/if}" />
+				<em>上传</em>
+				
+				<img id="preview_welcome_page_picture" src="__STATIC__/blue/img/upload-common-select.png" {if condition="$info.welcome_page_picture"}data-src="{:__IMG($info.welcome_page_picture)}"{/if} data-html="true" data-container="body" data-placement="top" data-trigger="manual"/>
+
+			</div>
+			<p class="hint">
+				<span>建议使用<i class="important-note">宽750</i>像素-<i class="important-note">高1334</i>像素内的<i class="important-note">GIF</i>或<i class="important-note">PNG</i>透明图片</span>
+			</p>
+		</dd>
+	</dl>
+	<!-- ******************************************* start 选择商品 start ******************************************* -->
+	<!-- 
+		is_limit_sku 是否限制只查询单规格商品 1限制 0不限制
+		is_many_select 是否可多选 1可多选 0只能单选
+		is_limit_skock 是否只查询有库存的商品 1只查询有库存商品 0不限制
+		is_limit_state 是否只查询已上架商品 1只查询上架商品 0不限制
+		is_limit_goods_type 是否限制只查询实物商品 1限制 0不限制
+	 -->
+	<input type="hidden" id="range_type" value="0">
+	<input type="hidden" id="is_show_select" value="0">
+	<input type="hidden" id="goods_id_array" value="{$info.goods_id}">
+	<input type="hidden" id="select-goods-limit" value='{"is_limit_sku" : 0, "is_many_select" : 1, "is_limit_skock" : 1, "is_limit_state" : 1, "is_limit_goods_type" : 0}'>
+	{include file="admin/Promotion/goodsSelectDialog"/}
+	<!-- ******************************************* end 选择商品 end ******************************************* -->
+	<dl>
+		<dt></dt>
+		<dd>
+			<p class="hint">
+				<span><i class="important-note">选择商品后，将会跳转到App内部商品详情界面</i></span>
+			</p>
+		</dd>
+	</dl>
+
+	<dl>
+		<dt></dt>
+		<dd><button class="btn-common btn-big" onclick="save();">保存</button></dd>
+	</dl>
+</div>
+<script src="__STATIC__/js/ajax_file_upload.js" type="text/javascript"></script>
+<script src="__STATIC__/js/file_upload.js" type="text/javascript"></script>
+<script>
+$(".js-select-goods,.goods-list").show();
+//图片上传
+function imgUpload(event) {
+	var fileid = $(event).attr("id");
+	var id = $(event).next().attr("id");
+	var data = { 'file_path' : "config" };
+	uploadFile({
+		url: __URL(ADMINMAIN + '/config/uploadimage'),
+		fileId: fileid,
+		data : data,
+		callBack: function (res) {
+			if(res.code){
+				$("#"+id).val(res.data.path);
+				$("#text_" + id).val(res.data.path);
+				$("#preview_" + id).attr("data-src",__IMG(res.data.path));
+				showTip(res.message,"success");
+			}else{
+				showTip(res.message,"error");
+			}
+		}
+	});
+}
+
+function save(){
+	var residence_time = $("#residence_time").val();
+	var jump_link = $("#jump_link").val();
+	var welcome_page_picture = $("#welcome_page_picture").val();
+	var goods_id = $("#goods_id_array").val();
+	if(residence_time.length == 0){
+		residence_time = 5;
+	}
+	if(welcome_page_picture.length == 0){
+		showTip("请上传欢迎页图片",'warning');
+		return;
+	}
+	var value = {
+		residence_time : residence_time,
+		jump_link : jump_link,
+		welcome_page_picture : welcome_page_picture,
+		goods_id : goods_id
+	};
+	$.ajax({
+		type:"post",
+		url:"{:__URL('ADMIN_MAIN/config/appWelcomePage')}",
+		data:{ 'value' : JSON.stringify(value) },
+		success:function (data) {
+			if (data["code"] > 0) {
+				showTip(data["message"],'success');
+			}else{
+				showTip(data["message"],'error');
+			}
+		}
+	});
+}
+</script>
+{/block}

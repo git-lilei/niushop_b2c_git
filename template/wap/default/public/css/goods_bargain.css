@@ -1,0 +1,32 @@
+.bargain-block ul li {background:#fff;padding:5px 10px;position:relative;overflow:hidden;width:100%;margin-top:10px;}
+.bargain-block ul li > div {text-align:center;margin:0;width:33%;display:inline-block;}
+.bargain-block ul li > div > img {display:inline-block;vertical-align:middle;max-width:100%;max-height:100%;height:auto;font-size:12px;}
+.bargain-block ul li > p {padding:0 10px;word-wrap:break-word;display:inline-block;width:55%;position:absolute;right:6px;top:21px;}
+.bargain-block ul li footer {display:inline-block;float:right;padding:0 0 8px 10px;text-align:left;width:67%;height:100%;}
+.bargain-block ul li footer p {height:40px;line-height:20px;overflow:hidden;width:100%;}
+.bargain-block ul li footer .tuangou-money {font-size:16px;margin-right:5px;}
+.bargain-block ul li footer .mui-btn-danger {height:26px;line-height:28px;width:70px;text-align:center;font-size:13px;}
+.assemble-tag {overflow:hidden;}
+.assemble-tag div {float:left;margin-right:5px;font-size:12px;border-radius:3px;}
+.assemble-tag .already-num {padding:1px 5px;}
+.assemble-tag .people-num {border:1px solid;padding:0 3px;}
+.assemble-foot {overflow:hidden;margin-top:20px;}
+.assemble-foot-left {float:left;margin-top:15px;}
+.assemble-foot-right {float:right;margin-top:10px;}
+.assemble-foot-right .goin {border:1px solid;height:26px;line-height:26px;width:50px;text-align:center;font-size:12px;float:right;}
+.assemble-foot-right .mui-btn-danger {float:right;}
+.banner-container img {width:100%;height:auto;}
+.bargain-head {background:#fff;padding:10px;}
+.bargain-head .title {font-weight:normal;height:30px;line-height:30px;margin-bottom:0;font-size:16px;}
+.bargain-head .group .term {float:left;width:31.33%;text-align:center;line-height:40px;height:40px;font-size:12px;}
+.bargain-head .group .term:nth-child(1),.bargain-head .group .term:nth-child(2) {width:34.33%;}
+.bargain-head .group .term .text {width:60%;display:inline-block;}
+.bargain-head .group .term .text p {line-height:1.5;}
+.bargain-head .group .icon {display:inline-block;width:13px;height:13px;position:relative;top:-6px;}
+.bargain-head .group .bargain-first-icon {background:url(../img/goods/bargain_first_icon.png) no-repeat center center;background-size:contain;}
+.bargain-head .group .bargain-second-icon {background:url(../img/goods/bargain_second_icon.png) no-repeat center center;background-size:contain;}
+.bargain-head .group .bargain-third-icon {background:url(../img/goods/bargain_third_icon.png) no-repeat center center;background-size:contain;}
+.bargain-head .group .bargain-right-icon {background:url(../img/goods/bargain_right_icon.png) no-repeat center center;background-size:contain;}
+.empty {text-align:center;padding:20px 0;}
+.empty img {width:50px;}
+.empty p {margin-top:10px;font-size:12px;}

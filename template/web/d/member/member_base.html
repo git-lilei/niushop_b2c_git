@@ -1,0 +1,66 @@
+{extend name="$base" /}
+{block name="resources"}
+<link type="text/css" rel="stylesheet" href="WEB_CSS/member_common.css"/>
+{/block}
+{block name="left_main"}
+<aside class="member-menu">
+	<div class="item">
+		<p class="title">{:lang('member_member_center')}</p>
+		<ul>
+			<li>
+				<a href="{:__URL('SHOP_MAIN/member/index')}">{:lang('member_welcome_page')}</a>
+			</li>
+			<li>
+				<a href="{:__URL('SHOP_MAIN/member/info')}">{:lang('member_personal_data')}</a>
+			</li>
+			<li>
+				<a href="{:__URL('SHOP_MAIN/member/security')}">{:lang('member_account_security')}</a>
+			</li>
+			<li>
+				<a href="{:__URL('SHOP_MAIN/member/address')}">{:lang('member_delivery_address')}</a>
+			</li>
+			<li>
+				<a href="{:__URL('SHOP_MAIN/member/balance')}">{:lang('member_account_balance')}</a>
+			</li>
+			<li>
+				<a href="{:__URL('SHOP_MAIN/member/withdrawal')}">{:lang('member_cash_register')}</a>
+			</li>
+			<li>
+				<a href="{:__URL('SHOP_MAIN/member/coupon')}">{:lang('member_my_coupon')}</a>
+			</li>
+			<li>
+				<a href="{:__URL('SHOP_MAIN/member/goods')}">{:lang('member_my_virtual_code')}</a>
+			</li>
+			<li>
+				<a href="{:__URL('SHOP_MAIN/member/point')}">{:lang('member_my_points')}</a>
+			</li>
+			<li>
+				<a href="{:__URL('SHOP_MAIN/member/footprint')}">{:lang('new_my_path')}</a>
+			</li>
+		</ul>
+	</div>
+	<div class="item">
+		<p class="title">{:lang('member_trading_center')}</p>
+		<ul>
+			<li class="member-order">
+				<a href="{:__URL('SHOP_MAIN/member/order')}">{:lang('member_my_order')}</a>
+			</li>
+			<li class="member-order">
+				<a href="{:__URL('SHOP_MAIN/member/refund')}">{:lang('refund_return_maintenance')}</a>
+			</li>
+			<li class="member-order">
+				<a href="{:__URL('SHOP_MAIN/member/evaluate')}">{:lang('commodity_evaluation_drying_list')}</a>
+			</li>
+			<li class="member-order">
+				<a href="{:__URL('SHOP_MAIN/member/collection')}">{:lang('member_merchandise_collection')}</a>
+			</li>
+		</ul>
+	</div>
+</aside>
+<script type="text/javascript">
+$(function () {
+	$(".member-menu ul li a[href='" + String(location) + "']").addClass("ns-text-color");
+});
+</script>
+{/block}
+{block name="right_main"}{/block}

@@ -1,0 +1,64 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" href="WAP_CSS/verification_detail.css">
+{/block}
+{block name="main"}
+{php}
+	$vg_id = request()->get('vg_id', '');
+	$info = api("System.Order.verificationDetail",['vg_id'=>$vg_id]);
+	$info = $info['data'];
+{/php}
+{notempty name="$info"}
+<div class="verification-detail">
+	<div class="goods-info-wrap">
+		<div class="goods-img">
+			<img src="{:__IMG($info.picture.pic_cover_micro)}">
+		</div>
+		<p class="name">{$info.goods_name}</p>
+		<!-- <p class="desc">{$info.virtual_goods_name}</p> -->
+	</div>
+	{switch $info.goods_type }
+	    {case value="0"}
+	    	<!-- 普通虚拟商品 -->
+	    	<a href="{:__URL('APP_MAIN/verification/share','vg_id='.$info.virtual_goods_id)}" class="used ns-text-color ns-border-color">立即使用</a>
+	    {/case}
+	{/switch}
+</div>
+{switch $info.goods_type }
+		{case value="2"}
+			<!-- 下载类商品 -->
+			<div class="virtual-line-block">
+				<ul>
+					<li><span class="title ns-border-color-gray ns-text-color-gray">{$info.virtual_goods_name}</span><a href="{:__URL('APP_MAIN/order/download','virtual_code='.$info['virtual_code'])}" class="href ns-text-color"><span class="tip ns-text-color-gray">去下载</span></a></li>
+				</ul>
+			</div>
+	    {/case}
+	    {case value="3"}
+			<!-- 网盘类商品 -->
+			<div class="virtual-line-block">
+				<ul>
+					<li><span class="title ns-border-color-gray ns-text-color-gray">网盘地址/提取码</span><span class="tip ns-text-color-gray">{$info.remark}</span></li>
+				</ul>
+			</div>
+	    	
+	    {/case}
+	    {case value="4"}
+			<!-- 卡券类商品 -->
+	    	<div class="virtual-line-block">
+				<ul>
+					<li><span class="title ns-border-color-gray ns-text-color-gray">卡号/密码</span><span class="tip ns-text-color-gray">{$info.remark}</span></li>
+				</ul>
+			</div>
+	    {/case}
+	{/switch}
+<!-- 导航列表 -->
+<div class="list-container">
+	<ul>
+		<a href="{:__URL('APP_MAIN/member/index')}"><li><span class="title ns-border-color-gray ns-text-color-gray">会员中心</span><span class="tip ns-text-color-gray">点击进入会员中心</span></li></a>
+	</ul>
+</div>
+{else/}
+<script>location.href = __URL(APPMAIN + "/login/index");</script>
+{/notempty}
+{/block}
+{block name="footer"}{/block}

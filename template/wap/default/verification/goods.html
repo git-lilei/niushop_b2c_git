@@ -1,0 +1,58 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/verification_goods.css">
+{/block}
+{block name="main"}
+{php}
+	$vg_id = request()->get('vg_id', '');
+	$verification = api("System.Order.verificationExamine",['vg_id' =>$vg_id]);
+	$verification = $verification['data'];
+	if($verification) {
+		$verificadition_person_info = api('System.Order.getVerificationPersonnelInfo');
+		$verificadition_person_info = $verificadition_person_info['data'];
+	}
+{/php}
+{notempty name="$verification"}
+<section class="verification-goods">
+	<h2 class="ns-border-color-gray">{:lang('shop_name')}：{$platform_shop_name}</h2>
+	<div class="goods-info">
+		<div class="goods-img">
+			<a href="{:__URL('APP_MAIN/goods/detail?goods_id='.$verification['goods_id'])}">
+		 		<img src="{:__IMG($verification['picture']['pic_cover_mid'])}" class="ns-bg-color-gray-fadeout-80">
+		 	</a>
+		</div>
+		<div class="data-goods-info">
+			<a href="{:__URL('APP_MAIN/goods/detail?goods_id='.$verification['goods_id'])}"><p class="goods-name">{$verification['goods_name']}</p></a>
+			<p class="sku-name ns-text-color-gray">{$verification['virtual_goods_name']}</p>
+		</div>
+	</div>
+</section>
+<div class="list-container">
+	<ul>
+		<li><span class="title">核销人</span><span class="tip ns-text-color-gray">{$verificadition_person_info['nick_name']}</span></li>
+		<li><span class="title">核销码</span><span class="tip ns-text-color-gray">{$verification['virtual_code']}</span></li>
+		<li><span class="title">有效期</span><span class="tip ns-text-color-gray">{if condition="$verification['end_time'] != 0"}到{$verification['end_time']|date='Y-m-d',###}之前有效{else/}不限{/if}</span></li>
+	</ul>
+</div>
+<div class="btn-verrfication ns-bg-color" onclick="verificationVirtualGoods({$verification['virtual_goods_id']});">确认核销</div>
+<script>
+var is_click = false;
+function verificationVirtualGoods(virtual_goods_id){
+	if(!is_click){
+		is_click = true;
+		api("System.Order.verificationVirtualGoods",{ "virtual_goods_id" : virtual_goods_id },function (res) {
+			if(res.data > 0){
+				is_click = false;
+				toast("核销成功","{:__URL('APP_MAIN/member/index')}");
+			}else{
+				toast("核销失败",location.href);
+			}
+		});
+	}
+}
+</script>
+{else/}
+<script>location.href = __URL(APPMAIN + "/member/index");</script>
+{/notempty}
+{/block}
+{block name="footer"}{/block}

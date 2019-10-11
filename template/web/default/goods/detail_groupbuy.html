@@ -1,0 +1,60 @@
+{extend name="$goods_detail_base" /}
+{block name="goods_data"}
+<input type="hidden" id="hidden_order_type" value="1">
+<input type="hidden" id="hidden_promotion_type" value="2" />
+{/block}
+{block name="goods_promotion"}
+<!--团购-->
+<div class="discount-banner ns-bg-color">
+	<i class="discount-icon"></i>
+	<div class="activity-name">{$goods_detail['promotion_detail']['group_buy']['data']['group_name']}</div>
+	<div class="surplus-time" data-value="{$goods_detail['promotion_detail']['group_buy']['data']['end_time']}">
+		<span>{:lang('goods_distance_ends')}</span>
+		<span id="day"><i class="ns-bg-color-black">00</i>:</span>
+		<span id="hour"><i class="ns-bg-color-black">00</i>:</span>
+		<span id="min"><i class="ns-bg-color-black">00</i>:</span>
+		<span id="second"><i class="ns-bg-color-black">00</i></span>
+	</div>
+</div>
+{/block}
+
+{block name="goods_price"}
+<div class="item-block">
+	<div class="item-line promotion-price">
+		<dl class="item-line">
+			<dt class="ns-text-color-gray">团购价</dt>
+			<dd>
+				<em class="yuan ns-text-color">¥</em>
+				<span class="price ns-text-color">{$goods_detail['promotion_detail']['group_buy']['data']['price_array'][0]['group_price']}</span>
+				{assign name="show_price" value="$goods_detail['promotion_detail']['group_buy']['data']['price_array'][0]['group_price']"}
+				{if condition ='!empty($goods_detail.goods_unit)'}
+				<span class="label ns-text-color">/{$goods_detail.goods_unit}</span>
+				{/if}
+				<!-- 原价大于输出价 -->
+				{if $show_price < $goods_detail['price']}
+				<span class="original-price">[￥{$goods_detail['price']}]</span>
+				{/if}
+			</dd>
+		</dl>
+{/block}
+
+{block name="goods_action"}
+<dl class="item-line buy-btn">
+	<dt></dt>
+	<dd>
+		{if condition="$goods_detail.state == 1"}
+		<button class="btn btn-primary js-buy-now ns-bg-color-goods ns-text-color" type="button" {if condition="$goods_detail['stock'] ==0"}disabled{/if}>{if condition="$goods_detail['point_exchange_type'] == 1 || ($goods_detail['point_exchange_type'] == 2 && $from == 'point')|| $goods_detail['point_exchange_type'] == 3"}{:lang('goods_exchange')}{else/}{:lang('goods_buy_now')}{/if}</button>
+		{else/}
+		<button class="btn btn-primary" type="button" disabled>{:lang('goods_laid_off')}</button>
+		{/if}
+		{if condition="$goods_detail.QRcode != ''"}
+		<a href="javascript:;" class="go-phone">
+			<img src="WEB_IMG/goods/qrcode.png"/>
+			<div class="qrcode-wrap ns-border-color-gray">
+				<img src="{:__IMG($goods_detail.QRcode)}" alt="{:lang('goods_code_picture')}" width="100" height="100">
+			</div>
+		</a>
+		{/if}
+	</dd>
+</dl>
+{/block}

@@ -1,0 +1,46 @@
+body{background: #fff;}
+.member-info-container {padding: 20px 20px 0 20px;background: #000;position: relative;}
+.member-info {display: flex;}
+.member-info .member-face {width: 58px;margin-right: 10px;}
+.member-info .member-face div {width: 58px;height: 58px;border-radius: 50%;overflow:hidden;border:2px solid #fff;}
+.member-info .member-face div img {display: block;}
+.member-info .info {flex: 1}
+.member-info .info .nick-name {color: #fff;line-height: 1}
+.member-info .info .level-name {margin-top: 5px;}
+.member-info .info .level-name span {display: inline-block;color: #E7E525;border:1px solid #E7E525;border-radius: 4px;font-size: 12px;padding: 3px 5px;line-height: 1}
+.member-info .upgrade-progress {width: 100%;height: 3px;margin-top:10px; background: rgba(255,255,255, 0.6);border-radius: 2px;overflow: hidden; }
+.member-info .upgrade-progress span {height: 3px;background:#E3CE96;width: 5%;display: block;}
+.member-info .upgrade-desc {color: #ccc;margin-top: 5px;font-size: 12px;}
+.level-equity {margin-top: 30px;}
+.level-equity .equity-top {text-align: center;}
+.level-equity .equity-top img{width: 70px;}
+.level-equity .equity-top .title {color: #E3CE96;margin-top: 5px;}
+.level-equity ul {margin-top: 15px;}
+.level-equity ul li {float: left;margin-right: 20px;width: calc((100% - 40px) / 3);position: relative;}
+.level-equity ul li:last-child{margin-right: 0}
+.level-equity ul li > div {position: absolute;width: 100%;height: 100%;top: 0;left: 0;}
+.level-equity ul li .icon {width: 30px;height:30px;display: block;margin: 15px auto 0 auto; }
+.level-equity ul li .icon-discount {background: url(../img/member/member_level_discount.png) no-repeat;background-size: contain;}
+.level-equity ul li .icon-label {background: url(../img/member/member_level_tag.png) no-repeat;background-size: contain;}
+.level-equity ul li .icon-service {background: url(../img/member/member_level_service.png) no-repeat;background-size: contain;}
+.level-equity ul li .title {text-align: center;margin-top:5px;}
+.level-equity ul li .desc {text-align: center;font-size: 12px;color: #C4A762;}
+.member-info-bottom {position: absolute;width: 100%;left: 0;bottom: 0;z-index: 5;}
+.level-lists {}
+.level-lists .title {text-align: center;font-weight: normal;font-size: 16px;margin-bottom: 20px;}
+.level-lists .title span:before,.level-lists .title span:after{content:'';width: 10px;height: 2px;background: #000;display: inline-block;vertical-align: middle;transform: translateY(-50%);}
+.level-lists .title span:before{margin-right: 10px;}
+.level-lists .title span:after{margin-left: 10px;}
+.level-lists ul {padding: 0 20px}
+.level-lists ul li {border:1px solid #D9BE87;border-radius: 3px;overflow:hidden;margin-bottom: 20px; }
+.level-lists ul li table {width: 100%; }
+.level-lists ul li table thead tr {background: #D9BE87}
+.level-lists ul li table thead tr th,.level-lists ul li table tr td {padding: 5px 10px;}
+.level-lists ul li table thead tr th span {font-weight: normal;color: #fff;padding-left: 5px;position: relative;}
+.level-lists ul li table thead tr th span:before{content: '';width: 2px;height: 14px;background: #fff;position: absolute;left: 0;top: 0;top: 50%;transform: translateY(-50%);}
+.level-lists ul li table tr {border-bottom:1px solid #D9BE87}
+.level-lists ul li table tr:last-child {border-bottom: 0;} 
+.level-lists ul li table tr th,.level-lists ul li table tr td {border-right:1px solid #D9BE87}
+.level-lists ul li table tr th:last-child,.level-lists ul li table tr td:last-child {border-right:none;}
+.level-lists ul li table tbody{font-size: 12px;}
+.level-lists ul li table tr td:last-child{color: #E3CE96;letter-spacing: 1px;}

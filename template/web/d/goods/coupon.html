@@ -1,0 +1,98 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" href="WEB_CSS/goods_coupon.css" />
+{/block}
+{block name="main"}
+{php}
+	$banner_list = api('System.Shop.advDetail', ['ap_keyword' => 'PC_COUPON_SWIPER', 'export_type' => 'data']);
+	$data = api('System.Goods.couponList', ['page_index' => $page_index, 'page_size' => $page_size]);
+	$data = $data['data'];
+	$promotion_list = $data['data'];
+	$total_count = $data['total_count'];
+{/php}
+<div class="goods-coupon-wrap">
+	<div class="coupon-title">
+		<div class="describe">
+			<div class="coupon-name">
+				<span class="ns-text-color">优惠券中心</span>
+				<span class="ns-text-color-gray text12">省钱更多，领券更多</span>
+			</div>
+			<ul class="coupon-type clear-float">
+				<li><i></i><span>限时抢券</span></li>
+				<li><i></i><span>叠加使用</span></li>
+				<li><i></i><span>种类多样</span></li>
+			</ul>
+			<a class="btn btn-primary" href="{:__URL('SHOP_MAIN/member/coupon')}" target="_blank">我的优惠券</a>
+		</div>
+	
+		{notempty name="$banner_list['data']"}
+		<div id="coupon_carousel" class="carousel slide" style="width:{$banner_list['data']['ap_width']}px;height:{$banner_list['data']['ap_height']}px;" data-ride="carousel">
+			<ol class="carousel-indicators carousel-spot">
+				{foreach name="$banner_list['data']['advs']" item="vo" key="k"}
+				<li data-target="#coupon_carousel" data-slide-to="{$k}" {eq name='$k' value='0'}class="active"{/eq}></li>
+				{/foreach}
+			</ol>
+			<div class="carousel-inner">
+				{foreach name="$banner_list['data']['advs']" item="vo" key="k"}
+					<div class="item {eq name='$k' value='0'}active{/eq}" style="background-color:{$vo['background']}">
+						<a href="{:__URL($vo['adv_url'])}" target="_blank" style="width: {$banner_list['data']['ap_width']}px;height: {$banner_list['data']['ap_height']}px;line-height: {$banner_list['data']['ap_height']}px;display: inline-block;">
+							{if $vo['adv_image']}
+							<img alt="轮播图" src="{:__IMG($vo['adv_image'])}">
+							{else /}
+							<img alt="轮播图" src="WEB_IMG/index/default_banner.png">
+							{/if}
+						</a>
+					</div>
+				{/foreach}
+			</div>
+		</div>
+		{/notempty}
+	</div>
+	{notempty name="$promotion_list"}
+	<div class="coupon-list">
+		<ul>
+			{volist name="promotion_list" id="vo"}
+			{if $vo['surplus_percentage'] > 0 && ($vo['max_fetch'] == 0 || $vo['received_num'] < $vo['max_fetch'])}
+			<li class="ns-bg-color">
+			{else /}
+			<li class="ns-bg-color-gray-shade-20">
+			{/if}
+				<div class="describe">
+					<span>￥{$vo['money']}</span>
+					<span>{$vo['coupon_name']}</span>
+					<br/>
+					<span>满{$vo['at_least'] > 0 ?$vo['at_least']: '任意金额'}可使用</span>
+					<br>
+					<span>&nbsp;&nbsp;{$vo['range_type'] ? '适用所有商品' : '适用部分商品'}</span>
+				</div>
+				<div class="receive">
+					{if $vo['surplus_percentage'] > 0}
+						<!-- 如果限领数为0 或者 领取数小于最大领取数 -->
+						{if $vo['max_fetch'] == 0 || $vo['received_num'] < $vo['max_fetch']}
+							<a class="ns-text-color" onclick="coupon_receive(this,{$vo.coupon_type_id})"><span>立即领取</span></a>
+						{else/}
+							<a class="ns-text-color"><span>您已领取</span></a>
+						{/if}
+					{else/}
+						<a class="ns-text-color"><span>已抢光</span></a>
+					{/if}
+				</div>
+			</li>
+			{/volist}
+		</ul>
+		{if condition="$total_count == 0"}
+		<div class="tip-box">
+			<img src="WEB_IMG/goods/no_coupons.png"/>
+			<div class="tip-text">{:lang('no_coupons')}……</div>
+		</div>
+		{/if}
+		{if condition="$total_count>0"}
+		<ul class="pager" data-ride="pager" data-elements="prev,nav,next,total_page_text,goto" data-rec-per-page="{$page_size}" data-page="{$page_index}" data-rec-total="{$total_count}" id="myPager"></ul>
+		{/if}
+	</div>
+	{/notempty}
+</div>
+{/block}
+{block name="script"}
+<script src="WEB_JS/goods_coupon.js"></script>
+{/block}

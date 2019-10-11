@@ -1,0 +1,68 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" type="text/css" href="WAP_CSS/pickup_toexamine.css">
+{/block}
+{block name="main"}
+<section>
+	<div class="list-myorder">
+		<ul>
+			{foreach name="$order['order_goods']" item="vo"}
+			<li class="ns-border-color-gray">
+				<span class="pic">
+					<img src="{:__IMG($vo.picture_info.pic_cover_micro)}">
+				</span>
+				<div class="text">
+					<span class="pro-name">{$vo.goods_name}</span>
+					<div class="pro-pric">
+						<span class="ns-text-color-gray">价格:</span>
+						<span>￥{$vo.price}</span>
+					</div>
+					<div class="pro-pric">
+						<span class="ns-text-color-gray">规格:</span>
+						<span>{$vo.sku_name} </span>
+					</div>
+					<div class="pro-pric">
+						<span class="ns-text-color-gray">数量:</span>
+						<span>{$vo.num}件</span>
+					</div>
+				</div>
+			</li>
+			{/foreach}
+		</ul>
+	</div>
+	<div class="pickedup-info">
+		<dl>
+			<dt>订单状态：</dt>
+			<dd>{$order.status_name}</dd>
+		</dl>
+		<dl>
+			<dt>提货人：</dt>
+			<dd>{$order.receiver_name}</dd>
+		</dl>
+		<dl>
+			<dt>联系方式：</dt>
+			<dd>{$order.receiver_mobile}</dd>
+		</dl>
+	</div>
+	<a href="javascript:;" class="confirm-pick-up btn primary" onclick="confirmPickUp({$order.order_id});">确认提货</a>
+</section>
+<script type="text/javascript">
+var is_click = false;
+function confirmPickUp(order_id){
+	if(is_click) return;
+	is_click = true;
+	api('System.Order.confirmPickup', {
+		"order_id" : order_id,
+		"buyer_name" : '{$order.receiver_name}',
+		"buyer_phone" : '{$order.receiver_mobile}'	
+	}, function(res){
+		if(res.code > 0){
+			toast(res.message, "{:__URL('APP_MAIN/member/index')}");
+		}else{
+			toast(res.message);
+		}
+	}, false);
+}
+</script>
+{/block}
+{block name="bottom"}{/block}

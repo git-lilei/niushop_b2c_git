@@ -1,0 +1,194 @@
+
+{extend name="$base" /}
+{block name="main"}
+<div class="set-style">
+	<dl>
+		<dt>版本切换：</dt>
+		<dd>
+			<div class="total">
+				<label for="navigationtype2" class="radio inline normal">
+					<i class="radio-common {if condition="$edition_data.is_use eq 0"}selected{/if}">
+						<input type="radio" style="margin-left:0px" value="0" name="edition" id="edition2"  {if condition="$edition_data.is_use eq 0"}checked{/if}/>
+					</i>
+					<span>旧版</span>
+				</label>
+				<label for="navigationtype1" class="radio inline normal">
+					<i class="radio-common {if condition="$edition_data.is_use eq 1"}selected{/if}">
+						<input type="radio" style="margin-left:0px" value="1" name="edition" id="edition1"  {if condition="$edition_data.is_use eq 1"}checked{/if}/>
+					</i>
+					<span>新版</span>
+				</label>				
+			</div>
+			<p class="hint">当前版本为旧版</p>
+		</dd>
+	</dl>
+	<div id="jiu">
+		<dl>
+			<dt>账号：</dt>
+			<dd>
+				<input id="ali_seller" type="text" value="{$config['value']['ali_seller']}" class="input-common long" />
+				<p class="hint">支付宝账户</p>
+			</dd>
+		</dl>
+		<dl>
+			<dt>合作者身份ID：</dt>
+			<dd>
+				<input id="ali_partnerid" type="text" value="{$config['value']['ali_partnerid']}" class="input-common long" />
+				<p class="hint">支付宝合作者身份ID（PID）</p>
+			</dd>
+		</dl>
+			<dl>
+			<dt>安全校验码：</dt>
+			<dd>
+				<input id="ali_key" type="text" value="{$config['value']['ali_key']}" class="input-common long" />
+				<p class="hint">支付宝老版MD5密钥</p>
+			</dd>
+		</dl>		
+	</div>
+	<div id="xin">
+		<dl>
+			<dt>API_ID：</dt>
+			<dd>
+				<input id="appid" type="text" value="{$config_new['value']['app_id']}" class="input-common long" oninput="if(value != ''){$(this).next().text('支付宝应用APPID').css('color','rgba(179, 178, 178, 0.89)')}else{$(this).next().text('支付宝应用APPID不能为空').css('color','red')}" />
+				<p class="hint">应用APPID</p>
+			</dd>
+		</dl>
+		<dl>
+			<dt>PRIVATE_KEY：</dt>
+			<dd>
+				<textarea id="private_key" style="width:490px;height:100px;resize:none">{$config_new.value.private_key}</textarea>
+				<p class="hint">应用私钥</p>
+			</dd>
+		</dl>
+		<dl>
+			<dt>PUBLIC_KEY：</dt>
+			<dd>
+				<textarea id="public_key" style="width:490px;height:100px;resize:none">{$config_new.value.public_key}</textarea>
+				<p class="hint">应用公钥</p>
+			</dd>
+		</dl>
+		<dl>
+			<dt>ALIPAY_PUBLIC_KEY：</dt>
+			<dd>
+				<textarea id="alipay_public_key" style="width:490px;height:100px;resize:none">{$config_new.value.alipay_public_key}</textarea>		
+				<p class="hint">支付宝公钥</p>
+			</dd>
+		</dl>
+	</div>
+	<dl>
+		<dt>是否启用支付：</dt>
+		<dd>
+			<p>
+				<input id="is_use" type="checkbox" class="checkbox" {if condition="$alipay_status_info.is_use==1"} checked="checked"{/if}/>
+			</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否启用退款：</dt>
+		<dd>
+			<p><input id="refund_is_use" type="checkbox" class="checkbox"
+			{if condition="$original_road_refund_setting_info.is_use"}checked="checked"{/if}
+			/></p>
+			<p class="hint">支付宝支付订单退款时, 支付宝退款原路返回</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt>是否启用转账：</dt>
+		<dd>
+			<p><input id="transfer_is_use" type="checkbox" class="checkbox"
+			{if condition="$transfer_accounts_setting_info.is_use"}checked="checked"{/if}
+			/></p>
+			<p class="hint">前台用户申请提现, 转账到支付宝余额</p>
+		</dd>
+	</dl>
+	<dl>
+		<dt></dt>
+		<dd>
+			<button class="btn-common btn-big" onclick="setConfigAjax()">保存</button>
+			<button class="btn-common-cancle btn-big" onclick="javascript:history.back(-1);" >返回</button>
+		</dd>
+	</dl>
+</div>
+
+<script>
+$("input[name='edition']").change(function(){
+	var edition_status = $("input[name='edition']:checked").val();
+	if(edition_status == 0){
+		$("#xin").css("display","none");
+		$("#jiu").css("display","block");
+		$("input[name='edition']:checked").parent().parent().parent().next().html("当前版本为旧版");
+	}else{
+		$("#xin").css("display","block");
+		$("#jiu").css("display","none");
+		$("input[name='edition']:checked").parent().parent().parent().next().html("当前版本为新版");
+	}
+})
+
+$(function(){
+	var edition_status = $("input[name='edition']:checked").val();
+	if(edition_status == 0){
+		$("#xin").css("display","none");
+		$("#jiu").css("display","block");
+		$("input[name='edition']:checked").parent().parent().parent().next().html("当前版本为旧版");
+	}else{
+		$("#xin").css("display","block");
+		$("#jiu").css("display","none");
+		$("input[name='edition']:checked").parent().parent().parent().next().html("当前版本为新版");
+	}
+})
+
+function setConfigAjax(){
+	var ali_partnerid = $("#ali_partnerid").val();
+	var ali_seller = $("#ali_seller").val();
+	var ali_key = $("#ali_key").val();
+	var public_key = $("#public_key").val();
+	var private_key = $("#private_key").val();
+	var appid = $("#appid").val();
+	var alipay_public_key = $("#alipay_public_key").val();
+	var originalRoadRefund = new Object();
+	originalRoadRefund.is_use = $("#refund_is_use").is(":checked") ? 1 : 0;
+	
+	var originalRoadTransfer = new Object();
+	originalRoadTransfer.is_use = $("#transfer_is_use").is(":checked") ? 1 : 0;
+
+	var originalRoadTEdition = new Object();
+	originalRoadTEdition.is_use = $("input[name='edition']:checked").val();
+	
+	var alipayConfigStatus = new Object();
+	alipayConfigStatus.is_use = $("#is_use").is(":checked") ? 1 : 0;
+	
+	$.ajax({
+		type:"post",
+		url:"{:__URL('__URL__/NsAlipay/ADMIN_MODULE/config/payaliconfig')}",
+		data:{
+			'partnerid':ali_partnerid,
+			'seller':ali_seller,
+			'ali_key':ali_key,
+			'is_use' : is_use,
+			'type' : 'alipay',
+			
+			'new_type' : JSON.stringify(originalRoadTEdition),
+			'value' : JSON.stringify(originalRoadRefund),
+			'transferValue' : JSON.stringify(originalRoadTransfer),
+			'is_use' : JSON.stringify(alipayConfigStatus),
+			
+			'public_key' : public_key,
+			'private_key' : private_key,
+			'appid' : appid,
+			'alipay_public_key' : alipay_public_key,
+			
+			'status' : originalRoadTEdition.is_use
+		},
+		success:function (data) {
+			if (data["code"] > 0) {
+				showTip(data["message"],"success");
+				location.href=__URL("ADMIN_MAIN/config/paymentconfig");
+			}else{
+				showTip(data["message"],"error");
+			}
+		}
+	});
+}
+
+</script>
+{/block}

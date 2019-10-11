@@ -1,0 +1,174 @@
+<style type="text/css">
+.modal#set_member_discount{
+	border-radius: 0;
+	width: 500px;
+}
+.modal#set_member_discount .modal-body{
+	text-align: center;
+}
+.modal#set_member_discount .modal-body dl{
+	margin-top: 0;
+	margin-bottom: 10px;
+	width: 100%;
+	overflow: hidden;
+}
+.modal#set_member_discount .modal-body dl:last-child{
+	margin-bottom: 0;
+}
+.modal#set_member_discount .modal-body dl dt,.modal#set_member_discount .modal-body dl dd{
+	display: inline-block;
+	line-height: 30px;
+}
+.modal#set_member_discount .modal-body dl dt{
+	width: 35%;
+	text-align: right;
+	font-weight: normal;
+	float: left;
+}
+.modal#set_member_discount .modal-body dl dd{
+	text-align: left;
+	margin-left: 0;
+	width: 63%;
+	float: right;
+}
+</style>
+<div class="modal fade hide" id="set_member_discount" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3>会员折扣</h3>
+			</div>
+			<div class="modal-body" id="member_discount">
+				{foreach name="$level_list" item="vo"}
+					<dl>
+						<dt>{$vo.level_name}</dt>
+						<dd>
+							<input class="input-common harf" type="number" data-level-id="{$vo.level_id}" maxlength="3"><em class="unit">%</em>
+						</dd>
+					</dl>
+				{/foreach}
+				<dl>
+					<dt>价格保留方式</dt>
+					<dd>
+						<label class="radio inline normal decimal_reservation_number">
+							<i class="radio-common">
+								<input type="radio" name="decimal-reservation-number" value="0">
+							</i>
+							<span>抹去角和分</span>
+						</label>
+						<label class="radio inline normal decimal_reservation_number">
+							<i class="radio-common">
+								<input type="radio" name="decimal-reservation-number" value="1">
+							</i>
+							<span>抹去分</span>
+						</label>
+						<label class="radio inline normal decimal_reservation_number">
+							<i class="radio-common">
+								<input type="radio" name="decimal-reservation-number" value="2">
+							</i>
+							<span>保留角和分</span>
+						</label>
+					</dd>
+				</dl>
+			</div>
+			<div class="modal-footer">
+				<button class="btn-common btn-big" onclick="save_goods_discount();">保存</button>
+				<button class="btn-common-cancle btn-big" data-dismiss="modal">关闭</button>
+			</div>
+		</div>
+	</div>
+</div>
+<input type="hidden" id="curr_goods_id">
+<script type="text/javascript">
+var is_sub = false;
+function save_goods_discount(){
+	var member_discount_arr = [];
+	$("#member_discount dl dd input[type='number']").each(function(){
+		var discount = parseInt($(this).val());
+		if(discount > 100){
+			showMessage("error","商品折扣最大百分比为100,请重新设置");
+			return;
+		}
+		if(discount != NaN && discount > 0 && discount <= 100){
+			var member_discount = {};
+				member_discount.level_id = $(this).attr("data-level-id");
+				member_discount.discount = discount;
+			member_discount_arr.push(member_discount);
+		}
+	});
+
+	var goods_ids= [];
+	$("#productTbody input[type='checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			goods_ids.push($(this).val());
+		}
+	});
+	
+	if(goods_ids.length == 0 && $("#curr_goods_id").val() > 0){
+		goods_ids.push($("#curr_goods_id").val());
+	}
+	var decimal_reservation_number = $("input[name='decimal-reservation-number']:checked").val();
+		decimal_reservation_number = decimal_reservation_number == undefined ? -1 : decimal_reservation_number;
+		
+	if(member_discount_arr.length > 0 && goods_ids.length > 0){
+		if(is_sub) return;
+		is_sub = true;
+		$.ajax({
+			type : "post",
+			url : "{:__URL('ADMIN_MAIN/goods/setMemberDiscount')}",
+			data : {
+				member_discount_arr : JSON.stringify(member_discount_arr),
+				goods_ids : goods_ids.toString(),
+				decimal_reservation_number : decimal_reservation_number
+			},
+			success : function(data){
+				$("#set_member_discount").modal("hide");
+				if(data["code"] > 0){
+					showMessage("success",data["message"],location.href);
+				}else{
+					is_click = false;
+					showMessage("error",data["message"]);
+				}
+			}
+		})
+	}else{
+		$("#set_member_discount").modal("hide");
+	}
+}
+
+$(".decimal_reservation_number").click(function(){
+	$(this).siblings().find("i").removeClass("selected").find("input[type='checkbox']").prop('checked', false);
+});
+
+// 查看折扣
+function showMemberDiscount(goods_id){
+	$("#curr_goods_id").val(goods_id);
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/goods/showMemberDiscountAjax')}",
+		data : {
+			goods_id : goods_id,
+		},
+		success : function(data){
+			if(data['discount_list'].length > 0){
+				for (var i = 0; i < data['discount_list'].length; i++) {
+					var discount_info = data['discount_list'][i];
+					$("input[data-level-id='"+discount_info['level_id']+"']").val(discount_info['discount']);
+				}
+			}
+			if(data['decimal_reservation_number'] >= 0){
+				$('input[name="decimal-reservation-number"]').prop("checked", false).parent().removeClass("selected");
+				$('input[name="decimal-reservation-number"][value="'+data['decimal_reservation_number']+'"]').prop("checked", true).parent().addClass("selected");
+			}
+		}
+	});
+	$("#set_member_discount").modal("show");
+}
+
+$('#set_member_discount').on('hidden.bs.modal', function (e) {
+	$("#curr_goods_id").val("");
+	$("#member_discount").find('input[data-level-id]').val("");
+	$("#member_discount").find('input[name="decimal-reservation-number"]').prop("checked", false).parent().removeClass("selected");
+})
+</script>

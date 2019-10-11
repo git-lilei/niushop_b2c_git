@@ -1,0 +1,170 @@
+{extend name="$base" /}
+{block name="resources"}
+<script type="text/javascript" src="__STATIC__/My97DatePicker/WdatePicker.js"></script>
+<style>
+.ns-main{margin-top:0px;}
+</style>
+{/block}
+{block name="main"}
+<table class="mytable">
+	<tr>
+		<td style="text-align: left;">
+			<button class="btn-common-delete" onclick="batchDelete()" style="margin:0 5px 0 0 !important;">批量删除</button>
+		</td>
+		<td class="default-condition">
+			<span>操作时间：</span>
+			<input type="text" id='search_text' placeholder="请输入用户名" class="input-common middle" />
+			<input type="button" class="btn-common" onclick="searchData()" value="搜索" />
+			<button onclick="openSeniorSearch('.default-condition')" value="搜索" class="btn-common" >高级搜索</button>
+		</td>
+	</tr>
+</table>
+
+<!-- 高级搜索 -->
+<div class="nui-condition">
+	<div class="c-item-column">
+		<label>用户名：</label>
+		<input type="text" id='search_text' placeholder="请输入用户名" class="input-common middle" />
+	</div>
+	<div class="c-item-column">
+		<label>操作时间：</label>
+		<input type="text" id="startDate" class="input-common w100" placeholder="请选择开始日期" onclick="WdatePicker()" />
+		&nbsp;-&nbsp;
+		<input type="text" id="endDate" placeholder="请选择结束日期" class="input-common w100" onclick="WdatePicker()" />
+	</div>
+	<br />
+
+	<div class="c-operation">
+		<button onclick="searchData()"  value="搜索" class="btn-common" >搜索</button>
+		<a href="javascript:clearCondition();">清空筛选条件</a>
+	</div>
+	<a href="javascript:retractSeniorSearch();" class="retract">收起↑</a>
+</div>
+
+<table class="table-class">
+	<colgroup>
+		<col style="width: 2%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 10%;">
+		<col style="width: 42%;">
+		<col style="width: 16%;">
+		<col style="width: 10%;">
+	</colgroup>
+	<thead>
+		<tr align="center">
+			<th><i class="checkbox-common" input_all ="#productTbody">
+			<input type="checkbox" ></i>
+			</th>
+			<th align="left">操作用户</th>
+			<th align="left">操作</th>
+			<th align="left">IP</th>
+			<th align="left">操作详情</th>
+			<th>时间</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody id="productTbody"></tbody>
+</table>
+{/block}
+{block name="script"}
+<script type="text/javascript">
+function LoadingInfo(page_index) {
+	var search_text = $("#search_text").val();
+	var start_date = $("#startDate").val();
+	var end_date = $("#endDate").val();
+	$.ajax({
+		type : "post",
+		url : "{:__URL('ADMIN_MAIN/auth/authLog')}",
+		data : { "page_index" : page_index, "page_size" : $("#showNumber").val(), "search_text" : search_text, "start_date" : start_date, "end_date" : end_date },
+		success : function(data) {
+			if (data["data"].length > 0) {
+				$(".table-class tbody").empty();
+				for (var i = 0; i < data["data"].length; i++) {
+					var html = '';
+					html += '<tr align="center">';
+					html += '<td ><i class="checkbox-common"><input name="sub" type="checkbox" value="'+ data['data'][i]['id']+'" ></i></td>';
+					html += '<td align="left">' + data["data"][i]["user_name"] + '</td>';
+					html += '<td align="left">' + data["data"][i]["controller"] + '/' + data["data"][i]["method"] + '</td>';
+					html += '<td align="left">' + data["data"][i]["ip"] + '</td>';
+					html += '<td align="left">访问地址：<span style="color:#ff0000;">'+ data["data"][i]["url"] +'</span><br/>操作描述：<span style="color:blue;">'+ data["data"][i]["data"] + '</span></td>';
+					
+					html += '<td>' + timeStampTurnTime(data["data"][i]["create_time"]) + '</td>';
+					/*if(data['data'][i]['is_admin'] == 1){
+						html += '<td style="color:#B5B3B3;">管理员用户不可进行操作</td>';
+					}else{
+						html += '<td><a href="'+__URL('ADMIN_MAIN/auth/edituser?uid=' + data["data"][i]["uid"])+'">修改</a>&nbsp;&nbsp; ';
+						html += data["data"][i]["user_status"] == 0 ? '<a href="javascript:void(0);" onclick="unlock('+data["data"][i]["uid"]+', 1)">解锁</a>&nbsp;&nbsp; ' : '<a href="javascript:void(0);" onclick="lock('+data["data"][i]["uid"]+', 0)">锁定</a>&nbsp;&nbsp; ';
+						html += '<a href="javascript:void(0);" onclick="resetPassword(' + data["data"][i]["uid"] + ')">重置密码</a>';
+						html += '&nbsp;&nbsp;<a href="javascript:;" onclick="deleteLog(' + data["data"][i]["uid"] + ')">删除</a></td>';
+					}*/
+					html += '<td><a href="javascript:;" onclick="deleteLog(' + data["data"][i]["id"] + ')">删除</a></td>';
+					html += '</tr>';
+					$(".table-class tbody").append(html);
+				}
+			} else {
+				var html = '<tr align="center"><td colspan="8">暂无符合条件的数据记录</td></tr>';
+				$(".table-class tbody").html(html);
+			}
+			initPageData(data["page_count"],data['data'].length,data['total_count']);
+			$("#pageNumber").html(pagenumShow(jumpNumber,$("#page_count").val(),{$pageshow}));
+		}
+	});
+}
+
+function deleteLog(id){
+	$( "#dialog" ).dialog({
+		buttons: {
+			"确定": function() {
+				$(this).dialog('close');
+				$.ajax({
+				url : "{:__URL('ADMIN_MAIN/auth/deleteLog')}",
+				data : {"id" : id.toString() },
+				type : "post",
+				dataType : "json",
+				success : function(data) {
+					if(data['code'] > 0){
+						showTip(data["message"],'success');
+						window.location.reload();
+					}else{
+						showTip(data["message"],'error');
+					}
+				}
+			});
+		},
+		"取消,#f5f5f5,#666": function() {
+			$(this).dialog('close');
+		}
+	},
+	contentText:"确定要删除操作日志吗？"
+	});
+}
+
+//批量删除
+function batchDelete() {
+	var id= new Array();
+	$("#productTbody input[type='checkbox']:checked").each(function() {
+		if (!isNaN($(this).val())) {
+			id.push($(this).val());
+		}
+	});
+	if(id.length ==0){
+		$( "#dialog" ).dialog({
+			buttons: {
+				"确定,#0059d6,#fff": function() {
+					$(this).dialog('close');
+				}
+			},
+			contentText:"请选择需要操作的记录",
+			title:"消息提醒",
+		});
+		return false;
+	}
+	deleteLog(id);
+}
+
+function searchData(){
+	LoadingInfo(1);
+}
+</script>
+{/block}

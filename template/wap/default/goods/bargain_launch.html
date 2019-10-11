@@ -1,0 +1,108 @@
+{extend name="$base" /}
+{block name="resources"}
+<link rel="stylesheet" href="WAP_CSS/goods_bargain_launch.css">
+{/block}
+{block name="head"}{/block}
+{block name="main"}
+{php}
+	$launch_info_data = api('NsBargain.Bargain.bargainDetail', ['launch_id' =>$launch_id]);
+{/php}
+{if $launch_info_data['code'] == 0}
+	{php}
+		$partake_info =  api('NsBargain.Bargain.bargainConfig');
+		$partake_info = $partake_info["data"];
+		$launch_info = $launch_info_data['data']['launch_info'];
+		$user_info = $launch_info_data['data']['user_info'];
+		$partake_list = $launch_info_data['data']['partake_list'];
+		$is_self = $launch_info_data['data']['is_self'];
+		$is_max_partake = $launch_info_data['data']['is_max_partake'];
+		$goods_info = $launch_info_data['data']['goods_info'];
+		$bargain_goods_info = $launch_info_data['data']['bargain_goods_info'];
+	{/php}
+
+	<section class="bargain-header">
+		<a href="{:__URL('APP_MAIN/index/index')}" class="index">首页</a>
+		<div class="bargain-content" onclick="jump_goods({$goods_info['goods_id']},{$launch_info['bargain_id']})">
+			<div class="user-headimg">
+				{if condition="$user_info.user_headimg"}
+				<img src="{:__IMG($user_info.user_headimg)}"/>
+				{else}
+				<img src="{:__IMG($default_headimg)}"/>
+				{/if}
+			</div>
+			<div class="user-name">{$user_info.user_name}</div>
+			<div class="propaganda">{$partake_info.propaganda}</div>
+			<div class="goods-info ns-bg-color-gray-fadeout-60">
+				<div class="goods-left"><img src="{:__IMG($goods_info['pic']['pic_cover'])}"></div>
+				<div class="goods-right">
+					<span class="goods-name">{$goods_info['goods_name']}</span>
+					<span class="goods-center ns-text-color-gray">最低可砍至 <b class="ns-text-color">{$launch_info['bargain_min_money']}</b>元</span>
+					<br />
+					<span class="goods-price ns-text-color">￥{$goods_info['price']}</span>
+					<span class="partake-number ns-text-color-gray">{$bargain_goods_info['sales'] + $bargain_goods_info['fictitious_sales']}人已参与</span>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="bargain-info">
+		{if condition="$launch_info['status'] == 1"}
+			<h3>已砍<span>{$launch_info.bargain_money}</span>元，还差<span>{$launch_info['surplus']}</span>元</h3>
+			{if condition="$is_self eq 1"}
+				<button id="share_friends" class="share-friends ns-text-color">喊好友砍一刀</button>
+			{else/}
+				{if condition = "$is_max_partake eq 1"}
+					<a href="javascript:jump_bargain();" class="friend-bargain ns-text-color">我也要免费拿</a>
+				{else /}
+					<a href="javascript:friend_brafain({$launch_id});" class="friend-bargain ns-text-color">帮他砍一刀</a>
+				{/if}
+			{/if}
+		{/if}
+		{if condition="$launch_info['status'] == 1"}
+			<h3>还剩<time data-end-time="{$launch_info.end_time}">00:00:00</time>结束，快来砍价吧~</h3>
+		{elseif condition="$launch_info['status'] == 2"}
+			<h3>砍价已结束</h3>
+		{else}
+			<h3>砍价已取消</h3>
+		{/if}
+	</section>
+	<section class="bargain-list">
+		<h3>砍价帮</h3>
+		<ul>
+			{foreach name="partake_list" id="v"}
+			<li>
+				<div class="user-headimg">
+					{if condition="$v.user_info.user_headimg"}
+					<img src="{:__IMG($v.user_info.user_headimg)}">
+					{else}
+					<img src="{:__IMG($default_headimg)}"/>
+					{/if}
+				</div>
+				<div class="user-info">
+					<p>{$v.user_info.nick_name} <br>{$v.remark}</p>
+					<span class="bargain-price">砍掉{$v.bargain_money}元</span>
+				</div>
+			</li>
+			{/foreach}
+		</ul>
+	</section>
+	{if condition = "$is_self == 1"}
+	<div class="mask-layer-bg"></div>
+	<div class="mask-layer-invite-friends">
+		<div><img src="WAP_IMG/goods/invite_friends_share.png"/></div>
+		<h4>已砍<strong class="ns-text-color">{$launch_info.bargain_money}</strong>元，点击右上角发送给好友</h4>
+	</div>
+	{/if}
+{else/}
+<script type="text/javascript">
+window.onload = function(){
+	toast('{$launch_info.message}', __URL(APPMAIN+"/member/index"));
+}
+</script>
+{/if}
+<input type="hidden" id="ms_time" value="{:time()}"/>
+<input type="hidden" id="launch_id" value="{$launch_id}">
+{/block}
+{block name="footer"}{/block}
+{block name="script"}
+<script src="WAP_JS/goods_bargain_launch.js"></script>
+{/block}

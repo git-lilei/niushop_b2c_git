@@ -1,0 +1,150 @@
+{extend name="$base"}
+{block name="resources"}
+<link type="text/css" rel="stylesheet" href="WEB_CSS/login_register.css"/>
+{/block}
+{block name="head"}
+<div class="header w1200">
+	<a href="{:__URL('SHOP_MAIN')}">
+		<img alt="logo" src="{:__IMG($web_info['logo'])}"/>
+	</a>
+</div>
+{/block}
+{block name="main"}
+{php}
+//广告
+$register_adv = api('System.Shop.shopAdvPositionDetailByApKeyword', ['ap_keyword' => "pcRegisterAdv"]);
+$register_adv = $register_adv['data']['adv_list'][0];
+
+//验证码配置
+$login_verify_code = api("System.Config.loginVerifyCode");
+$login_verify_code = $login_verify_code['data'];
+$login_verify_code = $login_verify_code['value'];
+{/php}
+
+<p class="login-info">
+	<span>{:lang('i_have_registered_now')}</span>
+	<a href="{:__URL('SHOP_MAIN/login/index')}" title="{:lang('log_in')}" class="ns-text-color">{:lang('login')}</a>
+</p>
+<ul class="nav nav-tabs">
+  	<li class="active general-registration"><a data-tab href="#tab1">完善信息</a></li>
+	<li class="mobile-phone-registration"><a data-tab href="#tab2">绑定信息</a></li>
+</ul>
+<div class="tab-content ns-border-color-gray ns-text-color-gray">
+	<!-- 完善信息  -->
+	<div class="tab-pane active" id="tab1">
+		<div class="form-group">
+			<label >
+				<span class="ns-text-color">*</span>
+				<span class="switching-user-names">{:lang('user_name')}：</span>
+			</label>
+			<input id="username" type="text" class="ns-border-color-gray-shade-10" placeholder="{:lang('please_enter_your_user_name')}" />
+		</div>
+		<div class="form-group">
+			<label >
+				<span class="ns-text-color">*</span>
+				<span>{:lang('password')}：</span>
+			</label>
+			<input id="pass" type="password" class="ns-border-color-gray-shade-10" placeholder="{:lang('please_input_password')}" />
+		</div>
+		<div class="form-group">
+			<label >
+				<span class="ns-text-color">*</span>
+				<span>{:lang('member_confirm_password')}：</span>
+			</label>
+			<input id="repass" type="password" class="ns-border-color-gray-shade-10" placeholder="{:lang('please_enter_confirmation_password')}"/>
+		</div>
+		{if condition = "$login_verify_code['pc'] == 1"}
+		<div class="form-group">
+			<label>
+				<span class="ns-text-color">*</span>
+				<span>验证码：</span>
+			</label>
+			<input id="verify_code" type="text" placeholder="请输入验证码" class="form-item ns-border-color-gray-shade-10" />
+			<label class="img">
+				<img class="verifyimg" src="{:__URL('SHOP_MAIN/captcha')}" onclick="this.src='{:__URL('SHOP_MAIN/captcha?tag=1')}'+'&send='+Math.random()"  alt="captcha" />
+			</label>
+		</div>
+		{/if}
+		<div class="form-group">
+			<label></label>
+			<button class="btn btn-primary btn-binding btn-info" onclick="perfectInfo();" type="button">完善信息</button>
+		</div>
+	</div>
+	<!-- 绑定信息 -->
+	<div class="tab-pane" id="tab2">
+		<div class="form-group">
+			<label >
+				<span class="ns-text-color">*</span>
+				<span class="switching-user-names">{:lang('user_name')}：</span>
+			</label>
+			<input id="binding_username" class="ns-border-color-gray-shade-10" name="username" type="text" placeholder="用户名/邮箱/手机号" />
+		</div>
+		<div class="form-group">
+			<label >
+				<span class="ns-text-color">*</span>
+				<span>{:lang('password')}：</span>
+			</label>
+			<input type="password" id="binding_pass" class="ns-border-color-gray-shade-10" placeholder="{:lang('please_input_password')}" />
+		</div>
+		{if condition = "$login_verify_code['pc'] == 1"}
+		<div class="form-group">
+			<label>
+				<span class="ns-text-color">*</span>
+				<span>验证码:</span>
+			</label>
+			<input id="binding_verify_code" type="text" autocomplete="off" placeholder="请输入验证码" class="form-item ns-border-color-gray-shade-10" />
+			<label class="img">
+				<img class="verifyimg" src="{:__URL('SHOP_MAIN/captcha')}" onclick="this.src='{:__URL('SHOP_MAIN/captcha?tag=1')}'+'&send='+Math.random()"  alt="captcha" />
+			</label>
+		</div>
+		{/if}
+		<div class="form-group">
+			<label></label>
+			<button class="btn btn-primary btn-binding btn-info" onclick="loginBind()" type="button">登录绑定</button>
+		</div>
+	</div>
+</div>
+
+<input type="hidden" value="{:lang('non_existent')}" id="isset_username"/>
+<input type="hidden" value="{$login_verify_code['pc']}" id="hidden_verify_pc"/>
+<input type="hidden" value="{$reg_config['pwd_len']}" id="hidden_pwd_len" />
+<input type="hidden" value="{$reg_config['name_keyword']}" id="hidden_name_keyword"/>
+<input type="hidden" value="{$reg_config['pwd_complexity']}" id="hidden_pwd_complexity"/>
+{/block}
+{block name="footer"}
+<div class="ns-copyright" id="copyright-main">
+	<p id="copyright_desc"></p>
+	<p>
+		<a id="copyright_companyname" href="javascript:;" target="_blank"></a>
+		<span id="copyright_meta"></span>
+	</p>
+	<p id="web_gov_record_wap">
+		<a href="javascript:;" target="_blank">
+			<img src="__STATIC__/images/gov_record.png" alt="公安备案">
+			<span></span>
+		</a>
+	</p>
+	{$web_info.third_count}
+</div>
+{/block}
+{block name="sidebar"}{/block}
+{block name="script"}
+<script>
+var lang_register = {
+	user_name_already_exists : '{:lang("user_name_already_exists")}',
+	password_must_contain_symbols : '{:lang("password_must_contain_symbols")}',
+	password_must_have_uppercase_letters : '{:lang("password_must_have_uppercase_letters")}',
+	password_must_have_lowercase_letters : '{:lang("password_must_have_lowercase_letters")}',
+	password_must_contain_numbers : '{:lang("password_must_contain_numbers")}',
+	minimum_password_length : '{:lang("minimum_password_length")}',
+	password_cannot_empty : '{:lang("password_cannot_empty")}',
+	such_characters : '{:lang("such_characters")}',
+	username_cannot_includ : '{:lang("username_cannot_includ")}',
+	user_name_canno_be_phone : '{:lang("user_name_canno_be_phone")}',
+	user_name_canno_be_mailbox : '{:lang("user_name_canno_be_mailbox")}',
+	two_password_not_same : '{:lang("two_password_not_same")}',
+	user_name_length : '{:lang("user_name_length")}',
+};
+</script>
+<script src="WEB_JS/login_register_ext.js"></script>
+{/block}
